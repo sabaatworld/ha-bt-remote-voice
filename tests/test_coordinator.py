@@ -269,3 +269,38 @@ async def test_stale_aborted_session_does_not_authorize_unsolicited_open_start()
     c.control(bytes.fromhex("04000208"))
     assert c.sessions == 1
     await c.stop()
+
+
+async def test_sleep_after_input_eof_does_not_cancel_pending_intent_or_reply():
+    from unittest.mock import AsyncMock, patch
+
+    c = VoiceCoordinator(FakeHass(), Entry())
+    lost = asyncio.Event()
+    caps = Capabilities(128)
+    t = type(
+        "Transport", (), {"open": AsyncMock(return_value=caps), "close": AsyncMock(), "lost": lost}
+    )()
+    done = asyncio.Event()
+    input_drained = asyncio.Event()
+
+    async def consume(session):
+        async for _ in session.stream():
+            pass
+        input_drained.set()
+        await done.wait()
+
+    c.run_pipeline = consume
+    with patch("custom_components.atvv_remote.coordinator.BlueZTransport", return_value=t):
+        c.connection_task = asyncio.create_task(c.connect_loop())
+        await asyncio.sleep(0.01)
+        c.control(bytes.fromhex("04030207"))
+        c.audio(bytes(128))
+        c.control(bytes.fromhex("0002"))
+        await input_drained.wait()
+        lost.set()
+        await asyncio.sleep(0.02)
+        assert not c.pipeline_task.done()
+        done.set()
+        await c.pipeline_task
+        assert c.failures == 0
+        await c.stop()

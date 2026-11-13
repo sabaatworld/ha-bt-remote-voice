@@ -113,7 +113,11 @@ class VoiceCoordinator:
                     self.session.abort("disconnected")
                 self.mic_active = False
                 # Keep old transport/capabilities until its pipeline has stopped.
-                if self.pipeline_task and not self.pipeline_task.done():
+                if (
+                    self.pipeline_task
+                    and not self.pipeline_task.done()
+                    and (self.stopping or not self.session or not self.session.input_complete)
+                ):
                     self.pipeline_task.cancel()
                     with suppress(asyncio.CancelledError):
                         await self.pipeline_task

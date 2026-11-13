@@ -57,7 +57,7 @@ attribution in [third-party notices](THIRD_PARTY_NOTICES.md).
 - Pairing, trust/bond management and Bluetooth discovery/connect ownership stay
   external. No OS packages, PipeWire daemon or proxy support are required.
 - Existing Keyboard Remote and HID input integrations remain independent.
-- Capture is limited to 30 seconds; request/tap capture has a 15-second no-speech
+- Capture is limited to 30 seconds; request/tap capture has a 15-second total
   limit and ends about 0.8 seconds after speech. Audio buffering is bounded.
 - Bad frames, unresolved sequence gaps, disconnects, queue overflow and missing
   audio abort input. Headerless audio cannot prove packet identity when CTL and
