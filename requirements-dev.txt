@@ -1,0 +1,12 @@
+homeassistant==2026.11.1
+pytest>=9,<10
+pytest-asyncio>=1.4,<2
+ruff>=0.17,<1
+dbus-fast==5.0.22
+hassil==3.12.1
+pymicro-vad==1.0.1
+pyspeex-noise==1.0.2
+gazetteer-matcher==1.1.0
+home-assistant-intents==2026.10.27
+mutagen
+ha-ffmpeg

@@ -1,32 +1,68 @@
 # ATVV Remote Voice for Home Assistant
 
-A Home Assistant custom integration for push-to-talk voice from compatible,
-already-paired Android TV Voice over BLE (ATVV) remotes.
+Push-to-talk Assist input from an already-paired Android TV Voice over BLE
+(ATVV) remote. Early development; currently targets TVision BT19K and Home
+Assistant 2026.11.1 or later on Linux with a local BlueZ adapter.
 
-## Status
+## Install and configure
 
-Early development. This repository currently contains project setup only;
-there is no installable integration yet.
+1. Copy `custom_components/atvv_remote` into Home Assistant's
+   `config/custom_components` directory and restart Home Assistant.
+2. Pair the remote externally on the HA host. This integration does not pair,
+   unpair, trust or repair bonds. A bond on another computer is not sufficient.
+3. Add **ATVV Remote Voice** under Settings → Devices & Services.
+4. Pick an already-paired device, or enter its address. Wake it with a normal
+   arrow button, select an Assist pipeline and submit to check voice capabilities.
+5. Hold the remote's Assistant button while speaking, then release it.
 
-## Intended scope
+Starts in **Transcription only** mode: no commands execute. Check the Assist
+pipeline's debug view for results. Once tested, choose **Execute commands** in
+integration options. Pipeline identity is preserved through name changes;
+removing the selected pipeline requires choosing another in options.
 
-- Use an already-paired remote; pairing is managed outside this integration.
-- Send microphone audio to a selected Home Assistant Assist pipeline.
-- Start with physical hold-to-talk and TVision BT19K support.
-- Expose voice-session status for Home Assistant automations.
+This version ends at speech-to-text or intent processing. It does not play
+spoken replies, support announcements, or enable wake-word listening.
 
-Additional remote models will require individual compatibility verification.
+## Behavior and limits
 
-## Project contents
+- Exposes a voice satellite, microphone-active sensor and pressed/released event
+  entity. No automation is required to start microphone input.
+- Existing keyboard/input integrations handle normal buttons independently.
+- Local paired devices only. Bluetooth proxies, Apple Siri remotes, arbitrary
+  button learning, tap-to-toggle and software-only mic activation are unsupported.
+- Only ATVV v1.0, 16 kHz ADPCM and hold-to-talk capabilities are accepted.
+- A busy press is ignored until release; queued commands are not replayed.
+- Audio buffering is bounded. Corrupt/missing input aborts the utterance; the
+  integration does not intentionally execute a partial recording.
+- Capture is limited to 30 seconds. Missing-audio and processing timeouts recover
+  the listener. Sleep/reconnect recovery may require waking the remote first.
+- This integration does not change OS handling of remote power keys. Check your
+  host's behavior before pressing a power button.
 
-This repository is for reusable integration code, tests using synthetic data,
-and user-facing documentation. Private installation settings, device addresses,
-audio recordings, traffic captures, credentials, and personal research notes
-must stay outside it.
+System D-Bus must be accessible to HA Core. There is no PipeWire service or host
+package installation. Remote compatibility requires testing each model.
 
-## Related projects
+## Privacy
 
-- [ATVVoice](https://github.com/b0o/ATVVoice)
-- [SiriRemoteESP](https://github.com/Jakkumn/SiriRemoteESP)
+No audio recordings, transcripts, household configuration or credentials are
+included or saved by this integration. Diagnostics omit device addresses and
+names. The selected HA pipeline/provider still controls its own processing and
+retention; selecting a cloud provider sends speech to that provider.
 
-Any future code reuse must retain the applicable upstream license notices.
+Keep personal configuration, captures and research outside this repository.
+Review changes before committing; ignore rules do not replace that review.
+
+## Development
+
+Use Linux, Python 3.14 and a virtual environment with Home Assistant 2026.11.1,
+pytest, pytest-asyncio, dbus-fast, ruff and the optional dependencies declared by
+HA's Assist/media components. Tests use synthetic audio and fake BLE objects;
+real HA entities are exercised without opening an HTTP listener.
+
+```sh
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -p pytest_asyncio.plugin
+ruff check .
+ruff format --check .
+```
+
+See [third-party notices](THIRD_PARTY_NOTICES.md) for upstream attribution.

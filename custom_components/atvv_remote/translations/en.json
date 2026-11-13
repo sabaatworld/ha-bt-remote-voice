@@ -1,0 +1,64 @@
+{
+  "title": "ATVV Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Select paired remote",
+        "description": "Pair your remote outside this integration first. ATVV indicates a cached voice service; wake to check means capabilities have not been verified.",
+        "data": {
+          "device": "Paired remote"
+        }
+      },
+      "manual": {
+        "title": "Enter paired remote address",
+        "data": {
+          "address": "Bluetooth address"
+        }
+      },
+      "configure": {
+        "title": "Select Assist pipeline",
+        "description": "Wake the remote with an arrow button before submitting. Starts in transcription-only mode.",
+        "data": {
+          "pipeline_id": "Assist pipeline"
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Local Bluetooth is unavailable. Check that system D-Bus is accessible.",
+      "wake_remote": "Wake the paired remote with an arrow button, then try again.",
+      "not_paired": "Pair this remote externally first.",
+      "multiple_adapters": "This remote is paired on multiple adapters. Keep its bond on one adapter.",
+      "invalid_address": "Enter a Bluetooth address in AA:BB:CC:DD:EE:FF format.",
+      "unsupported_remote": "This remote does not provide the supported ATVV 16 kHz hold-to-talk profile.",
+      "invalid_pipeline": "Choose an existing Assist pipeline."
+    },
+    "abort": {
+      "already_configured": "This remote is already configured.",
+      "no_pipelines": "Create an Assist pipeline before adding the remote."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Voice settings",
+        "description": "Transcription only does not execute commands. Command mode executes speech through the selected pipeline; this version does not play spoken replies.",
+        "data": {
+          "pipeline_id": "Assist pipeline",
+          "mode": "Voice mode"
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Local Bluetooth is unavailable. Check that system D-Bus is accessible.",
+      "wake_remote": "Wake the paired remote with an arrow button, then try again.",
+      "not_paired": "Pair this remote externally first.",
+      "multiple_adapters": "This remote is paired on multiple adapters. Keep its bond on one adapter.",
+      "invalid_address": "Enter a Bluetooth address in AA:BB:CC:DD:EE:FF format.",
+      "unsupported_remote": "This remote does not provide the supported ATVV 16 kHz hold-to-talk profile.",
+      "invalid_pipeline": "Choose an existing Assist pipeline."
+    },
+    "abort": {
+      "no_pipelines": "Create an Assist pipeline first."
+    }
+  }
+}

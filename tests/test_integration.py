@@ -1,0 +1,80 @@
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, patch
+
+import pytest
+from homeassistant.components.assist_pipeline import PipelineEvent, PipelineEventType, PipelineStage
+
+from custom_components.atvv_remote.assist_satellite import RemoteSatellite
+from custom_components.atvv_remote.coordinator import VoiceCoordinator
+from custom_components.atvv_remote.session import AudioFailure, VoiceSession
+
+
+class Entry:
+    options = {}
+    data = {
+        "address": "02:00:00:00:00:01",
+        "name": "Test Remote",
+        "pipeline_id": "stable-id",
+        "mode": "transcription",
+    }
+
+
+async def test_satellite_streams_stt_only_and_validates_stable_pipeline_id():
+    c = VoiceCoordinator(SimpleNamespace(), Entry())
+    satellite = RemoteSatellite(c)
+    from homeassistant.components.assist_pipeline.runtime import KEY_ASSIST_PIPELINE
+
+    satellite.hass = SimpleNamespace(
+        data={
+            KEY_ASSIST_PIPELINE: SimpleNamespace(
+                pipeline_store=SimpleNamespace(
+                    data={"stable-id": SimpleNamespace(id="stable-id", name="Renamed")}
+                )
+            )
+        }
+    )
+    with patch(
+        "custom_components.atvv_remote.assist_satellite.async_get_pipelines",
+        return_value=[SimpleNamespace(id="stable-id", name="Renamed")],
+    ):
+        assert satellite._resolve_pipeline() == "stable-id"
+    with patch(
+        "custom_components.atvv_remote.assist_satellite.async_get_pipelines", return_value=[]
+    ):
+        with pytest.raises(AudioFailure, match="pipeline_removed"):
+            satellite._resolve_pipeline()
+    s = VoiceSession(128, finish_delay=0)
+    s.audio(bytes(128))
+    s.release()
+    with patch.object(satellite, "async_accept_pipeline_from_satellite", AsyncMock()) as accept:
+        await satellite.run(s)
+        assert accept.call_args.kwargs["end_stage"] == PipelineStage.STT
+    c.entry = SimpleNamespace(data=Entry.data, options={"mode": "commands"})
+    with patch.object(satellite, "async_accept_pipeline_from_satellite", AsyncMock()) as accept:
+        await satellite.run(s)
+        assert accept.call_args.kwargs["end_stage"] == PipelineStage.INTENT
+
+
+async def test_intent_guard_rejects_early_stt_and_corrupted_audio():
+    c = VoiceCoordinator(SimpleNamespace(), Entry())
+    satellite = RemoteSatellite(c)
+    s = VoiceSession(128)
+    satellite.current_session = s
+    with pytest.raises(AudioFailure, match="incomplete_utterance"):
+        satellite.on_pipeline_event(PipelineEvent(PipelineEventType.STT_END))
+    s.abort("disconnected")
+    with pytest.raises(AudioFailure, match="incomplete_utterance"):
+        satellite.on_pipeline_event(PipelineEvent(PipelineEventType.STT_END))
+
+
+async def test_stt_cannot_execute_before_provider_has_drained_input():
+    c = VoiceCoordinator(SimpleNamespace(), Entry())
+    satellite = RemoteSatellite(c)
+    session = VoiceSession(128, finish_delay=0)
+    session.audio(bytes(128))
+    session.release()
+    satellite.current_session = session
+    with pytest.raises(AudioFailure, match="incomplete_utterance"):
+        satellite.on_pipeline_event(PipelineEvent(PipelineEventType.STT_END))
+    assert [len(chunk) async for chunk in session.stream()] == [512]
+    satellite.on_pipeline_event(PipelineEvent(PipelineEventType.STT_END))
