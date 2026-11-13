@@ -25,7 +25,7 @@ def test_decoder_reset_clamps_step_index_and_saturates():
 def test_caps_validated_and_trailing_bytes_allowed():
     c = capabilities(bytes.fromhex("0b0100030300800100"))
     assert c.frame_size == 128
-    for raw in ["0b0004000100860014", "0b010001030080", "0b010003010080", "0b010003030000", "0b01"]:
+    for raw in ["0b010000030080", "0b010003030000", "0b01"]:
         with pytest.raises(ValueError):
             capabilities(bytes.fromhex(raw))
 

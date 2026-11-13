@@ -8,6 +8,7 @@ from homeassistant.components.assist_pipeline import async_get_pipelines
 from homeassistant.core import callback
 
 from .bluez import BlueZTransport
+from .playback import speaker_choices
 
 DOMAIN = "atvv_remote"
 
@@ -127,17 +128,27 @@ class OptionsFlow(config_entries.OptionsFlow):
 
     async def async_step_init(self, user_input=None):
         choices = pipelines(self.hass)
+        speakers = speaker_choices(self.hass)
         if not choices:
             return self.async_abort(reason="no_pipelines")
         errors = {}
         if user_input:
-            if user_input["pipeline_id"] not in choices or user_input["mode"] not in (
+            if user_input.get("speaker", "") not in speakers:
+                errors["base"] = "invalid_speaker"
+            elif user_input["pipeline_id"] not in choices or user_input["mode"] not in (
                 "transcription",
                 "commands",
             ):
                 errors["base"] = "invalid_pipeline"
             else:
-                return self.async_create_entry(title="", data=user_input)
+                return self.async_create_entry(
+                    title="",
+                    data={
+                        **self.entry.options,
+                        **user_input,
+                        "speaker": user_input.get("speaker", ""),
+                    },
+                )
         selected = self.entry.options.get("pipeline_id", self.entry.data["pipeline_id"])
         return self.async_show_form(
             step_id="init",
@@ -147,8 +158,14 @@ class OptionsFlow(config_entries.OptionsFlow):
                         "pipeline_id",
                         default=selected if selected in choices else next(iter(choices)),
                     ): vol.In(choices),
+                    vol.Optional("speaker", default=self.entry.options.get("speaker", "")): vol.In(
+                        speakers
+                    ),
                     vol.Required(
-                        "mode", default=self.entry.options.get("mode", "transcription")
+                        "mode",
+                        default=self.entry.options.get(
+                            "mode", self.entry.data.get("mode", "transcription")
+                        ),
                     ): vol.In(
                         {"transcription": "Transcription only", "commands": "Execute commands"}
                     ),

@@ -29,7 +29,7 @@
       "not_paired": "Pair this remote externally first.",
       "multiple_adapters": "This remote is paired on multiple adapters. Keep its bond on one adapter.",
       "invalid_address": "Enter a Bluetooth address in AA:BB:CC:DD:EE:FF format.",
-      "unsupported_remote": "This remote does not provide the supported ATVV 16 kHz hold-to-talk profile.",
+      "unsupported_remote": "This remote does not provide a supported ATVV v0.4/v1.0 ADPCM voice profile.",
       "invalid_pipeline": "Choose an existing Assist pipeline."
     },
     "abort": {
@@ -41,10 +41,11 @@
     "step": {
       "init": {
         "title": "Voice settings",
-        "description": "Transcription only does not execute commands. Command mode executes speech through the selected pipeline; this version does not play spoken replies.",
+        "description": "Transcription only does not execute commands. Command mode uses the selected pipeline. Choose an optional speaker for spoken replies; busy players are left alone.",
         "data": {
           "pipeline_id": "Assist pipeline",
-          "mode": "Voice mode"
+          "mode": "Voice mode",
+          "speaker": "Reply speaker"
         }
       }
     },
@@ -54,8 +55,9 @@
       "not_paired": "Pair this remote externally first.",
       "multiple_adapters": "This remote is paired on multiple adapters. Keep its bond on one adapter.",
       "invalid_address": "Enter a Bluetooth address in AA:BB:CC:DD:EE:FF format.",
-      "unsupported_remote": "This remote does not provide the supported ATVV 16 kHz hold-to-talk profile.",
-      "invalid_pipeline": "Choose an existing Assist pipeline."
+      "unsupported_remote": "This remote does not provide a supported ATVV v0.4/v1.0 ADPCM voice profile.",
+      "invalid_pipeline": "Choose an existing Assist pipeline.",
+      "invalid_speaker": "Choose a media player that supports playing audio, or no spoken reply."
     },
     "abort": {
       "no_pipelines": "Create an Assist pipeline first."

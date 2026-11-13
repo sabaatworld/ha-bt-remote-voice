@@ -78,3 +78,57 @@ async def test_stt_cannot_execute_before_provider_has_drained_input():
         satellite.on_pipeline_event(PipelineEvent(PipelineEventType.STT_END))
     assert [len(chunk) async for chunk in session.stream()] == [512]
     satellite.on_pipeline_event(PipelineEvent(PipelineEventType.STT_END))
+
+
+async def test_configured_reply_runs_tts_and_acknowledges_only_after_playback():
+    c = VoiceCoordinator(SimpleNamespace(), Entry())
+    c.entry = SimpleNamespace(
+        data=Entry.data, options={"mode": "commands", "speaker": "media_player.test_speaker"}
+    )
+    satellite = RemoteSatellite(c)
+    satellite.hass = SimpleNamespace()
+    s = VoiceSession(128, finish_delay=0)
+    s.audio(bytes(128))
+    s.release()
+
+    async def accept(*args, **kwargs):
+        assert kwargs["end_stage"] == PipelineStage.TTS
+        satellite.on_pipeline_event(
+            PipelineEvent(
+                PipelineEventType.TTS_END, {"tts_output": {"media_id": "media-source://tts/test"}}
+            )
+        )
+
+    order = []
+
+    async def playback(*args):
+        order.append("played")
+
+    with (
+        patch.object(satellite, "_resolve_pipeline", return_value="stable-id"),
+        patch.object(satellite, "async_accept_pipeline_from_satellite", side_effect=accept),
+        patch("custom_components.atvv_remote.assist_satellite.play_reply", side_effect=playback),
+        patch.object(
+            satellite, "tts_response_finished", side_effect=lambda: order.append("finished")
+        ),
+    ):
+        await satellite.run(s)
+    assert order == ["played", "finished"]
+
+
+async def test_pipeline_error_is_propagated_to_coordinator_without_a_speaker():
+    c = VoiceCoordinator(SimpleNamespace(), Entry())
+    satellite = RemoteSatellite(c)
+    s = VoiceSession(128, finish_delay=0)
+    s.audio(bytes(128))
+    s.release()
+
+    async def accept(*args, **kwargs):
+        satellite.on_pipeline_event(PipelineEvent(PipelineEventType.ERROR, {"code": "stt-failed"}))
+
+    with (
+        patch.object(satellite, "_resolve_pipeline", return_value="stable-id"),
+        patch.object(satellite, "async_accept_pipeline_from_satellite", side_effect=accept),
+    ):
+        with pytest.raises(AudioFailure, match="stt-failed"):
+            await satellite.run(s)

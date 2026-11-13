@@ -1,4 +1,4 @@
-"""ATVV v1.0 controls and IMA/DVI ADPCM (see THIRD_PARTY_NOTICES.md)."""
+"""ATVV v0.4/v1.0 controls and IMA/DVI ADPCM (see THIRD_PARTY_NOTICES.md)."""
 
 import sys
 from array import array
@@ -104,6 +104,26 @@ INDEX = (-1, -1, -1, -1, 2, 4, 6, 8)
 @dataclass(frozen=True)
 class Capabilities:
     frame_size: int
+    version: int = 256
+    codec: int = 2
+    model: int = 3
+
+    @property
+    def sample_rate(self):
+        return 16000 if self.codec == 2 else 8000
+
+    @property
+    def profile(self):
+        return f"atvv_{self.version:04x}_{self.sample_rate}_{self.model}"
+
+    def open_command(self):
+        return bytes([12, 0, self.codec]) if self.version == 4 else bytes([12, 0])
+
+    def close_command(self, stream_id):
+        return bytes([13]) if self.version == 4 else bytes([13, stream_id])
+
+    def keepalive_command(self, stream_id):
+        return self.open_command() if self.version == 4 else bytes([14, stream_id])
 
 
 @dataclass(frozen=True)
@@ -118,24 +138,43 @@ class Control:
 
 
 def capabilities(data: bytes) -> Capabilities:
-    """Accept the verified v1.0, 16 kHz, hold-to-talk profile only."""
-    if len(data) < 7 or data[:3] != b"\x0b\x01\x00" or not data[3] & 2 or data[4] != 3:
+    """Negotiate only wire formats with a documented decoder."""
+    if len(data) < 7 or data[0] != 11:
         raise ValueError("unsupported_capabilities")
+    version = int.from_bytes(data[1:3], "big")
+    if version == 4 and len(data) >= 9:
+        codecs, model = int.from_bytes(data[3:5], "big"), 0
+    elif version == 256 and data[4] in (0, 1, 3):
+        codecs, model = data[3], data[4]
+    else:
+        raise ValueError("unsupported_capabilities")
+    codec = 2 if codecs & 2 else 1 if codecs & 1 else 0
+    if not codec:
+        raise ValueError("unsupported_codec")
     size = int.from_bytes(data[5:7], "big")
-    if not 1 <= size <= 512:
+    if not (7 if version == 4 else 1) <= size <= 512:
         raise ValueError("invalid_frame_size")
-    return Capabilities(size)
+    return Capabilities(size, version, codec, model)
 
 
-def parse_control(data: bytes) -> Control | None:
+def parse_control(data: bytes, caps: Capabilities | None = None) -> Control | None:
     if not data:
         return None
+    if caps and caps.version == 4:
+        if data[0] == 4:
+            return Control("start", codec=caps.codec)
+        if data[0] == 0:
+            return Control("stop")
+        if data[0] == 10 and len(data) >= 3:
+            return Control("sync", codec=caps.codec, sequence=int.from_bytes(data[1:3], "big"))
     if data[0] == 4 and len(data) >= 4:
         return Control("start", stream_id=data[3], reason=data[1], codec=data[2])
     if data[0] == 0 and len(data) >= 2:
         return Control("stop", reason=data[1])
     if data[0] == 8:
         return Control("search")
+    if data[0] == 12 and len(data) >= 3:
+        return Control("open_error", reason=int.from_bytes(data[1:3], "big"))
     if data[0] == 10 and len(data) >= 7:
         return Control(
             "sync",

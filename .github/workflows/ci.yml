@@ -1,0 +1,26 @@
+name: Integration checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: pip
+      - run: python -m pip install -r requirements-dev.txt
+      - name: Full HA lifecycle and unit tests
+        env:
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+        run: python -m pytest -p pytest_asyncio.plugin -q
+      - run: ruff check .
+      - run: ruff format --check .
+      - name: Verify distributable metadata
+        run: python scripts/check_package.py

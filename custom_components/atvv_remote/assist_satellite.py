@@ -9,8 +9,10 @@ from homeassistant.components.assist_satellite import (
     AssistSatelliteConfiguration,
     AssistSatelliteEntity,
 )
+from homeassistant.components.assist_satellite.entity import AssistSatelliteState
 
 from .entity import RemoteEntity
+from .playback import play_reply
 from .session import AudioFailure
 
 
@@ -25,6 +27,7 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
     def __init__(self, coordinator):
         super().__init__(coordinator, "voice")
         self.current_session = None
+        self.tts_output = None
         coordinator.run_pipeline = self.run
 
     @property
@@ -65,14 +68,31 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
         mode = self.coordinator.entry.options.get(
             "mode", self.coordinator.entry.data.get("mode", "transcription")
         )
+        speaker = self.coordinator.entry.options.get("speaker", "")
+        self.tts_output = None
+        self.pipeline_error = None
         try:
             await self.async_accept_pipeline_from_satellite(
                 session.stream(),
                 start_stage=PipelineStage.STT,
-                end_stage=PipelineStage.INTENT if mode == "commands" else PipelineStage.STT,
+                end_stage=(PipelineStage.TTS if speaker else PipelineStage.INTENT)
+                if mode == "commands"
+                else PipelineStage.STT,
             )
+            if self.pipeline_error:
+                raise AudioFailure(self.pipeline_error)
+            if mode == "commands" and speaker:
+                if self.tts_output:
+                    await play_reply(self.hass, speaker, self.tts_output)
+                    self.tts_response_finished()
+                elif self.coordinator.last_error:
+                    raise AudioFailure("tts_pipeline_failed")
         finally:
+            # Failure/cancellation resets state without claiming playback finished.
+            if self.state == AssistSatelliteState.RESPONDING:
+                self._set_state(AssistSatelliteState.IDLE)
             self.current_session = None
+            self.tts_output = None
 
     def on_pipeline_event(self, event):
         # A provider can stop early independently of host VAD. Do not execute
@@ -81,6 +101,9 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
             s = self.current_session
             if s is None or not s.finished or not s.input_complete or s.error:
                 raise AudioFailure("incomplete_utterance")
+        elif event.type == PipelineEventType.TTS_END:
+            self.tts_output = (event.data or {}).get("tts_output")
         elif event.type == PipelineEventType.ERROR:
-            self.coordinator.last_error = (event.data or {}).get("code", "pipeline_failed")
+            self.pipeline_error = (event.data or {}).get("code", "pipeline_failed")
+            self.coordinator.last_error = self.pipeline_error
         self.coordinator.changed()

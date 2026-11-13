@@ -200,7 +200,11 @@ class BlueZTransport:
     async def check_connected(self):
         objects = await self.objects()
         remote = select_remote(objects, self.remote.address)
-        return remote.connected and remote.path == self.remote.path
+        return (
+            remote.connected
+            and remote.path == self.remote.path
+            and all(path in objects for path in self.paths.values())
+        )
 
     async def close(self):
         if self.bus is None:

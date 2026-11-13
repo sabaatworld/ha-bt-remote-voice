@@ -1,68 +1,119 @@
 # ATVV Remote Voice for Home Assistant
 
-Push-to-talk Assist input from an already-paired Android TV Voice over BLE
-(ATVV) remote. Early development; currently targets TVision BT19K and Home
-Assistant 2026.11.1 or later on Linux with a local BlueZ adapter.
+Use an already-paired Android TV Voice over BLE (ATVV) remote as an Assist
+microphone. Home Assistant 2026.11.1 or later on Linux with a local BlueZ
+adapter is required. Early development: BT19K is the physically tested model;
+other supported wire formats have synthetic tests, not hardware certification.
 
-## Install and configure
+## Install
 
-1. Copy `custom_components/atvv_remote` into Home Assistant's
-   `config/custom_components` directory and restart Home Assistant.
-2. Pair the remote externally on the HA host. This integration does not pair,
-   unpair, trust or repair bonds. A bond on another computer is not sufficient.
-3. Add **ATVV Remote Voice** under Settings → Devices & Services.
-4. Pick an already-paired device, or enter its address. Wake it with a normal
-   arrow button, select an Assist pipeline and submit to check voice capabilities.
-5. Hold the remote's Assistant button while speaking, then release it.
+1. Copy `custom_components/atvv_remote` into `config/custom_components`, then
+   restart Home Assistant. For HACS, add this repository as a custom integration
+   repository; repository access is required while it is private.
+2. Pair the remote **on the HA host** using your preferred external method.
+3. Add **ATVV Remote Voice** in Settings → Devices & Services.
+4. Select a paired device (or enter its address), wake it with an arrow button,
+   and choose an Assist pipeline. Setup checks its voice capabilities.
+5. Use the remote's microphone/Assistant control. Hold remotes end capture on
+   release; supported tap/request remotes end after speech and a short silence.
 
-Starts in **Transcription only** mode: no commands execute. Check the Assist
-pipeline's debug view for results. Once tested, choose **Execute commands** in
-integration options. Pipeline identity is preserved through name changes;
-removing the selected pipeline requires choosing another in options.
+Starts in **Transcription only** mode. Inspect results under Settings → Voice
+assistants → your pipeline → Debug. After testing, choose **Execute commands**
+in the integration's Configure options. The chosen pipeline ID survives rename;
+a deleted pipeline must be explicitly replaced in options.
 
-This version ends at speech-to-text or intent processing. It does not play
-spoken replies, support announcements, or enable wake-word listening.
+## Spoken replies
 
-## Behavior and limits
+Choose any eligible **Reply speaker** in Configure options, or **No spoken
+reply**. Command mode runs the selected pipeline through TTS when a speaker is
+selected. The remote remains a microphone; replies play on the selected HA
+media player. The pipeline must provide TTS and the player must resolve HA media
+sources and report playing/idle transitions. The satellite remains responding
+until observed playback finishes. Busy/paused players are left alone. Volume,
+player configuration and existing media are not modified or restored.
 
-- Exposes a voice satellite, microphone-active sensor and pressed/released event
-  entity. No automation is required to start microphone input.
-- Existing keyboard/input integrations handle normal buttons independently.
-- Local paired devices only. Bluetooth proxies, Apple Siri remotes, arbitrary
-  button learning, tap-to-toggle and software-only mic activation are unsupported.
-- Only ATVV v1.0, 16 kHz ADPCM and hold-to-talk capabilities are accepted.
-- A busy press is ignored until release; queued commands are not replayed.
-- Audio buffering is bounded. Corrupt/missing input aborts the utterance; the
-  integration does not intentionally execute a partial recording.
-- Capture is limited to 30 seconds. Missing-audio and processing timeouts recover
-  the listener. Sleep/reconnect recovery may require waking the remote first.
-- This integration does not change OS handling of remote power keys. Check your
-  host's behavior before pressing a power button.
+Players that hide announcement state or cannot report playback completion will
+report a timeout; they are not treated as successfully finished. No automatic
+follow-up listening, announcements or wake words are implemented.
 
-System D-Bus must be accessible to HA Core. There is no PipeWire service or host
-package installation. Remote compatibility requires testing each model.
+## Compatibility and microphone controls
 
-## Privacy
+| Protocol | Audio | Voice control | Evidence |
+| --- | --- | --- | --- |
+| ATVV 1.0 | 8/16 kHz IMA/DVI ADPCM, headerless + sync | Hold, press-to-talk, OnRequest | BT19K 16 kHz hold tested; other combinations synthetic |
+| ATVV 0.4 | 8/16 kHz IMA/DVI ADPCM, six-byte frame header | OnRequest voice notification → microphone request | ATVVoice-derived vectors; hardware untested here |
+| Apple Siri Remote | Apple HID/Opus | Separate transport | Unsupported; SiriRemoteESP is a separate receiver option |
 
-No audio recordings, transcripts, household configuration or credentials are
-included or saved by this integration. Diagnostics omit device addresses and
-names. The selected HA pipeline/provider still controls its own processing and
-retention; selecting a cloud provider sends speech to that provider.
+Capabilities choose the format; there is no model-name allowlist or key-learning
+wizard. A standard voice-control notification is the trigger, so no individual
+key needs teaching. Ordinary buttons that do not activate the microphone are
+outside this integration. Press-to-talk is used only when advertised by the
+remote; this integration does not turn BT19K's hold control into tap-to-toggle.
+Unknown versions/codecs are rejected rather than guessed. See upstream
+attribution in [third-party notices](THIRD_PARTY_NOTICES.md).
 
-Keep personal configuration, captures and research outside this repository.
-Review changes before committing; ignore rules do not replace that review.
+## Behavior, privacy and limits
 
-## Development
+- Pairing, trust/bond management and Bluetooth discovery/connect ownership stay
+  external. No OS packages, PipeWire daemon or proxy support are required.
+- Existing Keyboard Remote and HID input integrations remain independent.
+- Capture is limited to 30 seconds; request/tap capture has a 15-second no-speech
+  limit and ends about 0.8 seconds after speech. Audio buffering is bounded.
+- Bad frames, unresolved sequence gaps, disconnects, queue overflow and missing
+  audio abort input. Headerless audio cannot prove packet identity when CTL and
+  RX counts disagree, so mismatches fail closed and record anonymous counts.
+- Reconnection re-resolves GATT paths, re-subscribes and negotiates again.
+  The remote may need waking. Stale busy/hold state is discarded on connection loss.
+- Busy presses are ignored; old requests are never replayed as new commands.
+- No microphone service opens capture without a physical voice notification.
+- No recordings or transcripts are saved by this integration. Diagnostics omit
+  identifiers/content and include only capabilities, counts, errors and timings.
+  The selected pipeline/provider has its own processing and retention policy;
+  cloud pipelines send speech to that provider. HA pipeline Debug can retain text.
+- This integration does not change OS handling of power keys. Check host behavior
+  before pressing them.
 
-Use Linux, Python 3.14 and a virtual environment with Home Assistant 2026.11.1,
-pytest, pytest-asyncio, dbus-fast, ruff and the optional dependencies declared by
-HA's Assist/media components. Tests use synthetic audio and fake BLE objects;
-real HA entities are exercised without opening an HTTP listener.
+## Troubleshooting
+
+- **No paired devices / Bluetooth unavailable:** check the host bond and HA Core
+  access to local system D-Bus. A bond on another computer is insufficient.
+- **Wake remote:** press an arrow, wait a few seconds, then retry. Do not use power.
+- **Unsupported profile:** download redacted diagnostics and report the model,
+  protocol/capabilities and integration/HA version. Do not publish addresses/audio.
+- **Audio sequence gap:** retry close to the adapter; inspect last-session frame
+  counters. Confirmed gaps fail closed instead of sending truncated commands.
+- **No speech / audio stalled:** check the actual microphone control and selected
+  speech-to-text provider. A normal HID key cannot substitute for mic activation.
+- **No reply:** verify command mode, selected pipeline TTS and configured speaker.
+  Speaker busy/unavailable and playback start/finish timeouts are distinct errors.
+- **Reconnect:** wake the remote and allow up to 30 seconds for retry. Reload the
+  integration if necessary; re-pair externally only when the bond itself is broken.
+
+Physical coverage does not establish all-model compatibility or behavior under
+battery depletion, radio interference, adapter removal or a host reboot.
+
+## Development and releases
+
+Linux/Python 3.14 is the reference test environment. Install
+`requirements-dev.txt` in a virtual environment, then run:
 
 ```sh
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -p pytest_asyncio.plugin
 ruff check .
 ruff format --check .
+python scripts/check_package.py
 ```
 
-See [third-party notices](THIRD_PARTY_NOTICES.md) for upstream attribution.
+CI runs the full HA setup/unload test on Linux. Synthetic tests cover both
+protocol versions, frame validation, microphone lifecycle, reconnect reset,
+configuration and playback completion. macOS may have an upstream HA/native
+extension shutdown crash; use Linux for the complete lifecycle suite.
+
+For contributions, supply synthetic protocol vectors and failing regression
+tests before changing framing/decoder behavior. Include upstream revision and
+license attribution. Keep personal configuration, packet captures, recordings,
+credentials, deployment notes and research outside this repository. Verify new
+remote models physically before upgrading their compatibility claim.
+
+`scripts/check_package.py` creates `dist/atvv_remote.zip` containing only component
+files. No public release or publishing is performed automatically.

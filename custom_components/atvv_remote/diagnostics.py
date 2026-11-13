@@ -10,5 +10,8 @@ async def async_get_config_entry_diagnostics(hass, entry):
         "failures": c.failures,
         "last_error": c.last_error,
         "mode": entry.options.get("mode", entry.data.get("mode", "transcription")),
-        "profile": "atvv_v1_16khz_hold",
+        "profile": c.caps.profile if c.caps else None,
+        "connections": c.reconnects,
+        "last_session": c.last_session,
+        "spoken_replies": bool(entry.options.get("speaker")),
     }

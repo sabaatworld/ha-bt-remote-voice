@@ -1,7 +1,7 @@
 {
   "domain": "atvv_remote",
   "name": "ATVV Remote Voice",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "config_flow": true,
   "documentation": "https://github.com/sabaatworld/ha-atvv-remote",
   "issue_tracker": "https://github.com/sabaatworld/ha-atvv-remote/issues",
@@ -10,7 +10,8 @@
   ],
   "dependencies": [
     "assist_pipeline",
-    "assist_satellite"
+    "assist_satellite",
+    "media_player"
   ],
   "requirements": [
     "dbus-fast>=5.0.22,<6"
