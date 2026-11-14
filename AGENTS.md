@@ -103,7 +103,7 @@ the HA audio dependencies; mount the repo read-only and set
   satellite; the coordinator waits).
 - **Play only what we own.** Stop only media this request started, and verify the
   stop before retiring a request. Unknown ownership fails explicitly.
-- **Tested remotes.** The README's "Tested remotes" table lists only what was
+- **Supported remotes.** The README's "Supported remotes" table lists only what was
   physically tested as tested. Record every remote you evaluate (supported,
   unsupported, or unusable) with the evidence, never a guess, and keep the
   pairing guide accurate (HAOS host shell vs terminal app).

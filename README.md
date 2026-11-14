@@ -10,7 +10,12 @@ Hold the voice button on a Bluetooth TV remote, say what you want, and hear the 
 a speaker of your choice. Bluetooth Remote Voice turns the microphone in remotes that speak
 the Android TV Voice (ATVV) protocol, or in the Amazon Fire TV voice remote, into a native
 Home Assistant Assist satellite: your pipeline and your conversation agent, including live
-speech-to-speech providers such as Gemini Live and OpenAI Realtime.
+speech-to-speech providers such as [Gemini Live](https://github.com/matt123p/ha-gemini-live) and
+[OpenAI Realtime](https://github.com/craig-b/ha-openai-realtime).
+
+<p align="center">
+  <img src="docs/images/how-it-works.gif" width="640" alt="Hold the remote's voice button and speak. The voice goes over Bluetooth to Home Assistant, which turns on the light and answers through a media player.">
+</p>
 
 - **Hold to talk, release to send,** or hold and keep a back-and-forth conversation going.
 - **Any Assist pipeline,** local or cloud, classic or live.
@@ -22,8 +27,8 @@ speech-to-speech providers such as Gemini Live and OpenAI Realtime.
   (reject, queue or replace) and Repairs notices when a pipeline or speaker goes missing.
 
 How it works: pair the remote with the Home Assistant machine, add the integration, then hold
-the voice button and speak. It needs Home Assistant 2026.11.1 or later on Linux with a local
-BlueZ Bluetooth adapter.
+the voice button and speak. It needs Home Assistant 2026.11.1 or later on Linux with a Bluetooth
+adapter built into or plugged into the Home Assistant machine.
 
 ## Install
 
@@ -70,7 +75,7 @@ Download `bt_remote_voice.zip` from the latest
 
 </details>
 
-## Tested remotes
+## Supported remotes
 
 Remotes that speak the Android TV Voice (ATVV) protocol over Bluetooth LE can work,
 and so can the Amazon Fire TV voice remote (tested for held requests). "Tested" means a
@@ -96,20 +101,13 @@ that runs Home Assistant, then add it in Devices & Services. A remote bonds to o
 host at a time, so pairing it here breaks its pairing with the TV or box it came
 with (you pair it back with that device's own settings afterwards).
 
-**Home Assistant OS** (recommended; this is the setup the integration was
-developed and tested on) has two kinds of terminal. They are not the same:
+**Home Assistant OS** (recommended; it is the setup the integration is tested on) has two
+kinds of terminal. They are not the same:
 
 | Terminal | How you reach it | Use it for pairing? |
 | --- | --- | --- |
-| **Host shell** ("developer SSH") | `ssh -p 22222 root@<ha-host>` after enabling it with the [developer SSH key setup](https://contributors.home-assistant.io/os/operating-system/debugging/); lands on the HA OS prompt | **Yes.** This is the route that worked for every remote paired so far. |
-| **SSH / Terminal app** | `ssh root@<ha-host>` (port 22) or the web terminal; a container named `core-ssh` | Not recommended. It reaches the same Bluetooth service, but a pairing attempt from it connected and then lost its bond; the cause was not established. |
-
-The host shell has no SFTP server, so `scp` fails. Copy a file through the SSH
-connection instead:
-
-```sh
-ssh -p 22222 root@<ha-host> 'cat > /tmp/pair.sh' < pair.sh
-```
+| **Host shell** ("developer SSH") | `ssh -p 22222 root@<ha-host>` after enabling it with the [developer SSH key setup](https://contributors.home-assistant.io/os/operating-system/debugging/); lands on the HA OS prompt | **Yes.** The reliable route: it keeps the pairing agent and the bond. |
+| **SSH / Terminal app** | `ssh root@<ha-host>` (port 22) or the web terminal; a container named `core-ssh` | Not recommended. It reaches the same Bluetooth service, but pairing from it has connected and then lost the bond. |
 
 Steps (a hold-to-talk remote that is awake, near the Home Assistant machine):
 
@@ -136,7 +134,7 @@ Steps (a hold-to-talk remote that is awake, near the Home Assistant machine):
    ```
 
    A one-shot `bluetoothctl pair <address>` does not keep a pairing agent, so use
-   the interactive prompt (or a script that keeps one session open).
+   the interactive prompt.
 4. Check `bluetoothctl info <address>` shows `Paired: yes`, `Bonded: yes` and
    `Connected: yes`. Then add **Bluetooth Remote Voice** in Home Assistant and wake the
    remote with an arrow button when you submit the form.
@@ -156,7 +154,7 @@ Select **Configure** on the integration to change these settings; changes reload
 the integration. Every setting has a short description in the form itself; this
 section adds when to use each one. All text, including entity names, option
 labels and error messages, comes from Home Assistant's translation files
-(English is provided). Every option has a default (shown in bold in the table), so a setup behaves the same
+(every Home Assistant language is provided; see [Languages](#languages)). Every option has a default (shown in bold in the table), so a setup behaves the same
 until you choose otherwise.
 
 ### Setup (once)
@@ -257,7 +255,7 @@ the rule to one speaker.
 | Protocol | Audio | Voice control | Evidence |
 | --- | --- | --- | --- |
 | ATVV 1.0 | 8/16 kHz IMA/DVI ADPCM, headerless + sync | Hold, press-to-talk, OnRequest | BT19K 16 kHz hold tested; other combinations synthetic |
-| ATVV 0.4 | 8/16 kHz IMA/DVI ADPCM, six-byte frame header | OnRequest voice notification → microphone request | ATVVoice-derived vectors; hardware untested here |
+| ATVV 0.4 | 8/16 kHz IMA/DVI ADPCM, six-byte frame header | OnRequest voice notification → microphone request | [ATVVoice](https://github.com/b0o/ATVVoice)-derived vectors; hardware untested |
 | Amazon Fire TV voice remote | HID-over-GATT; Opus 16 kHz mono, one 80-byte packet per HID report | Hold-to-talk with the microphone key; read through the kernel's `hidraw` device | Tested for held requests on one remote (product ID `0x0413`); streamed 37.8 s continuously in a probe; long holds and Alternating conversation not tested through the integration |
 | Apple Siri Remote | Apple HID-over-GATT, Opus | Separate transport | Unsupported; [SiriRemoteESP](https://github.com/Jakkumn/SiriRemoteESP) is a separate ESP32 receiver option |
 
@@ -400,13 +398,6 @@ been reviewed by native speakers, so wording may be off in places. Corrections a
 Thanks to the open-source projects whose designs and research informed this
 integration:
 
-- [matt123p/ha-gemini-live](https://github.com/matt123p/ha-gemini-live), a Gemini
-  Live integration for Home Assistant. Its documentation of streaming TTS,
-  low-latency satellite playback and barge-in requirements shaped how replies are
-  streamed and what is reported as unavailable here.
-- [craig-b/ha-openai-realtime](https://github.com/craig-b/ha-openai-realtime), an
-  OpenAI Realtime voice assistant for Home Assistant. Its playback pre-buffering
-  and real-time paced delivery informed the streaming head start option.
 - [b0o/ATVVoice](https://github.com/b0o/ATVVoice), a Linux daemon that turns
   Android TV voice remotes (the ATVV protocol) into a PipeWire microphone. Its
   protocol research and implementation, including the ADPCM framing, versions 0.4
@@ -424,11 +415,21 @@ integration:
   confirmed on hardware.
 
 The ATVV protocol and IMA/DVI ADPCM implementation was adapted with reference to
-ATVVoice (MIT; its copyright notice and licence text are in
+[ATVVoice](https://github.com/b0o/ATVVoice) (MIT; its copyright notice and licence text are in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). From the other projects only
 ideas, protocol facts and design lessons were taken; no source code was copied.
 
 ### Useful references
+
+For live speech-to-speech providers, which can serve as the Assist conversation agent:
+
+- [matt123p/ha-gemini-live](https://github.com/matt123p/ha-gemini-live), a Gemini
+  Live integration for Home Assistant. Its documentation of streaming TTS,
+  low-latency satellite playback and barge-in requirements is a good companion to the
+  streaming reply options here.
+- [craig-b/ha-openai-realtime](https://github.com/craig-b/ha-openai-realtime), an
+  OpenAI Realtime voice assistant for Home Assistant. Its playback pre-buffering and
+  real-time paced delivery is the idea behind the streaming head start option.
 
 For pairing and Bluetooth setup:
 
