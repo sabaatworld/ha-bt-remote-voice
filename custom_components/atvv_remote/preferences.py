@@ -5,6 +5,26 @@ from homeassistant.helpers.translation import async_get_cached_translations
 DOMAIN = "atvv_remote"
 
 MAX_HEAD_START = 10  # seconds
+REQUEST_RANGE = (5, 120, 5)  # seconds: (min, max, step)
+CONVERSATION_RANGE = (30, 600, 10)
+PRESS_RANGE = (0, 0.5, 0.05)  # seconds; 0 turns the short-press filter off
+
+# Order of the options form and of the README configuration table (spec: option order).
+FORM_ORDER = (
+    "pipeline_id",
+    "mode",
+    "speaker",
+    "reply_condition",
+    "output_mode",
+    "stream_head_start",
+    "busy_processing",
+    "busy_playback",
+    "context_mode",
+    "input_mode",
+    "min_press_seconds",
+    "max_request_seconds",
+    "max_conversation_seconds",
+)
 
 # Allowed values per choice option. Labels live in strings.json under "selector"
 # (translation_key == option name), never in code.
@@ -22,6 +42,9 @@ DEFAULTS = {
     "context_mode": "reuse",
     "input_mode": "single",
     "stream_head_start": 0,
+    "min_press_seconds": 0,
+    "max_request_seconds": 30,
+    "max_conversation_seconds": 120,
 }
 
 
@@ -36,7 +59,28 @@ def preferences(options):
         or not 0 <= head_start <= MAX_HEAD_START
     ):
         raise ValueError("invalid_preferences")
+    for key, (low, high, _step) in (
+        ("min_press_seconds", PRESS_RANGE),
+        ("max_request_seconds", REQUEST_RANGE),
+        ("max_conversation_seconds", CONVERSATION_RANGE),
+    ):
+        value = result[key]
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not low <= value <= high
+        ):
+            raise ValueError("invalid_preferences")
+    if result["max_conversation_seconds"] < result["max_request_seconds"]:
+        raise ValueError("invalid_preferences")
     return result
+
+
+def capture_buffer_bytes(seconds):
+    """Audio buffer cap for a capture limit: 16 kHz 16-bit mono plus a second of headroom
+    (frames arrive in bursts, so a capture must hit its time limit before its byte cap);
+    never below today's cap."""
+    return max(960000, int((seconds + 1) * 32000))
 
 
 def capability_status():
@@ -106,6 +150,10 @@ ERROR_CODES = (
     "unsupported_capabilities",
     "unsupported_codec",
     "invalid_frame_size",
+    "hidraw_unavailable",
+    "hidraw_permission_denied",
+    "opus_decoder_unavailable",
+    "invalid_opus_packet",
 )
 
 

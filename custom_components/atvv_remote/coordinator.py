@@ -8,9 +8,12 @@ from types import SimpleNamespace
 from homeassistant.util import dt as dt_util
 
 from .bluez import BlueZTransport
+from .fire import FireTransport
 from .held import HeldTurns
 from .history import CaptureHistory
+from .preferences import DEFAULTS, PRESS_RANGE, capture_buffer_bytes
 from .protocol import parse_control
+from .reply_condition import ReplyCondition
 from .session import AudioFailure, VoiceSession
 
 
@@ -63,6 +66,7 @@ class VoiceCoordinator:
         self.recovery_blocked = False
         self.retiring_generation = None
         self.last_failure = None
+        self.reply_condition = ReplyCondition(hass, None)  # replaced at setup
 
     def changed(self):
         for listener in tuple(self.listeners):
@@ -130,18 +134,40 @@ class VoiceCoordinator:
             self.mic_active = False
             self.changed()
 
+    def limits(self):
+        """(request_seconds, conversation_seconds) from the options, defaults otherwise."""
+        options = self.entry.options
+        return (
+            options.get("max_request_seconds", DEFAULTS["max_request_seconds"]),
+            options.get("max_conversation_seconds", DEFAULTS["max_conversation_seconds"]),
+        )
+
+    def min_press_seconds(self):
+        """The short-press filter, or 0 (off) for a missing or unusable stored value."""
+        value = self.entry.options.get("min_press_seconds", DEFAULTS["min_press_seconds"])
+        usable = (
+            isinstance(value, (int, float))
+            and not isinstance(value, bool)
+            and 0 <= value <= PRESS_RANGE[1]
+        )
+        return value if usable else DEFAULTS["min_press_seconds"]
+
     def accept_capture(self, event, *, pending=False):
         self.sessions += 1
         caps = replace(self.caps, codec=event.codec, model=event.reason)
         held = self.entry.options.get("input_mode", "single") == "conversation"
+        request_seconds, conversation_seconds = self.limits()
+        max_duration = conversation_seconds if held else request_seconds
         turns = asyncio.Queue(maxsize=1)
-        controller = HeldTurns(turns.put_nowait) if held else None
+        controller = (
+            HeldTurns(turns.put_nowait, max_request_seconds=request_seconds) if held else None
+        )
         session = VoiceSession(
             caps.frame_size,
             caps=caps,
-            # Up to 30 s of 16 kHz PCM may wait for a slow consumer to start reading.
-            max_bytes=960000,
-            max_duration=120 if held else 30,
+            # PCM may wait for a slow consumer to start reading; the cap follows the limit.
+            max_bytes=capture_buffer_bytes(max_duration),
+            max_duration=max_duration,
             on_pcm=controller.feed if controller else None,
         )
         owner = SimpleNamespace(
@@ -204,12 +230,14 @@ class VoiceCoordinator:
             )
         except asyncio.CancelledError:
             self.cancel_release_timer(owner)
+            self.close_held(owner)
             if not owner.session.finished:
                 owner.session.abort("queue_discarded")
             await self.close_microphone(owner)
             raise
         except Exception as err:
             self.cancel_release_timer(owner)
+            self.close_held(owner)
             reason = str(err) if isinstance(err, AudioFailure) else "queue_failed"
             owner.session.abort(reason)
             self.failures += 1
@@ -221,9 +249,15 @@ class VoiceCoordinator:
             if self.pending is owner:
                 self.pending = None
 
+    @staticmethod
+    def close_held(owner):
+        if owner is not None and owner.held is not None:
+            owner.held.close()
+
     def expire_pending(self, owner, reason="queue_expired"):
         if owner is not self.pending:
             return
+        self.close_held(owner)
         self.pending = None
         owner.session.abort(reason)
         self.failures += 1
@@ -236,7 +270,11 @@ class VoiceCoordinator:
     async def connect_loop(self):
         delay = 2
         while not self.stopping:
-            self.transport = transport = BlueZTransport()
+            self.transport = transport = (
+                FireTransport(min_press_seconds=self.min_press_seconds())
+                if self.entry.data.get("family") == "fire"
+                else BlueZTransport()
+            )
             try:
                 self.caps = await self.transport.open(
                     self.entry.data["address"],
@@ -263,6 +301,10 @@ class VoiceCoordinator:
                     if isinstance(err, (ValueError, ConnectionError))
                     else "bluetooth_unavailable"
                 )
+                if self.last_error == "wake_remote":
+                    # A sleeping remote wakes on a button press: keep polling every
+                    # couple of seconds instead of backing off to 30 s.
+                    delay = 2
             finally:
                 self.ready = False
                 if self.pending:
@@ -365,7 +407,7 @@ class VoiceCoordinator:
                 return
             if (
                 not self.caps
-                or event.codec not in (1, 2)
+                or event.codec not in ((3,) if self.caps.family == "fire" else (1, 2))
                 or event.reason not in (0, 1, 3)
                 or (
                     event.reason == 0
@@ -614,6 +656,7 @@ class VoiceCoordinator:
             self.outcome("failed", self.last_error)
         finally:
             self.cancel_release_timer(owner)
+            self.close_held(owner)
             microphone.cancel()
             with suppress(asyncio.CancelledError):
                 await microphone
@@ -723,5 +766,8 @@ class VoiceCoordinator:
         if self.capture and self.capture.expiry:
             self.capture.expiry.cancel()
         self.cancel_release_timer(self.capture)
+        self.close_held(self.capture)
         self.history.clear()
+        # Last: until the pipeline is cancelled a finished turn may still ask the condition.
+        self.reply_condition.async_unload()
         self.changed()

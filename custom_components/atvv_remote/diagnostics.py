@@ -24,4 +24,8 @@ async def async_get_config_entry_diagnostics(hass, entry):
         "capabilities": capability_status(),
         "last_failure": c.last_failure,
         "spoken_replies": bool(entry.options.get("speaker")),
+        "ignored_presses": getattr(c.transport, "ignored_presses", None),
+        "limits": dict(
+            zip(("max_request_seconds", "max_conversation_seconds"), c.limits(), strict=True)
+        ),
     }

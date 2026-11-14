@@ -21,6 +21,8 @@ dist = root / "dist"
 dist.mkdir(exist_ok=True)
 with ZipFile(dist / "atvv_remote.zip", "w") as archive:
     for path in sorted(component.rglob("*")):
-        if path.is_file() and path.suffix in (".py", ".json") and "__pycache__" not in path.parts:
+        is_source = path.suffix in (".py", ".json")
+        is_brand = path.parent == component / "brand" and path.suffix == ".png"
+        if path.is_file() and (is_source or is_brand) and "__pycache__" not in path.parts:
             archive.write(path, path.relative_to(component))
 print("Metadata validated; component-only release archive built")

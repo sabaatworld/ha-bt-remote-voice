@@ -18,6 +18,8 @@ Module map:
 - `assist_satellite.py`, `pipeline.py` — runs HA's native pipeline; early streamed playback; generation retirement.
 - `playback.py` — plays replies on a media player and observes real start/finish.
 - `preferences.py`, `config_flow.py`, `strings.json`, `translations/en.json` — options, validation, UI text.
+- `fire.py`, `opus.py` — Fire TV voice remote: hidraw transport (ATVV-shaped control + raw Opus packets to the coordinator) and the Opus decoder adapter (PyAV, ctypes fallback).
+- `reply_condition.py` — the reply-speaker condition (raw-list selector, per-request decision).
 - `event.py`, `binary_sensor.py`, `sensor.py`, `diagnostics.py`, `history.py` — entities, diagnostics, bounded anonymous history.
 
 ## Commands
@@ -56,6 +58,20 @@ the HA audio dependencies; mount the repo read-only and set
   every error/abort key exists, and failure codes are `ERROR_CODES` with a state
   translation each. Edit `strings.json` and keep `translations/en.json` identical
   (`tests/test_translations.py` enforces this, including field coverage).
+- **Repairs for external dependencies.** Any option that points at something this
+  integration does not own (an Assist pipeline, a media player, and any future
+  entity, device, service or other reference) must raise a Repairs issue in
+  `issues.py` when the target is missing: created at startup (after HA has
+  started) and re-checked when the target changes, cleared when it returns and on
+  unload, with `strings.json` `issues` text (title, description with the Configure
+  path) in `translations/en.json` too. The options form must also keep a missing
+  saved value visible with a field error, never silently substitute another, and
+  must still let other settings be saved. Test all of it (`tests/test_issues.py`,
+  `tests/test_config_flow.py`). Temporary unavailability is not a repair.
+- **Option order.** The options form lists fields in a deliberate order (pipeline,
+  voice mode, reply speaker, reply condition, reply timing, head start, busy
+  policies, context, button behavior, short-press filter, then limits). Put new options in that
+  grouping and keep the README configuration table in the same order.
 - **Behavior-preserving defaults.** A new option must default to existing behavior,
   be validated in `preferences.py`, appear in `config_flow.py`, `strings.json`
   and `translations/en.json`, and be documented in the README's Configuration
@@ -73,11 +89,23 @@ the HA audio dependencies; mount the repo read-only and set
   satellite; the coordinator waits).
 - **Play only what we own.** Stop only media this request started, and verify the
   stop before retiring a request. Unknown ownership fails explicitly.
+- **Tested remotes.** The README's "Tested remotes" table lists only what was
+  physically tested as tested. Record every remote you evaluate (supported,
+  unsupported, or unusable) with the evidence, never a guess, and keep the
+  pairing guide accurate (HAOS host shell vs terminal app).
 - **Honest claims.** Streaming latency, audio smoothness and hardware
   compatibility need physical acceptance tests; unit tests do not establish
   them. Timings are *request/report* times, not acoustic first-sound. Full
   duplex stays reported unavailable until a complete interruption contract is verified.
 - **Hardware safety.** Never press or script a remote's power buttons. Do not
   open a microphone without a physical voice notification.
+- **Image resolution.** Generate and use `@3x` raster variants wherever supported,
+  including the README. Retain editable SVG sources. Where Home Assistant requires
+  specific image sizes or filenames, supply its prescribed variants instead.
+- **Regenerate edited assets.** Keep generated files in sync with their sources.
+  After editing branding SVGs in `docs/images/` or `scripts/generate_branding.sh`,
+  run `scripts/generate_branding.sh`, verify the outputs, and include all updated
+  PNG variants in `custom_components/atvv_remote/brand/` in the same change.
+  Edit the SVG sources rather than generated branding PNGs.
 - **Git.** Do not commit or push unless asked. Do not add AI co-author trailers.
   `scripts/check_package.py` builds the release archive but publishes nothing.

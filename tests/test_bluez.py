@@ -103,3 +103,20 @@ async def test_partial_subscription_failure_releases_only_owned_session():
             await transport.open("02:00:00:00:00:01", None, None)
     assert [x["path"] for x in calls if x["member"] == "StopNotify"] == [service + "/char1"]
     assert bus.disconnected
+
+
+def test_paired_devices_detects_fire_family():
+    from custom_components.atvv_remote.fire import FIRE_VOICE_SERVICE
+
+    hid = "00001812-0000-1000-8000-00805f9b34fb"
+    items = {
+        "/org/bluez/hci0/dev_fire": obj("02:00:00:00:00:01", services=[hid, FIRE_VOICE_SERVICE]),
+        "/org/bluez/hci0/dev_atvv": obj("02:00:00:00:00:02", services=[SERVICE]),
+        "/org/bluez/hci0/dev_kbd": obj("02:00:00:00:00:03", services=[hid]),
+    }
+    found = {x.address: (x.family, x.compatible) for x in paired_devices(items)}
+    assert found == {
+        "02:00:00:00:00:01": ("fire", True),
+        "02:00:00:00:00:02": ("atvv", True),
+        "02:00:00:00:00:03": ("atvv", None),  # a plain HID device is not a voice remote
+    }

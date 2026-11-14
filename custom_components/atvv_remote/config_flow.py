@@ -6,6 +6,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.components.assist_pipeline import async_get_pipelines
 from homeassistant.core import callback
+from homeassistant.helpers import condition
 from homeassistant.helpers.selector import (
     NumberSelector,
     NumberSelectorConfig,
@@ -17,8 +18,19 @@ from homeassistant.helpers.selector import (
 )
 
 from .bluez import BlueZTransport
+from .fire import FireTransport
 from .playback import speaker_choices
-from .preferences import CHOICES, DEFAULTS, MAX_HEAD_START, preferences
+from .preferences import (
+    CHOICES,
+    CONVERSATION_RANGE,
+    DEFAULTS,
+    FORM_ORDER,
+    MAX_HEAD_START,
+    PRESS_RANGE,
+    REQUEST_RANGE,
+    preferences,
+)
+from .reply_condition import ReplyConditionSelector, load_conditions
 
 DOMAIN = "atvv_remote"
 
@@ -31,6 +43,16 @@ def dropdown(options, translation_key):
     return SelectSelector(
         SelectSelectorConfig(
             options=options, mode=SelectSelectorMode.DROPDOWN, translation_key=translation_key
+        )
+    )
+
+
+def pipeline_dropdown(choices):
+    """Dropdown of the live Assist pipelines (names are user data, not translated)."""
+    return SelectSelector(
+        SelectSelectorConfig(
+            options=[SelectOptionDict(value=k, label=v) for k, v in choices.items()],
+            mode=SelectSelectorMode.DROPDOWN,
         )
     )
 
@@ -116,13 +138,24 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if user_input["pipeline_id"] not in choices:
                 errors["base"] = "invalid_pipeline"
             else:
-                transport = BlueZTransport()
+                fire = self.selected.family == "fire"
+                transport = FireTransport() if fire else BlueZTransport()
                 try:
-                    await transport.open(self.selected.address, None, None)
-                except ConnectionError:
-                    errors["base"] = "wake_remote"
-                except ValueError:
-                    errors["base"] = "unsupported_remote"
+                    await transport.open(
+                        self.selected.address, *((lambda d: None,) * 2 if fire else (None, None))
+                    )
+                except ConnectionError as err:
+                    if str(err) == "hidraw_unavailable":
+                        errors["base"] = "hidraw_unavailable"
+                    else:
+                        errors["base"] = "wake_remote"
+                except ValueError as err:
+                    if str(err) == "opus_decoder_unavailable":
+                        errors["base"] = "opus_decoder_unavailable"
+                    elif str(err) == "hidraw_permission_denied":
+                        errors["base"] = "hidraw_permission_denied"
+                    else:
+                        errors["base"] = "unsupported_remote"
                 except Exception:
                     errors["base"] = "bluetooth_unavailable"
                 finally:
@@ -135,11 +168,12 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             "name": self.selected.name,
                             "pipeline_id": user_input["pipeline_id"],
                             "mode": "transcription",
+                            "family": self.selected.family,
                         },
                     )
         return self.async_show_form(
             step_id="configure",
-            data_schema=vol.Schema({vol.Required("pipeline_id"): vol.In(choices)}),
+            data_schema=vol.Schema({vol.Required("pipeline_id"): pipeline_dropdown(choices)}),
             errors=errors,
         )
 
@@ -147,6 +181,15 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 class OptionsFlow(config_entries.OptionsFlow):
     def __init__(self, entry):
         self.entry = entry
+
+    async def _condition_is_valid(self, raw):
+        if not raw:
+            return True
+        try:
+            await condition.async_validate_conditions_config(self.hass, load_conditions(raw))
+        except Exception:  # noqa: BLE001 - any validation failure is a form error
+            return False
+        return True
 
     async def async_step_init(self, user_input=None):
         choices = pipelines(self.hass)
@@ -161,7 +204,13 @@ class OptionsFlow(config_entries.OptionsFlow):
                 errors["base"] = "invalid_preferences"
             if errors:
                 pass
-            elif user_input.get("speaker", NONE) not in (NONE, *speakers):
+            elif not await self._condition_is_valid(user_input.get("reply_condition")):
+                errors["base"] = "invalid_reply_condition"
+            elif user_input.get("speaker", NONE) not in (
+                NONE,
+                *speakers,
+                *([self.entry.options["speaker"]] if self.entry.options.get("speaker") else []),
+            ):
                 errors["base"] = "invalid_speaker"
             elif user_input["pipeline_id"] not in choices or user_input["mode"] not in (
                 "transcription",
@@ -181,50 +230,92 @@ class OptionsFlow(config_entries.OptionsFlow):
                     },
                 )
         selected = self.entry.options.get("pipeline_id", self.entry.data["pipeline_id"])
+        options = self.entry.options
+        saved_speaker = options.get("speaker") or ""
+        # Saved choices that no longer exist are flagged, never silently replaced.
+        if not user_input:
+            if selected not in choices:
+                errors["pipeline_id"] = "pipeline_missing"
+            if saved_speaker and saved_speaker not in speakers:
+                errors["speaker"] = "speaker_missing"
+
+        def seconds(key, low, high, step):
+            return (
+                vol.Optional(key, default=options.get(key, DEFAULTS[key])),
+                NumberSelector(
+                    NumberSelectorConfig(
+                        min=low,
+                        max=high,
+                        step=step,
+                        unit_of_measurement="s",
+                        mode=NumberSelectorMode.SLIDER,
+                    )
+                ),
+            )
+
+        fields = {
+            "pipeline_id": (
+                vol.Required("pipeline_id", default=selected)
+                if selected in choices
+                else vol.Required("pipeline_id"),
+                pipeline_dropdown(choices),
+            ),
+            "mode": (
+                vol.Required(
+                    "mode",
+                    default=options.get("mode", self.entry.data.get("mode", "transcription")),
+                ),
+                dropdown(["transcription", "commands"], "voice_mode"),
+            ),
+            "speaker": (
+                vol.Optional("speaker", default=options.get("speaker") or NONE),
+                dropdown(
+                    [
+                        SelectOptionDict(value=NONE, label=NONE),
+                        *(SelectOptionDict(value=k, label=v) for k, v in speakers.items()),
+                        # Keep an offline or removed speaker selectable so it is not dropped.
+                        *(
+                            [SelectOptionDict(value=saved_speaker, label=saved_speaker)]
+                            if saved_speaker and saved_speaker not in speakers
+                            else []
+                        ),
+                    ],
+                    "reply_speaker",
+                ),
+            ),
+            "reply_condition": (
+                vol.Optional("reply_condition", default=options.get("reply_condition", [])),
+                ReplyConditionSelector(),
+            ),
+            **{
+                key: (
+                    vol.Optional(key, default=options.get(key, DEFAULTS[key])),
+                    dropdown(list(values), key),
+                )
+                for key, values in CHOICES.items()
+            },
+            "stream_head_start": (
+                vol.Optional(
+                    "stream_head_start",
+                    default=options.get("stream_head_start", DEFAULTS["stream_head_start"]),
+                ),
+                NumberSelector(
+                    NumberSelectorConfig(
+                        min=0,
+                        max=MAX_HEAD_START,
+                        step=0.5,
+                        unit_of_measurement="s",
+                        mode=NumberSelectorMode.SLIDER,
+                    )
+                ),
+            ),
+            "min_press_seconds": seconds("min_press_seconds", *PRESS_RANGE),
+            "max_request_seconds": seconds("max_request_seconds", *REQUEST_RANGE),
+            "max_conversation_seconds": seconds("max_conversation_seconds", *CONVERSATION_RANGE),
+        }
+        # Field order is presentation: FORM_ORDER is the single source (see preferences.py).
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema(
-                {
-                    **{
-                        vol.Optional(
-                            key, default=self.entry.options.get(key, DEFAULTS[key])
-                        ): dropdown(list(values), key)
-                        for key, values in CHOICES.items()
-                    },
-                    vol.Optional(
-                        "stream_head_start",
-                        default=self.entry.options.get(
-                            "stream_head_start", DEFAULTS["stream_head_start"]
-                        ),
-                    ): NumberSelector(
-                        NumberSelectorConfig(
-                            min=0,
-                            max=MAX_HEAD_START,
-                            step=0.5,
-                            unit_of_measurement="s",
-                            mode=NumberSelectorMode.SLIDER,
-                        )
-                    ),
-                    vol.Required(
-                        "pipeline_id",
-                        default=selected if selected in choices else next(iter(choices)),
-                    ): vol.In(choices),
-                    vol.Optional(
-                        "speaker", default=self.entry.options.get("speaker") or NONE
-                    ): dropdown(
-                        [
-                            SelectOptionDict(value=NONE, label=NONE),
-                            *(SelectOptionDict(value=k, label=v) for k, v in speakers.items()),
-                        ],
-                        "reply_speaker",
-                    ),
-                    vol.Required(
-                        "mode",
-                        default=self.entry.options.get(
-                            "mode", self.entry.data.get("mode", "transcription")
-                        ),
-                    ): dropdown(["transcription", "commands"], "voice_mode"),
-                }
-            ),
+            data_schema=vol.Schema({fields[k][0]: fields[k][1] for k in FORM_ORDER if k in fields}),
             errors=errors,
         )

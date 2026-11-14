@@ -5,11 +5,15 @@ import sys
 from array import array
 from collections import deque
 
+from .opus import OpusDecoder
 from .protocol import AdpcmDecoder, Capabilities, Control, decode_frame
 
 
 class AudioFailure(Exception):
     """The utterance is incomplete and must not execute an intent."""
+
+
+OPUS_ERRORS = ("invalid_opus_packet", "opus_decoder_unavailable")
 
 
 class VoiceSession:
@@ -60,43 +64,61 @@ class VoiceSession:
         self.watchdog = self.loop.call_later(first_timeout, self.abort, "no_audio")
         self.limit = self.loop.call_later(max_duration, self.abort, "capture_limit")
         self.tail = None
+        self._opus = None
+
+    def _decode_atvv(self, data):
+        if self.caps.version == 4:
+            if len(data) != self.frame_size or data[5] > 88:
+                raise ValueError("invalid_audio_frame")
+            seq = int.from_bytes(data[:2], "big")
+            if self.legacy_sequence is not None and seq != self.legacy_sequence:
+                self.abort("audio_sequence_gap")
+                return
+            self.legacy_sequence = (seq + 1) & 65535
+            predictor = int.from_bytes(data[3:5], "big", signed=True)
+            self.decoder.reset(predictor, data[5])
+            samples = array("h", [predictor] + self.decoder.decode(data[6:]))
+            if sys.byteorder != "little":
+                samples.byteswap()
+            pcm = samples.tobytes()
+        else:
+            pcm = decode_frame(self.decoder, data, self.frame_size)
+        if self.caps.sample_rate == 8000:
+            samples = array("h")
+            samples.frombytes(pcm)
+            if sys.byteorder != "little":
+                samples.byteswap()
+            output = array("h")
+            for sample in samples:
+                previous = sample if self.previous_sample is None else self.previous_sample
+                output.extend(((previous + sample) // 2, sample))
+                self.previous_sample = sample
+            if sys.byteorder != "little":
+                output.byteswap()
+            pcm = output.tobytes()
+        return pcm
 
     def audio(self, data: bytes):
         if self.finished:
             return
-        try:
-            if self.caps.version == 4:
-                if len(data) != self.frame_size or data[5] > 88:
-                    raise ValueError("invalid_audio_frame")
-                seq = int.from_bytes(data[:2], "big")
-                if self.legacy_sequence is not None and seq != self.legacy_sequence:
-                    self.abort("audio_sequence_gap")
-                    return
-                self.legacy_sequence = (seq + 1) & 65535
-                predictor = int.from_bytes(data[3:5], "big", signed=True)
-                self.decoder.reset(predictor, data[5])
-                samples = array("h", [predictor] + self.decoder.decode(data[6:]))
-                if sys.byteorder != "little":
-                    samples.byteswap()
-                pcm = samples.tobytes()
-            else:
-                pcm = decode_frame(self.decoder, data, self.frame_size)
-            if self.caps.sample_rate == 8000:
-                samples = array("h")
-                samples.frombytes(pcm)
-                if sys.byteorder != "little":
-                    samples.byteswap()
-                output = array("h")
-                for sample in samples:
-                    previous = sample if self.previous_sample is None else self.previous_sample
-                    output.extend(((previous + sample) // 2, sample))
-                    self.previous_sample = sample
-                if sys.byteorder != "little":
-                    output.byteswap()
-                pcm = output.tobytes()
-        except ValueError:
-            self.abort("invalid_audio_frame")
-            return
+        if self.caps.codec == 3:  # Opus (Fire remote): one 80-byte packet per report
+            try:
+                if len(data) != 80 or data[0] != 0xB8:  # fail closed on anything else
+                    raise ValueError("invalid_opus_packet")
+                if self._opus is None:
+                    self._opus = OpusDecoder()
+                pcm = self._opus.decode(data)
+            except ValueError as err:
+                self.abort(str(err) if str(err) in OPUS_ERRORS else "invalid_opus_packet")
+                return
+        else:
+            try:
+                pcm = self._decode_atvv(data)
+            except ValueError:
+                self.abort("invalid_audio_frame")
+                return
+            if pcm is None:  # aborted inside the decoder (sequence gap)
+                return
         if self.on_pcm is None and self.queued_bytes + len(pcm) > self.max_bytes:
             self.abort("buffer_overflow")
             return

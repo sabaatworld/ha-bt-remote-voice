@@ -34,6 +34,7 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
         super().__init__(coordinator, "voice")
         self.current_session = None
         self.tts_output = None
+        self.reply_allowed = True
         coordinator.run_pipeline = self.run
         coordinator.satellite = self
 
@@ -97,7 +98,13 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
     def start_playback(self, output):
         # Only the run that owns the pipeline may play; a generation that outlived
         # its run (current_session is None) must never start untracked playback.
-        if self.current_session is None or self.playback_task is not None or not self.speaker:
+        # A reply the user's condition said not to speak never plays.
+        if (
+            self.current_session is None
+            or self.playback_task is not None
+            or not self.speaker
+            or not self.reply_allowed
+        ):
             return
         self.coordinator.phase = "playback"
         self._run_has_tts = True
@@ -124,6 +131,21 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
         self.tts_output = self.streaming_output = None
         self.playback_task = None
         self.head_start_task = None
+        self.reply_allowed = True
+        if self.speaker:
+            # Decided once per request (each held turn, and a queued request when it
+            # starts); the pipeline below runs unchanged either way.
+            entry = self.coordinator.entry
+            allowed, code = self.coordinator.reply_condition.decide(
+                {
+                    "speaker": self.speaker,
+                    "remote": getattr(entry, "title", ""),
+                    "held": opts.get("input_mode") == "conversation",
+                }
+            )
+            self.reply_allowed = allowed
+            if not allowed:
+                self.coordinator.outcome("reply_skipped", code)
         self.pipeline_error = None
         self.playback_ready = asyncio.Event()
         self.generation_complete = False
@@ -230,6 +252,7 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
                 (event.data or {}).get("tts_start_streaming")
                 and output.get("stream_response")
                 and self.coordinator.entry.options.get("output_mode", "auto") == "auto"
+                and self.reply_allowed
             ):
                 self.timing("output_ready")
                 head_start = self.coordinator.entry.options.get("stream_head_start", 0)
@@ -240,6 +263,10 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
                     )
                 else:
                     self.start_playback(output)
+        elif event.type == PipelineEventType.TTS_START:
+            if not self.reply_allowed and self.entity_id:
+                # HA's base handler just set RESPONDING; nothing will be spoken.
+                self._set_state(AssistSatelliteState.PROCESSING)
         elif event.type == PipelineEventType.TTS_END:
             self.tts_output = (event.data or {}).get("tts_output")
             self.timing("tts_end")

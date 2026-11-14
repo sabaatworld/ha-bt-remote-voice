@@ -40,7 +40,10 @@
       "multiple_adapters": "This remote is paired on multiple adapters. Keep its bond on one adapter.",
       "invalid_address": "Enter a Bluetooth address in AA:BB:CC:DD:EE:FF format.",
       "unsupported_remote": "This remote does not provide a supported ATVV v0.4/v1.0 ADPCM voice profile.",
-      "invalid_pipeline": "Choose an existing Assist pipeline."
+      "invalid_pipeline": "Choose an existing Assist pipeline.",
+      "hidraw_unavailable": "The remote's input device is not available to Home Assistant. Wake the remote and check that Home Assistant can see /dev/hidraw devices.",
+      "hidraw_permission_denied": "Home Assistant is not allowed to read the remote's input device. See the README for the device access this remote needs.",
+      "opus_decoder_unavailable": "No Opus audio decoder is available to Home Assistant, which this remote needs."
     },
     "abort": {
       "already_configured": "This remote is already configured.",
@@ -51,7 +54,7 @@
     "step": {
       "init": {
         "title": "Voice settings",
-        "description": "These settings control how presses are handled and how replies are spoken. Replacing a request cannot undo actions it already performed. Simultaneous full duplex is unavailable. Stopping after transcription does not disable tools built into a live speech provider; use a transcription-only provider when actions must be disabled.",
+        "description": "These settings control how presses are handled and how replies are spoken. Replacing a request cannot undo actions it already performed. Simultaneous full duplex is unavailable. Stopping after transcription does not disable tools built into a live speech provider; use a transcription-only provider when actions must be disabled.\n\n**Reply condition:** all of its conditions must pass for a reply to be spoken. They are checked once at the start of each request; leave it empty to always speak, and a condition that cannot be evaluated counts as not met. Template conditions can use the variables `speaker`, `remote` and `held`.",
         "data": {
           "pipeline_id": "Assist pipeline",
           "mode": "Voice mode",
@@ -61,7 +64,11 @@
           "busy_processing": "New press while processing",
           "busy_playback": "New press during reply",
           "context_mode": "Conversation context",
-          "input_mode": "Button behavior"
+          "input_mode": "Button behavior",
+          "min_press_seconds": "Ignore short presses",
+          "max_request_seconds": "Maximum request length",
+          "max_conversation_seconds": "Maximum conversation length",
+          "reply_condition": "Reply condition"
         },
         "data_description": {
           "pipeline_id": "The Assist pipeline that processes speech: speech-to-text, conversation agent and text-to-speech. A removed pipeline fails with an error instead of falling back.",
@@ -72,14 +79,21 @@
           "busy_processing": "What to do when the button is pressed before the previous request is answered: reject the press, keep one pending request, or replace the current request. Replacing cannot undo actions already performed.",
           "busy_playback": "What to do when the button is pressed while a reply is playing: reject the press, answer one pending request afterward, or stop the reply and start the new request.",
           "context_mode": "Reuse keeps the Home Assistant conversation so follow-ups such as 'and double that?' work. Fresh makes every press an independent conversation.",
-          "input_mode": "One request per hold records until the button is released. Alternating conversation keeps listening while the button is held: speak, pause, hear the reply, then speak again. It needs a hold-to-talk remote."
+          "input_mode": "One request per hold records until the button is released. Alternating conversation keeps listening while the button is held: speak, pause, hear the reply, then speak again. It needs a hold-to-talk remote.",
+          "min_press_seconds": "Voice-button presses shorter than this are ignored without starting a request. A Fire TV remote that was asleep re-sends the key that woke it as an instant tap, which otherwise fails with \"No microphone audio\". 0 turns this off; 0.1 s is a good starting point. Only applies to Fire TV remotes.",
+          "max_request_seconds": "The longest a single request can last on any remote: a whole hold in One-request mode, and each turn in Alternating conversation. Reaching it ends the request with a capture-limit error. Remotes that are not hold-to-talk also end at about 15 seconds of speech or at silence, whichever comes first.",
+          "max_conversation_seconds": "The longest a whole button hold can last in Alternating conversation mode. It is ignored in One-request mode and must not be shorter than the maximum request length.",
+          "reply_condition": "Conditions that must all pass for a reply to be spoken. Checked once at the start of each request (and each turn in Alternating conversation). Leave empty to always speak. A condition that errors counts as not met. Template conditions can use the variables speaker, remote and held."
         }
       }
     },
     "error": {
       "invalid_speaker": "Choose a media player that supports playing audio, or no spoken reply.",
       "invalid_preferences": "Choose one of the supported voice preferences.",
-      "invalid_pipeline": "Choose an existing Assist pipeline."
+      "invalid_pipeline": "Choose an existing Assist pipeline.",
+      "invalid_reply_condition": "The reply condition is not valid. Check the conditions and try again.",
+      "pipeline_missing": "The Assist pipeline saved for this remote no longer exists. Choose another one.",
+      "speaker_missing": "The saved reply speaker is not available right now, so replies will not play until it returns. Keep it, or choose another."
     },
     "abort": {
       "no_pipelines": "Create an Assist pipeline first."
@@ -186,7 +200,8 @@
               "rejected": "Rejected",
               "queued": "Queued",
               "failed": "Failed",
-              "context_reset": "Conversation reset"
+              "context_reset": "Conversation reset",
+              "reply_skipped": "Reply skipped"
             }
           },
           "outcome": {
@@ -268,6 +283,10 @@
           "unsupported_capabilities": "The remote reported voice capabilities this integration does not support.",
           "unsupported_codec": "The remote uses an audio format this integration does not support.",
           "invalid_frame_size": "The remote reported an invalid audio frame size.",
+          "hidraw_unavailable": "The remote's input device is not available to Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant is not allowed to read the remote's input device.",
+          "opus_decoder_unavailable": "No Opus audio decoder is available to Home Assistant.",
+          "invalid_opus_packet": "The remote sent audio that could not be decoded.",
           "other": "Another error occurred. The error code gives the details."
         },
         "state_attributes": {
@@ -285,6 +304,16 @@
           }
         }
       }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist pipeline missing for {remote}",
+      "description": "The remote **{remote}** is set to use the Assist pipeline `{pipeline}`, which no longer exists. Voice requests from this remote fail until you choose another pipeline.\n\nGo to **Settings → Devices & services → ATVV Remote Voice**, open the menu of **{remote}**, choose **Configure**, and pick an existing pipeline."
+    },
+    "speaker_missing": {
+      "title": "Reply speaker missing for {remote}",
+      "description": "The remote **{remote}** is set to play replies on `{speaker}`, which no longer exists. Commands still run, but their spoken reply will not play.\n\nGo to **Settings → Devices & services → ATVV Remote Voice**, open the menu of **{remote}**, choose **Configure**, and pick another speaker or choose none."
     }
   }
 }

@@ -6,8 +6,10 @@ from dataclasses import dataclass
 from dbus_fast import BusType, Message, MessageType, Variant
 from dbus_fast.aio import MessageBus
 
+from .fire import FIRE_VOICE_SERVICE
 from .protocol import CTL, GET_CAPS, RX, SERVICE, TX, capabilities
 
+HID_SERVICE = "00001812-0000-1000-8000-00805f9b34fb"
 DEVICE = "org.bluez.Device1"
 CHAR = "org.bluez.GattCharacteristic1"
 
@@ -19,6 +21,7 @@ class Remote:
     path: str
     connected: bool
     compatible: bool | None
+    family: str = "atvv"  # "fire" for an Amazon Fire TV voice remote (HID + vendor voice service)
 
 
 def paired_devices(objects: dict) -> list[Remote]:
@@ -36,13 +39,15 @@ def paired_devices(objects: dict) -> list[Remote]:
         if not address:
             continue
         uuids = [v.lower() for v in get("UUIDs", [])]
+        fire = HID_SERVICE in uuids and FIRE_VOICE_SERVICE in uuids
         result.append(
             Remote(
                 address,
                 get("Name", address),  # the address is data; no English fallback text
                 path,
                 get("Connected", False),
-                True if SERVICE in uuids else None,
+                True if SERVICE in uuids or fire else None,
+                "fire" if fire else "atvv",
             )
         )
     return sorted(result, key=lambda x: (x.compatible is not True, x.name, x.path))

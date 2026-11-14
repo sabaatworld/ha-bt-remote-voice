@@ -241,7 +241,15 @@ def test_every_emitted_failure_code_has_a_translated_state():
     """Codes the source can report must be ERROR_CODES entries, not silent 'other'."""
     from custom_components.atvv_remote.preferences import ERROR_CODES
 
-    not_failures = {"invalid_preferences", "wake_words_not_supported", "unloaded", "replacement"}
+    not_failures = {
+        "invalid_preferences",
+        "wake_words_not_supported",
+        "unloaded",
+        "replacement",
+        "reply_skipped",
+        "condition_false",
+        "condition_error",
+    }
     emitted = set()
     for path in COMPONENT.glob("*.py"):
         if path.name == "config_flow.py":
@@ -258,3 +266,28 @@ def test_every_emitted_failure_code_has_a_translated_state():
             emitted |= set(re.findall(pattern, text))
     missing = emitted - set(ERROR_CODES) - not_failures
     assert not missing, sorted(missing)
+
+
+def test_step_description_explains_the_reply_condition_because_its_editor_shows_no_help():
+    """HA's condition selector renders only a label, so the dialog intro carries the help."""
+    text = STRINGS["options"]["step"]["init"]["description"].lower()
+    for needle in (
+        "reply condition",
+        "empty",
+        "start of each request",
+        "speaker",
+        "remote",
+        "held",
+    ):
+        assert needle in text, needle
+
+
+def test_every_repair_issue_has_a_title_and_description():
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).parents[1] / "custom_components" / "atvv_remote"
+    issues = json.loads((root / "strings.json").read_text())["issues"]
+    assert set(issues) == {"pipeline_missing", "speaker_missing"}
+    for text in issues.values():
+        assert text["title"] and "Configure" in text["description"]

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="256" viewBox="0 0 1180 256" role="img" aria-labelledby="logo-title logo-desc">
+  <title id="logo-title">ATVV Remote Voice for Home Assistant</title>
+  <desc id="logo-desc">Emerald Solar remote icon beside the ATVV Remote Voice wordmark.</desc>
+  <svg x="0" y="0" width="256" height="256" viewBox="0 0 256 256">
+    <g fill="none" stroke-linecap="round">
+      <path d="M11 174l29-18" stroke="#25B981" stroke-width="13" />
+      <path d="M15 205l29-18" stroke="#E8B64F" stroke-width="13" />
+    </g>
+    <g transform="rotate(18 139 147)">
+      <rect x="82" y="60" width="114" height="180" rx="37" fill="#25B981" />
+      <rect x="92" y="70" width="94" height="160" rx="27" fill="#10332C" />
+      <circle cx="139" cy="136" r="32" fill="#25B981" />
+      <rect x="132" y="115" width="14" height="25" rx="7" fill="#10332C" />
+      <g fill="none" stroke="#10332C" stroke-width="5.5" stroke-linecap="round">
+        <path d="M124 133v4a15 15 0 0 0 30 0v-4M139 152v10M132 162h14" />
+      </g>
+      <g fill="#E8B64F">
+        <rect x="107" y="188" width="27" height="15" rx="7.5" />
+        <rect x="144" y="188" width="27" height="15" rx="7.5" />
+      </g>
+    </g>
+    <path d="M202 5a49 49 0 0 0-30 88l-5 23 26-14A49 49 0 1 0 202 5Z" fill="#E8B64F" />
+    <g fill="#10332C">
+      <rect x="177" y="37" width="10" height="31" rx="5" />
+      <rect x="197" y="25" width="10" height="55" rx="5" />
+      <rect x="217" y="37" width="10" height="31" rx="5" />
+    </g>
+  </svg>
+  <text x="292" y="140" fill="#10332C" font-family="Verdana, DejaVu Sans, sans-serif" font-size="74" font-weight="700" letter-spacing="-2">ATVV Remote Voice</text>
+  <text x="296" y="192" fill="#356558" font-family="Verdana, DejaVu Sans, sans-serif" font-size="32">for Home Assistant</text>
+</svg>

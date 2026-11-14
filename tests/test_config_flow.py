@@ -1,4 +1,8 @@
+import asyncio
 from unittest.mock import AsyncMock, patch
+
+import pytest
+import voluptuous as vol
 
 from custom_components.atvv_remote.bluez import Remote
 from custom_components.atvv_remote.config_flow import ConfigFlow, pipeline_choices
@@ -116,3 +120,203 @@ async def test_options_speaker_is_optional_configurable_and_preserves_unknown_op
         )
     assert result["data"]["speaker"] == "media_player.test_speaker"
     assert result["data"]["future_option"] is True
+
+
+# ---- Fire family in the config flow ----
+async def _configure_fire(hass, transport_open):
+    from types import SimpleNamespace
+
+    from custom_components.atvv_remote.config_flow import ConfigFlow
+
+    flow = ConfigFlow()
+    flow.hass = hass
+    flow.selected = SimpleNamespace(address="02:00:00:00:00:01", name="Fire", family="fire")
+    closed = []
+
+    class FakeFire:
+        async def open(self, address, on_control, on_audio):
+            return await transport_open()
+
+        async def close(self):
+            closed.append(True)
+
+    with (
+        patch("custom_components.atvv_remote.config_flow.pipelines", return_value={"p": "P"}),
+        patch("custom_components.atvv_remote.config_flow.FireTransport", FakeFire),
+    ):
+        result = await flow.async_step_configure({"pipeline_id": "p"})
+    return result, closed
+
+
+async def test_picker_lists_both_families(hass):
+    flow = ConfigFlow()
+    flow.hass = hass
+    flow.context = {"source": "user"}
+    remotes = [
+        Remote("02:00:00:00:00:01", "Fire", "/p1", False, True, "fire"),
+        Remote("02:00:00:00:00:02", "Atvv", "/p2", False, True),
+    ]
+    with patch(
+        "custom_components.atvv_remote.config_flow.BlueZTransport.list_paired",
+        AsyncMock(return_value=remotes),
+    ):
+        result = await flow.async_step_user()
+    options = {o["value"] for o in result["data_schema"].schema["device"].config["options"]}
+    assert {"02:00:00:00:00:01", "02:00:00:00:00:02"} <= options
+
+
+async def test_fire_entry_stores_its_family(hass):
+    async def ok():
+        return object()
+
+    result, closed = await _configure_fire(hass, ok)
+    assert result["type"] == "create_entry" and result["data"]["family"] == "fire"
+    assert closed == [True]
+
+
+@pytest.mark.parametrize(
+    ("failure", "expected"),
+    [
+        (ValueError("opus_decoder_unavailable"), "opus_decoder_unavailable"),
+        (ValueError("hidraw_permission_denied"), "hidraw_permission_denied"),
+        (ConnectionError("hidraw_unavailable"), "hidraw_unavailable"),
+        (ConnectionError("wake_remote"), "wake_remote"),
+    ],
+)
+async def test_fire_configure_reports_each_failure_distinctly(hass, failure, expected):
+    async def fail():
+        raise failure
+
+    result, closed = await _configure_fire(hass, fail)
+    assert result["errors"] == {"base": expected}
+    assert closed == [True]
+
+
+async def test_entry_without_family_defaults_to_atvv():
+    from types import SimpleNamespace
+
+    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from tests.test_coordinator import FakeHass
+
+    c = VoiceCoordinator(
+        FakeHass(),
+        SimpleNamespace(
+            data={"address": "02:00:00:00:00:01", "name": "T", "pipeline_id": "p"}, options={}
+        ),
+    )
+
+    class Stop(Exception):
+        pass
+
+    class Blue:
+        lost = None
+
+        async def open(self, *args):
+            c.stopping = True
+            raise ConnectionError("wake_remote")
+
+        async def close(self):
+            pass
+
+    with (
+        patch("custom_components.atvv_remote.coordinator.BlueZTransport", Blue) as blue,
+        patch("custom_components.atvv_remote.coordinator.FireTransport") as fire,
+    ):
+        await asyncio.wait_for(c.connect_loop(), 2)
+    assert blue is Blue and not fire.called
+
+
+# ---- External dependencies in the options form (pipeline and speaker) ----
+def _options_flow(hass, data=None, options=None):
+    from types import SimpleNamespace
+
+    from custom_components.atvv_remote.config_flow import OptionsFlow
+
+    flow = OptionsFlow(SimpleNamespace(data=data or {"pipeline_id": "p1"}, options=options or {}))
+    flow.hass = hass
+    return flow
+
+
+def _field(result, name):
+    return next(k for k in result["data_schema"].schema if k == name), result["data_schema"].schema[
+        next(k for k in result["data_schema"].schema if k == name)
+    ]
+
+
+async def test_pipeline_field_is_a_dropdown_listing_the_real_pipelines(hass):
+    from homeassistant.helpers.selector import SelectSelector
+
+    flow = _options_flow(hass)
+    with patch(
+        "custom_components.atvv_remote.config_flow.pipelines",
+        return_value={"p1": "Home Assistant", "p2": "Gemini Live"},
+    ):
+        result = await flow.async_step_init()
+    key, selector = _field(result, "pipeline_id")
+    assert isinstance(selector, SelectSelector)
+    assert [(o["value"], o["label"]) for o in selector.config["options"]] == [
+        ("p1", "Home Assistant"),
+        ("p2", "Gemini Live"),
+    ]
+    assert key.default() == "p1"
+    assert not result["errors"]
+
+
+async def test_missing_saved_pipeline_is_flagged_not_silently_replaced(hass):
+    flow = _options_flow(hass, data={"pipeline_id": "gone"})
+    with patch(
+        "custom_components.atvv_remote.config_flow.pipelines", return_value={"p1": "Home Assistant"}
+    ):
+        result = await flow.async_step_init()
+        key, _ = _field(result, "pipeline_id")
+        assert result["errors"] == {"pipeline_id": "pipeline_missing"}
+        assert key.default is vol.UNDEFINED  # nothing is pre-selected on the user's behalf
+        # Saving without choosing one is refused, with the same message.
+        again = await flow.async_step_init({"pipeline_id": "gone", "mode": "transcription"})
+    assert again["type"] == "form" and again["errors"]["base"] == "invalid_pipeline"
+
+
+async def test_unavailable_saved_speaker_stays_selectable_and_other_settings_still_save(hass):
+    flow = _options_flow(hass, options={"mode": "commands", "speaker": "media_player.office"})
+    with patch(
+        "custom_components.atvv_remote.config_flow.pipelines", return_value={"p1": "Home Assistant"}
+    ):
+        result = await flow.async_step_init()
+        key, selector = _field(result, "speaker")
+        values = [o["value"] for o in selector.config["options"]]
+        assert "media_player.office" in values  # the saved choice is not dropped
+        assert key.default() == "media_player.office"
+        assert result["errors"] == {"speaker": "speaker_missing"}
+        saved = await flow.async_step_init(
+            {
+                "pipeline_id": "p1",
+                "mode": "commands",
+                "speaker": "media_player.office",
+                "busy_processing": "reject",
+            }
+        )
+    assert saved["type"] == "create_entry"
+    assert saved["data"]["speaker"] == "media_player.office"
+
+
+async def test_a_different_unknown_speaker_is_still_rejected(hass):
+    flow = _options_flow(hass, options={"speaker": "media_player.office"})
+    with patch(
+        "custom_components.atvv_remote.config_flow.pipelines", return_value={"p1": "Home Assistant"}
+    ):
+        result = await flow.async_step_init(
+            {"pipeline_id": "p1", "mode": "commands", "speaker": "media_player.typo"}
+        )
+    assert result["errors"]["base"] == "invalid_speaker"
+
+
+async def test_options_accept_a_short_press_minimum_and_reject_one_out_of_range(hass):
+    flow = _options_flow(hass)
+    base = {"pipeline_id": "p1", "mode": "commands"}
+    with patch(
+        "custom_components.atvv_remote.config_flow.pipelines", return_value={"p1": "Home Assistant"}
+    ):
+        ok = await flow.async_step_init({**base, "min_press_seconds": 0.1})
+        bad = await flow.async_step_init({**base, "min_press_seconds": 0.55})
+    assert ok["type"] == "create_entry" and ok["data"]["min_press_seconds"] == 0.1
+    assert bad["type"] == "form" and bad["errors"]["base"] == "invalid_preferences"

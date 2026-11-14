@@ -20,6 +20,7 @@ class VoiceButton(RemoteEntity, EventEntity):
         "queued",
         "failed",
         "context_reset",
+        "reply_skipped",
     ]
 
     def __init__(self, coordinator):

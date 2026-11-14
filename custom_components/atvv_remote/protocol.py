@@ -107,14 +107,15 @@ class Capabilities:
     version: int = 256
     codec: int = 2
     model: int = 3
+    family: str = "atvv"
 
     @property
     def sample_rate(self):
-        return 16000 if self.codec == 2 else 8000
+        return 16000 if self.codec in (2, 3) else 8000
 
     @property
     def profile(self):
-        return f"atvv_{self.version:04x}_{self.sample_rate}_{self.model}"
+        return f"{self.family}_{self.version:04x}_{self.sample_rate}_{self.model}"
 
     def open_command(self):
         return bytes([12, 0, self.codec]) if self.version == 4 else bytes([12, 0])
