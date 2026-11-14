@@ -1,7 +1,7 @@
 import asyncio
 
-from custom_components.atvv_remote.coordinator import VoiceCoordinator
-from custom_components.atvv_remote.protocol import Capabilities
+from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
+from custom_components.bt_remote_voice.protocol import Capabilities
 
 
 class Entry:
@@ -168,7 +168,7 @@ async def test_disconnect_resets_ignored_hold_and_aborts_even_released_input():
         (),
         {"open": AsyncMock(side_effect=ConnectionError("wake_remote")), "close": AsyncMock()},
     )()
-    with patch("custom_components.atvv_remote.coordinator.BlueZTransport", return_value=t):
+    with patch("custom_components.bt_remote_voice.coordinator.BlueZTransport", return_value=t):
         c.connection_task = asyncio.create_task(c.connect_loop())
         await asyncio.sleep(0.01)
         assert not c.ignored_press and not c.pending_open and c.stream_id is None
@@ -290,7 +290,7 @@ async def test_sleep_after_input_eof_does_not_cancel_pending_intent_or_reply():
         await done.wait()
 
     c.run_pipeline = consume
-    with patch("custom_components.atvv_remote.coordinator.BlueZTransport", return_value=t):
+    with patch("custom_components.bt_remote_voice.coordinator.BlueZTransport", return_value=t):
         c.connection_task = asyncio.create_task(c.connect_loop())
         await asyncio.sleep(0.01)
         c.control(bytes.fromhex("04030207"))

@@ -1,12 +1,15 @@
-# AGENTS.md — ha-atvv-remote
+# AGENTS.md — ha-bt-remote-voice
 
 Instructions for coding agents working on this reusable Home Assistant custom
 integration. `CLAUDE.md` only links here.
 
 ## What this is
 
-A Home Assistant custom integration (`custom_components/atvv_remote`) that turns an
-already-paired Android TV Voice (ATVV) BLE remote into an Assist microphone.
+**Bluetooth Remote Voice** (full name: Bluetooth Remote Voice to Home Assistant; repo
+`ha-bt-remote-voice`, domain `bt_remote_voice`): a Home Assistant custom integration
+(`custom_components/bt_remote_voice`) that turns an already-paired Bluetooth TV remote into an
+Assist microphone. It supports remotes that speak the Android TV Voice (ATVV) protocol and the
+Amazon Fire TV voice remote, and may support others later (for example the Apple Siri Remote).
 Linux with local BlueZ is the target; Python 3.14, HA 2026.11.1+.
 
 Module map:
@@ -97,6 +100,9 @@ the HA audio dependencies; mount the repo read-only and set
   compatibility need physical acceptance tests; unit tests do not establish
   them. Timings are *request/report* times, not acoustic first-sound. Full
   duplex stays reported unavailable until a complete interruption contract is verified.
+- **Naming.** The product is "Bluetooth Remote Voice". Write "ATVV" only when naming that
+  protocol (profiles, parsing, compatibility rows, the ATVVoice credit). Background task names,
+  docstrings and user-facing text must not present the whole integration as ATVV.
 - **Hardware safety.** Never press or script a remote's power buttons. Do not
   open a microphone without a physical voice notification.
 - **Image resolution.** Generate and use `@3x` raster variants wherever supported,
@@ -105,7 +111,15 @@ the HA audio dependencies; mount the repo read-only and set
 - **Regenerate edited assets.** Keep generated files in sync with their sources.
   After editing branding SVGs in `docs/images/` or `scripts/generate_branding.sh`,
   run `scripts/generate_branding.sh`, verify the outputs, and include all updated
-  PNG variants in `custom_components/atvv_remote/brand/` in the same change.
+  PNG variants in `custom_components/bt_remote_voice/brand/` in the same change.
   Edit the SVG sources rather than generated branding PNGs.
+- **Branding.** The "Emerald Solar" icon combines a voice remote, a speech bubble and two motion
+  strokes, with forest `#10332C`, emerald `#25B981` and warm gold `#E8B64F` on transparent
+  artwork for both light and dark. Editable SVGs (`icon.svg`, `logo.svg`, `dark_logo.svg`) live in
+  `docs/images/`; the wordmark reads "Bluetooth Remote Voice" with the subtitle "to Home Assistant".
+  Home Assistant loads the PNGs in `custom_components/bt_remote_voice/brand/` automatically; the
+  README uses their 3× variants. `scripts/generate_branding.sh` (needs `rsvg-convert` from
+  librsvg) renders 1×, 2× and 3× PNGs from the SVGs, works from any directory and replaces
+  outputs only after every render succeeds. Release zips contain the PNGs, not the SVGs.
 - **Git.** Do not commit or push unless asked. Do not add AI co-author trailers.
   `scripts/check_package.py` builds the release archive but publishes nothing.

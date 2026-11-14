@@ -4,8 +4,8 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from custom_components.atvv_remote.protocol import Capabilities, Control
-from custom_components.atvv_remote.session import AudioFailure, VoiceSession
+from custom_components.bt_remote_voice.protocol import Capabilities, Control
+from custom_components.bt_remote_voice.session import AudioFailure, VoiceSession
 
 
 async def test_routed_capture_validates_frames_without_retaining_pcm():
@@ -19,7 +19,7 @@ async def test_routed_capture_validates_frames_without_retaining_pcm():
 
 
 def test_history_keeps_failures_after_success_and_bounds_metadata():
-    from custom_components.atvv_remote.history import CaptureHistory
+    from custom_components.bt_remote_voice.history import CaptureHistory
 
     h = CaptureHistory()
     for i in range(25):
@@ -37,7 +37,7 @@ def test_history_keeps_failures_after_success_and_bounds_metadata():
 
 
 async def test_completed_input_rejects_overflow_and_drains_valid_pcm():
-    from custom_components.atvv_remote.held import Utterance
+    from custom_components.bt_remote_voice.held import Utterance
 
     u = Utterance(max_bytes=4)
     u.feed(b"1234")
@@ -51,7 +51,7 @@ async def test_completed_input_rejects_overflow_and_drains_valid_pcm():
 
 
 async def test_held_mode_requires_speech_and_drops_response_audio():
-    from custom_components.atvv_remote.held import HeldTurns
+    from custom_components.bt_remote_voice.held import HeldTurns
 
     turns = []
     h = HeldTurns(turns.append)
@@ -75,7 +75,7 @@ async def test_held_mode_requires_speech_and_drops_response_audio():
 
 
 async def test_no_vad_pipeline_retains_satellite_and_chat_identity():
-    from custom_components.atvv_remote.pipeline import run_audio_pipeline
+    from custom_components.bt_remote_voice.pipeline import run_audio_pipeline
 
     sat = SimpleNamespace(
         hass=SimpleNamespace(),
@@ -98,9 +98,12 @@ async def test_no_vad_pipeline_retains_satellite_and_chat_identity():
         yield SimpleNamespace(conversation_id="reused")
 
     with (
-        patch("custom_components.atvv_remote.pipeline.chat_session.async_get_chat_session", chat),
         patch(
-            "custom_components.atvv_remote.pipeline.async_pipeline_from_audio_stream", AsyncMock()
+            "custom_components.bt_remote_voice.pipeline.chat_session.async_get_chat_session", chat
+        ),
+        patch(
+            "custom_components.bt_remote_voice.pipeline.async_pipeline_from_audio_stream",
+            AsyncMock(),
         ) as run,
     ):
         await run_audio_pipeline(sat, session, "stt", "intent")
@@ -121,8 +124,8 @@ async def test_capture_timeout_is_not_clean_eof():
 async def test_reply_streams_before_generation_finishes_and_never_replays():
     from homeassistant.components.assist_pipeline import PipelineEvent, PipelineEventType
 
-    from custom_components.atvv_remote.assist_satellite import RemoteSatellite
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.assist_satellite import RemoteSatellite
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
 
     c = VoiceCoordinator(
         SimpleNamespace(),
@@ -172,7 +175,7 @@ async def test_reply_streams_before_generation_finishes_and_never_replays():
         patch.object(sat, "_resolve_pipeline", return_value="p"),
         patch.object(sat, "async_accept_pipeline_from_satellite", side_effect=accept),
         patch(
-            "custom_components.atvv_remote.assist_satellite.play_reply", side_effect=playback
+            "custom_components.bt_remote_voice.assist_satellite.play_reply", side_effect=playback
         ) as play,
         patch.object(sat, "tts_response_finished"),
     ):
@@ -185,7 +188,7 @@ async def test_reply_streams_before_generation_finishes_and_never_replays():
 async def test_cancelled_playback_stops_only_its_own_media(hass):
     from homeassistant.components.media_player import MediaPlayerEntityFeature
 
-    from custom_components.atvv_remote.playback import play_reply
+    from custom_components.bt_remote_voice.playback import play_reply
 
     for replaced in (False, True):
         hass.states.async_set(
@@ -222,7 +225,7 @@ async def test_cancelled_playback_stops_only_its_own_media(hass):
 
 @pytest.mark.parametrize("phase", ["processing", "playback"])
 async def test_queue_one_waits_then_accepts_and_preserves_context(phase):
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(
@@ -258,7 +261,7 @@ async def test_queue_one_waits_then_accepts_and_preserves_context(phase):
 
 
 async def test_replace_old_cleanup_cannot_close_new_capture():
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(
@@ -295,7 +298,7 @@ async def test_replace_old_cleanup_cannot_close_new_capture():
 
 
 async def test_queue_expiration_is_reported_and_never_runs():
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(
@@ -325,7 +328,7 @@ async def test_queue_expiration_is_reported_and_never_runs():
 
 
 def test_all_outcomes_are_advertised_without_breaking_existing_events():
-    from custom_components.atvv_remote.event import VoiceButton
+    from custom_components.bt_remote_voice.event import VoiceButton
 
     entry = SimpleNamespace(data={"address": "02:00:00:00:00:01", "name": "Test"})
     button = VoiceButton(SimpleNamespace(entry=entry))
@@ -341,7 +344,7 @@ def test_all_outcomes_are_advertised_without_breaking_existing_events():
 
 
 def test_preferences_are_validated_and_defaults_preserve_behavior():
-    from custom_components.atvv_remote.preferences import preferences
+    from custom_components.bt_remote_voice.preferences import preferences
 
     opts = preferences({})
     assert opts["busy_processing"] == opts["busy_playback"] == "reject"
@@ -354,7 +357,7 @@ def test_preferences_are_validated_and_defaults_preserve_behavior():
 
 
 async def test_held_coordinator_runs_two_turns_and_suppresses_response_input():
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(
@@ -400,7 +403,7 @@ async def test_held_coordinator_runs_two_turns_and_suppresses_response_input():
 
 
 async def test_replacement_is_blocked_when_previous_stop_unverified():
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(FakeHass(), SimpleNamespace(data=Entry.data, options={}))
@@ -420,7 +423,7 @@ async def test_replacement_is_blocked_when_previous_stop_unverified():
 async def test_fresh_context_does_not_reuse_previous_chat_id():
     from contextlib import contextmanager
 
-    from custom_components.atvv_remote.pipeline import run_audio_pipeline
+    from custom_components.bt_remote_voice.pipeline import run_audio_pipeline
 
     sat = SimpleNamespace(
         hass=SimpleNamespace(),
@@ -439,9 +442,12 @@ async def test_fresh_context_does_not_reuse_previous_chat_id():
         yield SimpleNamespace(conversation_id="new")
 
     with (
-        patch("custom_components.atvv_remote.pipeline.chat_session.async_get_chat_session", chat),
         patch(
-            "custom_components.atvv_remote.pipeline.async_pipeline_from_audio_stream", AsyncMock()
+            "custom_components.bt_remote_voice.pipeline.chat_session.async_get_chat_session", chat
+        ),
+        patch(
+            "custom_components.bt_remote_voice.pipeline.async_pipeline_from_audio_stream",
+            AsyncMock(),
         ),
     ):
         await run_audio_pipeline(
@@ -451,7 +457,7 @@ async def test_fresh_context_does_not_reuse_previous_chat_id():
 
 
 async def test_long_logical_capture_drains_25_seconds_without_truncation():
-    from custom_components.atvv_remote.held import Utterance
+    from custom_components.bt_remote_voice.held import Utterance
 
     u = Utterance()
     for _ in range(2500):
@@ -464,7 +470,7 @@ async def test_long_logical_capture_drains_25_seconds_without_truncation():
 async def test_provider_stream_error_is_raised_instead_of_clean_eof():
     from contextlib import contextmanager
 
-    from custom_components.atvv_remote.pipeline import run_audio_pipeline
+    from custom_components.bt_remote_voice.pipeline import run_audio_pipeline
 
     sat = SimpleNamespace(
         hass=SimpleNamespace(),
@@ -492,8 +498,12 @@ async def test_provider_stream_error_is_raised_instead_of_clean_eof():
         effects.append("clean_eof")
 
     with (
-        patch("custom_components.atvv_remote.pipeline.chat_session.async_get_chat_session", chat),
-        patch("custom_components.atvv_remote.pipeline.async_pipeline_from_audio_stream", provider),
+        patch(
+            "custom_components.bt_remote_voice.pipeline.chat_session.async_get_chat_session", chat
+        ),
+        patch(
+            "custom_components.bt_remote_voice.pipeline.async_pipeline_from_audio_stream", provider
+        ),
     ):
         with pytest.raises(AudioFailure, match="audio_sequence_gap"):
             await run_audio_pipeline(sat, s, "stt", "intent")
@@ -503,7 +513,7 @@ async def test_provider_stream_error_is_raised_instead_of_clean_eof():
 async def test_playback_timeout_stops_owned_audio(hass):
     from homeassistant.components.media_player import MediaPlayerEntityFeature
 
-    from custom_components.atvv_remote.playback import play_reply
+    from custom_components.bt_remote_voice.playback import play_reply
 
     hass.states.async_set(
         "media_player.test",
@@ -526,7 +536,7 @@ async def test_playback_timeout_stops_owned_audio(hass):
 
 
 async def test_requested_start_remote_can_queue_while_busy():
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(
@@ -546,7 +556,7 @@ async def test_requested_start_remote_can_queue_while_busy():
 
 
 async def test_abnormal_held_stop_never_publishes_completed_turn():
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(
@@ -567,7 +577,7 @@ async def test_abnormal_held_stop_never_publishes_completed_turn():
 
 
 async def test_pending_request_expires_while_original_still_running():
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(
@@ -599,8 +609,8 @@ async def test_pending_request_expires_while_original_still_running():
 async def test_early_playback_error_cancels_generation_promptly():
     from homeassistant.components.assist_pipeline import PipelineEvent, PipelineEventType
 
-    from custom_components.atvv_remote.assist_satellite import RemoteSatellite
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.assist_satellite import RemoteSatellite
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(
@@ -637,7 +647,7 @@ async def test_early_playback_error_cancels_generation_promptly():
         patch.object(sat, "_resolve_pipeline", return_value="p"),
         patch.object(sat, "async_accept_pipeline_from_satellite", side_effect=accept),
         patch(
-            "custom_components.atvv_remote.assist_satellite.play_reply",
+            "custom_components.bt_remote_voice.assist_satellite.play_reply",
             AsyncMock(side_effect=AudioFailure("speaker_busy")),
         ),
     ):
@@ -647,7 +657,7 @@ async def test_early_playback_error_cancels_generation_promptly():
 
 
 async def test_held_failure_closes_capture_instead_of_resuming():
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(
@@ -670,7 +680,7 @@ async def test_held_failure_closes_capture_instead_of_resuming():
 
 
 async def test_requested_start_recovery_after_speaker_becomes_idle():
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     hass = FakeHass()
@@ -695,7 +705,7 @@ async def test_physical_capture_through_core_stream_exceeds_old_15_second_cutoff
     from homeassistant.components.assist_pipeline.models import AudioSettings
     from homeassistant.components.assist_pipeline.vad import VoiceCommandSegmenter
 
-    from custom_components.atvv_remote.pipeline import run_audio_pipeline
+    from custom_components.bt_remote_voice.pipeline import run_audio_pipeline
 
     host = SimpleNamespace(
         audio_settings=AudioSettings(is_vad_enabled=False),
@@ -749,8 +759,12 @@ async def test_physical_capture_through_core_stream_exceeds_old_15_second_cutoff
         s.release()
 
     with (
-        patch("custom_components.atvv_remote.pipeline.chat_session.async_get_chat_session", chat),
-        patch("custom_components.atvv_remote.pipeline.async_pipeline_from_audio_stream", provider),
+        patch(
+            "custom_components.bt_remote_voice.pipeline.chat_session.async_get_chat_session", chat
+        ),
+        patch(
+            "custom_components.bt_remote_voice.pipeline.async_pipeline_from_audio_stream", provider
+        ),
     ):
         await asyncio.gather(run_audio_pipeline(sat, s, "stt", "intent"), produce())
     assert sum(map(len, consumed)) == 819200 and s.input_complete and not s.error
@@ -759,7 +773,7 @@ async def test_physical_capture_through_core_stream_exceeds_old_15_second_cutoff
 async def test_live_tool_can_precede_stt_failure_and_is_not_retried():
     from contextlib import contextmanager
 
-    from custom_components.atvv_remote.pipeline import run_audio_pipeline
+    from custom_components.bt_remote_voice.pipeline import run_audio_pipeline
 
     sat = SimpleNamespace(
         hass=SimpleNamespace(),
@@ -788,8 +802,12 @@ async def test_live_tool_can_precede_stt_failure_and_is_not_retried():
         _ = [x async for x in kwargs["stt_stream"]]
 
     with (
-        patch("custom_components.atvv_remote.pipeline.chat_session.async_get_chat_session", chat),
-        patch("custom_components.atvv_remote.pipeline.async_pipeline_from_audio_stream", provider),
+        patch(
+            "custom_components.bt_remote_voice.pipeline.chat_session.async_get_chat_session", chat
+        ),
+        patch(
+            "custom_components.bt_remote_voice.pipeline.async_pipeline_from_audio_stream", provider
+        ),
     ):
         with pytest.raises(AudioFailure):
             await run_audio_pipeline(sat, s, "stt", "intent")
@@ -797,7 +815,7 @@ async def test_live_tool_can_precede_stt_failure_and_is_not_retried():
 
 
 async def test_replacement_wait_is_bounded_for_cancellation_resistant_generation():
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(FakeHass(), SimpleNamespace(data=Entry.data, options={}))
@@ -829,7 +847,7 @@ async def test_replacement_wait_is_bounded_for_cancellation_resistant_generation
 async def test_owned_stop_must_be_observed_before_retirement(hass):
     from homeassistant.components.media_player import MediaPlayerEntityFeature
 
-    from custom_components.atvv_remote.playback import play_reply
+    from custom_components.bt_remote_voice.playback import play_reply
 
     hass.states.async_set(
         "media_player.test",
@@ -853,7 +871,7 @@ async def test_owned_stop_must_be_observed_before_retirement(hass):
 
 
 async def _disconnect_harness(options, run):
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(FakeHass(), SimpleNamespace(data=Entry.data, options=options))
@@ -867,7 +885,7 @@ async def _disconnect_harness(options, run):
     )
     c.run_pipeline = run
     patcher = patch(
-        "custom_components.atvv_remote.coordinator.BlueZTransport", return_value=transport
+        "custom_components.bt_remote_voice.coordinator.BlueZTransport", return_value=transport
     )
     patcher.start()
     c.connection_task = asyncio.create_task(c.connect_loop())
@@ -992,8 +1010,8 @@ async def test_disconnect_with_incomplete_active_input_cancels_everything(held):
 
 async def test_input_failure_with_resistant_generation_blocks_recovery():
     """Input abort while generation resists cancellation must block recovery."""
-    from custom_components.atvv_remote.assist_satellite import RemoteSatellite
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.assist_satellite import RemoteSatellite
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(
@@ -1060,7 +1078,7 @@ async def test_disconnect_discarded_pending_is_recorded():
 
 
 async def test_held_trailing_audio_after_stop_reaches_turn():
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     c = VoiceCoordinator(
@@ -1091,14 +1109,14 @@ async def test_held_trailing_audio_after_stop_reaches_turn():
 
 
 def _coordinator(options=None):
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import Entry, FakeHass
 
     return VoiceCoordinator(FakeHass(), SimpleNamespace(data=Entry.data, options=options or {}))
 
 
 async def test_error_sensor_reports_root_cause_and_clears_on_success():
-    from custom_components.atvv_remote.sensor import LastError
+    from custom_components.bt_remote_voice.sensor import LastError
 
     c = _coordinator()
     c.caps = Capabilities(128)
@@ -1140,7 +1158,7 @@ async def test_error_sensor_reports_root_cause_and_clears_on_success():
 
 
 async def test_busy_rejection_is_not_a_latched_error():
-    from custom_components.atvv_remote.sensor import LastError
+    from custom_components.bt_remote_voice.sensor import LastError
 
     c = _coordinator()
     c.caps = Capabilities(128)
@@ -1165,7 +1183,7 @@ async def test_busy_rejection_is_not_a_latched_error():
 
 
 async def test_error_sensor_survives_disconnect_and_keeps_failure_details():
-    from custom_components.atvv_remote.sensor import LastError
+    from custom_components.bt_remote_voice.sensor import LastError
 
     c = _coordinator()
     c.ready = False
@@ -1179,9 +1197,9 @@ async def test_error_sensor_survives_disconnect_and_keeps_failure_details():
 def test_audible_feedback_is_removed():
     from importlib.util import find_spec
 
-    from custom_components.atvv_remote import preferences
+    from custom_components.bt_remote_voice import preferences
 
-    assert find_spec("custom_components.atvv_remote.feedback") is None
+    assert find_spec("custom_components.bt_remote_voice.feedback") is None
     assert "audible_feedback" not in preferences.DEFAULTS
 
 
@@ -1212,8 +1230,8 @@ async def test_each_request_keeps_its_own_timings_in_history():
 
 
 def _streaming_satellite(head_start):
-    from custom_components.atvv_remote.assist_satellite import RemoteSatellite
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.assist_satellite import RemoteSatellite
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
 
     options = {"mode": "commands", "speaker": "media_player.test"}
     if head_start is not None:
@@ -1270,7 +1288,9 @@ async def _run_streamed(sat, generation_seconds):
     with (
         patch.object(sat, "_resolve_pipeline", return_value="p"),
         patch.object(sat, "async_accept_pipeline_from_satellite", side_effect=accept),
-        patch("custom_components.atvv_remote.assist_satellite.play_reply", side_effect=playback),
+        patch(
+            "custom_components.bt_remote_voice.assist_satellite.play_reply", side_effect=playback
+        ),
         patch.object(sat, "tts_response_finished"),
     ):
         await sat.run(u)
@@ -1311,7 +1331,7 @@ async def test_cancelled_run_leaves_no_pending_head_start_timer():
 
 
 def test_head_start_preference_is_validated():
-    from custom_components.atvv_remote.preferences import DEFAULTS, preferences
+    from custom_components.bt_remote_voice.preferences import DEFAULTS, preferences
 
     assert DEFAULTS["stream_head_start"] == 0
     assert preferences({"stream_head_start": 3.5})["stream_head_start"] == 3.5
@@ -1376,7 +1396,9 @@ async def test_events_from_a_retired_generation_cannot_start_playback():
     with (
         patch.object(sat, "_resolve_pipeline", return_value="p"),
         patch.object(sat, "async_accept_pipeline_from_satellite", side_effect=accept),
-        patch("custom_components.atvv_remote.assist_satellite.play_reply", side_effect=playback),
+        patch(
+            "custom_components.bt_remote_voice.assist_satellite.play_reply", side_effect=playback
+        ),
         patch.object(sat, "_set_state"),
     ):
         task = asyncio.create_task(sat.run(u))
@@ -1396,7 +1418,7 @@ def test_replacement_waits_at_least_as_long_as_the_satellite_cleanup():
 
 
 async def test_earlier_success_does_not_clear_a_later_requests_failure():
-    from custom_components.atvv_remote.sensor import LastError
+    from custom_components.bt_remote_voice.sensor import LastError
 
     c = _coordinator({"busy_processing": "queue"})
     c.caps = Capabilities(128)
@@ -1429,9 +1451,9 @@ async def test_queued_replacement_press_is_not_reported_with_an_error_message():
     c = _coordinator()
     c.hass.config = SimpleNamespace(language="en")
     with patch(
-        "custom_components.atvv_remote.preferences.async_get_cached_translations",
+        "custom_components.bt_remote_voice.preferences.async_get_cached_translations",
         return_value={
-            "component.atvv_remote.entity.sensor.last_error.state.other": "An error occurred."
+            "component.bt_remote_voice.entity.sensor.last_error.state.other": "An error occurred."
         },
     ):
         c.outcome("queued", "replacement")

@@ -4,8 +4,8 @@ from unittest.mock import AsyncMock, patch
 import pytest
 import voluptuous as vol
 
-from custom_components.atvv_remote.bluez import Remote
-from custom_components.atvv_remote.config_flow import ConfigFlow, pipeline_choices
+from custom_components.bt_remote_voice.bluez import Remote
+from custom_components.bt_remote_voice.config_flow import ConfigFlow, pipeline_choices
 
 
 async def test_picker_lists_bonded_remote_and_manual_fallback(hass):
@@ -14,7 +14,7 @@ async def test_picker_lists_bonded_remote_and_manual_fallback(hass):
     flow.context = {"source": "user"}
     remote = Remote("02:00:00:00:00:01", "Test Remote", "/org/bluez/hci1/dev_test", False, True)
     with patch(
-        "custom_components.atvv_remote.config_flow.BlueZTransport.list_paired",
+        "custom_components.bt_remote_voice.config_flow.BlueZTransport.list_paired",
         AsyncMock(return_value=[remote]),
     ):
         result = await flow.async_step_user()
@@ -46,17 +46,21 @@ async def test_complete_entry_setup_creates_entities_and_unloads(hass):
     from homeassistant import loader
     from homeassistant.config_entries import ConfigEntry
 
-    from custom_components.atvv_remote import async_setup_entry, async_unload_entry
+    from custom_components.bt_remote_voice import async_setup_entry, async_unload_entry
 
-    path = Path(__file__).parents[1] / "custom_components" / "atvv_remote"
+    path = Path(__file__).parents[1] / "custom_components" / "bt_remote_voice"
     manifest = json.loads((path / "manifest.json").read_text())
     loader.async_setup(hass)
     integration = loader.Integration(
-        hass, "custom_components.atvv_remote", path, manifest, set(x.name for x in path.iterdir())
+        hass,
+        "custom_components.bt_remote_voice",
+        path,
+        manifest,
+        set(x.name for x in path.iterdir()),
     )
-    hass.data[loader.DATA_CUSTOM_COMPONENTS] = {"atvv_remote": integration}
+    hass.data[loader.DATA_CUSTOM_COMPONENTS] = {"bt_remote_voice": integration}
     entry = ConfigEntry(
-        domain="atvv_remote",
+        domain="bt_remote_voice",
         title="Test Remote",
         version=1,
         minor_version=1,
@@ -74,7 +78,7 @@ async def test_complete_entry_setup_creates_entities_and_unloads(hass):
     )
     hass.config_entries._entries[entry.entry_id] = entry
     with (
-        patch("custom_components.atvv_remote.coordinator.VoiceCoordinator.start"),
+        patch("custom_components.bt_remote_voice.coordinator.VoiceCoordinator.start"),
         patch("homeassistant.components.http.server.HomeAssistantHTTP.async_bind", AsyncMock()),
     ):
         async with entry.setup_lock:
@@ -100,7 +104,7 @@ async def test_options_speaker_is_optional_configurable_and_preserves_unknown_op
 
     from homeassistant.components.media_player import MediaPlayerEntityFeature
 
-    from custom_components.atvv_remote.config_flow import OptionsFlow
+    from custom_components.bt_remote_voice.config_flow import OptionsFlow
 
     entry = SimpleNamespace(
         data={"pipeline_id": "stable-id"}, options={"mode": "commands", "future_option": True}
@@ -113,7 +117,8 @@ async def test_options_speaker_is_optional_configurable_and_preserves_unknown_op
         {"supported_features": int(MediaPlayerEntityFeature.PLAY_MEDIA)},
     )
     with patch(
-        "custom_components.atvv_remote.config_flow.pipelines", return_value={"stable-id": "Offline"}
+        "custom_components.bt_remote_voice.config_flow.pipelines",
+        return_value={"stable-id": "Offline"},
     ):
         result = await flow.async_step_init(
             {"pipeline_id": "stable-id", "mode": "commands", "speaker": "media_player.test_speaker"}
@@ -126,7 +131,7 @@ async def test_options_speaker_is_optional_configurable_and_preserves_unknown_op
 async def _configure_fire(hass, transport_open):
     from types import SimpleNamespace
 
-    from custom_components.atvv_remote.config_flow import ConfigFlow
+    from custom_components.bt_remote_voice.config_flow import ConfigFlow
 
     flow = ConfigFlow()
     flow.hass = hass
@@ -141,8 +146,8 @@ async def _configure_fire(hass, transport_open):
             closed.append(True)
 
     with (
-        patch("custom_components.atvv_remote.config_flow.pipelines", return_value={"p": "P"}),
-        patch("custom_components.atvv_remote.config_flow.FireTransport", FakeFire),
+        patch("custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "P"}),
+        patch("custom_components.bt_remote_voice.config_flow.FireTransport", FakeFire),
     ):
         result = await flow.async_step_configure({"pipeline_id": "p"})
     return result, closed
@@ -157,7 +162,7 @@ async def test_picker_lists_both_families(hass):
         Remote("02:00:00:00:00:02", "Atvv", "/p2", False, True),
     ]
     with patch(
-        "custom_components.atvv_remote.config_flow.BlueZTransport.list_paired",
+        "custom_components.bt_remote_voice.config_flow.BlueZTransport.list_paired",
         AsyncMock(return_value=remotes),
     ):
         result = await flow.async_step_user()
@@ -195,7 +200,7 @@ async def test_fire_configure_reports_each_failure_distinctly(hass, failure, exp
 async def test_entry_without_family_defaults_to_atvv():
     from types import SimpleNamespace
 
-    from custom_components.atvv_remote.coordinator import VoiceCoordinator
+    from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
     from tests.test_coordinator import FakeHass
 
     c = VoiceCoordinator(
@@ -219,8 +224,8 @@ async def test_entry_without_family_defaults_to_atvv():
             pass
 
     with (
-        patch("custom_components.atvv_remote.coordinator.BlueZTransport", Blue) as blue,
-        patch("custom_components.atvv_remote.coordinator.FireTransport") as fire,
+        patch("custom_components.bt_remote_voice.coordinator.BlueZTransport", Blue) as blue,
+        patch("custom_components.bt_remote_voice.coordinator.FireTransport") as fire,
     ):
         await asyncio.wait_for(c.connect_loop(), 2)
     assert blue is Blue and not fire.called
@@ -230,7 +235,7 @@ async def test_entry_without_family_defaults_to_atvv():
 def _options_flow(hass, data=None, options=None):
     from types import SimpleNamespace
 
-    from custom_components.atvv_remote.config_flow import OptionsFlow
+    from custom_components.bt_remote_voice.config_flow import OptionsFlow
 
     flow = OptionsFlow(SimpleNamespace(data=data or {"pipeline_id": "p1"}, options=options or {}))
     flow.hass = hass
@@ -248,7 +253,7 @@ async def test_pipeline_field_is_a_dropdown_listing_the_real_pipelines(hass):
 
     flow = _options_flow(hass)
     with patch(
-        "custom_components.atvv_remote.config_flow.pipelines",
+        "custom_components.bt_remote_voice.config_flow.pipelines",
         return_value={"p1": "Home Assistant", "p2": "Gemini Live"},
     ):
         result = await flow.async_step_init()
@@ -265,7 +270,8 @@ async def test_pipeline_field_is_a_dropdown_listing_the_real_pipelines(hass):
 async def test_missing_saved_pipeline_is_flagged_not_silently_replaced(hass):
     flow = _options_flow(hass, data={"pipeline_id": "gone"})
     with patch(
-        "custom_components.atvv_remote.config_flow.pipelines", return_value={"p1": "Home Assistant"}
+        "custom_components.bt_remote_voice.config_flow.pipelines",
+        return_value={"p1": "Home Assistant"},
     ):
         result = await flow.async_step_init()
         key, _ = _field(result, "pipeline_id")
@@ -279,7 +285,8 @@ async def test_missing_saved_pipeline_is_flagged_not_silently_replaced(hass):
 async def test_unavailable_saved_speaker_stays_selectable_and_other_settings_still_save(hass):
     flow = _options_flow(hass, options={"mode": "commands", "speaker": "media_player.office"})
     with patch(
-        "custom_components.atvv_remote.config_flow.pipelines", return_value={"p1": "Home Assistant"}
+        "custom_components.bt_remote_voice.config_flow.pipelines",
+        return_value={"p1": "Home Assistant"},
     ):
         result = await flow.async_step_init()
         key, selector = _field(result, "speaker")
@@ -302,7 +309,8 @@ async def test_unavailable_saved_speaker_stays_selectable_and_other_settings_sti
 async def test_a_different_unknown_speaker_is_still_rejected(hass):
     flow = _options_flow(hass, options={"speaker": "media_player.office"})
     with patch(
-        "custom_components.atvv_remote.config_flow.pipelines", return_value={"p1": "Home Assistant"}
+        "custom_components.bt_remote_voice.config_flow.pipelines",
+        return_value={"p1": "Home Assistant"},
     ):
         result = await flow.async_step_init(
             {"pipeline_id": "p1", "mode": "commands", "speaker": "media_player.typo"}
@@ -314,7 +322,8 @@ async def test_options_accept_a_short_press_minimum_and_reject_one_out_of_range(
     flow = _options_flow(hass)
     base = {"pipeline_id": "p1", "mode": "commands"}
     with patch(
-        "custom_components.atvv_remote.config_flow.pipelines", return_value={"p1": "Home Assistant"}
+        "custom_components.bt_remote_voice.config_flow.pipelines",
+        return_value={"p1": "Home Assistant"},
     ):
         ok = await flow.async_step_init({**base, "min_press_seconds": 0.1})
         bad = await flow.async_step_init({**base, "min_press_seconds": 0.55})

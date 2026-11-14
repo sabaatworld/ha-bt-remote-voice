@@ -1,4 +1,4 @@
-"""ATVV microphone satellite using HA's native pipeline lifecycle."""
+"""Bluetooth remote microphone satellite using HA's native pipeline lifecycle."""
 
 import asyncio
 from contextlib import suppress
@@ -115,7 +115,7 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
                 output,
                 on_stage=lambda stage, session=self.current_session: self.timing(stage, session),
             ),
-            name="ATVV reply",
+            name="BT voice reply",
         )
         self.playback_ready.set()
         if self.entity_id:
@@ -159,7 +159,7 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
                 if mode == "commands"
                 else PipelineStage.STT,
             ),
-            name="ATVV generation",
+            name="BT voice generation",
         )
         readiness = asyncio.create_task(self.playback_ready.wait())
         try:
@@ -259,7 +259,7 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
                 if head_start > 0:
                     self.coordinator.last_timings["head_start_ms"] = round(head_start * 1000)
                     self.head_start_task = asyncio.create_task(
-                        self._start_after(output, head_start), name="ATVV head start"
+                        self._start_after(output, head_start), name="BT voice head start"
                     )
                 else:
                     self.start_playback(output)

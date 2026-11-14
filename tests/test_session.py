@@ -1,7 +1,7 @@
 import pytest
 
-from custom_components.atvv_remote.protocol import Control
-from custom_components.atvv_remote.session import AudioFailure, VoiceSession
+from custom_components.bt_remote_voice.protocol import Control
+from custom_components.bt_remote_voice.session import AudioFailure, VoiceSession
 
 
 async def collect(session):

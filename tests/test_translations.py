@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from homeassistant.helpers.selector import SelectSelector
 
-COMPONENT = Path(__file__).parents[1] / "custom_components" / "atvv_remote"
+COMPONENT = Path(__file__).parents[1] / "custom_components" / "bt_remote_voice"
 STRINGS = json.loads((COMPONENT / "strings.json").read_text())
 ADDRESS = "02:00:00:00:00:01"
 
@@ -42,8 +42,8 @@ def selectors(result):
 async def _forms(hass):
     from homeassistant.components.media_player import MediaPlayerEntityFeature
 
-    from custom_components.atvv_remote.bluez import Remote
-    from custom_components.atvv_remote.config_flow import ConfigFlow, OptionsFlow
+    from custom_components.bt_remote_voice.bluez import Remote
+    from custom_components.bt_remote_voice.config_flow import ConfigFlow, OptionsFlow
 
     hass.states.async_set(
         "media_player.test_speaker",
@@ -56,11 +56,12 @@ async def _forms(hass):
     remote = Remote(ADDRESS, "Test Remote", "/org/bluez/hci1/dev_test", False, True)
     with (
         patch(
-            "custom_components.atvv_remote.config_flow.BlueZTransport.list_paired",
+            "custom_components.bt_remote_voice.config_flow.BlueZTransport.list_paired",
             AsyncMock(return_value=[remote]),
         ),
         patch(
-            "custom_components.atvv_remote.config_flow.pipelines", return_value={"p": "Pipeline"}
+            "custom_components.bt_remote_voice.config_flow.pipelines",
+            return_value={"p": "Pipeline"},
         ),
     ):
         user = await flow.async_step_user()
@@ -94,7 +95,7 @@ async def test_every_form_field_has_a_label_and_a_description(hass):
 
 
 async def test_choice_fields_use_translated_selectors(hass):
-    from custom_components.atvv_remote.preferences import CHOICES
+    from custom_components.bt_remote_voice.preferences import CHOICES
 
     forms = await _forms(hass)
     options = selectors(forms["options"]["init"])
@@ -155,10 +156,10 @@ def _coordinator():
 
 
 def test_every_entity_has_a_translated_name_and_attribute_names():
-    from custom_components.atvv_remote.assist_satellite import RemoteSatellite
-    from custom_components.atvv_remote.binary_sensor import MicrophoneActive
-    from custom_components.atvv_remote.event import VoiceButton
-    from custom_components.atvv_remote.sensor import LastError
+    from custom_components.bt_remote_voice.assist_satellite import RemoteSatellite
+    from custom_components.bt_remote_voice.binary_sensor import MicrophoneActive
+    from custom_components.bt_remote_voice.event import VoiceButton
+    from custom_components.bt_remote_voice.sensor import LastError
 
     c = _coordinator()
     for domain, cls in (
@@ -181,14 +182,14 @@ def test_every_entity_has_a_translated_name_and_attribute_names():
 
 
 def test_error_codes_and_translated_states_agree():
-    from custom_components.atvv_remote.preferences import ERROR_CODES
+    from custom_components.bt_remote_voice.preferences import ERROR_CODES
 
     states = set(STRINGS["entity"]["sensor"]["last_error"]["state"])
     assert states == {"none", "other", *ERROR_CODES}
 
 
 def test_unknown_error_codes_report_other_with_the_raw_code():
-    from custom_components.atvv_remote.sensor import LastError
+    from custom_components.bt_remote_voice.sensor import LastError
 
     c = _coordinator()
     sensor = LastError(c)
@@ -208,12 +209,12 @@ def test_unknown_error_codes_report_other_with_the_raw_code():
 
 
 def test_error_messages_come_from_translations_and_fall_back_to_other():
-    from custom_components.atvv_remote.preferences import error_message
+    from custom_components.bt_remote_voice.preferences import error_message
 
-    cache = flatten("component.atvv_remote", {"entity": STRINGS["entity"]}, {})
+    cache = flatten("component.bt_remote_voice", {"entity": STRINGS["entity"]}, {})
     hass = SimpleNamespace(config=SimpleNamespace(language="en"))
     with patch(
-        "custom_components.atvv_remote.preferences.async_get_cached_translations",
+        "custom_components.bt_remote_voice.preferences.async_get_cached_translations",
         return_value=cache,
     ):
         assert error_message(hass, "busy") == "Still answering the previous request."
@@ -227,19 +228,19 @@ def test_error_messages_come_from_translations_and_fall_back_to_other():
 
 @pytest.mark.parametrize("language", ["en"])
 async def test_translations_are_preloaded_for_runtime_messages(hass, language):
-    from custom_components.atvv_remote import preload_translations
+    from custom_components.bt_remote_voice import preload_translations
 
     with patch(
-        "custom_components.atvv_remote.async_get_translations", AsyncMock(return_value={})
+        "custom_components.bt_remote_voice.async_get_translations", AsyncMock(return_value={})
     ) as load:
         await preload_translations(hass)
     load.assert_awaited_once()
-    assert load.await_args.args[2] == "entity" and load.await_args.args[3] == ["atvv_remote"]
+    assert load.await_args.args[2] == "entity" and load.await_args.args[3] == ["bt_remote_voice"]
 
 
 def test_every_emitted_failure_code_has_a_translated_state():
     """Codes the source can report must be ERROR_CODES entries, not silent 'other'."""
-    from custom_components.atvv_remote.preferences import ERROR_CODES
+    from custom_components.bt_remote_voice.preferences import ERROR_CODES
 
     not_failures = {
         "invalid_preferences",
@@ -286,7 +287,7 @@ def test_every_repair_issue_has_a_title_and_description():
     import json
     from pathlib import Path
 
-    root = Path(__file__).parents[1] / "custom_components" / "atvv_remote"
+    root = Path(__file__).parents[1] / "custom_components" / "bt_remote_voice"
     issues = json.loads((root / "strings.json").read_text())["issues"]
     assert set(issues) == {"pipeline_missing", "speaker_missing"}
     for text in issues.values():

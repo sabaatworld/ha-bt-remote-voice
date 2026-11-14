@@ -5,7 +5,7 @@ import pytest
 
 pytest.importorskip("av")
 
-from custom_components.atvv_remote.opus import OpusDecoder, opus_available  # noqa: E402
+from custom_components.bt_remote_voice.opus import OpusDecoder, opus_available  # noqa: E402
 from tests.fire_helpers import synthetic_packets  # noqa: E402
 
 
@@ -47,8 +47,8 @@ def test_corrupt_packet_never_crashes():
 
 def test_decoder_unavailable_is_reported():
     with (
-        patch("custom_components.atvv_remote.opus._PyAvBackend", side_effect=ImportError),
-        patch("custom_components.atvv_remote.opus._CtypesBackend", side_effect=OSError),
+        patch("custom_components.bt_remote_voice.opus._PyAvBackend", side_effect=ImportError),
+        patch("custom_components.bt_remote_voice.opus._CtypesBackend", side_effect=OSError),
     ):
         with pytest.raises(ValueError, match="opus_decoder_unavailable"):
             OpusDecoder()
@@ -58,7 +58,7 @@ def test_decoder_unavailable_is_reported():
 @pytest.mark.skipif(ctypes.util.find_library("opus") is None, reason="no system libopus")
 def test_ctypes_fallback_decodes_same_stream_approximately():
     packets = synthetic_packets(50)
-    with patch("custom_components.atvv_remote.opus._PyAvBackend", side_effect=ImportError):
+    with patch("custom_components.bt_remote_voice.opus._PyAvBackend", side_effect=ImportError):
         fallback = OpusDecoder()
     primary = OpusDecoder()
     a = b"".join(primary.decode(p) for p in packets)

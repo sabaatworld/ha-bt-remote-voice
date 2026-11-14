@@ -11,7 +11,7 @@ from homeassistant.helpers import condition
 from homeassistant.helpers.json import json_bytes
 from homeassistant.helpers.selector import ConditionSelector
 
-from custom_components.atvv_remote.reply_condition import (
+from custom_components.bt_remote_voice.reply_condition import (
     ReplyCondition,
     ReplyConditionSelector,
     load_conditions,
@@ -136,15 +136,15 @@ GOOD = [
 
 
 def _entry(hass, options=None):
-    path = ROOT / "custom_components" / "atvv_remote"
+    path = ROOT / "custom_components" / "bt_remote_voice"
     manifest = json.loads((path / "manifest.json").read_text())
     loader.async_setup(hass)
     integration = loader.Integration(
-        hass, "custom_components.atvv_remote", path, manifest, {x.name for x in path.iterdir()}
+        hass, "custom_components.bt_remote_voice", path, manifest, {x.name for x in path.iterdir()}
     )
-    hass.data[loader.DATA_CUSTOM_COMPONENTS] = {"atvv_remote": integration}
+    hass.data[loader.DATA_CUSTOM_COMPONENTS] = {"bt_remote_voice": integration}
     entry = ConfigEntry(
-        domain="atvv_remote",
+        domain="bt_remote_voice",
         title="Test Remote",
         version=1,
         minor_version=1,
@@ -160,7 +160,7 @@ def _entry(hass, options=None):
 
 
 async def _submit(hass, entry, condition_value):
-    with patch("custom_components.atvv_remote.config_flow.pipelines", return_value={"p": "P"}):
+    with patch("custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "P"}):
         form = await hass.config_entries.options.async_init(entry.entry_id)
         return form, await hass.config_entries.options.async_configure(
             form["flow_id"],
@@ -175,7 +175,7 @@ async def _submit(hass, entry, condition_value):
 
 async def test_reply_condition_field_is_fourth(hass):
     entry = _entry(hass)
-    with patch("custom_components.atvv_remote.config_flow.pipelines", return_value={"p": "P"}):
+    with patch("custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "P"}):
         form = await hass.config_entries.options.async_init(entry.entry_id)
     keys = [str(k) for k in form["data_schema"].schema]
     assert keys[:4] == ["pipeline_id", "mode", "speaker", "reply_condition"]
@@ -198,15 +198,15 @@ async def test_invalid_condition_is_rejected_with_translated_error(hass):
     _form, result = await _submit(hass, entry, [{"condition": "no_such_condition"}])
     assert result["type"] == "form"
     assert result["errors"] == {"base": "invalid_reply_condition"}
-    strings = json.loads((ROOT / "custom_components/atvv_remote/strings.json").read_text())
+    strings = json.loads((ROOT / "custom_components/bt_remote_voice/strings.json").read_text())
     assert strings["options"]["error"]["invalid_reply_condition"]
 
 
 def test_event_types_include_reply_skipped_and_are_translated():
-    strings = json.loads((ROOT / "custom_components/atvv_remote/strings.json").read_text())
+    strings = json.loads((ROOT / "custom_components/bt_remote_voice/strings.json").read_text())
     states = strings["entity"]["event"]["voice_button"]["state_attributes"]["event_type"]["state"]
     assert states["reply_skipped"]
-    from custom_components.atvv_remote.event import VoiceButton
+    from custom_components.bt_remote_voice.event import VoiceButton
     from tests.test_translations import _coordinator
 
     assert "reply_skipped" in VoiceButton(_coordinator())._attr_event_types
@@ -237,12 +237,12 @@ async def test_decide_after_unload_is_condition_error(hass):
 async def test_setup_builds_the_condition_from_options_and_unload_clears_it(hass):
     from unittest.mock import AsyncMock
 
-    from custom_components.atvv_remote import async_setup_entry, async_unload_entry
+    from custom_components.bt_remote_voice import async_setup_entry, async_unload_entry
 
     entry = _entry(hass, {"reply_condition": GOOD})
     hass.states.async_set("binary_sensor.office_occupancy", "off")
     with (
-        patch("custom_components.atvv_remote.coordinator.VoiceCoordinator.start"),
+        patch("custom_components.bt_remote_voice.coordinator.VoiceCoordinator.start"),
         patch("homeassistant.components.http.server.HomeAssistantHTTP.async_bind", AsyncMock()),
     ):
         async with entry.setup_lock:
@@ -260,7 +260,7 @@ async def test_setup_builds_the_condition_from_options_and_unload_clears_it(hass
 async def test_failed_platform_setup_unloads_the_prepared_condition(hass):
     from unittest.mock import AsyncMock
 
-    from custom_components.atvv_remote import async_setup_entry
+    from custom_components.bt_remote_voice import async_setup_entry
 
     entry = _entry(hass, {"reply_condition": GOOD})
     holder = {}
@@ -271,7 +271,7 @@ async def test_failed_platform_setup_unloads_the_prepared_condition(hass):
         real(self)
 
     with (
-        patch("custom_components.atvv_remote.coordinator.VoiceCoordinator.start"),
+        patch("custom_components.bt_remote_voice.coordinator.VoiceCoordinator.start"),
         patch.object(ReplyCondition, "async_unload", spy),
         patch.object(
             hass.config_entries,
@@ -292,7 +292,7 @@ async def test_setup_raises_repairs_for_missing_dependencies_and_unload_clears_t
     from homeassistant.core import CoreState
     from homeassistant.helpers import issue_registry as ir
 
-    from custom_components.atvv_remote import (
+    from custom_components.bt_remote_voice import (
         async_remove_entry,
         async_setup_entry,
         async_unload_entry,
@@ -302,11 +302,11 @@ async def test_setup_raises_repairs_for_missing_dependencies_and_unload_clears_t
     registry = ir.async_get(hass)
 
     def mine():
-        return {i.issue_id for i in registry.issues.values() if i.domain == "atvv_remote"}
+        return {i.issue_id for i in registry.issues.values() if i.domain == "bt_remote_voice"}
 
     with (
-        patch("custom_components.atvv_remote.coordinator.VoiceCoordinator.start"),
-        patch("custom_components.atvv_remote.issues.pipelines", return_value={}),
+        patch("custom_components.bt_remote_voice.coordinator.VoiceCoordinator.start"),
+        patch("custom_components.bt_remote_voice.issues.pipelines", return_value={}),
         patch("homeassistant.components.http.server.HomeAssistantHTTP.async_bind", AsyncMock()),
     ):
         async with entry.setup_lock:

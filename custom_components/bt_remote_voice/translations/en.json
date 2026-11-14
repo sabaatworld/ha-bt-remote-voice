@@ -1,5 +1,5 @@
 {
-  "title": "ATVV Remote Voice",
+  "title": "Bluetooth Remote Voice",
   "config": {
     "step": {
       "user": {
@@ -75,13 +75,13 @@
           "mode": "Transcription only stops after speech recognition and plays no reply. Execute commands runs the whole pipeline and speaks the reply on the reply speaker.",
           "speaker": "The media player that speaks replies. Used only when executing commands. Choose no spoken reply to stop the pipeline before the reply is played.",
           "output_mode": "Automatic streaming starts speaking as soon as a streamed reply is ready. Waiting for the complete reply starts later but plays a finished audio file, which avoids breakup with providers that only produce speech at about real-time pace.",
-          "stream_head_start": "Seconds to wait before playing a streamed reply, so the speaker has a lead to avoid breakup at the start. Replies that finish sooner play at once. Has no effect when waiting for the complete reply. 0 keeps the default behavior.",
+          "stream_head_start": "Delays the start of a streamed reply by this many seconds so the speaker can buffer; replies that finish sooner play at once. Raise it if streamed replies break up in the first seconds. No effect when waiting for the complete reply. 0 keeps the default behavior.",
           "busy_processing": "What to do when the button is pressed before the previous request is answered: reject the press, keep one pending request, or replace the current request. Replacing cannot undo actions already performed.",
           "busy_playback": "What to do when the button is pressed while a reply is playing: reject the press, answer one pending request afterward, or stop the reply and start the new request.",
           "context_mode": "Reuse keeps the Home Assistant conversation so follow-ups such as 'and double that?' work. Fresh makes every press an independent conversation.",
           "input_mode": "One request per hold records until the button is released. Alternating conversation keeps listening while the button is held: speak, pause, hear the reply, then speak again. It needs a hold-to-talk remote.",
-          "min_press_seconds": "Voice-button presses shorter than this are ignored without starting a request. A Fire TV remote that was asleep re-sends the key that woke it as an instant tap, which otherwise fails with \"No microphone audio\". 0 turns this off; 0.1 s is a good starting point. Only applies to Fire TV remotes.",
-          "max_request_seconds": "The longest a single request can last on any remote: a whole hold in One-request mode, and each turn in Alternating conversation. Reaching it ends the request with a capture-limit error. Remotes that are not hold-to-talk also end at about 15 seconds of speech or at silence, whichever comes first.",
+          "min_press_seconds": "Ignores voice-button taps shorter than this, so a spurious tap never starts a request; a real hold starts this much later. 0 turns it off. Useful for a Fire TV remote that fails with \"No microphone audio\" right after waking: it re-sends the key that woke it as an instant tap. 0.1 s is a good starting point. Fire TV remotes only.",
+          "max_request_seconds": "The longest a single request can last on any remote: a whole hold in One-request mode, and each turn in Alternating conversation. Reaching it ends the request with a capture-limit error. Lower it to stop a stuck button recording; raise it for long dictation. Remotes that are not hold-to-talk also end at about 15 seconds of speech or at silence, whichever comes first.",
           "max_conversation_seconds": "The longest a whole button hold can last in Alternating conversation mode. It is ignored in One-request mode and must not be shorter than the maximum request length.",
           "reply_condition": "Conditions that must all pass for a reply to be spoken. Checked once at the start of each request (and each turn in Alternating conversation). Leave empty to always speak. A condition that errors counts as not met. Template conditions can use the variables speaker, remote and held."
         }
@@ -309,11 +309,11 @@
   "issues": {
     "pipeline_missing": {
       "title": "Assist pipeline missing for {remote}",
-      "description": "The remote **{remote}** is set to use the Assist pipeline `{pipeline}`, which no longer exists. Voice requests from this remote fail until you choose another pipeline.\n\nGo to **Settings → Devices & services → ATVV Remote Voice**, open the menu of **{remote}**, choose **Configure**, and pick an existing pipeline."
+      "description": "The remote **{remote}** is set to use the Assist pipeline `{pipeline}`, which no longer exists. Voice requests from this remote fail until you choose another pipeline.\n\nGo to **Settings → Devices & services → Bluetooth Remote Voice**, open the menu of **{remote}**, choose **Configure**, and pick an existing pipeline."
     },
     "speaker_missing": {
       "title": "Reply speaker missing for {remote}",
-      "description": "The remote **{remote}** is set to play replies on `{speaker}`, which no longer exists. Commands still run, but their spoken reply will not play.\n\nGo to **Settings → Devices & services → ATVV Remote Voice**, open the menu of **{remote}**, choose **Configure**, and pick another speaker or choose none."
+      "description": "The remote **{remote}** is set to play replies on `{speaker}`, which no longer exists. Commands still run, but their spoken reply will not play.\n\nGo to **Settings → Devices & services → Bluetooth Remote Voice**, open the menu of **{remote}**, choose **Configure**, and pick another speaker or choose none."
     }
   }
 }

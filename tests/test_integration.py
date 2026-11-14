@@ -4,9 +4,9 @@ from unittest.mock import AsyncMock, patch
 import pytest
 from homeassistant.components.assist_pipeline import PipelineEvent, PipelineEventType, PipelineStage
 
-from custom_components.atvv_remote.assist_satellite import RemoteSatellite
-from custom_components.atvv_remote.coordinator import VoiceCoordinator
-from custom_components.atvv_remote.session import AudioFailure, VoiceSession
+from custom_components.bt_remote_voice.assist_satellite import RemoteSatellite
+from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
+from custom_components.bt_remote_voice.session import AudioFailure, VoiceSession
 
 
 class Entry:
@@ -34,12 +34,12 @@ async def test_satellite_streams_stt_only_and_validates_stable_pipeline_id():
         }
     )
     with patch(
-        "custom_components.atvv_remote.assist_satellite.async_get_pipelines",
+        "custom_components.bt_remote_voice.assist_satellite.async_get_pipelines",
         return_value=[SimpleNamespace(id="stable-id", name="Renamed")],
     ):
         assert satellite._resolve_pipeline() == "stable-id"
     with patch(
-        "custom_components.atvv_remote.assist_satellite.async_get_pipelines", return_value=[]
+        "custom_components.bt_remote_voice.assist_satellite.async_get_pipelines", return_value=[]
     ):
         with pytest.raises(AudioFailure, match="pipeline_removed"):
             satellite._resolve_pipeline()
@@ -107,7 +107,9 @@ async def test_configured_reply_runs_tts_and_acknowledges_only_after_playback():
     with (
         patch.object(satellite, "_resolve_pipeline", return_value="stable-id"),
         patch.object(satellite, "async_accept_pipeline_from_satellite", side_effect=accept),
-        patch("custom_components.atvv_remote.assist_satellite.play_reply", side_effect=playback),
+        patch(
+            "custom_components.bt_remote_voice.assist_satellite.play_reply", side_effect=playback
+        ),
         patch.object(
             satellite, "tts_response_finished", side_effect=lambda: order.append("finished")
         ),

@@ -77,7 +77,7 @@ class VoiceCoordinator:
             listener(kind)
 
     def start(self):
-        self.connection_task = self.create_task(self.connect_loop(), "ATVV connection")
+        self.connection_task = self.create_task(self.connect_loop(), "BT voice connection")
 
     def create_task(self, coroutine, name):
         if hasattr(self.entry, "async_create_background_task"):
@@ -226,7 +226,7 @@ class VoiceCoordinator:
             if owner.expiry:
                 owner.expiry.cancel()
             self.pipeline_task = self.create_task(
-                self.process(owner.session, owner), "ATVV promoted"
+                self.process(owner.session, owner), "BT voice promoted"
             )
         except asyncio.CancelledError:
             self.cancel_release_timer(owner)
@@ -391,7 +391,7 @@ class VoiceCoordinator:
             ):
                 self.pending_open = True
                 self.stream_id = 0
-                self.open_task = self.create_task(self.request_microphone(), "ATVV voice request")
+                self.open_task = self.create_task(self.request_microphone(), "BT voice request")
             return
         if event.kind == "open_error":
             self.pending_open = False
@@ -445,7 +445,7 @@ class VoiceCoordinator:
                     self.last_error = "playback_stop_unverified"
                 task = self.create_task(
                     self.reject_stream(self.transport, self.caps, event.stream_id),
-                    "ATVV rejected capture",
+                    "BT voice rejected capture",
                 )
                 self.command_tasks.add(task)
                 task.add_done_callback(self.command_tasks.discard)
@@ -462,18 +462,18 @@ class VoiceCoordinator:
                 self.queued += 1
                 self.outcome("queued", "replacement" if policy == "replace" else None)
                 task = self.create_task(
-                    self.maintain_microphone(owner.session, owner), "ATVV pending mic"
+                    self.maintain_microphone(owner.session, owner), "BT voice pending mic"
                 )
                 self.capture_tasks.add(task)
                 task.add_done_callback(self.capture_tasks.discard)
                 self.promotion_task = self.create_task(
                     self.promote(owner, self.pipeline_task, policy == "replace"),
-                    "ATVV pending request",
+                    "BT voice pending request",
                 )
             else:
                 self.outcome("accepted")
                 self.pipeline_task = self.create_task(
-                    self.process(owner.session, owner), "ATVV utterance"
+                    self.process(owner.session, owner), "BT voice utterance"
                 )
         elif event.kind == "stop":
             self.mic_active = False
@@ -531,11 +531,11 @@ class VoiceCoordinator:
             await self.process_held(owner)
             return
         self.turns += 1
-        pipeline = self.create_task(self.run_pipeline(session), "ATVV pipeline")
+        pipeline = self.create_task(self.run_pipeline(session), "BT voice pipeline")
         microphone = (
             None
             if logical
-            else self.create_task(self.maintain_microphone(session, owner), "ATVV microphone")
+            else self.create_task(self.maintain_microphone(session, owner), "BT voice microphone")
         )
         failed = asyncio.create_task(session.failed.wait())
         self.active_input = session
@@ -626,7 +626,7 @@ class VoiceCoordinator:
 
     async def process_held(self, owner):
         microphone = self.create_task(
-            self.maintain_microphone(owner.session, owner), "ATVV held mic"
+            self.maintain_microphone(owner.session, owner), "BT voice held mic"
         )
         try:
             while True:

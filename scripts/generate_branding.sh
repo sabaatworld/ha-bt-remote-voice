@@ -4,7 +4,7 @@ set -euo pipefail
 
 repo_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 source_dir="$repo_dir/docs/images"
-brand_dir="$repo_dir/custom_components/atvv_remote/brand"
+brand_dir="$repo_dir/custom_components/bt_remote_voice/brand"
 assets=(icon logo dark_logo)
 
 if ! command -v rsvg-convert >/dev/null 2>&1; then
@@ -18,7 +18,7 @@ for asset in "${assets[@]}"; do
   fi
 done
 
-staging_dir="$(mktemp -d "${TMPDIR:-/tmp}/atvv-branding.XXXXXX")"
+staging_dir="$(mktemp -d "${TMPDIR:-/tmp}/bt-remote-voice-branding.XXXXXX")"
 trap 'rm -rf -- "$staging_dir"' EXIT
 # Finish every render before replacing any existing output.
 for asset in "${assets[@]}"; do

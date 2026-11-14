@@ -1,6 +1,6 @@
 import pytest
 
-from custom_components.atvv_remote.protocol import (
+from custom_components.bt_remote_voice.protocol import (
     AdpcmDecoder,
     capabilities,
     decode_frame,

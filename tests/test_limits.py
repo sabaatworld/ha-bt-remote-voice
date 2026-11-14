@@ -3,7 +3,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from custom_components.atvv_remote.preferences import (
+from custom_components.bt_remote_voice.preferences import (
     CONVERSATION_RANGE,
     DEFAULTS,
     FORM_ORDER,
@@ -11,8 +11,8 @@ from custom_components.atvv_remote.preferences import (
     capture_buffer_bytes,
     preferences,
 )
-from custom_components.atvv_remote.protocol import Capabilities
-from custom_components.atvv_remote.session import AudioFailure
+from custom_components.bt_remote_voice.protocol import Capabilities
+from custom_components.bt_remote_voice.session import AudioFailure
 from tests.test_update import _coordinator
 
 
@@ -133,7 +133,7 @@ async def test_held_turn_ends_at_request_limit_with_a_draining_reader():
 
 
 async def test_held_turn_timer_is_cancelled_on_release():
-    from custom_components.atvv_remote.held import Utterance
+    from custom_components.bt_remote_voice.held import Utterance
 
     u = Utterance(max_seconds=0.2)
     u.feed(b"x" * 320)
@@ -155,7 +155,7 @@ async def test_defaults_unchanged_for_capture():
 
 
 async def test_diagnostics_report_limits():
-    from custom_components.atvv_remote.diagnostics import async_get_config_entry_diagnostics
+    from custom_components.bt_remote_voice.diagnostics import async_get_config_entry_diagnostics
 
     c = _coordinator({"max_request_seconds": 45, "max_conversation_seconds": 200})
     c.caps = None
@@ -166,7 +166,7 @@ async def test_diagnostics_report_limits():
 
 # ---- C3: options form order, labels, README ----
 async def _options_form(hass, options=None):
-    from custom_components.atvv_remote.config_flow import OptionsFlow
+    from custom_components.bt_remote_voice.config_flow import OptionsFlow
 
     entry = SimpleNamespace(
         data={"pipeline_id": "p", "name": "Test"}, options=options or {}, title="Test"
@@ -176,7 +176,7 @@ async def _options_form(hass, options=None):
     from unittest.mock import patch
 
     with patch(
-        "custom_components.atvv_remote.config_flow.pipelines", return_value={"p": "Pipeline"}
+        "custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "Pipeline"}
     ):
         return flow, await flow.async_step_init()
 
@@ -203,7 +203,7 @@ async def test_conversation_shorter_than_request_is_an_options_error(hass):
 
     flow, _ = await _options_form(hass)
     with patch(
-        "custom_components.atvv_remote.config_flow.pipelines", return_value={"p": "Pipeline"}
+        "custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "Pipeline"}
     ):
         result = await flow.async_step_init(
             {
@@ -223,7 +223,7 @@ def test_readme_options_table_follows_form_order():
     from pathlib import Path
 
     root = Path(__file__).parents[1]
-    labels = json.loads((root / "custom_components/atvv_remote/strings.json").read_text())[
+    labels = json.loads((root / "custom_components/bt_remote_voice/strings.json").read_text())[
         "options"
     ]["step"]["init"]["data"]
     readme = (root / "README.md").read_text()
@@ -259,7 +259,7 @@ async def test_stop_aborts_the_open_held_turn_and_its_timer():
 
 
 def test_min_press_seconds_default_range_and_rejections():
-    from custom_components.atvv_remote.preferences import DEFAULTS, PRESS_RANGE
+    from custom_components.bt_remote_voice.preferences import DEFAULTS, PRESS_RANGE
 
     assert DEFAULTS["min_press_seconds"] == 0 and PRESS_RANGE == (0, 0.5, 0.05)
     for good in (0, 0.1, 0.5):

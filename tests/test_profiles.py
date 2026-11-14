@@ -2,8 +2,8 @@ from array import array
 
 import pytest
 
-from custom_components.atvv_remote.protocol import Capabilities, capabilities, parse_control
-from custom_components.atvv_remote.session import AudioFailure, VoiceSession
+from custom_components.bt_remote_voice.protocol import Capabilities, capabilities, parse_control
+from custom_components.bt_remote_voice.session import AudioFailure, VoiceSession
 
 
 def test_upstream_capability_vectors_and_versioned_commands():

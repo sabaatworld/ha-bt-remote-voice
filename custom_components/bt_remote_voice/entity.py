@@ -3,6 +3,8 @@
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.entity import DeviceInfo, Entity
 
+from .preferences import DOMAIN
+
 
 class RemoteEntity(Entity):
     _attr_has_entity_name = True
@@ -13,7 +15,7 @@ class RemoteEntity(Entity):
         address = coordinator.entry.data["address"].lower()
         self._attr_unique_id = f"{address}_{suffix}"
         self._attr_device_info = DeviceInfo(
-            identifiers={("atvv_remote", address)},
+            identifiers={(DOMAIN, address)},
             connections={(dr.CONNECTION_BLUETOOTH, address)},
             name=coordinator.entry.data["name"],
         )

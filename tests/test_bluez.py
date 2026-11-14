@@ -1,8 +1,8 @@
 import pytest
 from dbus_fast import Variant
 
-from custom_components.atvv_remote.bluez import choose_write, paired_devices, select_remote
-from custom_components.atvv_remote.protocol import SERVICE
+from custom_components.bt_remote_voice.bluez import choose_write, paired_devices, select_remote
+from custom_components.bt_remote_voice.protocol import SERVICE
 
 
 def obj(address, *, paired=True, services=None):
@@ -51,8 +51,8 @@ def test_duplicate_bonds_require_disambiguation_instead_of_arbitrary_adapter():
 
 async def test_partial_subscription_failure_releases_only_owned_session():
 
-    from custom_components.atvv_remote.bluez import CHAR, BlueZTransport
-    from custom_components.atvv_remote.protocol import CTL, RX, TX
+    from custom_components.bt_remote_voice.bluez import CHAR, BlueZTransport
+    from custom_components.bt_remote_voice.protocol import CTL, RX, TX
 
     class Bus:
         def add_message_handler(self, handler):
@@ -106,7 +106,7 @@ async def test_partial_subscription_failure_releases_only_owned_session():
 
 
 def test_paired_devices_detects_fire_family():
-    from custom_components.atvv_remote.fire import FIRE_VOICE_SERVICE
+    from custom_components.bt_remote_voice.fire import FIRE_VOICE_SERVICE
 
     hid = "00001812-0000-1000-8000-00805f9b34fb"
     items = {

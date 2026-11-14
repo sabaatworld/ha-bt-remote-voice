@@ -1,33 +1,76 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="custom_components/atvv_remote/brand/dark_logo@3x.png">
-  <source media="(prefers-color-scheme: light)" srcset="custom_components/atvv_remote/brand/logo@3x.png">
-  <img src="custom_components/atvv_remote/brand/logo@3x.png" width="100%" alt="ATVV Remote Voice for Home Assistant">
+  <source media="(prefers-color-scheme: dark)" srcset="custom_components/bt_remote_voice/brand/dark_logo@3x.png">
+  <source media="(prefers-color-scheme: light)" srcset="custom_components/bt_remote_voice/brand/logo@3x.png">
+  <img src="custom_components/bt_remote_voice/brand/logo@3x.png" width="100%" alt="Bluetooth Remote Voice to Home Assistant">
 </picture>
 
-Use an already-paired Android TV Voice over BLE (ATVV) remote as an Assist
-microphone. Home Assistant 2026.11.1 or later on Linux with a local BlueZ
-adapter is required. Early development: BT19K is the physically tested model;
-other supported wire formats have synthetic tests, not hardware certification.
+**Talk to Home Assistant with the remote you already own.**
+
+Hold the voice button on a Bluetooth TV remote, say what you want, and hear the answer from
+a speaker of your choice. Bluetooth Remote Voice turns the microphone in remotes that speak
+the Android TV Voice (ATVV) protocol, or in the Amazon Fire TV voice remote, into a native
+Home Assistant Assist satellite: your pipeline and your conversation agent, including live
+speech-to-speech providers such as Gemini Live and OpenAI Realtime.
+
+- **Hold to talk, release to send,** or hold and keep a back-and-forth conversation going.
+- **Any Assist pipeline,** local or cloud, classic or live.
+- **Replies where you want them:** on a media player you choose, optionally only when a
+  condition holds, for example only when you are in that room.
+- **Local and private.** Bluetooth goes straight to the Home Assistant machine; there is no cloud
+  service of its own and no recordings are kept.
+- **Built for real remotes.** Hardware-tested, with sleep and wake handling, busy-request policies
+  (reject, queue or replace) and Repairs notices when a pipeline or speaker goes missing.
+
+How it works: pair the remote with the Home Assistant machine, add the integration, then hold
+the voice button and speak. It needs Home Assistant 2026.11.1 or later on Linux with a local
+BlueZ Bluetooth adapter.
 
 ## Install
 
-1. Copy `custom_components/atvv_remote` into `config/custom_components`, then
-   restart Home Assistant. HACS custom-repository installation is also supported.
-2. Pair the remote on the Home Assistant machine itself (this integration never
-   pairs remotes); see [Pairing a remote](#pairing-a-remote). Wake it with an
-   arrow button before adding **ATVV Remote Voice** in Devices & Services.
-3. Select the paired device and an existing Assist pipeline. Select a speaker
-   and command mode in Configure when ready to process requests and hear replies.
+### 1. Install with HACS (recommended)
 
-The initial mode stops at the STT stage. This does not disable tools embedded
-inside a live STT provider: such a provider may act during speech processing.
-Use a dedicated transcription-only STT provider when actions must be disabled.
+[![Open your Home Assistant instance and open this repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sabaatworld&repository=ha-bt-remote-voice&category=integration)
+
+Or add it by hand:
+
+1. In Home Assistant open **HACS**, then the **⋮** menu, then **Custom repositories**.
+2. Enter `https://github.com/sabaatworld/ha-bt-remote-voice`, choose the category
+   **Integration** and select **Add**.
+3. Find **Bluetooth Remote Voice** in HACS, select **Download**, then restart Home Assistant.
+
+### 2. Pair your remote
+
+Pair the remote with the Home Assistant machine itself; this integration never pairs remotes.
+See [Pairing a remote](#pairing-a-remote).
+
+### 3. Add the integration
+
+[![Open your Home Assistant instance and start setting up Bluetooth Remote Voice.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=bt_remote_voice)
+
+Or go to **Settings → Devices & Services → Add integration → Bluetooth Remote Voice**. Wake the
+remote with an arrow button, select it, then choose an existing Assist pipeline. Later, select a
+speaker and **Execute commands** in **Configure** when you are ready to process requests and hear
+replies.
+
+The initial mode stops after speech recognition. This does not disable tools embedded inside a live
+STT provider: such a provider may act during speech processing. Use a dedicated transcription-only
+STT provider when actions must be disabled.
+
+<details>
+<summary>Manual installation (without HACS)</summary>
+
+Download `bt_remote_voice.zip` from the latest
+[release](https://github.com/sabaatworld/ha-bt-remote-voice/releases), unzip it into
+`config/custom_components/bt_remote_voice`, and restart Home Assistant.
+
+</details>
 
 ## Tested remotes
 
 Remotes that speak the Android TV Voice (ATVV) protocol over Bluetooth LE can work,
-plus the Fire TV voice remote below (tested for held requests). "Tested" means a person used it with this integration on real hardware;
-unit tests with synthetic vectors do not count.
+and so can the Amazon Fire TV voice remote (tested for held requests). "Tested" means a
+person used it with this integration on real hardware; unit tests with synthetic vectors
+do not count.
 
 | | Remote | Voice protocol | Status |
 | --- | --- | --- | --- |
@@ -90,7 +133,7 @@ Steps (a hold-to-talk remote that is awake, near the Home Assistant machine):
    A one-shot `bluetoothctl pair <address>` does not keep a pairing agent, so use
    the interactive prompt (or a script that keeps one session open).
 4. Check `bluetoothctl info <address>` shows `Paired: yes`, `Bonded: yes` and
-   `Connected: yes`. Then add **ATVV Remote Voice** in Home Assistant and wake the
+   `Connected: yes`. Then add **Bluetooth Remote Voice** in Home Assistant and wake the
    remote with an arrow button when you submit the form.
 
 If pairing connects but does not stay bonded, put the remote back into pairing
@@ -108,9 +151,8 @@ Select **Configure** on the integration to change these settings; changes reload
 the integration. Every setting has a short description in the form itself; this
 section adds when to use each one. All text, including entity names, option
 labels and error messages, comes from Home Assistant's translation files
-(English is provided). Everything except the pipeline, voice mode and speaker defaults
-to the behavior described in the Default column, so an existing setup does not
-change unless you choose otherwise.
+(English is provided). Every option has a default (shown in bold in the table), so a setup behaves the same
+until you choose otherwise.
 
 ### Setup (once)
 
@@ -121,21 +163,21 @@ change unless you choose otherwise.
 
 ### Options
 
-| Option | Choices | Default | Use it when |
+| Option | What it does | Choices (default in bold) | When to use it |
 | --- | --- | --- | --- |
-| Assist pipeline | Any existing pipeline | The one chosen at setup | You want a different agent or speech provider. A removed pipeline fails with a clear error instead of silently falling back. |
-| Voice mode | Transcription; Commands | Transcription | **Transcription** stops after speech recognition: nothing is run and no reply plays, which is useful for checking the microphone path and the speech provider. **Commands** runs the whole pipeline and, with a speaker, speaks the reply. |
-| Reply speaker | Any media player that can play media, or none | None | You want spoken replies. Used only in Commands mode. With none, the pipeline stops at the intent stage and nothing is played. The player must report when playback starts and finishes. |
-| Reply condition | Any Home Assistant conditions (state, numeric state, zone, time, template, and, or, not) | Empty (always speak) | You want a reply spoken only sometimes, for example only when you are in the room the reply speaker is in. Checked once at the start of each request. See [Reply condition](#reply-condition). |
-| Reply timing | Automatic streaming; Wait for complete reply | Automatic | **Automatic** starts speaking as soon as the pipeline reports a streamed reply, which gives the earliest start if the provider produces speech faster than real time. **Wait for complete reply** plays a finished audio file: the start is later, but it avoids breakup when a provider only produces speech at about real-time pace or the speaker stutters on a live stream. Short replies may not stream at all, in which case the completed reply is played. |
-| Streaming head start | 0 to 10 seconds, in 0.5 s steps | 0 | Streamed replies break up in the first seconds. After a streamed reply is ready, the integration waits this long before asking the speaker to play, or starts at once if the reply finishes sooner. It gives the speaker a lead; it cannot help if the provider keeps producing speech more slowly than it plays. It has no effect with Wait for complete reply or when the reply is not streamed. Try 0.5 to 3 seconds. |
-| New press while processing | Reject; Queue one; Replace current request | Reject | A press arrives before the previous request is answered. **Reject** is the safest. **Queue one** keeps one pending request and runs it afterward. **Replace** cancels the current request so the new one starts at once; this cannot undo an action the old request already performed. |
-| New press during reply | Reject; Queue one; Replace current reply | Reject | A press arrives while a reply is playing. **Reject** lets the reply finish. **Queue one** asks the next question while the reply plays and answers it afterward. **Replace** stops the reply and starts the new request. |
-| Conversation context | Reuse; Fresh per request | Reuse | **Reuse** keeps the Home Assistant conversation so follow-ups such as "and double that?" work (while Home Assistant retains it). **Fresh** makes each press independent. |
-| Button behavior | One request per hold; Alternating conversation while held | One request | **One request** records one request per hold and ends at release. **Alternating conversation** needs a hold-to-talk remote: speak, pause about 0.8 s, hear the reply, then speak again without releasing. |
-| Ignore short presses | 0 to 0.5 seconds, in 0.05 s steps | 0 (off) | Use it with a Fire TV remote that fails with "No microphone audio" right after waking. A sleeping Fire remote re-sends the key that woke it as an instant tap, which starts and fails a request. With a value such as 0.1, a voice press shorter than that is ignored silently (no request, no failure, no Last error); a real hold starts that much later. Applies to Fire TV remotes only; other remotes ignore it. |
-| Maximum request length | 5 to 120 seconds, in 5 s steps | 30 | One request is cut off too late or too early. In One-request mode it is the longest hold; in Alternating mode it bounds each turn. Lower it to stop a stuck button from recording; raise it for long dictation. Reaching it ends the request with a capture-limit error. The limit applies to every remote; remotes that are not hold-to-talk also end at about 15 seconds of speech or at silence, whichever comes first. |
-| Maximum conversation length | 30 to 600 seconds, in 10 s steps | 120 | Only used in Alternating conversation mode: the longest whole hold. Must not be shorter than the request length. |
+| Assist pipeline | The pipeline that processes speech: speech-to-text, conversation agent and text-to-speech. | Any existing pipeline (**the one chosen at setup**) | You want a different agent or speech provider. A removed pipeline fails with a clear error instead of silently falling back. |
+| Voice mode | Decides how far a request goes. **Transcription** stops after speech recognition: nothing is run and no reply plays. **Commands** runs the whole pipeline and, with a speaker, speaks the reply. | **Transcription**; Commands | Start in Transcription to check the microphone path and the speech provider; switch to Commands when you want actions and replies. |
+| Reply speaker | The media player that speaks replies. With none, the pipeline stops at the intent stage and nothing is played. It must report when playback starts and finishes. | Any media player that can play media, or **none** | You want spoken replies. Used only in Commands mode. |
+| Reply condition | Conditions, built with Home Assistant's condition editor, that must pass for a reply to be spoken. Checked once at the start of each request. See [Reply condition](#reply-condition). | Any Home Assistant conditions (state, numeric state, zone, time, template, and, or, not); **empty (always speak)** | You want a reply spoken only sometimes, for example only when you are in the room the reply speaker is in. |
+| Reply timing | When playback of the reply begins. **Automatic** starts speaking as soon as the pipeline reports a streamed reply. **Wait for complete reply** plays a finished audio file. Short replies may not stream at all, in which case the completed reply is played. | **Automatic**; Wait for complete reply | Automatic gives the earliest start if the provider produces speech faster than real time. Choose Wait when a provider only produces speech at about real-time pace or the speaker stutters on a live stream: the start is later but it avoids breakup. |
+| Streaming head start | Waits this long after a streamed reply is ready before asking the speaker to play, or starts at once if the reply finishes sooner. It gives the speaker a lead but cannot help if the provider keeps producing speech more slowly than it plays. No effect with Wait for complete reply or when the reply is not streamed. | 0 to 10 seconds in 0.5 s steps (**0**) | Streamed replies break up in the first seconds. Try 0.5 to 3 seconds. |
+| New press while processing | What happens when the voice button is pressed before the previous request is answered. **Reject** ignores the press. **Queue one** keeps one pending request and runs it afterward. **Replace** cancels the current request so the new one starts at once; this cannot undo an action the old request already performed. | **Reject**; Queue one; Replace current request | Reject is the safest. Use Queue one for quick follow-ups and Replace when the newest request should win. |
+| New press during reply | What happens when the button is pressed while a reply is playing. **Reject** lets the reply finish. **Queue one** asks the next question while the reply plays and answers it afterward. **Replace** stops the reply and starts the new request. | **Reject**; Queue one; Replace current reply | Use Queue one or Replace for fast back-and-forth instead of waiting for each reply to end. |
+| Conversation context | Whether requests share one Home Assistant conversation. **Reuse** keeps it, so follow-ups such as "and double that?" work (while Home Assistant retains it). **Fresh** makes every press independent. | **Reuse**; Fresh per request | Use Fresh for independent one-shot commands. |
+| Button behavior | How a hold maps to requests. **One request per hold** records one request and ends at release. **Alternating conversation** keeps listening while the button is held: speak, pause about 0.8 s, hear the reply, then speak again without releasing. | **One request**; Alternating conversation | Alternating needs a hold-to-talk remote and suits a longer back-and-forth. |
+| Ignore short presses | Ignores voice-button taps shorter than the time you set, so a spurious tap never starts a request (no request, no failure, no Last error). A real hold starts that much later. | 0 to 0.5 seconds in 0.05 s steps (**0**, off) | A Fire TV remote that fails with "No microphone audio" right after waking: a sleeping Fire remote re-sends the key that woke it as an instant tap. Try 0.1 s. Fire TV remotes only; other remotes ignore it. |
+| Maximum request length | The longest a single request can last on any remote; reaching it ends the request with a capture-limit error. In One-request mode it is the longest hold; in Alternating mode it bounds each turn. Remotes that are not hold-to-talk also end at about 15 seconds of speech or at silence, whichever comes first. | 5 to 120 seconds in 5 s steps (**30**) | Lower it to stop a stuck button from recording; raise it for long dictation. |
+| Maximum conversation length | The longest a whole hold can last in Alternating conversation mode. Must not be shorter than the request length. | 30 to 600 seconds in 10 s steps (**120**) | You use Alternating conversation and want longer or shorter conversations. Ignored in One-request mode. |
 
 Streaming, queueing and replacement work across traditional and live pipelines.
 Automatic output uses Home Assistant's streaming signals, not a provider list.
@@ -413,33 +455,12 @@ license attribution. Keep personal configuration, packet captures, recordings,
 credentials, deployment notes and research outside this repository. Verify new
 remote models physically before upgrading their compatibility claim.
 
-`scripts/check_package.py` creates `dist/atvv_remote.zip` containing only component
-files. No public release or publishing is performed automatically.
+### Releases
 
-## Branding
-
-The Emerald Solar icon combines a voice remote, a speech bubble and two motion
-strokes. Its transparent artwork uses forest `#10332C`, emerald `#25B981` and
-warm gold `#E8B64F`, with the same palette for light and dark backgrounds.
-
-The editable [icon SVG](docs/images/icon.svg),
-[light wordmark SVG](docs/images/logo.svg),
-[dark wordmark SVG](docs/images/dark_logo.svg) live in `docs/images/`.
-Home Assistant's required PNG exports live in
-[`custom_components/atvv_remote/brand/`](custom_components/atvv_remote/brand/).
-Home Assistant loads these local brand images automatically; no extra setup is needed.
-
-The README uses the 3× wordmarks (3540 × 768) from that same `brand/` folder;
-Home Assistant uses its required normal and 2× variants. No duplicate PNG exports
-are kept in `docs/images/`.
-
-Install [librsvg](https://gnome.pages.gitlab.gnome.org/librsvg/) to provide
-`rsvg-convert`, then regenerate all PNGs from the three SVG sources:
-
-```sh
-scripts/generate_branding.sh
-```
-
-The script generates normal, 2× and 3× variants of the icon and both wordmarks
-in `brand/`. It resolves paths relative to itself, so it can also be invoked by
-its full path from another working directory.
+Versions follow [SemVer](https://semver.org/) and the version in
+`custom_components/bt_remote_voice/manifest.json` must equal the release tag without the `v`
+(tag `v0.4.0` for version `0.4.0`). To release, update that version, merge to `main` and push
+the tag. The Release workflow runs `scripts/check_package.py`, which fails if the tag and manifest
+version disagree, builds `dist/bt_remote_voice.zip` (component files only) and attaches it to a
+GitHub release with generated notes; HACS installs from that zip. CI also runs hassfest and the
+HACS validation on every push.

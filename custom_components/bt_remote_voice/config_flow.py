@@ -24,6 +24,7 @@ from .preferences import (
     CHOICES,
     CONVERSATION_RANGE,
     DEFAULTS,
+    DOMAIN,
     FORM_ORDER,
     MAX_HEAD_START,
     PRESS_RANGE,
@@ -31,9 +32,6 @@ from .preferences import (
     preferences,
 )
 from .reply_condition import ReplyConditionSelector, load_conditions
-
-DOMAIN = "atvv_remote"
-
 
 NONE = "none"  # sentinel for "no spoken reply"; stored as an empty speaker
 

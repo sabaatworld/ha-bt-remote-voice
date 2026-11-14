@@ -3,9 +3,9 @@ from unittest.mock import patch
 
 from homeassistant.helpers import issue_registry as ir
 
-from custom_components.atvv_remote.issues import clear_issues, sync_issues, watch_speaker
+from custom_components.bt_remote_voice.issues import clear_issues, sync_issues, watch_speaker
 
-DOMAIN = "atvv_remote"
+DOMAIN = "bt_remote_voice"
 
 
 def _entry(options=None, data=None):
@@ -22,7 +22,7 @@ def _ids(hass):
 
 
 def _pipelines(found):
-    return patch("custom_components.atvv_remote.issues.pipelines", return_value=found)
+    return patch("custom_components.bt_remote_voice.issues.pipelines", return_value=found)
 
 
 async def test_missing_pipeline_raises_a_repair_with_the_remote_and_pipeline_named(hass):

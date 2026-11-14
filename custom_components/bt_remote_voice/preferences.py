@@ -2,7 +2,7 @@
 
 from homeassistant.helpers.translation import async_get_cached_translations
 
-DOMAIN = "atvv_remote"
+DOMAIN = "bt_remote_voice"
 
 MAX_HEAD_START = 10  # seconds
 REQUEST_RANGE = (5, 120, 5)  # seconds: (min, max, step)

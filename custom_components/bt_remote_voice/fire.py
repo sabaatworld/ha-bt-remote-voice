@@ -155,7 +155,7 @@ class FireTransport:
         except OSError:
             raise ConnectionError("hidraw_unavailable") from None
         self.on_control, self.on_audio = on_control, on_audio
-        self.task = asyncio.create_task(self._reader(), name="ATVV Fire hidraw reader")
+        self.task = asyncio.create_task(self._reader(), name="BT voice Fire hidraw reader")
         return Capabilities(frame_size=80, version=5, codec=3, model=0, family="fire")
 
     def _enable(self, on):

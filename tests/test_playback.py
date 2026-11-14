@@ -4,11 +4,11 @@ from unittest.mock import patch
 import pytest
 from homeassistant.components.media_player import MediaPlayerEntityFeature
 
-from custom_components.atvv_remote.session import AudioFailure
+from custom_components.bt_remote_voice.session import AudioFailure
 
 
 async def test_reply_waits_for_observed_start_then_finish(hass):
-    from custom_components.atvv_remote.playback import play_reply
+    from custom_components.bt_remote_voice.playback import play_reply
 
     hass.states.async_set(
         "media_player.test_speaker",
@@ -37,7 +37,7 @@ async def test_reply_waits_for_observed_start_then_finish(hass):
 
 
 async def test_reply_does_not_claim_completion_for_idle_without_start(hass):
-    from custom_components.atvv_remote.playback import play_reply
+    from custom_components.bt_remote_voice.playback import play_reply
 
     hass.states.async_set(
         "media_player.test_speaker",
@@ -55,7 +55,7 @@ async def test_reply_does_not_claim_completion_for_idle_without_start(hass):
 
 
 async def test_busy_or_missing_speaker_is_not_overwritten(hass):
-    from custom_components.atvv_remote.playback import play_reply
+    from custom_components.bt_remote_voice.playback import play_reply
 
     for state in ("unavailable", "playing", "buffering"):
         hass.states.async_set(
@@ -72,7 +72,7 @@ async def test_busy_or_missing_speaker_is_not_overwritten(hass):
 
 
 async def test_cancellation_removes_playback_listener(hass):
-    from custom_components.atvv_remote.playback import play_reply
+    from custom_components.bt_remote_voice.playback import play_reply
 
     hass.states.async_set(
         "media_player.test_speaker",
@@ -82,7 +82,7 @@ async def test_cancellation_removes_playback_listener(hass):
     removed = []
     with (
         patch(
-            "custom_components.atvv_remote.playback.async_track_state_change_event",
+            "custom_components.bt_remote_voice.playback.async_track_state_change_event",
             return_value=lambda: removed.append(True),
         ),
         patch.object(type(hass.services), "async_call", return_value=None),
@@ -100,7 +100,7 @@ async def test_cancellation_removes_playback_listener(hass):
 
 
 async def test_playback_finish_timeout_and_unavailability_are_errors(hass):
-    from custom_components.atvv_remote.playback import play_reply
+    from custom_components.bt_remote_voice.playback import play_reply
 
     for target_state, expected in (
         (None, "playback_finish_timeout"),
@@ -138,7 +138,7 @@ async def test_state_listener_runs_on_event_loop_not_executor(hass):
     """An undecorated listener is run in a thread; it writes entity state on completion."""
     from homeassistant.core import is_callback
 
-    from custom_components.atvv_remote.playback import play_reply
+    from custom_components.bt_remote_voice.playback import play_reply
 
     hass.states.async_set(
         "media_player.test_speaker",
@@ -152,7 +152,7 @@ async def test_state_listener_runs_on_event_loop_not_executor(hass):
         return lambda: None
 
     with (
-        patch("custom_components.atvv_remote.playback.async_track_state_change_event", track),
+        patch("custom_components.bt_remote_voice.playback.async_track_state_change_event", track),
         patch.object(type(hass.services), "async_call", return_value=None),
     ):
         task = asyncio.create_task(

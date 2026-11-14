@@ -1,4 +1,4 @@
-"""Voice input from already-paired ATVV remotes."""
+"""Voice input from already-paired Bluetooth remotes."""
 
 from homeassistant.const import Platform
 from homeassistant.core import callback

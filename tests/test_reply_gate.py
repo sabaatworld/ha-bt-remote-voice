@@ -8,11 +8,11 @@ import pytest
 from homeassistant.components.assist_pipeline import PipelineEvent, PipelineEventType
 from homeassistant.components.assist_satellite.entity import AssistSatelliteState
 
-from custom_components.atvv_remote.assist_satellite import RemoteSatellite
-from custom_components.atvv_remote.coordinator import VoiceCoordinator
-from custom_components.atvv_remote.protocol import Capabilities
-from custom_components.atvv_remote.sensor import LastError
-from custom_components.atvv_remote.session import VoiceSession
+from custom_components.bt_remote_voice.assist_satellite import RemoteSatellite
+from custom_components.bt_remote_voice.coordinator import VoiceCoordinator
+from custom_components.bt_remote_voice.protocol import Capabilities
+from custom_components.bt_remote_voice.sensor import LastError
+from custom_components.bt_remote_voice.session import VoiceSession
 from tests.test_coordinator import FakeHass
 
 
@@ -80,7 +80,9 @@ async def _run(sat, *, streamed, generation_seconds=0.05):
     with (
         patch.object(sat, "_resolve_pipeline", return_value="p"),
         patch.object(sat, "async_accept_pipeline_from_satellite", side_effect=accept),
-        patch("custom_components.atvv_remote.assist_satellite.play_reply", side_effect=playback),
+        patch(
+            "custom_components.bt_remote_voice.assist_satellite.play_reply", side_effect=playback
+        ),
         patch.object(sat, "tts_response_finished"),
     ):
         await sat.run(u)
@@ -179,7 +181,9 @@ async def test_skipped_held_turns_keep_listening_while_the_button_stays_down():
     with (
         patch.object(sat, "_resolve_pipeline", return_value="p"),
         patch.object(sat, "async_accept_pipeline_from_satellite", side_effect=accept),
-        patch("custom_components.atvv_remote.assist_satellite.play_reply", side_effect=playback),
+        patch(
+            "custom_components.bt_remote_voice.assist_satellite.play_reply", side_effect=playback
+        ),
         patch.object(sat, "tts_response_finished"),
     ):
         c.control(bytes.fromhex("04030201"))
@@ -218,7 +222,9 @@ async def test_queued_request_is_evaluated_when_it_starts_not_when_pressed():
     with (
         patch.object(sat, "_resolve_pipeline", return_value="p"),
         patch.object(sat, "async_accept_pipeline_from_satellite", side_effect=accept),
-        patch("custom_components.atvv_remote.assist_satellite.play_reply", side_effect=playback),
+        patch(
+            "custom_components.bt_remote_voice.assist_satellite.play_reply", side_effect=playback
+        ),
         patch.object(sat, "tts_response_finished"),
     ):
         c.control(bytes.fromhex("04030201"))
@@ -253,7 +259,7 @@ async def test_expired_queued_request_is_never_evaluated():
     with (
         patch.object(sat, "_resolve_pipeline", return_value="p"),
         patch.object(sat, "async_accept_pipeline_from_satellite", side_effect=accept),
-        patch("custom_components.atvv_remote.assist_satellite.play_reply"),
+        patch("custom_components.bt_remote_voice.assist_satellite.play_reply"),
         patch.object(sat, "tts_response_finished"),
     ):
         c.control(bytes.fromhex("04030201"))

@@ -1,4 +1,7 @@
 {
-  "name": "ATVV Remote Voice",
-  "homeassistant": "2026.11.1"
+  "name": "Bluetooth Remote Voice",
+  "homeassistant": "2026.11.1",
+  "render_readme": true,
+  "zip_release": true,
+  "filename": "bt_remote_voice.zip"
 }

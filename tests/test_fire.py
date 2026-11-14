@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 import pytest
 
-from custom_components.atvv_remote.fire import (
+from custom_components.bt_remote_voice.fire import (
     FireTransport,
     find_hidraw,
     parse_report,
@@ -193,7 +193,7 @@ async def test_missing_node_times_out_with_wake_remote():
 
 async def test_missing_opus_decoder_fails_in_open():
     transport = FireTransport(opener=lambda p: FakeHid(), find=lambda a: "/dev/hidraw9")
-    with patch("custom_components.atvv_remote.fire.opus_available", return_value=False):
+    with patch("custom_components.bt_remote_voice.fire.opus_available", return_value=False):
         with pytest.raises(ValueError, match="opus_decoder_unavailable"):
             await transport.open(ADDRESS, lambda d: None, lambda d: None)
 
@@ -201,9 +201,9 @@ async def test_missing_opus_decoder_fails_in_open():
 # ---- A3: session, coordinator, error codes ----
 from types import SimpleNamespace  # noqa: E402
 
-from custom_components.atvv_remote.coordinator import VoiceCoordinator  # noqa: E402
-from custom_components.atvv_remote.protocol import Capabilities  # noqa: E402
-from custom_components.atvv_remote.session import VoiceSession  # noqa: E402
+from custom_components.bt_remote_voice.coordinator import VoiceCoordinator  # noqa: E402
+from custom_components.bt_remote_voice.protocol import Capabilities  # noqa: E402
+from custom_components.bt_remote_voice.session import VoiceSession  # noqa: E402
 from tests.fire_helpers import synthetic_packets  # noqa: E402
 from tests.test_coordinator import FakeHass  # noqa: E402
 
@@ -262,7 +262,7 @@ async def test_invalid_opus_packet_aborts_the_session(packet):
 async def test_missing_decoder_aborts_with_a_translated_code():
     session = VoiceSession(80, caps=FIRE_CAPS, finish_delay=0)
     with patch(
-        "custom_components.atvv_remote.session.OpusDecoder",
+        "custom_components.bt_remote_voice.session.OpusDecoder",
         side_effect=ValueError("opus_decoder_unavailable"),
     ):
         session.audio(PACKETS[0])
@@ -396,7 +396,9 @@ async def test_unplugged_node_mid_hold_aborts_with_disconnected_and_cleans_up():
     device = FakeHid()
     transport = FireTransport(opener=lambda p: device, find=lambda a: "/dev/hidraw9")
     c.run_pipeline = lambda s: asyncio.sleep(5)
-    with patch("custom_components.atvv_remote.coordinator.FireTransport", return_value=transport):
+    with patch(
+        "custom_components.bt_remote_voice.coordinator.FireTransport", return_value=transport
+    ):
         c.connection_task = asyncio.create_task(c.connect_loop())
         await asyncio.sleep(0.1)
         device.feed(VOICE_DOWN)
@@ -436,8 +438,8 @@ async def test_wake_remote_does_not_back_off():
             pass
 
     with (
-        patch("custom_components.atvv_remote.coordinator.FireTransport", return_value=Waking()),
-        patch("custom_components.atvv_remote.coordinator.asyncio.sleep", Sleeper()),
+        patch("custom_components.bt_remote_voice.coordinator.FireTransport", return_value=Waking()),
+        patch("custom_components.bt_remote_voice.coordinator.asyncio.sleep", Sleeper()),
     ):
         task = asyncio.create_task(c.connect_loop())
         for _ in range(100):
@@ -588,7 +590,7 @@ async def _transport_built_for(**options):
         built.append(kwargs)
         return Stop()
 
-    with patch("custom_components.atvv_remote.coordinator.FireTransport", make):
+    with patch("custom_components.bt_remote_voice.coordinator.FireTransport", make):
         await asyncio.wait_for(c.connect_loop(), 2)
     return built
 

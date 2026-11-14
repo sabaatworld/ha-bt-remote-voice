@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="256" viewBox="0 0 1180 256" role="img" aria-labelledby="logo-title logo-desc">
-  <title id="logo-title">ATVV Remote Voice for Home Assistant</title>
-  <desc id="logo-desc">Emerald Solar remote icon beside the ATVV Remote Voice wordmark.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="256" viewBox="0 0 1260 256" role="img" aria-labelledby="logo-title logo-desc">
+  <title id="logo-title">Bluetooth Remote Voice to Home Assistant</title>
+  <desc id="logo-desc">Emerald Solar remote icon beside the Bluetooth Remote Voice wordmark.</desc>
   <svg x="0" y="0" width="256" height="256" viewBox="0 0 256 256">
     <g fill="none" stroke-linecap="round">
       <path d="M11 174l29-18" stroke="#25B981" stroke-width="13" />
@@ -26,6 +26,6 @@
       <rect x="217" y="37" width="10" height="31" rx="5" />
     </g>
   </svg>
-  <text x="292" y="140" fill="#F0F7F4" font-family="Verdana, DejaVu Sans, sans-serif" font-size="74" font-weight="700" letter-spacing="-2">ATVV Remote Voice</text>
-  <text x="296" y="192" fill="#B9D9CD" font-family="Verdana, DejaVu Sans, sans-serif" font-size="32">for Home Assistant</text>
+  <text x="292" y="140" fill="#F0F7F4" font-family="Verdana, DejaVu Sans, sans-serif" font-size="70" font-weight="700" letter-spacing="-2">Bluetooth Remote Voice</text>
+  <text x="296" y="192" fill="#B9D9CD" font-family="Verdana, DejaVu Sans, sans-serif" font-size="32">to Home Assistant</text>
 </svg>
