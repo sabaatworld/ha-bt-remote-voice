@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Pasirinkite susietą pultą",
+        "description": "Pirmiausia susiekite pultą ne per Home Assistant, tada pažadinkite jį rodyklės mygtuku, kad jį būtų galima patikrinti. Pasirinkite jį iš sąrašo arba įveskite jo Bluetooth adresą.",
+        "data": {
+          "device": "Susietas pultas"
+        },
+        "data_description": {
+          "device": "Pultai, jau susieti su šiuo Home Assistant šeimininku. Pasirinkite rankinį įvedimą, jei jūsų pulto sąraše nėra."
+        }
+      },
+      "manual": {
+        "title": "Įveskite susieto pulto adresą",
+        "description": "Įveskite pulto, kuris jau susietas su šiuo šeimininku, Bluetooth adresą.",
+        "data": {
+          "address": "Bluetooth adresas"
+        },
+        "data_description": {
+          "address": "Šešios šešioliktainių skaitmenų poros, atskirtos dvitaškiais, pavyzdžiui, AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Pasirinkite Assist srautą",
+        "description": "Prieš pateikdami pažadinkite pultą rodyklės mygtuku. Integracija pradeda veikti tik transkripcijos režimu; pakeiskite tai parinktyse, kai viskas veiks.",
+        "data": {
+          "pipeline_id": "Assist srautas"
+        },
+        "data_description": {
+          "pipeline_id": "Assist srautas, apdorojantis šio pulto kalbą."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Vietinis Bluetooth nepasiekiamas. Patikrinkite, ar sistemos D-Bus yra pasiekiama.",
+      "wake_remote": "Pažadinkite susietą pultą rodyklės mygtuku ir bandykite dar kartą.",
+      "not_paired": "Pirmiausia susiekite šį pultą ne per Home Assistant.",
+      "multiple_adapters": "Šis pultas susietas su keliais adapteriais. Palikite susiejimą tik viename adapteryje.",
+      "invalid_address": "Įveskite Bluetooth adresą formatu AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Šis pultas neteikia palaikomo ATVV v0.4/v1.0 ADPCM balso profilio.",
+      "invalid_pipeline": "Pasirinkite esamą Assist srautą.",
+      "hidraw_unavailable": "Pulto įvesties įrenginys nepasiekiamas Home Assistant. Pažadinkite pultą ir patikrinkite, ar Home Assistant mato /dev/hidraw įrenginius.",
+      "hidraw_permission_denied": "Home Assistant neturi leidimo skaityti pulto įvesties įrenginio. Žr. README, kokios prieigos prie įrenginio reikia šiam pultui.",
+      "opus_decoder_unavailable": "Home Assistant nepasiekiamas Opus garso dekoderis, kurio reikia šiam pultui."
+    },
+    "abort": {
+      "already_configured": "Šis pultas jau sukonfigūruotas.",
+      "no_pipelines": "Prieš pridėdami pultą, sukurkite Assist srautą."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Balso nustatymai",
+        "description": "Šie nustatymai valdo, kaip tvarkomi paspaudimai ir kaip tariami atsakymai. Užklausos pakeitimas negali atšaukti veiksmų, kuriuos ji jau atliko. Vienu metu veikiantis pilnas dvipusis režimas nepasiekiamas. Sustojimas po transkripcijos neišjungia įrankių, įtaisytų tiesioginės kalbos teikėjuose; kai veiksmai turi būti išjungti, naudokite tik transkripcijos teikėją.\n\n**Atsakymo sąlyga:** kad atsakymas būtų ištartas, turi būti įvykdytos visos jos sąlygos. Jos tikrinamos vieną kartą kiekvienos užklausos pradžioje; palikite tuščią, kad visada būtų kalbama, o sąlyga, kurios neįmanoma įvertinti, laikoma neįvykdyta. Šablonų sąlygos gali naudoti kintamuosius `speaker`, `remote` ir `held`.",
+        "data": {
+          "pipeline_id": "Assist srautas",
+          "mode": "Balso režimas",
+          "speaker": "Atsakymų garsiakalbis",
+          "output_mode": "Atsakymo laikas",
+          "stream_head_start": "Transliavimo pradžios pranašumas",
+          "busy_processing": "Naujas paspaudimas apdorojimo metu",
+          "busy_playback": "Naujas paspaudimas atsakymo metu",
+          "context_mode": "Pokalbio kontekstas",
+          "input_mode": "Mygtuko elgsena",
+          "min_press_seconds": "Ignoruoti trumpus paspaudimus",
+          "max_request_seconds": "Didžiausias užklausos ilgis",
+          "max_conversation_seconds": "Didžiausias pokalbio ilgis",
+          "reply_condition": "Atsakymo sąlyga"
+        },
+        "data_description": {
+          "pipeline_id": "Assist srautas, apdorojantis kalbą: kalbos pavertimas tekstu, pokalbio agentas ir teksto pavertimas kalba. Pašalintas srautas sukelia klaidą, o ne pereina prie kito.",
+          "mode": "Tik transkripcija sustoja po kalbos atpažinimo ir neatkuria atsakymo. Vykdyti komandas paleidžia visą srautą ir ištaria atsakymą atsakymų garsiakalbyje.",
+          "speaker": "Medijos grotuvas, kuris taria atsakymus. Naudojamas tik vykdant komandas. Pasirinkite „Be tariamo atsakymo“, kad srautas sustotų prieš atkuriant atsakymą.",
+          "output_mode": "Automatinis transliavimas pradeda kalbėti, kai tik transliuojamas atsakymas paruoštas. Laukimas viso atsakymo prasideda vėliau, bet atkuria paruoštą garso failą, taip išvengiama trūkinėjimo su teikėjais, kurie kalbą sukuria tik maždaug realiu laiku.",
+          "stream_head_start": "Atideda transliuojamo atsakymo pradžią tiek sekundžių, kad garsiakalbis galėtų sukaupti buferį; atsakymai, pasibaigę anksčiau, atkuriami iš karto. Padidinkite, jei transliuojami atsakymai trūkinėja per pirmąsias sekundes. Neturi įtakos, kai laukiama viso atsakymo. 0 palieka numatytąją elgseną.",
+          "busy_processing": "Ką daryti, kai mygtukas paspaudžiamas dar neatsakius į ankstesnę užklausą: atmesti paspaudimą, išlaikyti vieną laukiančią užklausą arba pakeisti dabartinę užklausą. Pakeitimas negali atšaukti jau atliktų veiksmų.",
+          "busy_playback": "Ką daryti, kai mygtukas paspaudžiamas atkuriant atsakymą: atmesti paspaudimą, vėliau atsakyti į vieną laukiančią užklausą arba sustabdyti atsakymą ir pradėti naują užklausą.",
+          "context_mode": "Pakartotinis naudojimas išlaiko Home Assistant pokalbį, kad tęsiniai, pvz., „o padvigubink tai?“, veiktų. Naujas pokalbys paverčia kiekvieną paspaudimą nepriklausomu pokalbiu.",
+          "input_mode": "Viena užklausa laikant įrašo, kol mygtukas atleidžiamas. Pokalbis laikant (pakaitomis) toliau klauso, kol mygtukas laikomas: kalbėkite, padarykite pauzę, išklausykite atsakymą, tada kalbėkite vėl. Reikia pulto su kalbėjimu laikant.",
+          "min_press_seconds": "Ignoruoja balso mygtuko palietimus, trumpesnius nei ši reikšmė, kad klaidingas palietimas niekada nepradėtų užklausos; tikras laikymas prasideda tiek vėliau. 0 išjungia. Naudinga Fire TV pultui, kuris iškart po pažadinimo klysta su „Negauta mikrofono garso“: jis pakartotinai siunčia jį pažadinusį klavišą kaip momentinį palietimą. 0,1 s yra geras pradinis taškas. Tik Fire TV pultams.",
+          "max_request_seconds": "Ilgiausia vienos užklausos trukmė bet kuriame pulte: visas laikymas vienos užklausos režimu ir kiekviena eilė pokalbyje pakaitomis. Pasiekus ribą užklausa baigiasi įrašymo ribos klaida. Sumažinkite, kad sustabdytumėte užstrigusio mygtuko įrašymą; padidinkite ilgam diktavimui. Pultai be kalbėjimo laikant taip pat baigia po maždaug 15 sekundžių kalbos arba tylos, atsižvelgiant į tai, kas įvyksta pirma.",
+          "max_conversation_seconds": "Ilgiausia viso mygtuko laikymo trukmė pokalbio pakaitomis režimu. Ignoruojama vienos užklausos režimu ir negali būti trumpesnė nei didžiausias užklausos ilgis.",
+          "reply_condition": "Sąlygos, kurios visos turi būti įvykdytos, kad atsakymas būtų ištartas. Tikrinamos vieną kartą kiekvienos užklausos pradžioje (ir kiekvienos eilės pokalbyje pakaitomis). Palikite tuščią, kad visada būtų kalbama. Sąlyga su klaida laikoma neįvykdyta. Šablonų sąlygos gali naudoti kintamuosius speaker, remote ir held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Pasirinkite medijos grotuvą, palaikantį garso atkūrimą, arba be tariamo atsakymo.",
+      "invalid_preferences": "Pasirinkite vieną iš palaikomų balso nuostatų.",
+      "invalid_pipeline": "Pasirinkite esamą Assist srautą.",
+      "invalid_reply_condition": "Atsakymo sąlyga neteisinga. Patikrinkite sąlygas ir bandykite dar kartą.",
+      "pipeline_missing": "Šiam pultui išsaugotas Assist srautas nebeegzistuoja. Pasirinkite kitą.",
+      "speaker_missing": "Išsaugotas atsakymų garsiakalbis šiuo metu nepasiekiamas, todėl atsakymai nebus atkuriami, kol jis negrįš. Palikite jį arba pasirinkite kitą."
+    },
+    "abort": {
+      "no_pipelines": "Pirmiausia sukurkite Assist srautą."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Įvesti Bluetooth adresą"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Tik transkripcija",
+        "commands": "Vykdyti komandas"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Be tariamo atsakymo"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatinis transliavimas",
+        "buffered": "Laukti viso atsakymo"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Atmesti naują užklausą",
+        "queue": "Įtraukti vieną užklausą į eilę",
+        "replace": "Pakeisti dabartinę užklausą"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Atmesti naują užklausą",
+        "queue": "Įtraukti vieną užklausą į eilę",
+        "replace": "Pakeisti dabartinį atsakymą"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Naudoti pokalbį pakartotinai",
+        "fresh": "Naujas pokalbis kiekvienai užklausai"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Viena užklausa laikant",
+        "conversation": "Pokalbis laikant (pakaitomis)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Balsas",
+        "state_attributes": {
+          "ready": {
+            "name": "Paruošta"
+          },
+          "last_error": {
+            "name": "Paskutinės klaidos kodas"
+          },
+          "last_error_message": {
+            "name": "Paskutinės klaidos pranešimas"
+          },
+          "mode": {
+            "name": "Balso režimas"
+          },
+          "sessions": {
+            "name": "Seansai"
+          },
+          "failures": {
+            "name": "Gedimai"
+          },
+          "rejected": {
+            "name": "Atmesti paspaudimai"
+          },
+          "queued": {
+            "name": "Eilėje esančios užklausos"
+          },
+          "last_outcome": {
+            "name": "Paskutinis rezultatas"
+          },
+          "full_duplex": {
+            "name": "Pilnas dvipusis režimas"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Balso mygtukas",
+        "state_attributes": {
+          "event_type": {
+            "name": "Įvykio tipas",
+            "state": {
+              "pressed": "Paspausta",
+              "released": "Atleista",
+              "accepted": "Priimta",
+              "rejected": "Atmesta",
+              "queued": "Įtraukta į eilę",
+              "failed": "Nepavyko",
+              "context_reset": "Pokalbis iš naujo nustatytas",
+              "reply_skipped": "Atsakymas praleistas"
+            }
+          },
+          "outcome": {
+            "name": "Rezultatas"
+          },
+          "stage": {
+            "name": "Etapas"
+          },
+          "code": {
+            "name": "Kodas"
+          },
+          "message": {
+            "name": "Pranešimas"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofonas aktyvus"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Paskutinė klaida",
+        "state": {
+          "none": "Klaidų nėra",
+          "busy": "Vis dar atsakoma į ankstesnę užklausą.",
+          "queue_full": "Užklausa jau laukia. Bandykite po atsakymo.",
+          "queue_expired": "Laukianti užklausa nebegalioja. Paspauskite ir kalbėkite dar kartą.",
+          "queue_discarded": "Laukianti užklausa buvo atmesta.",
+          "queue_failed": "Laukiančios užklausos nepavyko pradėti.",
+          "capture_limit": "Pasiekta mikrofono įrašymo riba. Naudokite trumpesnę užklausą.",
+          "buffer_overflow": "Mikrofono garsas susikaupė, kol kalbos paslauga dar nepradėjo jo skaityti.",
+          "audio_sequence_gap": "Nepavyko sinchronizuoti garso. Paspauskite ir bandykite dar kartą.",
+          "invalid_audio_sync": "Pultas atsiuntė neteisingą garso sinchronizavimo pranešimą.",
+          "invalid_audio_frame": "Pultas atsiuntė pažeistą garso kadrą.",
+          "invalid_control": "Pultas atsiuntė neteisingą valdymo pranešimą.",
+          "unsupported_audio_start": "Pultas pradėjo garsą būdu, kurio ši integracija nepalaiko.",
+          "incomplete_utterance": "Garsas baigėsi, kol užklausa dar nebuvo išsami.",
+          "audio_stalled": "Mikrofono garsas nustojo ateiti. Bandykite dar kartą.",
+          "audio_failed": "Mikrofono garso gedimas.",
+          "no_audio": "Negauta mikrofono garso.",
+          "no_speech": "Kalbos neaptikta.",
+          "held_mode_unsupported": "Pokalbiui pakaitomis reikia pulto su kalbėjimu laikant.",
+          "held_failed": "Pokalbis laikant mygtuką nepavyko.",
+          "held_turn_failed": "Pokalbio eilė nepavyko.",
+          "remote_stopped": "Pultas netikėtai sustabdė mikrofoną.",
+          "disconnected": "Pultas atsijungė.",
+          "cancelled": "Užklausa atšaukta.",
+          "pipeline_finished_early": "Assist srautas baigėsi, kol dar nebuvo perskaitytas visas garsas.",
+          "pipeline_timeout": "Assist srautas per ilgai atsakė.",
+          "pipeline_failed": "Assist srauto gedimas.",
+          "pipeline_removed": "Pasirinktas Assist srautas nebeegzistuoja.",
+          "playback_stop_unverified": "Nepavyko patvirtinti, kad ankstesnis atsakymas sustojo. Palaukite, kol garsiakalbis bus laisvas.",
+          "playback_stop_failed": "Nepavyko sustabdyti ankstesnio atsakymo.",
+          "playback_start_timeout": "Garsiakalbis nepradėjo atkurti atsakymo.",
+          "playback_finish_timeout": "Garsiakalbis laiku nebaigė atkurti atsakymo.",
+          "playback_interrupted": "Atsakymas buvo nutrauktas garsiakalbyje.",
+          "speaker_unavailable": "Atsakymų garsiakalbis nepasiekiamas.",
+          "speaker_busy": "Atsakymų garsiakalbis užimtas.",
+          "speaker_cannot_play": "Atsakymų garsiakalbis negali atkurti garso iš Home Assistant.",
+          "missing_tts_audio": "Atsakyme nebuvo garso, kurį galima atkurti.",
+          "generation_retirement_failed": "Ankstesnė užklausa dar nesustojo. Palaukite.",
+          "replacement_retirement_failed": "Nepavyko sustabdyti dabartinės užklausos, kad būtų pradėta nauja.",
+          "microphone_open_failed": "Nepavyko atidaryti pulto mikrofono.",
+          "microphone_open_rejected": "Pultas atsisakė atidaryti savo mikrofoną.",
+          "microphone_start_timeout": "Pultas laiku nepaleido savo mikrofono.",
+          "microphone_close_failed": "Nepavyko uždaryti pulto mikrofono.",
+          "microphone_keepalive_failed": "Ryšys su pulto mikrofonu prarastas.",
+          "active_generation_cancelled": "Ruošiamas atsakymas buvo atšauktas, o pokalbio kontekstas iš naujo nustatytas.",
+          "wake_remote": "Pažadinkite pultą rodyklės mygtuku ir bandykite dar kartą.",
+          "bluetooth_unavailable": "Vietinis Bluetooth nepasiekiamas.",
+          "bluetooth_operation_failed": "Bluetooth operacija nepavyko.",
+          "not_paired": "Pultas nesusietas su šiuo šeimininku.",
+          "multiple_adapters": "Pultas susietas daugiau nei su vienu adapteriu.",
+          "voice_service_unavailable": "Pultas neteikia balso paslaugos.",
+          "unsupported_write": "Į pulto balso valdymą rašyti neįmanoma.",
+          "unsupported_capabilities": "Pultas pranešė apie balso galimybes, kurių ši integracija nepalaiko.",
+          "unsupported_codec": "Pultas naudoja garso formatą, kurio ši integracija nepalaiko.",
+          "invalid_frame_size": "Pultas pranešė neteisingą garso kadro dydį.",
+          "hidraw_unavailable": "Pulto įvesties įrenginys nepasiekiamas Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant neturi leidimo skaityti pulto įvesties įrenginio.",
+          "opus_decoder_unavailable": "Home Assistant nepasiekiamas Opus garso dekoderis.",
+          "invalid_opus_packet": "Pultas atsiuntė garsą, kurio nepavyko iškoduoti.",
+          "other": "Įvyko kita klaida. Išsamią informaciją pateikia klaidos kodas."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kodas"
+          },
+          "stage": {
+            "name": "Etapas"
+          },
+          "since": {
+            "name": "Nuo"
+          },
+          "session": {
+            "name": "Užklausa"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Trūksta Assist srauto pultui {remote}",
+      "description": "Pultas **{remote}** nustatytas naudoti Assist srautą `{pipeline}`, kurio nebėra. Balso užklausos iš šio pulto nepavyksta, kol nepasirinksite kito srauto.\n\nEikite į **Nustatymai → Įrenginiai ir paslaugos → Bluetooth Remote Voice**, atidarykite pulto **{remote}** meniu, pasirinkite **Konfigūruoti** ir pasirinkite esamą srautą."
+    },
+    "speaker_missing": {
+      "title": "Trūksta atsakymų garsiakalbio pultui {remote}",
+      "description": "Pultas **{remote}** nustatytas atkurti atsakymus per `{speaker}`, kurio nebėra. Komandos vis dar vykdomos, bet jų tariamas atsakymas nebus atkurtas.\n\nEikite į **Nustatymai → Įrenginiai ir paslaugos → Bluetooth Remote Voice**, atidarykite pulto **{remote}** meniu, pasirinkite **Konfigūruoti** ir pasirinkite kitą garsiakalbį arba jokio."
+    }
+  }
+}

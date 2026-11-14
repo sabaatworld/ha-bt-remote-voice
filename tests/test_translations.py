@@ -10,7 +10,7 @@ import pytest
 from homeassistant.helpers.selector import SelectSelector
 
 COMPONENT = Path(__file__).parents[1] / "custom_components" / "bt_remote_voice"
-STRINGS = json.loads((COMPONENT / "strings.json").read_text())
+STRINGS = json.loads((COMPONENT / "translations" / "en.json").read_text())
 ADDRESS = "02:00:00:00:00:01"
 
 
@@ -76,10 +76,6 @@ async def _forms(hass):
         "config": {"user": user, "manual": manual, "configure": configure},
         "options": {"init": options},
     }
-
-
-async def test_en_json_matches_strings_json():
-    assert json.loads((COMPONENT / "translations" / "en.json").read_text()) == STRINGS
 
 
 async def test_every_form_field_has_a_label_and_a_description(hass):
@@ -288,7 +284,7 @@ def test_every_repair_issue_has_a_title_and_description():
     from pathlib import Path
 
     root = Path(__file__).parents[1] / "custom_components" / "bt_remote_voice"
-    issues = json.loads((root / "strings.json").read_text())["issues"]
+    issues = json.loads((root / "translations" / "en.json").read_text())["issues"]
     assert set(issues) == {"pipeline_missing", "speaker_missing"}
     for text in issues.values():
         assert text["title"] and "Configure" in text["description"]

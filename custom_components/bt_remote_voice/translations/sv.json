@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Välj parad fjärrkontroll",
+        "description": "Para först ihop fjärrkontrollen utanför Home Assistant och väck den sedan med en piltangent så att den kan verifieras. Välj den i listan eller ange dess Bluetooth-adress.",
+        "data": {
+          "device": "Parad fjärrkontroll"
+        },
+        "data_description": {
+          "device": "Fjärrkontroller som redan är parade med den här Home Assistant-värden. Välj det manuella alternativet om din inte finns i listan."
+        }
+      },
+      "manual": {
+        "title": "Ange adressen till den parade fjärrkontrollen",
+        "description": "Ange Bluetooth-adressen till en fjärrkontroll som redan är parad med den här värden.",
+        "data": {
+          "address": "Bluetooth-adress"
+        },
+        "data_description": {
+          "address": "Sex par hexadecimala siffror åtskilda av kolon, till exempel AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Välj Assist-pipeline",
+        "description": "Väck fjärrkontrollen med en piltangent innan du skickar. Integrationen startar i läget endast transkribering; ändra det i alternativen när det fungerar.",
+        "data": {
+          "pipeline_id": "Assist-pipeline"
+        },
+        "data_description": {
+          "pipeline_id": "Assist-pipelinen som bearbetar tal från den här fjärrkontrollen."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Lokal Bluetooth är inte tillgänglig. Kontrollera att systemets D-Bus är åtkomlig.",
+      "wake_remote": "Väck den parade fjärrkontrollen med en piltangent och försök sedan igen.",
+      "not_paired": "Para först ihop fjärrkontrollen externt.",
+      "multiple_adapters": "Den här fjärrkontrollen är parad på flera adaptrar. Behåll kopplingen på en adapter.",
+      "invalid_address": "Ange en Bluetooth-adress i formatet AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Den här fjärrkontrollen har ingen stödd ATVV v0.4/v1.0 ADPCM-röstprofil.",
+      "invalid_pipeline": "Välj en befintlig Assist-pipeline.",
+      "hidraw_unavailable": "Fjärrkontrollens indataenhet är inte tillgänglig för Home Assistant. Väck fjärrkontrollen och kontrollera att Home Assistant kan se /dev/hidraw-enheter.",
+      "hidraw_permission_denied": "Home Assistant har inte behörighet att läsa fjärrkontrollens indataenhet. Se README för den enhetsåtkomst som den här fjärrkontrollen behöver.",
+      "opus_decoder_unavailable": "Ingen Opus-ljudavkodare är tillgänglig för Home Assistant, vilket den här fjärrkontrollen kräver."
+    },
+    "abort": {
+      "already_configured": "Den här fjärrkontrollen är redan konfigurerad.",
+      "no_pipelines": "Skapa en Assist-pipeline innan du lägger till fjärrkontrollen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Röstinställningar",
+        "description": "De här inställningarna styr hur knapptryckningar hanteras och hur svar läses upp. Att ersätta en förfrågan kan inte ångra åtgärder som redan utförts. Samtidig full duplex är inte tillgänglig. Att stoppa efter transkribering inaktiverar inte verktyg som är inbyggda i en live-talleverantör; använd en leverantör som endast transkriberar när åtgärder måste vara inaktiverade.\n\n**Svarsvillkor:** alla dess villkor måste vara uppfyllda för att ett svar ska läsas upp. De kontrolleras en gång i början av varje förfrågan; lämna det tomt för att alltid tala, och ett villkor som inte kan utvärderas räknas som ej uppfyllt. Mallvillkor kan använda variablerna `speaker`, `remote` och `held`.",
+        "data": {
+          "pipeline_id": "Assist-pipeline",
+          "mode": "Röstläge",
+          "speaker": "Svarshögtalare",
+          "output_mode": "Svarstidpunkt",
+          "stream_head_start": "Försprång för strömning",
+          "busy_processing": "Nytt tryck under bearbetning",
+          "busy_playback": "Nytt tryck under svar",
+          "context_mode": "Konversationskontext",
+          "input_mode": "Knappbeteende",
+          "min_press_seconds": "Ignorera korta tryck",
+          "max_request_seconds": "Maximal förfrågningslängd",
+          "max_conversation_seconds": "Maximal konversationslängd",
+          "reply_condition": "Svarsvillkor"
+        },
+        "data_description": {
+          "pipeline_id": "Assist-pipelinen som bearbetar tal: tal till text, konversationsagent och text till tal. En borttagen pipeline ger ett fel i stället för att falla tillbaka på en annan.",
+          "mode": "Endast transkribering stannar efter taligenkänningen och spelar inget svar. Kör kommandon kör hela pipelinen och läser upp svaret i svarshögtalaren.",
+          "speaker": "Mediaspelaren som läser upp svar. Används bara när kommandon körs. Välj inget uppläst svar för att stoppa pipelinen innan svaret spelas upp.",
+          "output_mode": "Automatisk strömning börjar tala så fort ett strömmat svar är klart. Att vänta på hela svaret startar senare men spelar upp en färdig ljudfil, vilket undviker avbrott hos leverantörer som bara producerar tal i ungefär realtidstakt.",
+          "stream_head_start": "Fördröjer starten av ett strömmat svar med så här många sekunder så att högtalaren hinner buffra; svar som blir klara tidigare spelas upp direkt. Höj värdet om strömmade svar bryts upp under de första sekunderna. Ingen effekt när du väntar på hela svaret. 0 behåller standardbeteendet.",
+          "busy_processing": "Vad som ska hända när knappen trycks innan den föregående förfrågan har besvarats: avvisa trycket, behålla en väntande förfrågan eller ersätta den aktuella förfrågan. Att ersätta kan inte ångra åtgärder som redan utförts.",
+          "busy_playback": "Vad som ska hända när knappen trycks medan ett svar spelas upp: avvisa trycket, besvara en väntande förfrågan efteråt eller stoppa svaret och starta den nya förfrågan.",
+          "context_mode": "Återanvänd behåller Home Assistant-konversationen så att följdfrågor som ”och dubbelt så mycket?” fungerar. Ny gör varje tryck till en fristående konversation.",
+          "input_mode": "En förfrågan per håll spelar in tills knappen släpps. Växlande konversation fortsätter lyssna medan knappen hålls nedtryckt: tala, pausa, hör svaret och tala igen. Kräver en fjärrkontroll med håll-för-att-tala.",
+          "min_press_seconds": "Ignorerar tryck på röstknappen som är kortare än så här, så att ett oavsiktligt tryck aldrig startar en förfrågan; ett riktigt håll startar så här mycket senare. 0 stänger av funktionen. Användbart för en Fire TV-fjärrkontroll som misslyckas med ”Inget mikrofonljud” direkt efter att den väckts: den skickar om tangenten som väckte den som ett omedelbart tryck. 0,1 s är en bra startpunkt. Endast för Fire TV-fjärrkontroller.",
+          "max_request_seconds": "Den längsta tiden en enskild förfrågan kan pågå på valfri fjärrkontroll: ett helt håll i läget En förfrågan och varje tur i växlande konversation. När gränsen nås avslutas förfrågan med ett fel om inspelningsgräns. Sänk den för att stoppa inspelning med fastnad knapp; höj den för långa diktamen. Fjärrkontroller utan håll-för-att-tala avslutar också efter cirka 15 sekunders tal eller vid tystnad, beroende på vilket som inträffar först.",
+          "max_conversation_seconds": "Den längsta tiden ett helt knapphåll kan pågå i läget växlande konversation. Ignoreras i läget En förfrågan och får inte vara kortare än den maximala förfrågningslängden.",
+          "reply_condition": "Villkor som alla måste vara uppfyllda för att ett svar ska läsas upp. Kontrolleras en gång i början av varje förfrågan (och varje tur i växlande konversation). Lämna tomt för att alltid tala. Ett villkor som ger fel räknas som ej uppfyllt. Mallvillkor kan använda variablerna speaker, remote och held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Välj en mediaspelare som kan spela upp ljud, eller inget uppläst svar.",
+      "invalid_preferences": "Välj en av de röstinställningar som stöds.",
+      "invalid_pipeline": "Välj en befintlig Assist-pipeline.",
+      "invalid_reply_condition": "Svarsvillkoret är inte giltigt. Kontrollera villkoren och försök igen.",
+      "pipeline_missing": "Assist-pipelinen som sparats för den här fjärrkontrollen finns inte längre. Välj en annan.",
+      "speaker_missing": "Den sparade svarshögtalaren är inte tillgänglig just nu, så svar spelas inte upp förrän den är tillbaka. Behåll den eller välj en annan."
+    },
+    "abort": {
+      "no_pipelines": "Skapa först en Assist-pipeline."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Ange Bluetooth-adress"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Endast transkribering",
+        "commands": "Kör kommandon"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Inget uppläst svar"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatisk strömning",
+        "buffered": "Vänta på hela svaret"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Avvisa ny förfrågan",
+        "queue": "Köa en förfrågan",
+        "replace": "Ersätt aktuell förfrågan"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Avvisa ny förfrågan",
+        "queue": "Köa en förfrågan",
+        "replace": "Ersätt aktuellt svar"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Återanvänd konversation",
+        "fresh": "Ny konversation per förfrågan"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "En förfrågan per håll",
+        "conversation": "Konversation medan knappen hålls (växlande)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Röst",
+        "state_attributes": {
+          "ready": {
+            "name": "Redo"
+          },
+          "last_error": {
+            "name": "Senaste felkod"
+          },
+          "last_error_message": {
+            "name": "Senaste felmeddelande"
+          },
+          "mode": {
+            "name": "Röstläge"
+          },
+          "sessions": {
+            "name": "Sessioner"
+          },
+          "failures": {
+            "name": "Misslyckanden"
+          },
+          "rejected": {
+            "name": "Avvisade tryck"
+          },
+          "queued": {
+            "name": "Köade förfrågningar"
+          },
+          "last_outcome": {
+            "name": "Senaste utfall"
+          },
+          "full_duplex": {
+            "name": "Fullduplex"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Röstknapp",
+        "state_attributes": {
+          "event_type": {
+            "name": "Händelsetyp",
+            "state": {
+              "pressed": "Tryckt",
+              "released": "Släppt",
+              "accepted": "Accepterad",
+              "rejected": "Avvisad",
+              "queued": "Köad",
+              "failed": "Misslyckades",
+              "context_reset": "Konversation återställd",
+              "reply_skipped": "Svar hoppades över"
+            }
+          },
+          "outcome": {
+            "name": "Utfall"
+          },
+          "stage": {
+            "name": "Steg"
+          },
+          "code": {
+            "name": "Kod"
+          },
+          "message": {
+            "name": "Meddelande"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofon aktiv"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Senaste fel",
+        "state": {
+          "none": "Inget fel",
+          "busy": "Svarar fortfarande på föregående förfrågan.",
+          "queue_full": "En förfrågan väntar redan. Försök igen efter svaret.",
+          "queue_expired": "Den väntande förfrågan har gått ut. Tryck och tala igen.",
+          "queue_discarded": "Den väntande förfrågan förkastades.",
+          "queue_failed": "Den väntande förfrågan kunde inte startas.",
+          "capture_limit": "Mikrofonens inspelningsgräns nåddes. Använd en kortare förfrågan.",
+          "buffer_overflow": "Mikrofonljudet hann hopa sig innan taltjänsten började läsa det.",
+          "audio_sequence_gap": "Ljudsynkroniseringen misslyckades. Tryck och försök igen.",
+          "invalid_audio_sync": "Fjärrkontrollen skickade ett ogiltigt meddelande om ljudsynkronisering.",
+          "invalid_audio_frame": "Fjärrkontrollen skickade en skadad ljudram.",
+          "invalid_control": "Fjärrkontrollen skickade ett ogiltigt kontrollmeddelande.",
+          "unsupported_audio_start": "Fjärrkontrollen startade ljud på ett sätt som den här integrationen inte stöder.",
+          "incomplete_utterance": "Ljudet slutade innan förfrågan var komplett.",
+          "audio_stalled": "Mikrofonljudet slutade komma. Försök igen.",
+          "audio_failed": "Mikrofonljudet misslyckades.",
+          "no_audio": "Inget mikrofonljud togs emot.",
+          "no_speech": "Inget tal upptäcktes.",
+          "held_mode_unsupported": "Växlande konversation kräver en fjärrkontroll med håll-för-att-tala.",
+          "held_failed": "Konversationen medan knappen hölls misslyckades.",
+          "held_turn_failed": "En tur i konversationen misslyckades.",
+          "remote_stopped": "Fjärrkontrollen stoppade mikrofonen oväntat.",
+          "disconnected": "Fjärrkontrollen kopplades från.",
+          "cancelled": "Förfrågan avbröts.",
+          "pipeline_finished_early": "Assist-pipelinen avslutades innan allt ljud lästs.",
+          "pipeline_timeout": "Assist-pipelinen tog för lång tid att svara.",
+          "pipeline_failed": "Assist-pipelinen misslyckades.",
+          "pipeline_removed": "Den valda Assist-pipelinen finns inte längre.",
+          "playback_stop_unverified": "Kunde inte verifiera att det föregående svaret stoppades. Vänta tills högtalaren är inaktiv.",
+          "playback_stop_failed": "Det föregående svaret kunde inte stoppas.",
+          "playback_start_timeout": "Högtalaren började inte spela upp svaret.",
+          "playback_finish_timeout": "Högtalaren slutade inte spela upp svaret i tid.",
+          "playback_interrupted": "Svaret avbröts på högtalaren.",
+          "speaker_unavailable": "Svarshögtalaren är inte tillgänglig.",
+          "speaker_busy": "Svarshögtalaren är upptagen.",
+          "speaker_cannot_play": "Svarshögtalaren kan inte spela upp ljud från Home Assistant.",
+          "missing_tts_audio": "Svaret hade inget ljud att spela upp.",
+          "generation_retirement_failed": "Den föregående förfrågan har inte stoppats än. Vänta.",
+          "replacement_retirement_failed": "Den aktuella förfrågan kunde inte stoppas för att starta den nya.",
+          "microphone_open_failed": "Fjärrkontrollens mikrofon kunde inte öppnas.",
+          "microphone_open_rejected": "Fjärrkontrollen vägrade öppna sin mikrofon.",
+          "microphone_start_timeout": "Fjärrkontrollen startade inte sin mikrofon i tid.",
+          "microphone_close_failed": "Fjärrkontrollens mikrofon kunde inte stängas.",
+          "microphone_keepalive_failed": "Anslutningen till fjärrkontrollens mikrofon bröts.",
+          "active_generation_cancelled": "Svaret som förbereddes avbröts och konversationskontexten återställdes.",
+          "wake_remote": "Väck fjärrkontrollen med en piltangent och försök sedan igen.",
+          "bluetooth_unavailable": "Lokal Bluetooth är inte tillgänglig.",
+          "bluetooth_operation_failed": "En Bluetooth-åtgärd misslyckades.",
+          "not_paired": "Fjärrkontrollen är inte parad med den här värden.",
+          "multiple_adapters": "Fjärrkontrollen är parad på mer än en adapter.",
+          "voice_service_unavailable": "Fjärrkontrollen erbjuder ingen rösttjänst.",
+          "unsupported_write": "Fjärrkontrollens röststyrning kan inte skrivas.",
+          "unsupported_capabilities": "Fjärrkontrollen rapporterade röstfunktioner som den här integrationen inte stöder.",
+          "unsupported_codec": "Fjärrkontrollen använder ett ljudformat som den här integrationen inte stöder.",
+          "invalid_frame_size": "Fjärrkontrollen rapporterade en ogiltig ljudramsstorlek.",
+          "hidraw_unavailable": "Fjärrkontrollens indataenhet är inte tillgänglig för Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant har inte behörighet att läsa fjärrkontrollens indataenhet.",
+          "opus_decoder_unavailable": "Ingen Opus-ljudavkodare är tillgänglig för Home Assistant.",
+          "invalid_opus_packet": "Fjärrkontrollen skickade ljud som inte kunde avkodas.",
+          "other": "Ett annat fel inträffade. Felkoden ger detaljerna."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kod"
+          },
+          "stage": {
+            "name": "Steg"
+          },
+          "since": {
+            "name": "Sedan"
+          },
+          "session": {
+            "name": "Förfrågan"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist-pipeline saknas för {remote}",
+      "description": "Fjärrkontrollen **{remote}** är inställd på att använda Assist-pipelinen `{pipeline}`, som inte längre finns. Röstförfrågningar från den här fjärrkontrollen misslyckas tills du väljer en annan pipeline.\n\nGå till **Inställningar → Enheter och tjänster → Bluetooth Remote Voice**, öppna menyn för **{remote}**, välj **Konfigurera** och välj en befintlig pipeline."
+    },
+    "speaker_missing": {
+      "title": "Svarshögtalare saknas för {remote}",
+      "description": "Fjärrkontrollen **{remote}** är inställd på att spela upp svar på `{speaker}`, som inte längre finns. Kommandon körs fortfarande, men det upplästa svaret spelas inte upp.\n\nGå till **Inställningar → Enheter och tjänster → Bluetooth Remote Voice**, öppna menyn för **{remote}**, välj **Konfigurera** och välj en annan högtalare eller ingen."
+    }
+  }
+}

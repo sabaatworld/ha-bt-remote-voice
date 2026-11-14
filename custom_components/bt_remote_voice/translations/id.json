@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Pilih remote yang dipasangkan",
+        "description": "Pasangkan remote Anda di luar Home Assistant terlebih dahulu, lalu bangunkan dengan tombol panah agar dapat diverifikasi. Pilih dari daftar, atau masukkan alamat Bluetooth-nya.",
+        "data": {
+          "device": "Remote yang dipasangkan"
+        },
+        "data_description": {
+          "device": "Remote yang sudah dipasangkan pada host Home Assistant ini. Pilih opsi manual jika remote Anda tidak ada dalam daftar."
+        }
+      },
+      "manual": {
+        "title": "Masukkan alamat remote yang dipasangkan",
+        "description": "Masukkan alamat Bluetooth dari remote yang sudah dipasangkan pada host ini.",
+        "data": {
+          "address": "Alamat Bluetooth"
+        },
+        "data_description": {
+          "address": "Enam pasang digit heksadesimal yang dipisahkan titik dua, misalnya AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Pilih pipeline Assist",
+        "description": "Bangunkan remote dengan tombol panah sebelum mengirim. Integrasi dimulai dalam mode hanya transkripsi; ubah ini di opsi setelah berfungsi.",
+        "data": {
+          "pipeline_id": "Pipeline Assist"
+        },
+        "data_description": {
+          "pipeline_id": "Pipeline Assist yang memproses ucapan dari remote ini."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Bluetooth lokal tidak tersedia. Periksa apakah D-Bus sistem dapat diakses.",
+      "wake_remote": "Bangunkan remote yang dipasangkan dengan tombol panah, lalu coba lagi.",
+      "not_paired": "Pasangkan remote ini secara eksternal terlebih dahulu.",
+      "multiple_adapters": "Remote ini dipasangkan pada beberapa adaptor. Pertahankan ikatannya pada satu adaptor.",
+      "invalid_address": "Masukkan alamat Bluetooth dalam format AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Remote ini tidak menyediakan profil suara ATVV v0.4/v1.0 ADPCM yang didukung.",
+      "invalid_pipeline": "Pilih pipeline Assist yang sudah ada.",
+      "hidraw_unavailable": "Perangkat input remote tidak tersedia untuk Home Assistant. Bangunkan remote dan periksa apakah Home Assistant dapat melihat perangkat /dev/hidraw.",
+      "hidraw_permission_denied": "Home Assistant tidak diizinkan membaca perangkat input remote. Lihat README untuk akses perangkat yang dibutuhkan remote ini.",
+      "opus_decoder_unavailable": "Tidak ada dekoder audio Opus yang tersedia untuk Home Assistant, padahal dibutuhkan oleh remote ini."
+    },
+    "abort": {
+      "already_configured": "Remote ini sudah dikonfigurasi.",
+      "no_pipelines": "Buat pipeline Assist sebelum menambahkan remote."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Pengaturan suara",
+        "description": "Pengaturan ini mengontrol cara penekanan tombol ditangani dan cara balasan diucapkan. Mengganti permintaan tidak dapat membatalkan tindakan yang sudah dilakukan. Dupleks penuh simultan tidak tersedia. Berhenti setelah transkripsi tidak menonaktifkan alat bawaan penyedia suara langsung; gunakan penyedia hanya transkripsi jika tindakan harus dinonaktifkan.\n\n**Kondisi balasan:** semua kondisinya harus terpenuhi agar balasan diucapkan. Kondisi diperiksa sekali di awal setiap permintaan; biarkan kosong agar selalu diucapkan, dan kondisi yang tidak dapat dievaluasi dianggap tidak terpenuhi. Kondisi template dapat menggunakan variabel `speaker`, `remote` dan `held`.",
+        "data": {
+          "pipeline_id": "Pipeline Assist",
+          "mode": "Mode suara",
+          "speaker": "Speaker balasan",
+          "output_mode": "Waktu balasan",
+          "stream_head_start": "Jeda awal streaming",
+          "busy_processing": "Penekanan baru saat memproses",
+          "busy_playback": "Penekanan baru saat balasan",
+          "context_mode": "Konteks percakapan",
+          "input_mode": "Perilaku tombol",
+          "min_press_seconds": "Abaikan penekanan singkat",
+          "max_request_seconds": "Durasi permintaan maksimum",
+          "max_conversation_seconds": "Durasi percakapan maksimum",
+          "reply_condition": "Kondisi balasan"
+        },
+        "data_description": {
+          "pipeline_id": "Pipeline Assist yang memproses ucapan: ucapan-ke-teks, agen percakapan, dan teks-ke-ucapan. Pipeline yang dihapus menghasilkan error, bukan beralih ke pipeline lain.",
+          "mode": "Hanya transkripsi berhenti setelah pengenalan ucapan dan tidak memutar balasan. Jalankan perintah menjalankan seluruh pipeline dan mengucapkan balasan pada speaker balasan.",
+          "speaker": "Pemutar media yang mengucapkan balasan. Hanya digunakan saat menjalankan perintah. Pilih tanpa balasan lisan untuk menghentikan pipeline sebelum balasan diputar.",
+          "output_mode": "Streaming otomatis mulai berbicara segera setelah balasan streaming siap. Menunggu balasan lengkap dimulai lebih lambat tetapi memutar berkas audio yang sudah selesai, sehingga menghindari suara putus-putus pada penyedia yang hanya menghasilkan ucapan dengan kecepatan sekitar waktu nyata.",
+          "stream_head_start": "Menunda awal balasan streaming selama sekian detik agar speaker dapat melakukan buffering; balasan yang selesai lebih cepat diputar langsung. Naikkan jika balasan streaming putus-putus pada beberapa detik pertama. Tidak berpengaruh saat menunggu balasan lengkap. 0 mempertahankan perilaku default.",
+          "busy_processing": "Yang dilakukan saat tombol ditekan sebelum permintaan sebelumnya dijawab: tolak penekanan, simpan satu permintaan tertunda, atau ganti permintaan saat ini. Mengganti tidak dapat membatalkan tindakan yang sudah dilakukan.",
+          "busy_playback": "Yang dilakukan saat tombol ditekan ketika balasan sedang diputar: tolak penekanan, jawab satu permintaan tertunda setelahnya, atau hentikan balasan dan mulai permintaan baru.",
+          "context_mode": "Gunakan ulang mempertahankan percakapan Home Assistant sehingga pertanyaan lanjutan seperti 'dan dua kalinya?' berfungsi. Baru membuat setiap penekanan menjadi percakapan independen.",
+          "input_mode": "Satu permintaan per tahan merekam hingga tombol dilepas. Percakapan bergantian terus mendengarkan selama tombol ditahan: bicara, jeda, dengarkan balasan, lalu bicara lagi. Membutuhkan remote tahan-untuk-bicara.",
+          "min_press_seconds": "Mengabaikan ketukan tombol suara yang lebih singkat dari ini, sehingga ketukan palsu tidak memulai permintaan; tahan yang sebenarnya dimulai selambat ini. 0 menonaktifkan. Berguna untuk remote Fire TV yang gagal dengan «Tidak ada audio mikrofon» tepat setelah dibangunkan: remote mengirim ulang tombol yang membangunkannya sebagai ketukan instan. 0,1 s adalah titik awal yang baik. Hanya untuk remote Fire TV.",
+          "max_request_seconds": "Durasi terlama satu permintaan pada remote mana pun: seluruh tahan dalam mode Satu permintaan, dan setiap giliran dalam Percakapan bergantian. Mencapainya mengakhiri permintaan dengan error batas perekaman. Turunkan untuk menghentikan perekaman tombol yang macet; naikkan untuk dikte panjang. Remote yang bukan tahan-untuk-bicara juga berakhir pada sekitar 15 detik ucapan atau saat hening, mana yang lebih dulu.",
+          "max_conversation_seconds": "Durasi terlama seluruh tahan tombol dalam mode Percakapan bergantian. Diabaikan dalam mode Satu permintaan dan tidak boleh lebih pendek dari durasi permintaan maksimum.",
+          "reply_condition": "Kondisi yang semuanya harus terpenuhi agar balasan diucapkan. Diperiksa sekali di awal setiap permintaan (dan setiap giliran dalam Percakapan bergantian). Biarkan kosong agar selalu diucapkan. Kondisi yang error dianggap tidak terpenuhi. Kondisi template dapat menggunakan variabel speaker, remote dan held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Pilih pemutar media yang mendukung pemutaran audio, atau tanpa balasan lisan.",
+      "invalid_preferences": "Pilih salah satu preferensi suara yang didukung.",
+      "invalid_pipeline": "Pilih pipeline Assist yang sudah ada.",
+      "invalid_reply_condition": "Kondisi balasan tidak valid. Periksa kondisinya dan coba lagi.",
+      "pipeline_missing": "Pipeline Assist yang disimpan untuk remote ini sudah tidak ada. Pilih yang lain.",
+      "speaker_missing": "Speaker balasan yang disimpan saat ini tidak tersedia, sehingga balasan tidak akan diputar sampai tersedia kembali. Pertahankan, atau pilih yang lain."
+    },
+    "abort": {
+      "no_pipelines": "Buat pipeline Assist terlebih dahulu."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Masukkan alamat Bluetooth"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Hanya transkripsi",
+        "commands": "Jalankan perintah"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Tanpa balasan lisan"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Streaming otomatis",
+        "buffered": "Tunggu balasan lengkap"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Tolak permintaan baru",
+        "queue": "Antrekan satu permintaan",
+        "replace": "Ganti permintaan saat ini"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Tolak permintaan baru",
+        "queue": "Antrekan satu permintaan",
+        "replace": "Ganti balasan saat ini"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Gunakan ulang percakapan",
+        "fresh": "Percakapan baru per permintaan"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Satu permintaan per tahan",
+        "conversation": "Percakapan selama ditahan (bergantian)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Suara",
+        "state_attributes": {
+          "ready": {
+            "name": "Siap"
+          },
+          "last_error": {
+            "name": "Kode error terakhir"
+          },
+          "last_error_message": {
+            "name": "Pesan error terakhir"
+          },
+          "mode": {
+            "name": "Mode suara"
+          },
+          "sessions": {
+            "name": "Sesi"
+          },
+          "failures": {
+            "name": "Kegagalan"
+          },
+          "rejected": {
+            "name": "Penekanan ditolak"
+          },
+          "queued": {
+            "name": "Permintaan dalam antrean"
+          },
+          "last_outcome": {
+            "name": "Hasil terakhir"
+          },
+          "full_duplex": {
+            "name": "Dupleks penuh"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Tombol suara",
+        "state_attributes": {
+          "event_type": {
+            "name": "Jenis kejadian",
+            "state": {
+              "pressed": "Ditekan",
+              "released": "Dilepas",
+              "accepted": "Diterima",
+              "rejected": "Ditolak",
+              "queued": "Diantrekan",
+              "failed": "Gagal",
+              "context_reset": "Percakapan direset",
+              "reply_skipped": "Balasan dilewati"
+            }
+          },
+          "outcome": {
+            "name": "Hasil"
+          },
+          "stage": {
+            "name": "Tahap"
+          },
+          "code": {
+            "name": "Kode"
+          },
+          "message": {
+            "name": "Pesan"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofon aktif"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Error terakhir",
+        "state": {
+          "none": "Tidak ada error",
+          "busy": "Masih menjawab permintaan sebelumnya.",
+          "queue_full": "Sudah ada permintaan yang menunggu. Silakan coba setelah balasan.",
+          "queue_expired": "Permintaan yang menunggu telah kedaluwarsa. Silakan tekan dan bicara lagi.",
+          "queue_discarded": "Permintaan yang menunggu dibuang.",
+          "queue_failed": "Permintaan yang menunggu tidak dapat dimulai.",
+          "capture_limit": "Batas perekaman mikrofon tercapai. Silakan gunakan permintaan yang lebih singkat.",
+          "buffer_overflow": "Audio mikrofon menumpuk sebelum layanan ucapan mulai membacanya.",
+          "audio_sequence_gap": "Sinkronisasi audio gagal. Silakan tekan dan coba lagi.",
+          "invalid_audio_sync": "Remote mengirim pesan sinkronisasi audio yang tidak valid.",
+          "invalid_audio_frame": "Remote mengirim frame audio yang rusak.",
+          "invalid_control": "Remote mengirim pesan kontrol yang tidak valid.",
+          "unsupported_audio_start": "Remote memulai audio dengan cara yang tidak didukung integrasi ini.",
+          "incomplete_utterance": "Audio berakhir sebelum permintaan selesai.",
+          "audio_stalled": "Audio mikrofon berhenti diterima. Silakan coba lagi.",
+          "audio_failed": "Audio mikrofon gagal.",
+          "no_audio": "Tidak ada audio mikrofon yang diterima.",
+          "no_speech": "Tidak ada ucapan yang terdeteksi.",
+          "held_mode_unsupported": "Percakapan bergantian membutuhkan remote tahan-untuk-bicara.",
+          "held_failed": "Percakapan saat tombol ditahan gagal.",
+          "held_turn_failed": "Satu giliran percakapan gagal.",
+          "remote_stopped": "Remote menghentikan mikrofon secara tak terduga.",
+          "disconnected": "Remote terputus.",
+          "cancelled": "Permintaan dibatalkan.",
+          "pipeline_finished_early": "Pipeline Assist selesai sebelum semua audio terbaca.",
+          "pipeline_timeout": "Pipeline Assist terlalu lama merespons.",
+          "pipeline_failed": "Pipeline Assist gagal.",
+          "pipeline_removed": "Pipeline Assist yang dipilih sudah tidak ada.",
+          "playback_stop_unverified": "Tidak dapat memastikan balasan sebelumnya telah berhenti. Tunggu hingga speaker idle.",
+          "playback_stop_failed": "Balasan sebelumnya tidak dapat dihentikan.",
+          "playback_start_timeout": "Speaker tidak mulai memutar balasan.",
+          "playback_finish_timeout": "Speaker tidak selesai memutar balasan tepat waktu.",
+          "playback_interrupted": "Balasan terputus pada speaker.",
+          "speaker_unavailable": "Speaker balasan tidak tersedia.",
+          "speaker_busy": "Speaker balasan sedang sibuk.",
+          "speaker_cannot_play": "Speaker balasan tidak dapat memutar audio dari Home Assistant.",
+          "missing_tts_audio": "Balasan tidak memiliki audio untuk diputar.",
+          "generation_retirement_failed": "Permintaan sebelumnya belum berhenti. Harap tunggu.",
+          "replacement_retirement_failed": "Permintaan saat ini tidak dapat dihentikan untuk memulai yang baru.",
+          "microphone_open_failed": "Mikrofon remote tidak dapat dibuka.",
+          "microphone_open_rejected": "Remote menolak membuka mikrofonnya.",
+          "microphone_start_timeout": "Remote tidak memulai mikrofonnya tepat waktu.",
+          "microphone_close_failed": "Mikrofon remote tidak dapat ditutup.",
+          "microphone_keepalive_failed": "Koneksi mikrofon remote terputus.",
+          "active_generation_cancelled": "Balasan yang sedang disiapkan dibatalkan dan konteks percakapan direset.",
+          "wake_remote": "Bangunkan remote dengan tombol panah, lalu coba lagi.",
+          "bluetooth_unavailable": "Bluetooth lokal tidak tersedia.",
+          "bluetooth_operation_failed": "Operasi Bluetooth gagal.",
+          "not_paired": "Remote tidak dipasangkan pada host ini.",
+          "multiple_adapters": "Remote dipasangkan pada lebih dari satu adaptor.",
+          "voice_service_unavailable": "Remote tidak menyediakan layanan suara.",
+          "unsupported_write": "Kontrol suara remote tidak dapat ditulis.",
+          "unsupported_capabilities": "Remote melaporkan kemampuan suara yang tidak didukung integrasi ini.",
+          "unsupported_codec": "Remote menggunakan format audio yang tidak didukung integrasi ini.",
+          "invalid_frame_size": "Remote melaporkan ukuran frame audio yang tidak valid.",
+          "hidraw_unavailable": "Perangkat input remote tidak tersedia untuk Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant tidak diizinkan membaca perangkat input remote.",
+          "opus_decoder_unavailable": "Tidak ada dekoder audio Opus yang tersedia untuk Home Assistant.",
+          "invalid_opus_packet": "Remote mengirim audio yang tidak dapat didekode.",
+          "other": "Terjadi error lain. Kode error memberikan detailnya."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kode"
+          },
+          "stage": {
+            "name": "Tahap"
+          },
+          "since": {
+            "name": "Sejak"
+          },
+          "session": {
+            "name": "Permintaan"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Pipeline Assist untuk {remote} tidak ada",
+      "description": "Remote **{remote}** diatur untuk menggunakan pipeline Assist `{pipeline}`, yang sudah tidak ada. Permintaan suara dari remote ini gagal sampai Anda memilih pipeline lain.\n\nBuka **Pengaturan → Perangkat & layanan → Bluetooth Remote Voice**, buka menu **{remote}**, pilih **Konfigurasikan**, lalu pilih pipeline yang sudah ada."
+    },
+    "speaker_missing": {
+      "title": "Speaker balasan untuk {remote} tidak ada",
+      "description": "Remote **{remote}** diatur untuk memutar balasan pada `{speaker}`, yang sudah tidak ada. Perintah tetap dijalankan, tetapi balasan lisannya tidak akan diputar.\n\nBuka **Pengaturan → Perangkat & layanan → Bluetooth Remote Voice**, buka menu **{remote}**, pilih **Konfigurasikan**, lalu pilih speaker lain atau pilih tanpa."
+    }
+  }
+}

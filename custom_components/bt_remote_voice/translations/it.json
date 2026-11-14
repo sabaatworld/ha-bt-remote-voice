@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Seleziona il telecomando associato",
+        "description": "Associa prima il telecomando al di fuori di Home Assistant, poi riattivalo con un tasto freccia per poterlo verificare. Selezionalo dall'elenco oppure inserisci il suo indirizzo Bluetooth.",
+        "data": {
+          "device": "Telecomando associato"
+        },
+        "data_description": {
+          "device": "Telecomandi già associati a questo host di Home Assistant. Scegli l'opzione manuale se il tuo non è nell'elenco."
+        }
+      },
+      "manual": {
+        "title": "Inserisci l'indirizzo del telecomando associato",
+        "description": "Inserisci l'indirizzo Bluetooth di un telecomando già associato a questo host.",
+        "data": {
+          "address": "Indirizzo Bluetooth"
+        },
+        "data_description": {
+          "address": "Sei coppie di cifre esadecimali separate da due punti, ad esempio AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Seleziona la pipeline Assist",
+        "description": "Riattiva il telecomando con un tasto freccia prima di inviare. L'integrazione parte in modalità di sola trascrizione; modificala nelle opzioni quando funziona.",
+        "data": {
+          "pipeline_id": "Pipeline Assist"
+        },
+        "data_description": {
+          "pipeline_id": "La pipeline Assist che elabora la voce di questo telecomando."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Il Bluetooth locale non è disponibile. Verifica che il D-Bus di sistema sia accessibile.",
+      "wake_remote": "Riattiva il telecomando associato con un tasto freccia, poi riprova.",
+      "not_paired": "Associa prima questo telecomando esternamente.",
+      "multiple_adapters": "Questo telecomando è associato a più adattatori. Mantieni l'associazione su un solo adattatore.",
+      "invalid_address": "Inserisci un indirizzo Bluetooth nel formato AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Questo telecomando non offre un profilo vocale ADPCM ATVV v0.4/v1.0 supportato.",
+      "invalid_pipeline": "Scegli una pipeline Assist esistente.",
+      "hidraw_unavailable": "Il dispositivo di input del telecomando non è disponibile per Home Assistant. Riattiva il telecomando e verifica che Home Assistant veda i dispositivi /dev/hidraw.",
+      "hidraw_permission_denied": "Home Assistant non è autorizzato a leggere il dispositivo di input del telecomando. Consulta il README per l'accesso al dispositivo richiesto da questo telecomando.",
+      "opus_decoder_unavailable": "Home Assistant non dispone di un decodificatore audio Opus, necessario per questo telecomando."
+    },
+    "abort": {
+      "already_configured": "Questo telecomando è già configurato.",
+      "no_pipelines": "Crea una pipeline Assist prima di aggiungere il telecomando."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Impostazioni vocali",
+        "description": "Queste impostazioni controllano come vengono gestite le pressioni e come vengono pronunciate le risposte. Sostituire una richiesta non può annullare le azioni già eseguite. Il full duplex simultaneo non è disponibile. Interrompere dopo la trascrizione non disattiva gli strumenti integrati in un provider vocale live; usa un provider di sola trascrizione quando le azioni devono essere disattivate.\n\n**Condizione di risposta:** tutte le sue condizioni devono essere soddisfatte perché una risposta venga pronunciata. Vengono verificate una volta all'inizio di ogni richiesta; lasciala vuota per rispondere sempre a voce; una condizione che non può essere valutata conta come non soddisfatta. Le condizioni template possono usare le variabili `speaker`, `remote` e `held`.",
+        "data": {
+          "pipeline_id": "Pipeline Assist",
+          "mode": "Modalità vocale",
+          "speaker": "Altoparlante di risposta",
+          "output_mode": "Tempistica della risposta",
+          "stream_head_start": "Anticipo dello streaming",
+          "busy_processing": "Nuova pressione durante l'elaborazione",
+          "busy_playback": "Nuova pressione durante la risposta",
+          "context_mode": "Contesto della conversazione",
+          "input_mode": "Comportamento del tasto",
+          "min_press_seconds": "Ignora pressioni brevi",
+          "max_request_seconds": "Durata massima della richiesta",
+          "max_conversation_seconds": "Durata massima della conversazione",
+          "reply_condition": "Condizione di risposta"
+        },
+        "data_description": {
+          "pipeline_id": "La pipeline Assist che elabora la voce: riconoscimento vocale, agente di conversazione e sintesi vocale. Una pipeline rimossa genera un errore invece di ripiegare su un'altra.",
+          "mode": "Solo trascrizione si ferma dopo il riconoscimento vocale e non riproduce alcuna risposta. Esegui comandi esegue l'intera pipeline e pronuncia la risposta sull'altoparlante di risposta.",
+          "speaker": "Il lettore multimediale che pronuncia le risposte. Usato solo quando si eseguono comandi. Scegli nessuna risposta vocale per fermare la pipeline prima della riproduzione della risposta.",
+          "output_mode": "Lo streaming automatico inizia a parlare non appena una risposta in streaming è pronta. Attendere la risposta completa parte più tardi ma riproduce un file audio finito, evitando interruzioni con provider che producono la voce solo a ritmo quasi reale.",
+          "stream_head_start": "Ritarda l'avvio di una risposta in streaming di questo numero di secondi, così l'altoparlante può riempire il buffer; le risposte che terminano prima vengono riprodotte subito. Aumentalo se le risposte in streaming si interrompono nei primi secondi. Nessun effetto se si attende la risposta completa. 0 mantiene il comportamento predefinito.",
+          "busy_processing": "Cosa fare quando il tasto viene premuto prima che la richiesta precedente abbia ricevuto risposta: rifiutare la pressione, mantenere una richiesta in attesa o sostituire la richiesta corrente. La sostituzione non può annullare le azioni già eseguite.",
+          "busy_playback": "Cosa fare quando il tasto viene premuto mentre una risposta è in riproduzione: rifiutare la pressione, rispondere dopo a una richiesta in attesa oppure interrompere la risposta e avviare la nuova richiesta.",
+          "context_mode": "Riutilizza mantiene la conversazione di Home Assistant, così i seguiti come \"e il doppio?\" funzionano. Nuova rende ogni pressione una conversazione indipendente.",
+          "input_mode": "Una richiesta per pressione registra finché il tasto non viene rilasciato. La conversazione alternata continua ad ascoltare mentre il tasto è premuto: parli, fai una pausa, ascolti la risposta, poi parli di nuovo. Richiede un telecomando con push-to-talk.",
+          "min_press_seconds": "Ignora i tocchi del tasto vocale più brevi di questo valore, così un tocco spurio non avvia mai una richiesta; una pressione reale parte con questo ritardo. 0 lo disattiva. Utile per un telecomando Fire TV che fallisce con \"Nessun audio dal microfono\" subito dopo la riattivazione: invia di nuovo il tasto che l'ha riattivato come tocco istantaneo. 0,1 s è un buon punto di partenza. Solo per telecomandi Fire TV.",
+          "max_request_seconds": "La durata massima di una singola richiesta su qualsiasi telecomando: un'intera pressione in modalità Una richiesta e ogni turno nella conversazione alternata. Al raggiungimento, la richiesta termina con un errore di limite di acquisizione. Riducila per evitare registrazioni con tasto bloccato; aumentala per dettature lunghe. I telecomandi senza push-to-talk terminano anche dopo circa 15 secondi di voce o al silenzio, a seconda di quale avviene prima.",
+          "max_conversation_seconds": "La durata massima di un'intera pressione del tasto in modalità conversazione alternata. Viene ignorata in modalità Una richiesta e non deve essere inferiore alla durata massima della richiesta.",
+          "reply_condition": "Condizioni che devono essere tutte soddisfatte perché una risposta venga pronunciata. Verificate una volta all'inizio di ogni richiesta (e di ogni turno nella conversazione alternata). Lascia vuoto per rispondere sempre a voce. Una condizione che genera un errore conta come non soddisfatta. Le condizioni template possono usare le variabili speaker, remote e held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Scegli un lettore multimediale che supporti la riproduzione audio, oppure nessuna risposta vocale.",
+      "invalid_preferences": "Scegli una delle preferenze vocali supportate.",
+      "invalid_pipeline": "Scegli una pipeline Assist esistente.",
+      "invalid_reply_condition": "La condizione di risposta non è valida. Controlla le condizioni e riprova.",
+      "pipeline_missing": "La pipeline Assist salvata per questo telecomando non esiste più. Scegline un'altra.",
+      "speaker_missing": "L'altoparlante di risposta salvato non è al momento disponibile, quindi le risposte non verranno riprodotte finché non torna disponibile. Mantienilo oppure scegline un altro."
+    },
+    "abort": {
+      "no_pipelines": "Crea prima una pipeline Assist."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Inserisci indirizzo Bluetooth"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Solo trascrizione",
+        "commands": "Esegui comandi"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Nessuna risposta vocale"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Streaming automatico",
+        "buffered": "Attendi la risposta completa"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Rifiuta nuova richiesta",
+        "queue": "Metti in coda una richiesta",
+        "replace": "Sostituisci la richiesta corrente"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Rifiuta nuova richiesta",
+        "queue": "Metti in coda una richiesta",
+        "replace": "Sostituisci la risposta corrente"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Riutilizza la conversazione",
+        "fresh": "Nuova conversazione per ogni richiesta"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Una richiesta per pressione",
+        "conversation": "Conversazione durante la pressione (alternata)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Voce",
+        "state_attributes": {
+          "ready": {
+            "name": "Pronto"
+          },
+          "last_error": {
+            "name": "Codice ultimo errore"
+          },
+          "last_error_message": {
+            "name": "Messaggio ultimo errore"
+          },
+          "mode": {
+            "name": "Modalità vocale"
+          },
+          "sessions": {
+            "name": "Sessioni"
+          },
+          "failures": {
+            "name": "Errori"
+          },
+          "rejected": {
+            "name": "Pressioni rifiutate"
+          },
+          "queued": {
+            "name": "Richieste in coda"
+          },
+          "last_outcome": {
+            "name": "Ultimo esito"
+          },
+          "full_duplex": {
+            "name": "Duplex completo"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Tasto vocale",
+        "state_attributes": {
+          "event_type": {
+            "name": "Tipo di evento",
+            "state": {
+              "pressed": "Premuto",
+              "released": "Rilasciato",
+              "accepted": "Accettato",
+              "rejected": "Rifiutato",
+              "queued": "In coda",
+              "failed": "Non riuscito",
+              "context_reset": "Conversazione reimpostata",
+              "reply_skipped": "Risposta saltata"
+            }
+          },
+          "outcome": {
+            "name": "Esito"
+          },
+          "stage": {
+            "name": "Fase"
+          },
+          "code": {
+            "name": "Codice"
+          },
+          "message": {
+            "name": "Messaggio"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Microfono attivo"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Ultimo errore",
+        "state": {
+          "none": "Nessun errore",
+          "busy": "Sto ancora rispondendo alla richiesta precedente.",
+          "queue_full": "Una richiesta è già in attesa. Riprova dopo la risposta.",
+          "queue_expired": "La richiesta in attesa è scaduta. Premi e parla di nuovo.",
+          "queue_discarded": "La richiesta in attesa è stata scartata.",
+          "queue_failed": "Impossibile avviare la richiesta in attesa.",
+          "capture_limit": "È stato raggiunto il limite di acquisizione del microfono. Usa una richiesta più breve.",
+          "buffer_overflow": "L'audio del microfono si è accumulato prima che il servizio vocale iniziasse a leggerlo.",
+          "audio_sequence_gap": "Sincronizzazione audio non riuscita. Premi e riprova.",
+          "invalid_audio_sync": "Il telecomando ha inviato un messaggio di sincronizzazione audio non valido.",
+          "invalid_audio_frame": "Il telecomando ha inviato un frame audio danneggiato.",
+          "invalid_control": "Il telecomando ha inviato un messaggio di controllo non valido.",
+          "unsupported_audio_start": "Il telecomando ha avviato l'audio in un modo non supportato da questa integrazione.",
+          "incomplete_utterance": "L'audio è terminato prima che la richiesta fosse completa.",
+          "audio_stalled": "L'audio del microfono ha smesso di arrivare. Riprova.",
+          "audio_failed": "L'audio del microfono non è riuscito.",
+          "no_audio": "Nessun audio dal microfono ricevuto.",
+          "no_speech": "Nessun parlato rilevato.",
+          "held_mode_unsupported": "La conversazione alternata richiede un telecomando con push-to-talk.",
+          "held_failed": "La conversazione tenendo premuto il tasto non è riuscita.",
+          "held_turn_failed": "Un turno della conversazione non è riuscito.",
+          "remote_stopped": "Il telecomando ha arrestato il microfono in modo inatteso.",
+          "disconnected": "Il telecomando si è disconnesso.",
+          "cancelled": "La richiesta è stata annullata.",
+          "pipeline_finished_early": "La pipeline Assist è terminata prima che tutto l'audio fosse letto.",
+          "pipeline_timeout": "La pipeline Assist ha impiegato troppo tempo a rispondere.",
+          "pipeline_failed": "La pipeline Assist non è riuscita.",
+          "pipeline_removed": "La pipeline Assist selezionata non esiste più.",
+          "playback_stop_unverified": "Impossibile verificare che la risposta precedente si sia fermata. Attendi che l'altoparlante sia inattivo.",
+          "playback_stop_failed": "Impossibile interrompere la risposta precedente.",
+          "playback_start_timeout": "L'altoparlante non ha avviato la riproduzione della risposta.",
+          "playback_finish_timeout": "L'altoparlante non ha terminato in tempo la riproduzione della risposta.",
+          "playback_interrupted": "La risposta è stata interrotta sull'altoparlante.",
+          "speaker_unavailable": "L'altoparlante di risposta non è disponibile.",
+          "speaker_busy": "L'altoparlante di risposta è occupato.",
+          "speaker_cannot_play": "L'altoparlante di risposta non può riprodurre l'audio da Home Assistant.",
+          "missing_tts_audio": "La risposta non conteneva audio da riprodurre.",
+          "generation_retirement_failed": "La richiesta precedente non si è ancora fermata. Attendi.",
+          "replacement_retirement_failed": "Impossibile fermare la richiesta corrente per avviare quella nuova.",
+          "microphone_open_failed": "Impossibile aprire il microfono del telecomando.",
+          "microphone_open_rejected": "Il telecomando ha rifiutato di aprire il microfono.",
+          "microphone_start_timeout": "Il telecomando non ha avviato il microfono in tempo.",
+          "microphone_close_failed": "Impossibile chiudere il microfono del telecomando.",
+          "microphone_keepalive_failed": "La connessione al microfono del telecomando è stata persa.",
+          "active_generation_cancelled": "La risposta in preparazione è stata annullata e il contesto della conversazione è stato reimpostato.",
+          "wake_remote": "Riattiva il telecomando con un tasto freccia, poi riprova.",
+          "bluetooth_unavailable": "Il Bluetooth locale non è disponibile.",
+          "bluetooth_operation_failed": "Un'operazione Bluetooth non è riuscita.",
+          "not_paired": "Il telecomando non è associato a questo host.",
+          "multiple_adapters": "Il telecomando è associato a più di un adattatore.",
+          "voice_service_unavailable": "Il telecomando non offre un servizio vocale.",
+          "unsupported_write": "Il controllo vocale del telecomando non può essere scritto.",
+          "unsupported_capabilities": "Il telecomando ha segnalato funzionalità vocali non supportate da questa integrazione.",
+          "unsupported_codec": "Il telecomando usa un formato audio non supportato da questa integrazione.",
+          "invalid_frame_size": "Il telecomando ha segnalato una dimensione del frame audio non valida.",
+          "hidraw_unavailable": "Il dispositivo di input del telecomando non è disponibile per Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant non è autorizzato a leggere il dispositivo di input del telecomando.",
+          "opus_decoder_unavailable": "Home Assistant non dispone di un decodificatore audio Opus.",
+          "invalid_opus_packet": "Il telecomando ha inviato audio che non è stato possibile decodificare.",
+          "other": "Si è verificato un altro errore. Il codice errore ne indica i dettagli."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Codice"
+          },
+          "stage": {
+            "name": "Fase"
+          },
+          "since": {
+            "name": "Da"
+          },
+          "session": {
+            "name": "Richiesta"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Pipeline Assist mancante per {remote}",
+      "description": "Il telecomando **{remote}** è impostato per usare la pipeline Assist `{pipeline}`, che non esiste più. Le richieste vocali da questo telecomando falliscono finché non scegli un'altra pipeline.\n\nVai su **Impostazioni → Dispositivi e servizi → Bluetooth Remote Voice**, apri il menu di **{remote}**, scegli **Configura** e seleziona una pipeline esistente."
+    },
+    "speaker_missing": {
+      "title": "Altoparlante di risposta mancante per {remote}",
+      "description": "Il telecomando **{remote}** è impostato per riprodurre le risposte su `{speaker}`, che non esiste più. I comandi vengono comunque eseguiti, ma la risposta vocale non verrà riprodotta.\n\nVai su **Impostazioni → Dispositivi e servizi → Bluetooth Remote Voice**, apri il menu di **{remote}**, scegli **Configura** e seleziona un altro altoparlante oppure nessuno."
+    }
+  }
+}

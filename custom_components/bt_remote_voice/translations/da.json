@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Vælg parret fjernbetjening",
+        "description": "Par først fjernbetjeningen uden for Home Assistant, og væk den derefter med en piletast, så den kan verificeres. Vælg den på listen, eller indtast dens Bluetooth-adresse.",
+        "data": {
+          "device": "Parret fjernbetjening"
+        },
+        "data_description": {
+          "device": "Fjernbetjeninger, der allerede er parret med denne Home Assistant-vært. Vælg den manuelle indstilling, hvis din ikke står på listen."
+        }
+      },
+      "manual": {
+        "title": "Indtast adressen på den parrede fjernbetjening",
+        "description": "Indtast Bluetooth-adressen på en fjernbetjening, der allerede er parret med denne vært.",
+        "data": {
+          "address": "Bluetooth-adresse"
+        },
+        "data_description": {
+          "address": "Seks par hexadecimale cifre adskilt af kolon, for eksempel AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Vælg Assist-pipeline",
+        "description": "Væk fjernbetjeningen med en piletast, før du sender. Integrationen starter i tilstanden kun transskribering; ændr det i indstillingerne, når det virker.",
+        "data": {
+          "pipeline_id": "Assist-pipeline"
+        },
+        "data_description": {
+          "pipeline_id": "Den Assist-pipeline, der behandler tale fra denne fjernbetjening."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Lokal Bluetooth er ikke tilgængelig. Kontroller, at systemets D-Bus er tilgængelig.",
+      "wake_remote": "Væk den parrede fjernbetjening med en piletast, og prøv igen.",
+      "not_paired": "Par først denne fjernbetjening eksternt.",
+      "multiple_adapters": "Denne fjernbetjening er parret på flere adaptere. Behold parringen på én adapter.",
+      "invalid_address": "Indtast en Bluetooth-adresse i formatet AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Denne fjernbetjening har ingen understøttet ATVV v0.4/v1.0 ADPCM-stemmeprofil.",
+      "invalid_pipeline": "Vælg en eksisterende Assist-pipeline.",
+      "hidraw_unavailable": "Fjernbetjeningens inputenhed er ikke tilgængelig for Home Assistant. Væk fjernbetjeningen, og kontroller, at Home Assistant kan se /dev/hidraw-enheder.",
+      "hidraw_permission_denied": "Home Assistant har ikke tilladelse til at læse fjernbetjeningens inputenhed. Se README for den enhedsadgang, denne fjernbetjening kræver.",
+      "opus_decoder_unavailable": "Der er ingen Opus-lyddekoder tilgængelig for Home Assistant, hvilket denne fjernbetjening kræver."
+    },
+    "abort": {
+      "already_configured": "Denne fjernbetjening er allerede konfigureret.",
+      "no_pipelines": "Opret en Assist-pipeline, før du tilføjer fjernbetjeningen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Stemmeindstillinger",
+        "description": "Disse indstillinger styrer, hvordan tryk håndteres, og hvordan svar oplæses. Hvis du erstatter en anmodning, kan allerede udførte handlinger ikke fortrydes. Samtidig fuld duplex er ikke tilgængelig. Hvis du stopper efter transskribering, deaktiveres værktøjer indbygget i en live-taleudbyder ikke; brug en udbyder, der kun transskriberer, når handlinger skal deaktiveres.\n\n**Svarbetingelse:** alle dens betingelser skal være opfyldt, for at et svar oplæses. De kontrolleres én gang ved starten af hver anmodning; lad den være tom for altid at tale, og en betingelse, der ikke kan evalueres, regnes som ikke opfyldt. Skabelonbetingelser kan bruge variablerne `speaker`, `remote` og `held`.",
+        "data": {
+          "pipeline_id": "Assist-pipeline",
+          "mode": "Stemmetilstand",
+          "speaker": "Svarhøjttaler",
+          "output_mode": "Svartidspunkt",
+          "stream_head_start": "Forspring for streaming",
+          "busy_processing": "Nyt tryk under behandling",
+          "busy_playback": "Nyt tryk under svar",
+          "context_mode": "Samtalekontekst",
+          "input_mode": "Knapadfærd",
+          "min_press_seconds": "Ignorer korte tryk",
+          "max_request_seconds": "Maksimal anmodningslængde",
+          "max_conversation_seconds": "Maksimal samtalelængde",
+          "reply_condition": "Svarbetingelse"
+        },
+        "data_description": {
+          "pipeline_id": "Den Assist-pipeline, der behandler tale: tale til tekst, samtaleagent og tekst til tale. En fjernet pipeline giver en fejl i stedet for at falde tilbage på en anden.",
+          "mode": "Kun transskribering stopper efter talegenkendelsen og afspiller intet svar. Udfør kommandoer kører hele pipelinen og oplæser svaret på svarhøjttaleren.",
+          "speaker": "Medieafspilleren, der oplæser svar. Bruges kun, når kommandoer udføres. Vælg intet oplæst svar for at stoppe pipelinen, før svaret afspilles.",
+          "output_mode": "Automatisk streaming begynder at tale, så snart et streamet svar er klart. Hvis du venter på det komplette svar, starter det senere, men afspiller en færdig lydfil, hvilket undgår afbrydelser hos udbydere, der kun producerer tale i omtrent realtid.",
+          "stream_head_start": "Forsinker starten af et streamet svar med dette antal sekunder, så højttaleren kan buffere; svar, der bliver færdige tidligere, afspilles med det samme. Hæv værdien, hvis streamede svar hakker i de første sekunder. Ingen effekt, når der ventes på det komplette svar. 0 beholder standardadfærden.",
+          "busy_processing": "Hvad der skal ske, når knappen trykkes, før den forrige anmodning er besvaret: afvis trykket, behold én ventende anmodning, eller erstat den nuværende anmodning. Erstatning kan ikke fortryde allerede udførte handlinger.",
+          "busy_playback": "Hvad der skal ske, når knappen trykkes, mens et svar afspilles: afvis trykket, besvar en ventende anmodning bagefter, eller stop svaret og start den nye anmodning.",
+          "context_mode": "Genbrug bevarer Home Assistant-samtalen, så opfølgende spørgsmål som \"og det dobbelte?\" virker. Ny gør hvert tryk til en uafhængig samtale.",
+          "input_mode": "Én anmodning pr. hold optager, indtil knappen slippes. Skiftevis samtale bliver ved med at lytte, mens knappen holdes nede: tal, hold pause, hør svaret, og tal igen. Kræver en fjernbetjening med hold-for-at-tale.",
+          "min_press_seconds": "Ignorerer tryk på stemmeknappen, der er kortere end dette, så et utilsigtet tryk aldrig starter en anmodning; et rigtigt hold starter så meget senere. 0 slår det fra. Nyttigt til en Fire TV-fjernbetjening, der fejler med \"Ingen mikrofonlyd\" lige efter opvågning: den gensender den tast, der vækkede den, som et øjeblikkeligt tryk. 0,1 s er et godt udgangspunkt. Kun til Fire TV-fjernbetjeninger.",
+          "max_request_seconds": "Den længste tid, en enkelt anmodning kan vare på en fjernbetjening: et helt hold i tilstanden Én anmodning og hver tur i skiftevis samtale. Når grænsen nås, slutter anmodningen med en fejl om optagegrænse. Sænk den for at stoppe optagelse med hængende knap; hæv den til lange diktater. Fjernbetjeninger uden hold-for-at-tale slutter også efter ca. 15 sekunders tale eller ved stilhed, alt efter hvad der kommer først.",
+          "max_conversation_seconds": "Den længste tid, et helt knaphold kan vare i tilstanden skiftevis samtale. Ignoreres i tilstanden Én anmodning og må ikke være kortere end den maksimale anmodningslængde.",
+          "reply_condition": "Betingelser, der alle skal være opfyldt, for at et svar oplæses. Kontrolleres én gang ved starten af hver anmodning (og hver tur i skiftevis samtale). Lad den være tom for altid at tale. En betingelse, der giver en fejl, regnes som ikke opfyldt. Skabelonbetingelser kan bruge variablerne speaker, remote og held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Vælg en medieafspiller, der understøtter afspilning af lyd, eller intet oplæst svar.",
+      "invalid_preferences": "Vælg en af de understøttede stemmepræferencer.",
+      "invalid_pipeline": "Vælg en eksisterende Assist-pipeline.",
+      "invalid_reply_condition": "Svarbetingelsen er ikke gyldig. Kontroller betingelserne, og prøv igen.",
+      "pipeline_missing": "Den Assist-pipeline, der er gemt til denne fjernbetjening, findes ikke længere. Vælg en anden.",
+      "speaker_missing": "Den gemte svarhøjttaler er ikke tilgængelig lige nu, så svar afspilles ikke, før den vender tilbage. Behold den, eller vælg en anden."
+    },
+    "abort": {
+      "no_pipelines": "Opret først en Assist-pipeline."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Indtast Bluetooth-adresse"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Kun transskribering",
+        "commands": "Udfør kommandoer"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Intet oplæst svar"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatisk streaming",
+        "buffered": "Vent på komplet svar"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Afvis ny anmodning",
+        "queue": "Sæt én anmodning i kø",
+        "replace": "Erstat nuværende anmodning"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Afvis ny anmodning",
+        "queue": "Sæt én anmodning i kø",
+        "replace": "Erstat nuværende svar"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Genbrug samtale",
+        "fresh": "Ny samtale pr. anmodning"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Én anmodning pr. hold",
+        "conversation": "Samtale, mens knappen holdes (skiftevis)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Stemme",
+        "state_attributes": {
+          "ready": {
+            "name": "Klar"
+          },
+          "last_error": {
+            "name": "Seneste fejlkode"
+          },
+          "last_error_message": {
+            "name": "Seneste fejlmeddelelse"
+          },
+          "mode": {
+            "name": "Stemmetilstand"
+          },
+          "sessions": {
+            "name": "Sessioner"
+          },
+          "failures": {
+            "name": "Fejl"
+          },
+          "rejected": {
+            "name": "Afviste tryk"
+          },
+          "queued": {
+            "name": "Anmodninger i kø"
+          },
+          "last_outcome": {
+            "name": "Seneste udfald"
+          },
+          "full_duplex": {
+            "name": "Fuld duplex"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Stemmeknap",
+        "state_attributes": {
+          "event_type": {
+            "name": "Hændelsestype",
+            "state": {
+              "pressed": "Trykket",
+              "released": "Sluppet",
+              "accepted": "Accepteret",
+              "rejected": "Afvist",
+              "queued": "I kø",
+              "failed": "Mislykkedes",
+              "context_reset": "Samtale nulstillet",
+              "reply_skipped": "Svar sprunget over"
+            }
+          },
+          "outcome": {
+            "name": "Udfald"
+          },
+          "stage": {
+            "name": "Trin"
+          },
+          "code": {
+            "name": "Kode"
+          },
+          "message": {
+            "name": "Meddelelse"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofon aktiv"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Seneste fejl",
+        "state": {
+          "none": "Ingen fejl",
+          "busy": "Svarer stadig på den forrige anmodning.",
+          "queue_full": "En anmodning venter allerede. Prøv igen efter svaret.",
+          "queue_expired": "Den ventende anmodning er udløbet. Tryk og tal igen.",
+          "queue_discarded": "Den ventende anmodning blev kasseret.",
+          "queue_failed": "Den ventende anmodning kunne ikke startes.",
+          "capture_limit": "Mikrofonens optagegrænse blev nået. Brug en kortere anmodning.",
+          "buffer_overflow": "Mikrofonlyden hobede sig op, før taletjenesten begyndte at læse den.",
+          "audio_sequence_gap": "Lydsynkroniseringen mislykkedes. Tryk og prøv igen.",
+          "invalid_audio_sync": "Fjernbetjeningen sendte en ugyldig lydsynkroniseringsmeddelelse.",
+          "invalid_audio_frame": "Fjernbetjeningen sendte en beskadiget lydramme.",
+          "invalid_control": "Fjernbetjeningen sendte en ugyldig kontrolmeddelelse.",
+          "unsupported_audio_start": "Fjernbetjeningen startede lyd på en måde, som denne integration ikke understøtter.",
+          "incomplete_utterance": "Lyden sluttede, før anmodningen var fuldført.",
+          "audio_stalled": "Mikrofonlyden holdt op med at komme. Prøv igen.",
+          "audio_failed": "Mikrofonlyden mislykkedes.",
+          "no_audio": "Der blev ikke modtaget nogen mikrofonlyd.",
+          "no_speech": "Der blev ikke registreret tale.",
+          "held_mode_unsupported": "Skiftevis samtale kræver en fjernbetjening med hold-for-at-tale.",
+          "held_failed": "Samtalen, mens knappen blev holdt nede, mislykkedes.",
+          "held_turn_failed": "En tur i samtalen mislykkedes.",
+          "remote_stopped": "Fjernbetjeningen stoppede mikrofonen uventet.",
+          "disconnected": "Fjernbetjeningen blev afbrudt.",
+          "cancelled": "Anmodningen blev annulleret.",
+          "pipeline_finished_early": "Assist-pipelinen sluttede, før al lyden var læst.",
+          "pipeline_timeout": "Assist-pipelinen brugte for lang tid på at svare.",
+          "pipeline_failed": "Assist-pipelinen mislykkedes.",
+          "pipeline_removed": "Den valgte Assist-pipeline findes ikke længere.",
+          "playback_stop_unverified": "Kunne ikke bekræfte, at det forrige svar blev stoppet. Vent, til højttaleren er inaktiv.",
+          "playback_stop_failed": "Det forrige svar kunne ikke stoppes.",
+          "playback_start_timeout": "Højttaleren begyndte ikke at afspille svaret.",
+          "playback_finish_timeout": "Højttaleren blev ikke færdig med at afspille svaret i tide.",
+          "playback_interrupted": "Svaret blev afbrudt på højttaleren.",
+          "speaker_unavailable": "Svarhøjttaleren er ikke tilgængelig.",
+          "speaker_busy": "Svarhøjttaleren er optaget.",
+          "speaker_cannot_play": "Svarhøjttaleren kan ikke afspille lyd fra Home Assistant.",
+          "missing_tts_audio": "Svaret havde ingen lyd at afspille.",
+          "generation_retirement_failed": "Den forrige anmodning er ikke stoppet endnu. Vent.",
+          "replacement_retirement_failed": "Den nuværende anmodning kunne ikke stoppes for at starte den nye.",
+          "microphone_open_failed": "Fjernbetjeningens mikrofon kunne ikke åbnes.",
+          "microphone_open_rejected": "Fjernbetjeningen nægtede at åbne sin mikrofon.",
+          "microphone_start_timeout": "Fjernbetjeningen startede ikke sin mikrofon i tide.",
+          "microphone_close_failed": "Fjernbetjeningens mikrofon kunne ikke lukkes.",
+          "microphone_keepalive_failed": "Forbindelsen til fjernbetjeningens mikrofon blev mistet.",
+          "active_generation_cancelled": "Svaret, der blev forberedt, blev annulleret, og samtalekonteksten blev nulstillet.",
+          "wake_remote": "Væk fjernbetjeningen med en piletast, og prøv igen.",
+          "bluetooth_unavailable": "Lokal Bluetooth er ikke tilgængelig.",
+          "bluetooth_operation_failed": "En Bluetooth-handling mislykkedes.",
+          "not_paired": "Fjernbetjeningen er ikke parret med denne vært.",
+          "multiple_adapters": "Fjernbetjeningen er parret på mere end én adapter.",
+          "voice_service_unavailable": "Fjernbetjeningen tilbyder ingen stemmetjeneste.",
+          "unsupported_write": "Fjernbetjeningens stemmestyring kan ikke skrives.",
+          "unsupported_capabilities": "Fjernbetjeningen rapporterede stemmefunktioner, som denne integration ikke understøtter.",
+          "unsupported_codec": "Fjernbetjeningen bruger et lydformat, som denne integration ikke understøtter.",
+          "invalid_frame_size": "Fjernbetjeningen rapporterede en ugyldig lydrammestørrelse.",
+          "hidraw_unavailable": "Fjernbetjeningens inputenhed er ikke tilgængelig for Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant har ikke tilladelse til at læse fjernbetjeningens inputenhed.",
+          "opus_decoder_unavailable": "Der er ingen Opus-lyddekoder tilgængelig for Home Assistant.",
+          "invalid_opus_packet": "Fjernbetjeningen sendte lyd, der ikke kunne dekodes.",
+          "other": "Der opstod en anden fejl. Fejlkoden angiver detaljerne."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kode"
+          },
+          "stage": {
+            "name": "Trin"
+          },
+          "since": {
+            "name": "Siden"
+          },
+          "session": {
+            "name": "Anmodning"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist-pipeline mangler for {remote}",
+      "description": "Fjernbetjeningen **{remote}** er indstillet til at bruge Assist-pipelinen `{pipeline}`, som ikke længere findes. Stemmeanmodninger fra denne fjernbetjening mislykkes, indtil du vælger en anden pipeline.\n\nGå til **Indstillinger → Enheder og tjenester → Bluetooth Remote Voice**, åbn menuen for **{remote}**, vælg **Konfigurer**, og vælg en eksisterende pipeline."
+    },
+    "speaker_missing": {
+      "title": "Svarhøjttaler mangler for {remote}",
+      "description": "Fjernbetjeningen **{remote}** er indstillet til at afspille svar på `{speaker}`, som ikke længere findes. Kommandoer udføres stadig, men det oplæste svar afspilles ikke.\n\nGå til **Indstillinger → Enheder og tjenester → Bluetooth Remote Voice**, åbn menuen for **{remote}**, vælg **Konfigurer**, og vælg en anden højttaler eller ingen."
+    }
+  }
+}

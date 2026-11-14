@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "ペアリング済みのリモコンを選択",
+        "description": "先に Home Assistant の外部でリモコンをペアリングし、矢印ボタンを押してリモコンを起動して確認できる状態にしてください。一覧から選択するか、Bluetooth アドレスを入力してください。",
+        "data": {
+          "device": "ペアリング済みのリモコン"
+        },
+        "data_description": {
+          "device": "この Home Assistant ホストでペアリング済みのリモコンです。一覧に表示されない場合は、手動のオプションを選択してください。"
+        }
+      },
+      "manual": {
+        "title": "ペアリング済みリモコンのアドレスを入力",
+        "description": "このホストでペアリング済みのリモコンの Bluetooth アドレスを入力してください。",
+        "data": {
+          "address": "Bluetooth アドレス"
+        },
+        "data_description": {
+          "address": "コロンで区切られた 16 進数 6 組の値です。例: AA:BB:CC:DD:EE:FF。"
+        }
+      },
+      "configure": {
+        "title": "Assist パイプラインを選択",
+        "description": "送信する前に、矢印ボタンを押してリモコンを起動してください。この統合は文字起こしのみのモードで開始します。動作を確認したら、オプションで変更してください。",
+        "data": {
+          "pipeline_id": "Assist パイプライン"
+        },
+        "data_description": {
+          "pipeline_id": "このリモコンからの音声を処理する Assist パイプラインです。"
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "ローカルの Bluetooth を利用できません。システムの D-Bus にアクセスできることを確認してください。",
+      "wake_remote": "ペアリング済みのリモコンを矢印ボタンで起動してから、もう一度お試しください。",
+      "not_paired": "先にこのリモコンを外部でペアリングしてください。",
+      "multiple_adapters": "このリモコンは複数のアダプターでペアリングされています。ボンドは 1 つのアダプターのみに残してください。",
+      "invalid_address": "AA:BB:CC:DD:EE:FF 形式の Bluetooth アドレスを入力してください。",
+      "unsupported_remote": "このリモコンは、サポートされている ATVV v0.4/v1.0 ADPCM 音声プロファイルを提供していません。",
+      "invalid_pipeline": "既存の Assist パイプラインを選択してください。",
+      "hidraw_unavailable": "リモコンの入力デバイスを Home Assistant が利用できません。リモコンを起動し、Home Assistant から /dev/hidraw デバイスが見えることを確認してください。",
+      "hidraw_permission_denied": "Home Assistant にリモコンの入力デバイスを読み取る権限がありません。このリモコンに必要なデバイスへのアクセスについては README を参照してください。",
+      "opus_decoder_unavailable": "このリモコンに必要な Opus オーディオデコーダーを Home Assistant が利用できません。"
+    },
+    "abort": {
+      "already_configured": "このリモコンは既に設定されています。",
+      "no_pipelines": "リモコンを追加する前に Assist パイプラインを作成してください。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "音声設定",
+        "description": "これらの設定で、ボタン押下の扱いと返答の読み上げ方法を制御します。リクエストを置き換えても、既に実行されたアクションを取り消すことはできません。同時のフルデュプレックスは利用できません。文字起こし後に停止しても、ライブ音声プロバイダーに組み込まれたツールは無効になりません。アクションを無効にする必要がある場合は、文字起こし専用のプロバイダーを使用してください。\n\n**返答の条件:** 返答を読み上げるには、すべての条件を満たす必要があります。条件は各リクエストの開始時に一度だけ確認されます。空のままにすると常に読み上げます。評価できない条件は満たされていないものとして扱われます。テンプレート条件では、変数 `speaker`、`remote`、`held` を使用できます。",
+        "data": {
+          "pipeline_id": "Assist パイプライン",
+          "mode": "音声モード",
+          "speaker": "返答用スピーカー",
+          "output_mode": "返答のタイミング",
+          "stream_head_start": "ストリーミングの先行時間",
+          "busy_processing": "処理中の新たな押下",
+          "busy_playback": "返答中の新たな押下",
+          "context_mode": "会話のコンテキスト",
+          "input_mode": "ボタンの動作",
+          "min_press_seconds": "短い押下を無視",
+          "max_request_seconds": "リクエストの最大長",
+          "max_conversation_seconds": "会話の最大長",
+          "reply_condition": "返答の条件"
+        },
+        "data_description": {
+          "pipeline_id": "音声認識、会話エージェント、音声合成の順に音声を処理する Assist パイプラインです。削除されたパイプラインは代替されず、エラーになります。",
+          "mode": "文字起こしのみは、音声認識の後で停止し、返答を再生しません。コマンドを実行は、パイプライン全体を実行し、返答用スピーカーで返答を読み上げます。",
+          "speaker": "返答を読み上げるメディアプレーヤーです。コマンドの実行時のみ使用されます。音声での返答なしを選択すると、返答が再生される前にパイプラインを停止します。",
+          "output_mode": "自動ストリーミングは、ストリーミング返答の準備ができ次第、読み上げを開始します。返答全体を待つは、開始が遅くなりますが、完成した音声ファイルを再生するため、ほぼリアルタイムの速度でしか音声を生成しないプロバイダーでの途切れを防げます。",
+          "stream_head_start": "ストリーミング返答の開始をこの秒数だけ遅らせ、スピーカーがバッファリングできるようにします。それより早く終わる返答はすぐに再生されます。ストリーミング返答の最初の数秒で途切れる場合は、この値を上げてください。返答全体を待つ場合は影響しません。0 の場合は既定の動作になります。",
+          "busy_processing": "前のリクエストに応答する前にボタンが押されたときの動作です。押下を拒否する、保留リクエストを 1 件保持する、現在のリクエストを置き換える、から選べます。置き換えても、既に実行されたアクションは取り消せません。",
+          "busy_playback": "返答の再生中にボタンが押されたときの動作です。押下を拒否する、保留リクエストを 1 件その後で回答する、返答を停止して新しいリクエストを開始する、から選べます。",
+          "context_mode": "再利用は Home Assistant の会話を維持するため、「その 2 倍は?」のような追加の質問が使えます。新規は、押下のたびに独立した会話にします。",
+          "input_mode": "1 回の長押しにつき 1 リクエストは、ボタンを離すまで録音します。交互の会話は、ボタンを押している間は聞き続けます。話す、間を置く、返答を聞く、再び話す、の繰り返しです。長押しで話すタイプのリモコンが必要です。",
+          "min_press_seconds": "この秒数より短い音声ボタンのタップを無視し、誤ったタップでリクエストが始まらないようにします。実際の長押しは、この分だけ遅れて開始されます。0 で無効になります。起動直後に「マイク音声なし」で失敗する Fire TV リモコンに便利です。起動に使ったキーを瞬間的なタップとして再送するためです。0.1 s から始めるのが適切です。Fire TV リモコンのみが対象です。",
+          "max_request_seconds": "どのリモコンでも 1 回のリクエストが続けられる最長時間です。1 リクエストモードでは長押し全体、交互の会話では各ターンが対象です。この時間に達すると、キャプチャー上限エラーでリクエストが終了します。ボタンが押されたままのときの録音を止めるには下げ、長い口述には上げてください。長押しで話すタイプではないリモコンは、音声が約 15 秒続くか無音になった時点のいずれか早い方でも終了します。",
+          "max_conversation_seconds": "交互の会話モードで、ボタンを押し続けられる最長時間です。1 リクエストモードでは無視され、リクエストの最大長より短くすることはできません。",
+          "reply_condition": "返答を読み上げるには、すべて満たす必要がある条件です。各リクエストの開始時(交互の会話では各ターンの開始時)に一度だけ確認されます。空のままにすると常に読み上げます。エラーになる条件は満たされていないものとして扱われます。テンプレート条件では、変数 speaker、remote、held を使用できます。"
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "音声の再生に対応したメディアプレーヤーを選択するか、音声での返答なしを選択してください。",
+      "invalid_preferences": "サポートされている音声設定のいずれかを選択してください。",
+      "invalid_pipeline": "既存の Assist パイプラインを選択してください。",
+      "invalid_reply_condition": "返答の条件が無効です。条件を確認して、もう一度お試しください。",
+      "pipeline_missing": "このリモコンに保存されている Assist パイプラインは存在しません。別のパイプラインを選択してください。",
+      "speaker_missing": "保存されている返答用スピーカーは現在利用できないため、復帰するまで返答は再生されません。そのままにするか、別のスピーカーを選択してください。"
+    },
+    "abort": {
+      "no_pipelines": "先に Assist パイプラインを作成してください。"
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Bluetooth アドレスを入力"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "文字起こしのみ",
+        "commands": "コマンドを実行"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "音声での返答なし"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "自動ストリーミング",
+        "buffered": "返答全体を待つ"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "新しいリクエストを拒否",
+        "queue": "1 件のリクエストを待機",
+        "replace": "現在のリクエストを置き換え"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "新しいリクエストを拒否",
+        "queue": "1 件のリクエストを待機",
+        "replace": "現在の返答を置き換え"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "会話を再利用",
+        "fresh": "リクエストごとに新しい会話"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "1 回の長押しにつき 1 リクエスト",
+        "conversation": "長押し中の会話(交互)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "音声",
+        "state_attributes": {
+          "ready": {
+            "name": "準備完了"
+          },
+          "last_error": {
+            "name": "最後のエラーコード"
+          },
+          "last_error_message": {
+            "name": "最後のエラーメッセージ"
+          },
+          "mode": {
+            "name": "音声モード"
+          },
+          "sessions": {
+            "name": "セッション"
+          },
+          "failures": {
+            "name": "失敗"
+          },
+          "rejected": {
+            "name": "拒否された押下"
+          },
+          "queued": {
+            "name": "待機中のリクエスト"
+          },
+          "last_outcome": {
+            "name": "最後の結果"
+          },
+          "full_duplex": {
+            "name": "フルデュプレックス"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "音声ボタン",
+        "state_attributes": {
+          "event_type": {
+            "name": "イベントタイプ",
+            "state": {
+              "pressed": "押下",
+              "released": "解放",
+              "accepted": "受理",
+              "rejected": "拒否",
+              "queued": "待機中",
+              "failed": "失敗",
+              "context_reset": "会話をリセット",
+              "reply_skipped": "返答をスキップ"
+            }
+          },
+          "outcome": {
+            "name": "結果"
+          },
+          "stage": {
+            "name": "ステージ"
+          },
+          "code": {
+            "name": "コード"
+          },
+          "message": {
+            "name": "メッセージ"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "マイク動作中"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "最後のエラー",
+        "state": {
+          "none": "エラーなし",
+          "busy": "前のリクエストにまだ応答中です。",
+          "queue_full": "既にリクエストが待機中です。返答の後でお試しください。",
+          "queue_expired": "待機中のリクエストの有効期限が切れました。もう一度ボタンを押して話してください。",
+          "queue_discarded": "待機中のリクエストは破棄されました。",
+          "queue_failed": "待機中のリクエストを開始できませんでした。",
+          "capture_limit": "マイクのキャプチャー上限に達しました。もっと短いリクエストにしてください。",
+          "buffer_overflow": "音声サービスが読み取りを開始する前に、マイク音声が滞留しました。",
+          "audio_sequence_gap": "音声の同期に失敗しました。もう一度ボタンを押してお試しください。",
+          "invalid_audio_sync": "リモコンが無効な音声同期メッセージを送信しました。",
+          "invalid_audio_frame": "リモコンが破損した音声フレームを送信しました。",
+          "invalid_control": "リモコンが無効な制御メッセージを送信しました。",
+          "unsupported_audio_start": "リモコンが、この統合でサポートされていない方法で音声を開始しました。",
+          "incomplete_utterance": "リクエストが完了する前に音声が終了しました。",
+          "audio_stalled": "マイク音声が届かなくなりました。もう一度お試しください。",
+          "audio_failed": "マイク音声で障害が発生しました。",
+          "no_audio": "マイク音声を受信しませんでした。",
+          "no_speech": "音声が検出されませんでした。",
+          "held_mode_unsupported": "交互の会話には、長押しで話すタイプのリモコンが必要です。",
+          "held_failed": "ボタンを押している間の会話に失敗しました。",
+          "held_turn_failed": "会話のターンに失敗しました。",
+          "remote_stopped": "リモコンが予期せずマイクを停止しました。",
+          "disconnected": "リモコンが切断されました。",
+          "cancelled": "リクエストはキャンセルされました。",
+          "pipeline_finished_early": "すべての音声が読み取られる前に Assist パイプラインが終了しました。",
+          "pipeline_timeout": "Assist パイプラインの応答に時間がかかりすぎました。",
+          "pipeline_failed": "Assist パイプラインが失敗しました。",
+          "pipeline_removed": "選択された Assist パイプラインは存在しません。",
+          "playback_stop_unverified": "前の返答が停止したことを確認できませんでした。スピーカーがアイドル状態になるまでお待ちください。",
+          "playback_stop_failed": "前の返答を停止できませんでした。",
+          "playback_start_timeout": "スピーカーが返答の再生を開始しませんでした。",
+          "playback_finish_timeout": "スピーカーが時間内に返答の再生を完了しませんでした。",
+          "playback_interrupted": "スピーカーで返答が中断されました。",
+          "speaker_unavailable": "返答用スピーカーを利用できません。",
+          "speaker_busy": "返答用スピーカーは使用中です。",
+          "speaker_cannot_play": "返答用スピーカーは Home Assistant からの音声を再生できません。",
+          "missing_tts_audio": "返答に再生する音声がありませんでした。",
+          "generation_retirement_failed": "前のリクエストはまだ停止していません。お待ちください。",
+          "replacement_retirement_failed": "新しいリクエストを開始するために、現在のリクエストを停止できませんでした。",
+          "microphone_open_failed": "リモコンのマイクを開けませんでした。",
+          "microphone_open_rejected": "リモコンがマイクを開くことを拒否しました。",
+          "microphone_start_timeout": "リモコンが時間内にマイクを起動しませんでした。",
+          "microphone_close_failed": "リモコンのマイクを閉じられませんでした。",
+          "microphone_keepalive_failed": "リモコンのマイクとの接続が失われました。",
+          "active_generation_cancelled": "準備中の返答がキャンセルされ、会話のコンテキストがリセットされました。",
+          "wake_remote": "リモコンを矢印ボタンで起動してから、もう一度お試しください。",
+          "bluetooth_unavailable": "ローカルの Bluetooth を利用できません。",
+          "bluetooth_operation_failed": "Bluetooth の操作に失敗しました。",
+          "not_paired": "リモコンはこのホストでペアリングされていません。",
+          "multiple_adapters": "リモコンが複数のアダプターでペアリングされています。",
+          "voice_service_unavailable": "リモコンが音声サービスを提供していません。",
+          "unsupported_write": "リモコンの音声制御には書き込めません。",
+          "unsupported_capabilities": "リモコンが、この統合でサポートされていない音声機能を報告しました。",
+          "unsupported_codec": "リモコンが、この統合でサポートされていない音声形式を使用しています。",
+          "invalid_frame_size": "リモコンが無効な音声フレームサイズを報告しました。",
+          "hidraw_unavailable": "リモコンの入力デバイスを Home Assistant が利用できません。",
+          "hidraw_permission_denied": "Home Assistant にリモコンの入力デバイスを読み取る権限がありません。",
+          "opus_decoder_unavailable": "Home Assistant が利用できる Opus オーディオデコーダーがありません。",
+          "invalid_opus_packet": "リモコンがデコードできない音声を送信しました。",
+          "other": "別のエラーが発生しました。詳細はエラーコードを確認してください。"
+        },
+        "state_attributes": {
+          "code": {
+            "name": "コード"
+          },
+          "stage": {
+            "name": "ステージ"
+          },
+          "since": {
+            "name": "開始時刻"
+          },
+          "session": {
+            "name": "リクエスト"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "{remote} の Assist パイプラインがありません",
+      "description": "リモコン **{remote}** は Assist パイプライン `{pipeline}` を使用するよう設定されていますが、このパイプラインは存在しません。別のパイプラインを選択するまで、このリモコンからの音声リクエストは失敗します。\n\n**設定 → デバイスとサービス → Bluetooth Remote Voice** に移動し、**{remote}** のメニューを開いて **設定** を選択し、既存のパイプラインを選択してください。"
+    },
+    "speaker_missing": {
+      "title": "{remote} の返答用スピーカーがありません",
+      "description": "リモコン **{remote}** は返答を `{speaker}` で再生するよう設定されていますが、このスピーカーは存在しません。コマンドは引き続き実行されますが、音声での返答は再生されません。\n\n**設定 → デバイスとサービス → Bluetooth Remote Voice** に移動し、**{remote}** のメニューを開いて **設定** を選択し、別のスピーカーを選択するか、なしを選択してください。"
+    }
+  }
+}

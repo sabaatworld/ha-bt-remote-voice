@@ -27,16 +27,21 @@ BlueZ Bluetooth adapter.
 
 ## Install
 
-### 1. Install with HACS (recommended)
+<!-- ha-marketplace:exclude-start -->
 
-[![Open your Home Assistant instance and open this repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sabaatworld&repository=ha-bt-remote-voice&category=integration)
+### 1. Install from the Marketplace
 
-Or add it by hand:
+[![Open your Home Assistant instance and show this repository in the Marketplace.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=sabaatworld&repository=ha-bt-remote-voice&category=integration)
 
-1. In Home Assistant open **HACS**, then the **⋮** menu, then **Custom repositories**.
-2. Enter `https://github.com/sabaatworld/ha-bt-remote-voice`, choose the category
-   **Integration** and select **Add**.
-3. Find **Bluetooth Remote Voice** in HACS, select **Download**, then restart Home Assistant.
+Or add it by hand (Home Assistant 2026.11 or later, which has the Marketplace built in):
+
+1. Go to **Settings → Marketplace**.
+2. Select **Add from link** in the upper-right corner, enter `sabaatworld/ha-bt-remote-voice` (or the
+   full GitHub URL) and select **Add**.
+3. Select **Bluetooth Remote Voice** in the list, then **Install**, then **Install** again to confirm
+   the version. Restart Home Assistant if it asks you to.
+
+<!-- ha-marketplace:exclude-end -->
 
 ### 2. Pair your remote
 
@@ -57,7 +62,7 @@ STT provider: such a provider may act during speech processing. Use a dedicated 
 STT provider when actions must be disabled.
 
 <details>
-<summary>Manual installation (without HACS)</summary>
+<summary>Manual installation (without the Marketplace)</summary>
 
 Download `bt_remote_voice.zip` from the latest
 [release](https://github.com/sabaatworld/ha-bt-remote-voice/releases), unzip it into
@@ -379,6 +384,15 @@ satellite attributes. The voice button event still announces every occurrence.
 Physical coverage does not establish all-model compatibility or behavior under
 battery depletion, radio interference, adapter removal or a host reboot.
 
+## Languages
+
+The integration is translated into every language Home Assistant supports (63 besides English):
+setup, options, entities, errors and Repairs notices. The translations are AI-generated and have not
+been reviewed by native speakers, so wording may be off in places. Corrections are welcome as
+[issues or pull requests](https://github.com/sabaatworld/ha-bt-remote-voice/issues).
+
+<!-- ha-marketplace:exclude-start -->
+
 ## Acknowledgements and references
 
 ### Acknowledgements
@@ -449,6 +463,13 @@ New streaming/held behaviors need physical acceptance testing before a hardware
 compatibility claim; unit tests alone do not establish acoustic latency. macOS may have an upstream HA/native
 extension shutdown crash; use Linux for the complete lifecycle suite.
 
+Translations: `custom_components/bt_remote_voice/translations/en.json` is the only source text.
+Every other Home Assistant language has its own file with the same keys. When you add or change a
+user-visible string, translate it into all of them in the same change, then run
+`python scripts/translation_tools.py refresh-hashes`; `tests/test_language_files.py` fails on missing
+keys, damaged `{placeholders}` or Markdown, a missing language, or English text that changed without
+being retranslated.
+
 For contributions, supply synthetic protocol vectors and failing regression
 tests before changing framing/decoder behavior. Include upstream revision and
 license attribution. Keep personal configuration, packet captures, recordings,
@@ -462,5 +483,8 @@ Versions follow [SemVer](https://semver.org/) and the version in
 (tag `v0.4.0` for version `0.4.0`). To release, update that version, merge to `main` and push
 the tag. The Release workflow runs `scripts/check_package.py`, which fails if the tag and manifest
 version disagree, builds `dist/bt_remote_voice.zip` (component files only) and attaches it to a
-GitHub release with generated notes; HACS installs from that zip. CI also runs hassfest and the
-HACS validation on every push.
+GitHub release with generated notes; the Marketplace installs from that zip. CI also runs hassfest and
+the Marketplace (HACS action) validation on every push, and a weekly job runs the tests against the
+Home Assistant beta.
+
+<!-- ha-marketplace:exclude-end -->

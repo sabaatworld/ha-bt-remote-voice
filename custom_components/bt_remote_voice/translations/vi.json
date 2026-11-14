@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Chọn điều khiển từ xa đã ghép nối",
+        "description": "Hãy ghép nối điều khiển từ xa bên ngoài Home Assistant trước, sau đó đánh thức nó bằng một nút mũi tên để có thể xác minh. Chọn nó từ danh sách hoặc nhập địa chỉ Bluetooth của nó.",
+        "data": {
+          "device": "Điều khiển từ xa đã ghép nối"
+        },
+        "data_description": {
+          "device": "Các điều khiển từ xa đã được ghép nối trên máy chủ Home Assistant này. Chọn tùy chọn thủ công nếu điều khiển của bạn không có trong danh sách."
+        }
+      },
+      "manual": {
+        "title": "Nhập địa chỉ điều khiển từ xa đã ghép nối",
+        "description": "Nhập địa chỉ Bluetooth của điều khiển từ xa đã được ghép nối trên máy chủ này.",
+        "data": {
+          "address": "Địa chỉ Bluetooth"
+        },
+        "data_description": {
+          "address": "Sáu cặp chữ số thập lục phân cách nhau bằng dấu hai chấm, ví dụ AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Chọn pipeline Assist",
+        "description": "Hãy đánh thức điều khiển từ xa bằng một nút mũi tên trước khi gửi. Tích hợp khởi động ở chế độ chỉ chép lời; hãy thay đổi trong tùy chọn khi mọi thứ đã hoạt động.",
+        "data": {
+          "pipeline_id": "Pipeline Assist"
+        },
+        "data_description": {
+          "pipeline_id": "Pipeline Assist xử lý giọng nói từ điều khiển từ xa này."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Bluetooth cục bộ không khả dụng. Hãy kiểm tra xem có thể truy cập D-Bus của hệ thống hay không.",
+      "wake_remote": "Hãy đánh thức điều khiển từ xa đã ghép nối bằng một nút mũi tên, rồi thử lại.",
+      "not_paired": "Hãy ghép nối điều khiển từ xa này từ bên ngoài trước.",
+      "multiple_adapters": "Điều khiển từ xa này được ghép nối trên nhiều bộ điều hợp. Hãy giữ liên kết của nó trên một bộ điều hợp.",
+      "invalid_address": "Nhập địa chỉ Bluetooth theo định dạng AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Điều khiển từ xa này không cung cấp hồ sơ giọng nói ATVV v0.4/v1.0 ADPCM được hỗ trợ.",
+      "invalid_pipeline": "Hãy chọn một pipeline Assist hiện có.",
+      "hidraw_unavailable": "Home Assistant không dùng được thiết bị đầu vào của điều khiển từ xa. Hãy đánh thức điều khiển và kiểm tra xem Home Assistant có thấy các thiết bị /dev/hidraw hay không.",
+      "hidraw_permission_denied": "Home Assistant không được phép đọc thiết bị đầu vào của điều khiển từ xa. Xem README để biết quyền truy cập thiết bị mà điều khiển này cần.",
+      "opus_decoder_unavailable": "Home Assistant không có bộ giải mã âm thanh Opus, mà điều khiển từ xa này cần."
+    },
+    "abort": {
+      "already_configured": "Điều khiển từ xa này đã được cấu hình.",
+      "no_pipelines": "Hãy tạo một pipeline Assist trước khi thêm điều khiển từ xa."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Cài đặt giọng nói",
+        "description": "Các cài đặt này điều khiển cách xử lý lần nhấn và cách đọc phản hồi. Thay thế một yêu cầu không thể hoàn tác các hành động đã thực hiện. Không hỗ trợ song công toàn phần đồng thời. Dừng sau khi chép lời không vô hiệu hóa các công cụ tích hợp sẵn của nhà cung cấp giọng nói trực tiếp; hãy dùng nhà cung cấp chỉ chép lời khi cần tắt các hành động.\n\n**Điều kiện phản hồi:** tất cả điều kiện phải thỏa mãn thì phản hồi mới được đọc. Chúng được kiểm tra một lần khi bắt đầu mỗi yêu cầu; để trống để luôn đọc, và điều kiện không thể đánh giá được coi là không thỏa mãn. Điều kiện mẫu có thể dùng các biến `speaker`, `remote` và `held`.",
+        "data": {
+          "pipeline_id": "Pipeline Assist",
+          "mode": "Chế độ giọng nói",
+          "speaker": "Loa phản hồi",
+          "output_mode": "Thời điểm phản hồi",
+          "stream_head_start": "Khởi động trước khi phát trực tuyến",
+          "busy_processing": "Nhấn mới khi đang xử lý",
+          "busy_playback": "Nhấn mới khi đang phản hồi",
+          "context_mode": "Ngữ cảnh hội thoại",
+          "input_mode": "Hành vi nút",
+          "min_press_seconds": "Bỏ qua lần nhấn ngắn",
+          "max_request_seconds": "Độ dài yêu cầu tối đa",
+          "max_conversation_seconds": "Độ dài hội thoại tối đa",
+          "reply_condition": "Điều kiện phản hồi"
+        },
+        "data_description": {
+          "pipeline_id": "Pipeline Assist xử lý giọng nói: chuyển giọng nói thành văn bản, tác nhân hội thoại và chuyển văn bản thành giọng nói. Pipeline đã bị xóa sẽ báo lỗi thay vì chuyển sang pipeline khác.",
+          "mode": "Chỉ chép lời dừng sau khi nhận dạng giọng nói và không phát phản hồi. Thực thi lệnh chạy toàn bộ pipeline và đọc phản hồi trên loa phản hồi.",
+          "speaker": "Trình phát đa phương tiện đọc phản hồi. Chỉ dùng khi thực thi lệnh. Chọn không đọc phản hồi để dừng pipeline trước khi phát phản hồi.",
+          "output_mode": "Phát trực tuyến tự động bắt đầu đọc ngay khi phản hồi trực tuyến sẵn sàng. Chờ phản hồi hoàn chỉnh bắt đầu muộn hơn nhưng phát một tệp âm thanh đã hoàn tất, tránh bị ngắt quãng với các nhà cung cấp chỉ tạo giọng nói ở tốc độ xấp xỉ thời gian thực.",
+          "stream_head_start": "Trì hoãn phần bắt đầu của phản hồi trực tuyến theo số giây này để loa có thể đệm; phản hồi kết thúc sớm hơn sẽ phát ngay. Hãy tăng giá trị nếu phản hồi trực tuyến bị ngắt quãng trong vài giây đầu. Không có tác dụng khi chờ phản hồi hoàn chỉnh. 0 giữ hành vi mặc định.",
+          "busy_processing": "Việc cần làm khi nhấn nút trước khi yêu cầu trước được trả lời: từ chối lần nhấn, giữ một yêu cầu đang chờ, hoặc thay thế yêu cầu hiện tại. Thay thế không thể hoàn tác các hành động đã thực hiện.",
+          "busy_playback": "Việc cần làm khi nhấn nút trong lúc đang phát phản hồi: từ chối lần nhấn, trả lời sau một yêu cầu đang chờ, hoặc dừng phản hồi và bắt đầu yêu cầu mới.",
+          "context_mode": "Dùng lại giữ nguyên cuộc hội thoại Home Assistant để các câu hỏi tiếp theo như \"gấp đôi con số đó thì sao?\" hoạt động. Mới biến mỗi lần nhấn thành một cuộc hội thoại độc lập.",
+          "input_mode": "Một yêu cầu cho mỗi lần giữ ghi âm cho đến khi nhả nút. Hội thoại luân phiên tiếp tục lắng nghe khi đang giữ nút: nói, dừng, nghe phản hồi, rồi nói tiếp. Cần điều khiển từ xa kiểu nhấn giữ để nói.",
+          "min_press_seconds": "Bỏ qua các lần chạm nút giọng nói ngắn hơn giá trị này, để lần chạm nhầm không bắt đầu yêu cầu; lần giữ thật sẽ bắt đầu muộn hơn chừng đó. 0 là tắt. Hữu ích cho điều khiển Fire TV bị lỗi \"Không có âm thanh micrô\" ngay sau khi đánh thức: nó gửi lại phím đã đánh thức dưới dạng một lần chạm tức thì. 0.1 s là điểm khởi đầu tốt. Chỉ dành cho điều khiển Fire TV.",
+          "max_request_seconds": "Thời gian dài nhất của một yêu cầu trên mọi điều khiển từ xa: toàn bộ lần giữ ở chế độ một yêu cầu, và mỗi lượt trong hội thoại luân phiên. Khi đạt giới hạn, yêu cầu kết thúc với lỗi giới hạn thu âm. Giảm để ngăn nút bị kẹt tiếp tục ghi âm; tăng cho việc đọc chính tả dài. Điều khiển không phải kiểu nhấn giữ để nói cũng kết thúc sau khoảng 15 giây giọng nói hoặc khi im lặng, tùy điều nào đến trước.",
+          "max_conversation_seconds": "Thời gian dài nhất của một lần giữ nút ở chế độ hội thoại luân phiên. Bị bỏ qua ở chế độ một yêu cầu và không được ngắn hơn độ dài yêu cầu tối đa.",
+          "reply_condition": "Các điều kiện phải thỏa mãn hết thì phản hồi mới được đọc. Kiểm tra một lần khi bắt đầu mỗi yêu cầu (và mỗi lượt trong hội thoại luân phiên). Để trống để luôn đọc. Điều kiện bị lỗi được coi là không thỏa mãn. Điều kiện mẫu có thể dùng các biến speaker, remote và held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Hãy chọn trình phát đa phương tiện hỗ trợ phát âm thanh, hoặc không đọc phản hồi.",
+      "invalid_preferences": "Hãy chọn một trong các tùy chọn giọng nói được hỗ trợ.",
+      "invalid_pipeline": "Hãy chọn một pipeline Assist hiện có.",
+      "invalid_reply_condition": "Điều kiện phản hồi không hợp lệ. Hãy kiểm tra các điều kiện và thử lại.",
+      "pipeline_missing": "Pipeline Assist đã lưu cho điều khiển từ xa này không còn tồn tại. Hãy chọn pipeline khác.",
+      "speaker_missing": "Loa phản hồi đã lưu hiện không khả dụng, nên phản hồi sẽ không phát cho đến khi nó trở lại. Hãy giữ nguyên hoặc chọn loa khác."
+    },
+    "abort": {
+      "no_pipelines": "Hãy tạo một pipeline Assist trước."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Nhập địa chỉ Bluetooth"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Chỉ chép lời",
+        "commands": "Thực thi lệnh"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Không đọc phản hồi"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Phát trực tuyến tự động",
+        "buffered": "Chờ phản hồi hoàn chỉnh"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Từ chối yêu cầu mới",
+        "queue": "Xếp hàng một yêu cầu",
+        "replace": "Thay thế yêu cầu hiện tại"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Từ chối yêu cầu mới",
+        "queue": "Xếp hàng một yêu cầu",
+        "replace": "Thay thế phản hồi hiện tại"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Dùng lại hội thoại",
+        "fresh": "Hội thoại mới cho mỗi yêu cầu"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Một yêu cầu cho mỗi lần giữ",
+        "conversation": "Hội thoại khi giữ nút (luân phiên)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Giọng nói",
+        "state_attributes": {
+          "ready": {
+            "name": "Sẵn sàng"
+          },
+          "last_error": {
+            "name": "Mã lỗi gần nhất"
+          },
+          "last_error_message": {
+            "name": "Thông báo lỗi gần nhất"
+          },
+          "mode": {
+            "name": "Chế độ giọng nói"
+          },
+          "sessions": {
+            "name": "Phiên"
+          },
+          "failures": {
+            "name": "Số lần thất bại"
+          },
+          "rejected": {
+            "name": "Lần nhấn bị từ chối"
+          },
+          "queued": {
+            "name": "Yêu cầu trong hàng đợi"
+          },
+          "last_outcome": {
+            "name": "Kết quả gần nhất"
+          },
+          "full_duplex": {
+            "name": "Song công toàn phần"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Nút giọng nói",
+        "state_attributes": {
+          "event_type": {
+            "name": "Loại sự kiện",
+            "state": {
+              "pressed": "Đã nhấn",
+              "released": "Đã nhả",
+              "accepted": "Đã chấp nhận",
+              "rejected": "Đã từ chối",
+              "queued": "Đã xếp hàng",
+              "failed": "Thất bại",
+              "context_reset": "Đã đặt lại hội thoại",
+              "reply_skipped": "Đã bỏ qua phản hồi"
+            }
+          },
+          "outcome": {
+            "name": "Kết quả"
+          },
+          "stage": {
+            "name": "Giai đoạn"
+          },
+          "code": {
+            "name": "Mã"
+          },
+          "message": {
+            "name": "Thông báo"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Micrô đang hoạt động"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Lỗi gần nhất",
+        "state": {
+          "none": "Không có lỗi",
+          "busy": "Vẫn đang trả lời yêu cầu trước.",
+          "queue_full": "Đã có một yêu cầu đang chờ. Vui lòng thử lại sau khi phản hồi.",
+          "queue_expired": "Yêu cầu đang chờ đã hết hạn. Vui lòng nhấn và nói lại.",
+          "queue_discarded": "Yêu cầu đang chờ đã bị hủy bỏ.",
+          "queue_failed": "Không thể bắt đầu yêu cầu đang chờ.",
+          "capture_limit": "Đã đạt giới hạn thu âm của micrô. Vui lòng dùng yêu cầu ngắn hơn.",
+          "buffer_overflow": "Âm thanh micrô bị dồn lại trước khi dịch vụ giọng nói bắt đầu đọc.",
+          "audio_sequence_gap": "Đồng bộ âm thanh thất bại. Vui lòng nhấn và thử lại.",
+          "invalid_audio_sync": "Điều khiển từ xa đã gửi thông báo đồng bộ âm thanh không hợp lệ.",
+          "invalid_audio_frame": "Điều khiển từ xa đã gửi khung âm thanh bị hỏng.",
+          "invalid_control": "Điều khiển từ xa đã gửi thông báo điều khiển không hợp lệ.",
+          "unsupported_audio_start": "Điều khiển từ xa đã bắt đầu âm thanh theo cách mà tích hợp này không hỗ trợ.",
+          "incomplete_utterance": "Âm thanh kết thúc trước khi yêu cầu hoàn tất.",
+          "audio_stalled": "Âm thanh micrô đã ngừng đến. Vui lòng thử lại.",
+          "audio_failed": "Âm thanh micrô bị lỗi.",
+          "no_audio": "Không nhận được âm thanh micrô.",
+          "no_speech": "Không phát hiện giọng nói.",
+          "held_mode_unsupported": "Hội thoại luân phiên cần điều khiển từ xa kiểu nhấn giữ để nói.",
+          "held_failed": "Cuộc hội thoại khi giữ nút đã thất bại.",
+          "held_turn_failed": "Một lượt của cuộc hội thoại đã thất bại.",
+          "remote_stopped": "Điều khiển từ xa đã bất ngờ dừng micrô.",
+          "disconnected": "Điều khiển từ xa đã ngắt kết nối.",
+          "cancelled": "Yêu cầu đã bị hủy.",
+          "pipeline_finished_early": "Pipeline Assist đã kết thúc trước khi đọc hết âm thanh.",
+          "pipeline_timeout": "Pipeline Assist mất quá nhiều thời gian để phản hồi.",
+          "pipeline_failed": "Pipeline Assist đã thất bại.",
+          "pipeline_removed": "Pipeline Assist đã chọn không còn tồn tại.",
+          "playback_stop_unverified": "Không thể xác minh phản hồi trước đã dừng. Hãy đợi đến khi loa rảnh.",
+          "playback_stop_failed": "Không thể dừng phản hồi trước.",
+          "playback_start_timeout": "Loa đã không bắt đầu phát phản hồi.",
+          "playback_finish_timeout": "Loa đã không phát xong phản hồi đúng hạn.",
+          "playback_interrupted": "Phản hồi bị gián đoạn trên loa.",
+          "speaker_unavailable": "Loa phản hồi không khả dụng.",
+          "speaker_busy": "Loa phản hồi đang bận.",
+          "speaker_cannot_play": "Loa phản hồi không thể phát âm thanh từ Home Assistant.",
+          "missing_tts_audio": "Phản hồi không có âm thanh để phát.",
+          "generation_retirement_failed": "Yêu cầu trước vẫn chưa dừng. Vui lòng đợi.",
+          "replacement_retirement_failed": "Không thể dừng yêu cầu hiện tại để bắt đầu yêu cầu mới.",
+          "microphone_open_failed": "Không thể mở micrô của điều khiển từ xa.",
+          "microphone_open_rejected": "Điều khiển từ xa đã từ chối mở micrô.",
+          "microphone_start_timeout": "Điều khiển từ xa đã không khởi động micrô đúng hạn.",
+          "microphone_close_failed": "Không thể đóng micrô của điều khiển từ xa.",
+          "microphone_keepalive_failed": "Kết nối micrô của điều khiển từ xa đã bị mất.",
+          "active_generation_cancelled": "Phản hồi đang được chuẩn bị đã bị hủy và ngữ cảnh hội thoại đã được đặt lại.",
+          "wake_remote": "Hãy đánh thức điều khiển từ xa bằng một nút mũi tên, rồi thử lại.",
+          "bluetooth_unavailable": "Bluetooth cục bộ không khả dụng.",
+          "bluetooth_operation_failed": "Một thao tác Bluetooth đã thất bại.",
+          "not_paired": "Điều khiển từ xa chưa được ghép nối trên máy chủ này.",
+          "multiple_adapters": "Điều khiển từ xa được ghép nối trên nhiều hơn một bộ điều hợp.",
+          "voice_service_unavailable": "Điều khiển từ xa không cung cấp dịch vụ giọng nói.",
+          "unsupported_write": "Không thể ghi vào điều khiển giọng nói của điều khiển từ xa.",
+          "unsupported_capabilities": "Điều khiển từ xa báo cáo các khả năng giọng nói mà tích hợp này không hỗ trợ.",
+          "unsupported_codec": "Điều khiển từ xa dùng định dạng âm thanh mà tích hợp này không hỗ trợ.",
+          "invalid_frame_size": "Điều khiển từ xa báo cáo kích thước khung âm thanh không hợp lệ.",
+          "hidraw_unavailable": "Home Assistant không dùng được thiết bị đầu vào của điều khiển từ xa.",
+          "hidraw_permission_denied": "Home Assistant không được phép đọc thiết bị đầu vào của điều khiển từ xa.",
+          "opus_decoder_unavailable": "Home Assistant không có bộ giải mã âm thanh Opus.",
+          "invalid_opus_packet": "Điều khiển từ xa đã gửi âm thanh không thể giải mã.",
+          "other": "Đã xảy ra một lỗi khác. Mã lỗi cho biết chi tiết."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Mã"
+          },
+          "stage": {
+            "name": "Giai đoạn"
+          },
+          "since": {
+            "name": "Từ"
+          },
+          "session": {
+            "name": "Yêu cầu"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Thiếu pipeline Assist cho {remote}",
+      "description": "Điều khiển từ xa **{remote}** được đặt để dùng pipeline Assist `{pipeline}`, nhưng pipeline này không còn tồn tại. Các yêu cầu giọng nói từ điều khiển này sẽ thất bại cho đến khi bạn chọn pipeline khác.\n\nVào **Cài đặt → Thiết bị & dịch vụ → Bluetooth Remote Voice**, mở menu của **{remote}**, chọn **Định cấu hình** và chọn một pipeline hiện có."
+    },
+    "speaker_missing": {
+      "title": "Thiếu loa phản hồi cho {remote}",
+      "description": "Điều khiển từ xa **{remote}** được đặt để phát phản hồi trên `{speaker}`, nhưng loa này không còn tồn tại. Các lệnh vẫn chạy, nhưng phản hồi bằng giọng nói sẽ không phát.\n\nVào **Cài đặt → Thiết bị & dịch vụ → Bluetooth Remote Voice**, mở menu của **{remote}**, chọn **Định cấu hình** và chọn loa khác hoặc chọn không có."
+    }
+  }
+}

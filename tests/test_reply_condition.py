@@ -198,12 +198,16 @@ async def test_invalid_condition_is_rejected_with_translated_error(hass):
     _form, result = await _submit(hass, entry, [{"condition": "no_such_condition"}])
     assert result["type"] == "form"
     assert result["errors"] == {"base": "invalid_reply_condition"}
-    strings = json.loads((ROOT / "custom_components/bt_remote_voice/strings.json").read_text())
+    strings = json.loads(
+        (ROOT / "custom_components/bt_remote_voice/translations/en.json").read_text()
+    )
     assert strings["options"]["error"]["invalid_reply_condition"]
 
 
 def test_event_types_include_reply_skipped_and_are_translated():
-    strings = json.loads((ROOT / "custom_components/bt_remote_voice/strings.json").read_text())
+    strings = json.loads(
+        (ROOT / "custom_components/bt_remote_voice/translations/en.json").read_text()
+    )
     states = strings["entity"]["event"]["voice_button"]["state_attributes"]["event_type"]["state"]
     assert states["reply_skipped"]
     from custom_components.bt_remote_voice.event import VoiceButton

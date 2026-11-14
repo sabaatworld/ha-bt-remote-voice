@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Gekoppelte Fernbedienung auswählen",
+        "description": "Koppeln Sie Ihre Fernbedienung zuerst außerhalb von Home Assistant und wecken Sie sie dann mit einer Pfeiltaste auf, damit sie überprüft werden kann. Wählen Sie sie aus der Liste aus oder geben Sie ihre Bluetooth-Adresse ein.",
+        "data": {
+          "device": "Gekoppelte Fernbedienung"
+        },
+        "data_description": {
+          "device": "Fernbedienungen, die bereits auf diesem Home-Assistant-Host gekoppelt sind. Wählen Sie die manuelle Option, wenn Ihre nicht aufgeführt ist."
+        }
+      },
+      "manual": {
+        "title": "Adresse der gekoppelten Fernbedienung eingeben",
+        "description": "Geben Sie die Bluetooth-Adresse einer Fernbedienung ein, die bereits auf diesem Host gekoppelt ist.",
+        "data": {
+          "address": "Bluetooth-Adresse"
+        },
+        "data_description": {
+          "address": "Sechs Paare hexadezimaler Ziffern, durch Doppelpunkte getrennt, zum Beispiel AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Assist-Pipeline auswählen",
+        "description": "Wecken Sie die Fernbedienung vor dem Absenden mit einer Pfeiltaste auf. Die Integration startet im reinen Transkriptionsmodus; ändern Sie dies in den Optionen, sobald alles funktioniert.",
+        "data": {
+          "pipeline_id": "Assist-Pipeline"
+        },
+        "data_description": {
+          "pipeline_id": "Die Assist-Pipeline, die die Sprache dieser Fernbedienung verarbeitet."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Lokales Bluetooth ist nicht verfügbar. Prüfen Sie, ob der System-D-Bus erreichbar ist.",
+      "wake_remote": "Wecken Sie die gekoppelte Fernbedienung mit einer Pfeiltaste auf und versuchen Sie es erneut.",
+      "not_paired": "Koppeln Sie diese Fernbedienung zuerst extern.",
+      "multiple_adapters": "Diese Fernbedienung ist auf mehreren Adaptern gekoppelt. Behalten Sie die Kopplung nur auf einem Adapter.",
+      "invalid_address": "Geben Sie eine Bluetooth-Adresse im Format AA:BB:CC:DD:EE:FF ein.",
+      "unsupported_remote": "Diese Fernbedienung bietet kein unterstütztes ATVV-v0.4/v1.0-ADPCM-Sprachprofil.",
+      "invalid_pipeline": "Wählen Sie eine vorhandene Assist-Pipeline aus.",
+      "hidraw_unavailable": "Das Eingabegerät der Fernbedienung ist für Home Assistant nicht verfügbar. Wecken Sie die Fernbedienung auf und prüfen Sie, ob Home Assistant /dev/hidraw-Geräte sehen kann.",
+      "hidraw_permission_denied": "Home Assistant darf das Eingabegerät der Fernbedienung nicht lesen. Welchen Gerätezugriff diese Fernbedienung benötigt, steht in der README.",
+      "opus_decoder_unavailable": "Für Home Assistant ist kein Opus-Audiodecoder verfügbar, den diese Fernbedienung benötigt."
+    },
+    "abort": {
+      "already_configured": "Diese Fernbedienung ist bereits konfiguriert.",
+      "no_pipelines": "Erstellen Sie eine Assist-Pipeline, bevor Sie die Fernbedienung hinzufügen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Spracheinstellungen",
+        "description": "Diese Einstellungen legen fest, wie Tastendrücke behandelt und wie Antworten gesprochen werden. Das Ersetzen einer Anfrage kann bereits ausgeführte Aktionen nicht rückgängig machen. Gleichzeitiger Vollduplexbetrieb ist nicht verfügbar. Das Beenden nach der Transkription deaktiviert keine Werkzeuge, die in einen Live-Sprachanbieter integriert sind; verwenden Sie einen reinen Transkriptionsanbieter, wenn Aktionen deaktiviert sein müssen.\n\n**Antwortbedingung:** Alle Bedingungen müssen erfüllt sein, damit eine Antwort gesprochen wird. Sie werden einmal zu Beginn jeder Anfrage geprüft; lassen Sie das Feld leer, damit immer gesprochen wird. Eine Bedingung, die nicht ausgewertet werden kann, gilt als nicht erfüllt. Template-Bedingungen können die Variablen `speaker`, `remote` und `held` verwenden.",
+        "data": {
+          "pipeline_id": "Assist-Pipeline",
+          "mode": "Sprachmodus",
+          "speaker": "Antwort-Lautsprecher",
+          "output_mode": "Zeitpunkt der Antwort",
+          "stream_head_start": "Streaming-Vorlauf",
+          "busy_processing": "Neuer Tastendruck während der Verarbeitung",
+          "busy_playback": "Neuer Tastendruck während der Antwort",
+          "context_mode": "Konversationskontext",
+          "input_mode": "Tastenverhalten",
+          "min_press_seconds": "Kurze Tastendrücke ignorieren",
+          "max_request_seconds": "Maximale Anfragelänge",
+          "max_conversation_seconds": "Maximale Konversationslänge",
+          "reply_condition": "Antwortbedingung"
+        },
+        "data_description": {
+          "pipeline_id": "Die Assist-Pipeline, die Sprache verarbeitet: Spracherkennung, Konversationsagent und Sprachausgabe. Eine entfernte Pipeline führt zu einem Fehler statt zu einem Rückfall auf eine andere.",
+          "mode": "Nur Transkription stoppt nach der Spracherkennung und gibt keine Antwort wieder. Befehle ausführen führt die gesamte Pipeline aus und spricht die Antwort über den Antwort-Lautsprecher.",
+          "speaker": "Der Medienplayer, der Antworten spricht. Wird nur beim Ausführen von Befehlen verwendet. Wählen Sie „Keine gesprochene Antwort“, um die Pipeline vor der Wiedergabe der Antwort zu beenden.",
+          "output_mode": "Automatisches Streaming beginnt zu sprechen, sobald eine gestreamte Antwort bereit ist. Das Warten auf die vollständige Antwort beginnt später, spielt aber eine fertige Audiodatei ab. Das vermeidet Aussetzer bei Anbietern, die Sprache nur etwa in Echtzeit erzeugen.",
+          "stream_head_start": "Verzögert den Beginn einer gestreamten Antwort um diese Anzahl Sekunden, damit der Lautsprecher puffern kann; Antworten, die früher fertig sind, werden sofort abgespielt. Erhöhen Sie den Wert, wenn gestreamte Antworten in den ersten Sekunden aussetzen. Ohne Wirkung, wenn auf die vollständige Antwort gewartet wird. 0 behält das Standardverhalten bei.",
+          "busy_processing": "Was passiert, wenn die Taste gedrückt wird, bevor die vorherige Anfrage beantwortet wurde: den Tastendruck ablehnen, eine Anfrage vormerken oder die aktuelle Anfrage ersetzen. Das Ersetzen kann bereits ausgeführte Aktionen nicht rückgängig machen.",
+          "busy_playback": "Was passiert, wenn die Taste gedrückt wird, während eine Antwort abgespielt wird: den Tastendruck ablehnen, danach eine vorgemerkte Anfrage beantworten oder die Antwort stoppen und die neue Anfrage starten.",
+          "context_mode": "„Wiederverwenden“ behält die Home-Assistant-Konversation bei, sodass Folgefragen wie „und das Doppelte?“ funktionieren. „Neu“ macht jeden Tastendruck zu einer eigenständigen Konversation.",
+          "input_mode": "„Eine Anfrage pro Halten“ nimmt auf, bis die Taste losgelassen wird. „Wechselnde Konversation“ hört weiter zu, solange die Taste gehalten wird: sprechen, pausieren, die Antwort hören, dann erneut sprechen. Dafür ist eine Fernbedienung mit Push-to-Talk nötig.",
+          "min_press_seconds": "Ignoriert kurze Antippen der Sprachtaste, die kürzer als dieser Wert sind, damit ein versehentliches Antippen keine Anfrage startet; ein echtes Halten beginnt entsprechend später. 0 schaltet die Funktion aus. Nützlich für eine Fire TV-Fernbedienung, die direkt nach dem Aufwecken mit „No microphone audio“ fehlschlägt: Sie sendet die Taste, die sie geweckt hat, erneut als kurzes Antippen. 0,1 s ist ein guter Startwert. Nur für Fire TV-Fernbedienungen.",
+          "max_request_seconds": "Die längste Dauer einer einzelnen Anfrage bei jeder Fernbedienung: ein ganzes Halten im Modus „Eine Anfrage“ und jeder Durchgang bei „Wechselnde Konversation“. Wird sie erreicht, endet die Anfrage mit einem Aufnahmegrenzen-Fehler. Verringern Sie sie, um eine hängende Taste an der Aufnahme zu hindern; erhöhen Sie sie für lange Diktate. Fernbedienungen ohne Push-to-Talk enden außerdem nach etwa 15 Sekunden Sprache oder bei Stille, je nachdem, was zuerst eintritt.",
+          "max_conversation_seconds": "Die längste Dauer eines gesamten Tastenhaltens im Modus „Wechselnde Konversation“. Im Modus „Eine Anfrage“ wird sie ignoriert und darf nicht kürzer als die maximale Anfragelänge sein.",
+          "reply_condition": "Bedingungen, die alle erfüllt sein müssen, damit eine Antwort gesprochen wird. Sie werden einmal zu Beginn jeder Anfrage geprüft (und bei jedem Durchgang in „Wechselnde Konversation“). Leer lassen, damit immer gesprochen wird. Eine Bedingung, die einen Fehler verursacht, gilt als nicht erfüllt. Template-Bedingungen können die Variablen speaker, remote und held verwenden."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Wählen Sie einen Medienplayer, der die Wiedergabe von Audio unterstützt, oder keine gesprochene Antwort.",
+      "invalid_preferences": "Wählen Sie eine der unterstützten Spracheinstellungen.",
+      "invalid_pipeline": "Wählen Sie eine vorhandene Assist-Pipeline aus.",
+      "invalid_reply_condition": "Die Antwortbedingung ist ungültig. Prüfen Sie die Bedingungen und versuchen Sie es erneut.",
+      "pipeline_missing": "Die für diese Fernbedienung gespeicherte Assist-Pipeline existiert nicht mehr. Wählen Sie eine andere aus.",
+      "speaker_missing": "Der gespeicherte Antwort-Lautsprecher ist derzeit nicht verfügbar, daher werden Antworten erst wieder abgespielt, wenn er zurückkehrt. Behalten Sie ihn bei oder wählen Sie einen anderen."
+    },
+    "abort": {
+      "no_pipelines": "Erstellen Sie zuerst eine Assist-Pipeline."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Bluetooth-Adresse eingeben"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Nur Transkription",
+        "commands": "Befehle ausführen"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Keine gesprochene Antwort"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatisches Streaming",
+        "buffered": "Auf vollständige Antwort warten"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Neue Anfrage ablehnen",
+        "queue": "Eine Anfrage vormerken",
+        "replace": "Aktuelle Anfrage ersetzen"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Neue Anfrage ablehnen",
+        "queue": "Eine Anfrage vormerken",
+        "replace": "Aktuelle Antwort ersetzen"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Konversation wiederverwenden",
+        "fresh": "Neue Konversation pro Anfrage"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Eine Anfrage pro Halten",
+        "conversation": "Konversation beim Halten (wechselnd)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Sprache",
+        "state_attributes": {
+          "ready": {
+            "name": "Bereit"
+          },
+          "last_error": {
+            "name": "Letzter Fehlercode"
+          },
+          "last_error_message": {
+            "name": "Letzte Fehlermeldung"
+          },
+          "mode": {
+            "name": "Sprachmodus"
+          },
+          "sessions": {
+            "name": "Sitzungen"
+          },
+          "failures": {
+            "name": "Fehlschläge"
+          },
+          "rejected": {
+            "name": "Abgelehnte Tastendrücke"
+          },
+          "queued": {
+            "name": "Vorgemerkte Anfragen"
+          },
+          "last_outcome": {
+            "name": "Letztes Ergebnis"
+          },
+          "full_duplex": {
+            "name": "Vollduplex"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Sprachtaste",
+        "state_attributes": {
+          "event_type": {
+            "name": "Ereignistyp",
+            "state": {
+              "pressed": "Gedrückt",
+              "released": "Losgelassen",
+              "accepted": "Angenommen",
+              "rejected": "Abgelehnt",
+              "queued": "Vorgemerkt",
+              "failed": "Fehlgeschlagen",
+              "context_reset": "Konversation zurückgesetzt",
+              "reply_skipped": "Antwort übersprungen"
+            }
+          },
+          "outcome": {
+            "name": "Ergebnis"
+          },
+          "stage": {
+            "name": "Phase"
+          },
+          "code": {
+            "name": "Code"
+          },
+          "message": {
+            "name": "Nachricht"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofon aktiv"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Letzter Fehler",
+        "state": {
+          "none": "Kein Fehler",
+          "busy": "Die vorherige Anfrage wird noch beantwortet.",
+          "queue_full": "Eine Anfrage wartet bereits. Bitte versuchen Sie es nach der Antwort.",
+          "queue_expired": "Die wartende Anfrage ist abgelaufen. Bitte drücken Sie die Taste und sprechen Sie erneut.",
+          "queue_discarded": "Die wartende Anfrage wurde verworfen.",
+          "queue_failed": "Die wartende Anfrage konnte nicht gestartet werden.",
+          "capture_limit": "Das Aufnahmelimit des Mikrofons wurde erreicht. Bitte verwenden Sie eine kürzere Anfrage.",
+          "buffer_overflow": "Das Mikrofon-Audio hat sich aufgestaut, bevor der Sprachdienst es zu lesen begann.",
+          "audio_sequence_gap": "Die Audiosynchronisierung ist fehlgeschlagen. Bitte drücken Sie die Taste und versuchen Sie es erneut.",
+          "invalid_audio_sync": "Die Fernbedienung hat eine ungültige Audiosynchronisierungsnachricht gesendet.",
+          "invalid_audio_frame": "Die Fernbedienung hat einen beschädigten Audio-Frame gesendet.",
+          "invalid_control": "Die Fernbedienung hat eine ungültige Steuernachricht gesendet.",
+          "unsupported_audio_start": "Die Fernbedienung hat Audio auf eine Weise gestartet, die diese Integration nicht unterstützt.",
+          "incomplete_utterance": "Das Audio endete, bevor die Anfrage vollständig war.",
+          "audio_stalled": "Es kommt kein Mikrofon-Audio mehr an. Bitte versuchen Sie es erneut.",
+          "audio_failed": "Das Mikrofon-Audio ist fehlgeschlagen.",
+          "no_audio": "Es wurde kein Mikrofon-Audio empfangen.",
+          "no_speech": "Es wurde keine Sprache erkannt.",
+          "held_mode_unsupported": "Die wechselnde Konversation benötigt eine Fernbedienung mit Push-to-Talk.",
+          "held_failed": "Die Konversation beim Halten der Taste ist fehlgeschlagen.",
+          "held_turn_failed": "Ein Durchgang der Konversation ist fehlgeschlagen.",
+          "remote_stopped": "Die Fernbedienung hat das Mikrofon unerwartet gestoppt.",
+          "disconnected": "Die Verbindung zur Fernbedienung wurde getrennt.",
+          "cancelled": "Die Anfrage wurde abgebrochen.",
+          "pipeline_finished_early": "Die Assist-Pipeline wurde beendet, bevor das gesamte Audio gelesen wurde.",
+          "pipeline_timeout": "Die Assist-Pipeline hat zu lange für die Antwort gebraucht.",
+          "pipeline_failed": "Die Assist-Pipeline ist fehlgeschlagen.",
+          "pipeline_removed": "Die ausgewählte Assist-Pipeline existiert nicht mehr.",
+          "playback_stop_unverified": "Es konnte nicht überprüft werden, ob die vorherige Antwort gestoppt wurde. Warten Sie, bis der Lautsprecher inaktiv ist.",
+          "playback_stop_failed": "Die vorherige Antwort konnte nicht gestoppt werden.",
+          "playback_start_timeout": "Der Lautsprecher hat die Wiedergabe der Antwort nicht gestartet.",
+          "playback_finish_timeout": "Der Lautsprecher hat die Wiedergabe der Antwort nicht rechtzeitig beendet.",
+          "playback_interrupted": "Die Antwort wurde auf dem Lautsprecher unterbrochen.",
+          "speaker_unavailable": "Der Antwort-Lautsprecher ist nicht verfügbar.",
+          "speaker_busy": "Der Antwort-Lautsprecher ist beschäftigt.",
+          "speaker_cannot_play": "Der Antwort-Lautsprecher kann kein Audio von Home Assistant wiedergeben.",
+          "missing_tts_audio": "Die Antwort enthielt kein abzuspielendes Audio.",
+          "generation_retirement_failed": "Die vorherige Anfrage wurde noch nicht gestoppt. Bitte warten Sie.",
+          "replacement_retirement_failed": "Die aktuelle Anfrage konnte nicht gestoppt werden, um die neue zu starten.",
+          "microphone_open_failed": "Das Mikrofon der Fernbedienung konnte nicht geöffnet werden.",
+          "microphone_open_rejected": "Die Fernbedienung hat das Öffnen ihres Mikrofons abgelehnt.",
+          "microphone_start_timeout": "Die Fernbedienung hat ihr Mikrofon nicht rechtzeitig gestartet.",
+          "microphone_close_failed": "Das Mikrofon der Fernbedienung konnte nicht geschlossen werden.",
+          "microphone_keepalive_failed": "Die Mikrofonverbindung der Fernbedienung ging verloren.",
+          "active_generation_cancelled": "Die in Vorbereitung befindliche Antwort wurde abgebrochen und der Konversationskontext zurückgesetzt.",
+          "wake_remote": "Wecken Sie die Fernbedienung mit einer Pfeiltaste auf und versuchen Sie es erneut.",
+          "bluetooth_unavailable": "Lokales Bluetooth ist nicht verfügbar.",
+          "bluetooth_operation_failed": "Ein Bluetooth-Vorgang ist fehlgeschlagen.",
+          "not_paired": "Die Fernbedienung ist auf diesem Host nicht gekoppelt.",
+          "multiple_adapters": "Die Fernbedienung ist auf mehr als einem Adapter gekoppelt.",
+          "voice_service_unavailable": "Die Fernbedienung bietet keinen Sprachdienst an.",
+          "unsupported_write": "Die Sprachsteuerung der Fernbedienung kann nicht beschrieben werden.",
+          "unsupported_capabilities": "Die Fernbedienung hat Sprachfunktionen gemeldet, die diese Integration nicht unterstützt.",
+          "unsupported_codec": "Die Fernbedienung verwendet ein Audioformat, das diese Integration nicht unterstützt.",
+          "invalid_frame_size": "Die Fernbedienung hat eine ungültige Audio-Frame-Größe gemeldet.",
+          "hidraw_unavailable": "Das Eingabegerät der Fernbedienung ist für Home Assistant nicht verfügbar.",
+          "hidraw_permission_denied": "Home Assistant darf das Eingabegerät der Fernbedienung nicht lesen.",
+          "opus_decoder_unavailable": "Für Home Assistant ist kein Opus-Audiodecoder verfügbar.",
+          "invalid_opus_packet": "Die Fernbedienung hat Audio gesendet, das nicht dekodiert werden konnte.",
+          "other": "Es ist ein anderer Fehler aufgetreten. Der Fehlercode nennt die Details."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Code"
+          },
+          "stage": {
+            "name": "Phase"
+          },
+          "since": {
+            "name": "Seit"
+          },
+          "session": {
+            "name": "Anfrage"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist-Pipeline fehlt für {remote}",
+      "description": "Die Fernbedienung **{remote}** ist für die Assist-Pipeline `{pipeline}` eingestellt, die nicht mehr existiert. Sprachanfragen dieser Fernbedienung schlagen fehl, bis Sie eine andere Pipeline auswählen.\n\nGehen Sie zu **Einstellungen → Geräte & Dienste → Bluetooth Remote Voice**, öffnen Sie das Menü von **{remote}**, wählen Sie **Konfigurieren** und wählen Sie eine vorhandene Pipeline aus."
+    },
+    "speaker_missing": {
+      "title": "Antwort-Lautsprecher fehlt für {remote}",
+      "description": "Die Fernbedienung **{remote}** ist so eingestellt, dass Antworten auf `{speaker}` wiedergegeben werden, das nicht mehr existiert. Befehle werden weiterhin ausgeführt, aber ihre gesprochene Antwort wird nicht abgespielt.\n\nGehen Sie zu **Einstellungen → Geräte & Dienste → Bluetooth Remote Voice**, öffnen Sie das Menü von **{remote}**, wählen Sie **Konfigurieren** und wählen Sie einen anderen Lautsprecher oder keinen aus."
+    }
+  }
+}

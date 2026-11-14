@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Valige seotud kaugjuhtimispult",
+        "description": "Siduge kaugjuhtimispult esmalt väljaspool Home Assistanti ja äratage see seejärel nooleklahviga, et seda saaks kontrollida. Valige see loendist või sisestage selle Bluetooth-aadress.",
+        "data": {
+          "device": "Seotud kaugjuhtimispult"
+        },
+        "data_description": {
+          "device": "Kaugjuhtimispuldid, mis on selle Home Assistanti hostiga juba seotud. Valige käsitsi sisestamise valik, kui teie puldi loendis ei ole."
+        }
+      },
+      "manual": {
+        "title": "Sisestage seotud kaugjuhtimispuldi aadress",
+        "description": "Sisestage selle hostiga juba seotud kaugjuhtimispuldi Bluetooth-aadress.",
+        "data": {
+          "address": "Bluetooth-aadress"
+        },
+        "data_description": {
+          "address": "Kuus kaksteistkümnendnumbrite paari, mis on eraldatud koolonitega, näiteks AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Valige Assisti torujuhe",
+        "description": "Äratage kaugjuhtimispult enne esitamist nooleklahviga. Integratsioon alustab ainult transkriptsiooni režiimis; muutke seda suvandites, kui see töötab.",
+        "data": {
+          "pipeline_id": "Assisti torujuhe"
+        },
+        "data_description": {
+          "pipeline_id": "Assisti torujuhe, mis töötleb selle kaugjuhtimispuldi kõnet."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Kohalik Bluetooth ei ole saadaval. Kontrollige, kas süsteemi D-Bus on juurdepääsetav.",
+      "wake_remote": "Äratage seotud kaugjuhtimispult nooleklahviga ja proovige uuesti.",
+      "not_paired": "Siduge see kaugjuhtimispult esmalt väliselt.",
+      "multiple_adapters": "See kaugjuhtimispult on seotud mitme adapteriga. Jätke selle sidumine ainult ühele adapterile.",
+      "invalid_address": "Sisestage Bluetooth-aadress vormingus AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "See kaugjuhtimispult ei paku toetatud ATVV v0.4/v1.0 ADPCM hääleprofiili.",
+      "invalid_pipeline": "Valige olemasolev Assisti torujuhe.",
+      "hidraw_unavailable": "Kaugjuhtimispuldi sisendseade ei ole Home Assistantile saadaval. Äratage kaugjuhtimispult ja kontrollige, kas Home Assistant näeb /dev/hidraw seadmeid.",
+      "hidraw_permission_denied": "Home Assistantil ei ole luba kaugjuhtimispuldi sisendseadet lugeda. Vaadake README-st, millist seadmele juurdepääsu see kaugjuhtimispult vajab.",
+      "opus_decoder_unavailable": "Home Assistantile ei ole saadaval Opus helidekoodrit, mida see kaugjuhtimispult vajab."
+    },
+    "abort": {
+      "already_configured": "See kaugjuhtimispult on juba seadistatud.",
+      "no_pipelines": "Looge enne kaugjuhtimispuldi lisamist Assisti torujuhe."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Hääleseaded",
+        "description": "Need seaded määravad, kuidas vajutusi käsitletakse ja kuidas vastuseid esitatakse. Päringu asendamine ei saa juba tehtud toiminguid tagasi võtta. Samaaegne täisdupleks ei ole saadaval. Transkriptsiooni järel peatumine ei keela otsekõnepakkuja sisseehitatud tööriistu; kui toimingud peavad olema keelatud, kasutage ainult transkriptsiooni pakkujat.\n\n**Vastuse tingimus:** vastuse esitamiseks peavad kõik selle tingimused olema täidetud. Neid kontrollitakse iga päringu alguses üks kord; jätke tühjaks, et alati rääkida, ja tingimus, mida ei saa hinnata, loetakse täitmata. Mallitingimustes saab kasutada muutujaid `speaker`, `remote` ja `held`.",
+        "data": {
+          "pipeline_id": "Assisti torujuhe",
+          "mode": "Häälerežiim",
+          "speaker": "Vastuste kõlar",
+          "output_mode": "Vastuse ajastus",
+          "stream_head_start": "Voogedastuse ettenihe",
+          "busy_processing": "Uus vajutus töötlemise ajal",
+          "busy_playback": "Uus vajutus vastuse ajal",
+          "context_mode": "Vestluse kontekst",
+          "input_mode": "Nupu käitumine",
+          "min_press_seconds": "Eira lühikesi vajutusi",
+          "max_request_seconds": "Päringu maksimaalne pikkus",
+          "max_conversation_seconds": "Vestluse maksimaalne pikkus",
+          "reply_condition": "Vastuse tingimus"
+        },
+        "data_description": {
+          "pipeline_id": "Assisti torujuhe, mis töötleb kõnet: kõnetuvastus, vestlusagent ja tekstist kõneks. Eemaldatud torujuhe annab veateate, mitte ei lähe tagasi teisele.",
+          "mode": "Ainult transkriptsioon peatub pärast kõnetuvastust ega esita vastust. Käskude täitmine käivitab kogu torujuhtme ja esitab vastuse vastuste kõlaris.",
+          "speaker": "Meediumipleier, mis vastuseid esitab. Kasutatakse ainult käskude täitmisel. Valige „Kõnevastust pole“, et peatada torujuhe enne vastuse esitamist.",
+          "output_mode": "Automaatne voogedastus hakkab rääkima kohe, kui voogedastatud vastus on valmis. Täieliku vastuse ootamine algab hiljem, kuid esitab valmis helifaili, mis väldib katkeid pakkujatega, kes toodavad kõnet ainult ligikaudu reaalajas kiirusel.",
+          "stream_head_start": "Viivitab voogedastatud vastuse algust selle arvu sekundite võrra, et kõlar saaks puhverdada; vastused, mis lõpevad varem, esitatakse kohe. Suurendage, kui voogedastatud vastused katkevad esimestel sekunditel. Mõju puudub, kui oodatakse täielikku vastust. 0 säilitab vaikekäitumise.",
+          "busy_processing": "Mida teha, kui nuppu vajutatakse enne, kui eelmisele päringule on vastatud: vajutus tagasi lükata, hoida üks ootel päring või asendada praegune päring. Asendamine ei saa juba tehtud toiminguid tagasi võtta.",
+          "busy_playback": "Mida teha, kui nuppu vajutatakse vastuse esitamise ajal: vajutus tagasi lükata, vastata hiljem ühele ootel päringule või peatada vastus ja alustada uut päringut.",
+          "context_mode": "Taaskasutamine säilitab Home Assistanti vestluse, et järelküsimused nagu „ja kahekordne?“ toimiksid. Uus vestlus muudab iga vajutuse eraldi vestluseks.",
+          "input_mode": "Üks päring hoidmise kohta salvestab, kuni nupp vabastatakse. Vahelduv vestlus jätkab kuulamist, kuni nuppu hoitakse: rääkige, tehke paus, kuulake vastust, seejärel rääkige uuesti. See vajab hoia-ja-räägi kaugjuhtimispulti.",
+          "min_press_seconds": "Eirab häälenupu puudutusi, mis on sellest lühemad, et eksliku puudutuse peale päringut ei algaks; tõeline hoidmine algab selle võrra hiljem. 0 lülitab välja. Kasulik Fire TV kaugjuhtimispuldi puhul, mis ebaõnnestub teatega „Mikrofoni heli puudub“ kohe pärast äratamist: see saadab äratanud klahvi uuesti hetkelise puudutusena. 0,1 s on hea lähtepunkt. Ainult Fire TV kaugjuhtimispuldid.",
+          "max_request_seconds": "Pikim aeg, kaua üksik päring võib ükskõik millisel kaugjuhtimispuldil kesta: terve hoidmine režiimis „Üks päring“ ja iga vooru kestus vahelduvas vestluses. Selle saavutamine lõpetab päringu salvestuspiiri veaga. Vähendage kinnijäänud nupu salvestamise peatamiseks; suurendage pika dikteerimise jaoks. Kaugjuhtimispuldid, mis ei ole hoia-ja-räägi tüüpi, lõpetavad ka umbes 15 sekundi kõne või vaikuse korral, olenevalt sellest, kumb tuleb enne.",
+          "max_conversation_seconds": "Pikim aeg, kaua terve nupuhoidmine võib vahelduva vestluse režiimis kesta. Režiimis „Üks päring“ seda eiratakse ja see ei tohi olla lühem kui päringu maksimaalne pikkus.",
+          "reply_condition": "Tingimused, mis kõik peavad olema täidetud, et vastus esitataks. Kontrollitakse üks kord iga päringu alguses (ja iga vooru alguses vahelduvas vestluses). Jätke tühjaks, et alati rääkida. Tingimus, mis annab vea, loetakse täitmata. Mallitingimustes saab kasutada muutujaid speaker, remote ja held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Valige meediumipleier, mis toetab heli esitamist, või kõnevastuseta valik.",
+      "invalid_preferences": "Valige üks toetatud häälevalikutest.",
+      "invalid_pipeline": "Valige olemasolev Assisti torujuhe.",
+      "invalid_reply_condition": "Vastuse tingimus ei ole kehtiv. Kontrollige tingimusi ja proovige uuesti.",
+      "pipeline_missing": "Sellele kaugjuhtimispuldile salvestatud Assisti torujuhet enam ei ole. Valige mõni muu.",
+      "speaker_missing": "Salvestatud vastuste kõlar ei ole praegu saadaval, seega vastuseid ei esitata enne, kui see taas ilmub. Jätke see alles või valige mõni muu."
+    },
+    "abort": {
+      "no_pipelines": "Looge esmalt Assisti torujuhe."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Sisesta Bluetooth-aadress"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Ainult transkriptsioon",
+        "commands": "Käskude täitmine"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Kõnevastust pole"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automaatne voogedastus",
+        "buffered": "Oodake täielikku vastust"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Lükka uus päring tagasi",
+        "queue": "Pane üks päring ootele",
+        "replace": "Asenda praegune päring"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Lükka uus päring tagasi",
+        "queue": "Pane üks päring ootele",
+        "replace": "Asenda praegune vastus"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Taaskasuta vestlust",
+        "fresh": "Uus vestlus iga päringu jaoks"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Üks päring hoidmise kohta",
+        "conversation": "Vestlus hoidmise ajal (vahelduv)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Hääl",
+        "state_attributes": {
+          "ready": {
+            "name": "Valmis"
+          },
+          "last_error": {
+            "name": "Viimase vea kood"
+          },
+          "last_error_message": {
+            "name": "Viimane veateade"
+          },
+          "mode": {
+            "name": "Häälerežiim"
+          },
+          "sessions": {
+            "name": "Seansid"
+          },
+          "failures": {
+            "name": "Tõrked"
+          },
+          "rejected": {
+            "name": "Tagasi lükatud vajutused"
+          },
+          "queued": {
+            "name": "Ootel päringud"
+          },
+          "last_outcome": {
+            "name": "Viimane tulemus"
+          },
+          "full_duplex": {
+            "name": "Täisdupleks"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Häälenupp",
+        "state_attributes": {
+          "event_type": {
+            "name": "Sündmuse tüüp",
+            "state": {
+              "pressed": "Vajutatud",
+              "released": "Vabastatud",
+              "accepted": "Aktsepteeritud",
+              "rejected": "Tagasi lükatud",
+              "queued": "Ootel",
+              "failed": "Ebaõnnestus",
+              "context_reset": "Vestlus lähtestatud",
+              "reply_skipped": "Vastus vahele jäetud"
+            }
+          },
+          "outcome": {
+            "name": "Tulemus"
+          },
+          "stage": {
+            "name": "Etapp"
+          },
+          "code": {
+            "name": "Kood"
+          },
+          "message": {
+            "name": "Teade"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofon aktiivne"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Viimane tõrge",
+        "state": {
+          "none": "Tõrget pole",
+          "busy": "Eelmisele päringule vastatakse veel.",
+          "queue_full": "Päring juba ootab. Proovige pärast vastust.",
+          "queue_expired": "Ootel päring aegus. Vajutage ja rääkige uuesti.",
+          "queue_discarded": "Ootel päring jäeti kõrvale.",
+          "queue_failed": "Ootel päringut ei saanud alustada.",
+          "capture_limit": "Mikrofoni salvestuspiir on täis. Kasutage lühemat päringut.",
+          "buffer_overflow": "Mikrofoni heli kogunes enne, kui kõneteenus seda lugema hakkas.",
+          "audio_sequence_gap": "Heli sünkroonimine ebaõnnestus. Vajutage ja proovige uuesti.",
+          "invalid_audio_sync": "Kaugjuhtimispult saatis kehtetu heli sünkroonimisteate.",
+          "invalid_audio_frame": "Kaugjuhtimispult saatis kahjustatud helikaadri.",
+          "invalid_control": "Kaugjuhtimispult saatis kehtetu juhtteate.",
+          "unsupported_audio_start": "Kaugjuhtimispult alustas heli viisil, mida see integratsioon ei toeta.",
+          "incomplete_utterance": "Heli lõppes enne päringu lõpetamist.",
+          "audio_stalled": "Mikrofoni heli lakkas saabumast. Proovige uuesti.",
+          "audio_failed": "Mikrofoni heli ebaõnnestus.",
+          "no_audio": "Mikrofoni heli ei saadud.",
+          "no_speech": "Kõnet ei tuvastatud.",
+          "held_mode_unsupported": "Vahelduv vestlus vajab hoia-ja-räägi kaugjuhtimispulti.",
+          "held_failed": "Nupuhoidmisega vestlus ebaõnnestus.",
+          "held_turn_failed": "Vestluse voor ebaõnnestus.",
+          "remote_stopped": "Kaugjuhtimispult peatas mikrofoni ootamatult.",
+          "disconnected": "Kaugjuhtimispult katkestas ühenduse.",
+          "cancelled": "Päring tühistati.",
+          "pipeline_finished_early": "Assisti torujuhe lõpetas enne, kui kogu heli oli loetud.",
+          "pipeline_timeout": "Assisti torujuhe vastas liiga kaua.",
+          "pipeline_failed": "Assisti torujuhe ebaõnnestus.",
+          "pipeline_removed": "Valitud Assisti torujuhet enam ei ole.",
+          "playback_stop_unverified": "Ei õnnestunud kontrollida, kas eelmine vastus peatus. Oodake, kuni kõlar on jõudeolekus.",
+          "playback_stop_failed": "Eelmist vastust ei saanud peatada.",
+          "playback_start_timeout": "Kõlar ei hakanud vastust esitama.",
+          "playback_finish_timeout": "Kõlar ei lõpetanud vastuse esitamist õigel ajal.",
+          "playback_interrupted": "Vastus katkestati kõlaris.",
+          "speaker_unavailable": "Vastuste kõlar ei ole saadaval.",
+          "speaker_busy": "Vastuste kõlar on hõivatud.",
+          "speaker_cannot_play": "Vastuste kõlar ei saa Home Assistantist heli esitada.",
+          "missing_tts_audio": "Vastusel polnud esitatavat heli.",
+          "generation_retirement_failed": "Eelmine päring ei ole veel peatunud. Oodake.",
+          "replacement_retirement_failed": "Praegust päringut ei saanud uue alustamiseks peatada.",
+          "microphone_open_failed": "Kaugjuhtimispuldi mikrofoni ei saanud avada.",
+          "microphone_open_rejected": "Kaugjuhtimispult keeldus mikrofoni avamast.",
+          "microphone_start_timeout": "Kaugjuhtimispult ei käivitanud mikrofoni õigel ajal.",
+          "microphone_close_failed": "Kaugjuhtimispuldi mikrofoni ei saanud sulgeda.",
+          "microphone_keepalive_failed": "Kaugjuhtimispuldi mikrofoni ühendus katkes.",
+          "active_generation_cancelled": "Ettevalmistatav vastus tühistati ja vestluse kontekst lähtestati.",
+          "wake_remote": "Äratage kaugjuhtimispult nooleklahviga ja proovige uuesti.",
+          "bluetooth_unavailable": "Kohalik Bluetooth ei ole saadaval.",
+          "bluetooth_operation_failed": "Bluetooth-toiming ebaõnnestus.",
+          "not_paired": "Kaugjuhtimispult ei ole selle hostiga seotud.",
+          "multiple_adapters": "Kaugjuhtimispult on seotud rohkem kui ühe adapteriga.",
+          "voice_service_unavailable": "Kaugjuhtimispult ei paku hääleteenust.",
+          "unsupported_write": "Kaugjuhtimispuldi häälejuhtimisse ei saa kirjutada.",
+          "unsupported_capabilities": "Kaugjuhtimispult teatas häälevõimalustest, mida see integratsioon ei toeta.",
+          "unsupported_codec": "Kaugjuhtimispult kasutab helivormingut, mida see integratsioon ei toeta.",
+          "invalid_frame_size": "Kaugjuhtimispult teatas kehtetu helikaadri suuruse.",
+          "hidraw_unavailable": "Kaugjuhtimispuldi sisendseade ei ole Home Assistantile saadaval.",
+          "hidraw_permission_denied": "Home Assistantil ei ole luba kaugjuhtimispuldi sisendseadet lugeda.",
+          "opus_decoder_unavailable": "Home Assistantile ei ole saadaval Opus helidekoodrit.",
+          "invalid_opus_packet": "Kaugjuhtimispult saatis heli, mida ei saanud dekodeerida.",
+          "other": "Esines mõni muu tõrge. Üksikasjad on vea koodis."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kood"
+          },
+          "stage": {
+            "name": "Etapp"
+          },
+          "since": {
+            "name": "Alates"
+          },
+          "session": {
+            "name": "Päring"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assisti torujuhe puudub kaugjuhtimispuldil {remote}",
+      "description": "Kaugjuhtimispult **{remote}** on seadistatud kasutama Assisti torujuhet `{pipeline}`, mida enam ei ole. Selle kaugjuhtimispuldi häälpäringud ebaõnnestuvad, kuni valite mõne muu torujuhtme.\n\nMinge jaotisse **Seaded → Seadmed ja teenused → Bluetooth Remote Voice**, avage **{remote}** menüü, valige **Seadista** ja valige olemasolev torujuhe."
+    },
+    "speaker_missing": {
+      "title": "Vastuste kõlar puudub kaugjuhtimispuldil {remote}",
+      "description": "Kaugjuhtimispult **{remote}** on seadistatud esitama vastuseid seadmes `{speaker}`, mida enam ei ole. Käsud täidetakse endiselt, kuid nende kõnevastust ei esitata.\n\nMinge jaotisse **Seaded → Seadmed ja teenused → Bluetooth Remote Voice**, avage **{remote}** menüü, valige **Seadista** ja valige mõni muu kõlar või ärge valige ühtegi."
+    }
+  }
+}

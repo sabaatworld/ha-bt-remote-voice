@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Gekoppelt Fernbedienung auswielen",
+        "description": "Koppelt Är Fernbedienung als éischt ausserhalb vun Home Assistant a weckt se dann mat enger Päiltast op, fir datt se verifizéiert ka ginn. Wielt se aus der Lëscht aus oder gitt hir Bluetooth-Adress an.",
+        "data": {
+          "device": "Gekoppelt Fernbedienung"
+        },
+        "data_description": {
+          "device": "Fernbedienungen, déi schonn op dësem Home-Assistant-Host gekoppelt sinn. Wielt déi manuell Optioun, wann Är net opgelëscht ass."
+        }
+      },
+      "manual": {
+        "title": "Adress vun der gekoppelter Fernbedienung aginn",
+        "description": "Gitt d'Bluetooth-Adress vun enger Fernbedienung an, déi schonn op dësem Host gekoppelt ass.",
+        "data": {
+          "address": "Bluetooth-Adress"
+        },
+        "data_description": {
+          "address": "Sechs Puer hexadezimal Zifferen, duerch Doppelpunkten getrennt, zum Beispill AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Assist-Pipeline auswielen",
+        "description": "Weckt d'Fernbedienung mat enger Päiltast op, ier Dir se schéckt. D'Integratioun start am Modus nëmme Transkriptioun; ännert dat an den Optiounen, soubal et funktionéiert.",
+        "data": {
+          "pipeline_id": "Assist-Pipeline"
+        },
+        "data_description": {
+          "pipeline_id": "D'Assist-Pipeline, déi d'Sprooch vun dëser Fernbedienung verschafft."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Lokale Bluetooth ass net verfügbar. Kontrolléiert, ob de System-D-Bus accessibel ass.",
+      "wake_remote": "Weckt déi gekoppelt Fernbedienung mat enger Päiltast op a probéiert et nach eng Kéier.",
+      "not_paired": "Koppelt dës Fernbedienung als éischt extern.",
+      "multiple_adapters": "Dës Fernbedienung ass op méi Adapteren gekoppelt. Haalt d'Kopplung op engem Adapter.",
+      "invalid_address": "Gitt eng Bluetooth-Adress am Format AA:BB:CC:DD:EE:FF an.",
+      "unsupported_remote": "Dës Fernbedienung bitt kee ënnerstëtzte ATVV-v0.4/v1.0-ADPCM-Sproochprofil un.",
+      "invalid_pipeline": "Wielt eng bestoend Assist-Pipeline aus.",
+      "hidraw_unavailable": "D'Aginn-Apparat vun der Fernbedienung ass net fir Home Assistant verfügbar. Weckt d'Fernbedienung op a kontrolléiert, ob Home Assistant /dev/hidraw-Apparater gesäit.",
+      "hidraw_permission_denied": "Home Assistant däerf d'Aginn-Apparat vun der Fernbedienung net liesen. Kuckt am README, wéi en Apparat-Zougang dës Fernbedienung brauch.",
+      "opus_decoder_unavailable": "Et ass keen Opus-Audiodecoder fir Home Assistant verfügbar, deen dës Fernbedienung brauch."
+    },
+    "abort": {
+      "already_configured": "Dës Fernbedienung ass schonn konfiguréiert.",
+      "no_pipelines": "Erstellt eng Assist-Pipeline, ier Dir d'Fernbedienung derbäisetzt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Sproochastellungen",
+        "description": "Dës Astellunge bestëmmen, wéi Tastendréck behandelt ginn a wéi Äntwerte geschwat ginn. Eng Ufro ze ersetzen kann Aktiounen, déi schonn ausgefouert goufen, net réckgängeg maachen. Gläichzäitege Vollduplex ass net verfügbar. Nom Transkriptioun ophalen deaktivéiert keng Tools, déi an e Live-Sproochubidder agebaut sinn; benotzt en Ubidder nëmme fir Transkriptioun, wann Aktiounen deaktivéiert musse ginn.\n\n**Äntwertbedingung:** all seng Bedingunge mussen erfëllt si, fir datt eng Äntwert geschwat gëtt. Si ginn eemol um Ufank vun all Ufro kontrolléiert; looss et eidel, fir ëmmer ze schwätzen, an eng Bedingung, déi net kann ausgewäert ginn, gëllt als net erfëllt. Template-Bedingunge kënnen d'Variabelen `speaker`, `remote` an `held` benotzen.",
+        "data": {
+          "pipeline_id": "Assist-Pipeline",
+          "mode": "Sproochmodus",
+          "speaker": "Äntwert-Lautsprecher",
+          "output_mode": "Zäitpunkt vun der Äntwert",
+          "stream_head_start": "Streaming-Virsprong",
+          "busy_processing": "Nei Tast während der Verarbechtung",
+          "busy_playback": "Nei Tast während der Äntwert",
+          "context_mode": "Gespréichskontext",
+          "input_mode": "Tastverhalen",
+          "min_press_seconds": "Kuerz Tastendréck ignoréieren",
+          "max_request_seconds": "Maximal Uflängt",
+          "max_conversation_seconds": "Maximal Gespréichslängt",
+          "reply_condition": "Äntwertbedingung"
+        },
+        "data_description": {
+          "pipeline_id": "D'Assist-Pipeline, déi Sprooch verschafft: Spracherkennung, Gespréichsagent a Sproochausgab. Eng ewechgeholl Pipeline gëtt e Feeler, amplaz op eng aner zréckzefalen.",
+          "mode": "Nëmme Transkriptioun hält no der Spracherkennung op a spillt keng Äntwert of. Befehler ausféieren féiert déi ganz Pipeline aus a schwätzt d'Äntwert um Äntwert-Lautsprecher.",
+          "speaker": "De Medienspiller, deen Äntwerte schwätzt. Gëtt nëmme beim Ausféiere vu Befehler benotzt. Wielt keng geschwat Äntwert, fir d'Pipeline ze stoppen, ier d'Äntwert ofgespillt gëtt.",
+          "output_mode": "Automatescht Streaming fänkt un ze schwätzen, soubal eng gestreamt Äntwert prett ass. Op déi ganz Äntwert waarden fänkt méi spéit un, spillt awer eng fäerdeg Audiodatei of, wat Aussetzer bei Ubidder vermeit, déi Sprooch nëmme ongeféier a Echtzäit produzéieren.",
+          "stream_head_start": "Verzögert de Start vun enger gestreamter Äntwert em dës Unzuel u Sekonnen, fir datt de Lautsprecher ka pufferen; Äntwerten, déi méi fréi fäerdeg sinn, ginn direkt ofgespillt. Erhéicht et, wann gestreamt Äntwerte an den éischte Sekonnen aussetzen. Keen Effekt, wann op déi ganz Äntwert gewaart gëtt. 0 behält dat Standardverhalen.",
+          "busy_processing": "Wat geschitt, wann d'Tast gedréckt gëtt, ier déi viregt Ufro beäntwert ass: d'Tast ofleenen, eng Ufro an der Rei halen oder déi aktuell Ufro ersetzen. Ersetzen kann Aktiounen, déi schonn ausgefouert goufen, net réckgängeg maachen.",
+          "busy_playback": "Wat geschitt, wann d'Tast gedréckt gëtt, während eng Äntwert ofgespillt gëtt: d'Tast ofleenen, duerno eng Ufro an der Rei beäntweren oder d'Äntwert stoppen an déi nei Ufro starten.",
+          "context_mode": "Weiderbenotzen behält d'Home-Assistant-Gespréich, sou datt Folgefroen wéi „an dat duebel?“ funktionéieren. Frësch mécht vun all Tast en onofhängegt Gespréich.",
+          "input_mode": "Eng Ufro pro Halen hëlt op, bis d'Tast lassgelooss gëtt. Wiesselend Gespréich lauschtert weider, soulaang d'Tast gehale gëtt: schwätzen, pausen, d'Äntwert héieren, dann nees schwätzen. Dofir brauch et eng Fernbedienung mat Push-to-Talk.",
+          "min_press_seconds": "Ignoréiert Tippe op d'Sproochtast, déi méi kuerz si wéi dëst, fir datt en onbeabsiichtegt Tippe ni eng Ufro start; e richtegt Halen fänkt entspriechend méi spéit un. 0 schalt et aus. Nëtzlech fir eng Fire TV-Fernbedienung, déi direkt nom Opwecken mat \"No microphone audio\" feelschléit: si schéckt d'Tast, déi si opgeweckt huet, nees als direkten Tipp. 0,1 s ass e gudde Startwäert. Nëmme fir Fire TV-Fernbedienungen.",
+          "max_request_seconds": "Déi längst Dauer vun enger eenzeler Ufro op all Fernbedienung: e ganzt Halen am Modus Eng Ufro, an all Tour am Wiesselend Gespréich. Wann se erreecht gëtt, endet d'Ufro mat engem Opnamlimit-Feeler. Verréngert et, fir eng blockéiert Tast ze hanneren, ewech ze huelen; erhéicht et fir laang Diktater. Fernbedienunge ouni Push-to-Talk enden och no ongeféier 15 Sekonnen Sprooch oder bei Rou, wat fréier kënnt.",
+          "max_conversation_seconds": "Déi längst Dauer vun engem ganzen Tasthalen am Modus Wiesselend Gespréich. Gëtt am Modus Eng Ufro ignoréiert a muss net méi kuerz sinn wéi déi maximal Uflängt.",
+          "reply_condition": "Bedingungen, déi all erfëllt si mussen, fir datt eng Äntwert geschwat gëtt. Eemol um Ufank vun all Ufro kontrolléiert (an all Tour am Wiesselend Gespréich). Eidel loossen, fir ëmmer ze schwätzen. Eng Bedingung, déi e Feeler gëtt, gëllt als net erfëllt. Template-Bedingunge kënnen d'Variabelen speaker, remote an held benotzen."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Wielt e Medienspiller, deen d'Ofspille vun Audio ënnerstëtzt, oder keng geschwat Äntwert.",
+      "invalid_preferences": "Wielt eng vun den ënnerstëtzte Sproochpräferenzen aus.",
+      "invalid_pipeline": "Wielt eng bestoend Assist-Pipeline aus.",
+      "invalid_reply_condition": "D'Äntwertbedingung ass net gëlteg. Kontrolléiert d'Bedingungen a probéiert et nach eng Kéier.",
+      "pipeline_missing": "D'Assist-Pipeline, déi fir dës Fernbedienung gespäichert ass, gëtt et net méi. Wielt eng aner aus.",
+      "speaker_missing": "Deen gespäicherte Äntwert-Lautsprecher ass de Moment net verfügbar, dofir ginn Äntwerten eréischt erëm ofgespillt, wann en zréck ass. Behält en oder wielt en aneren."
+    },
+    "abort": {
+      "no_pipelines": "Erstellt als éischt eng Assist-Pipeline."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Bluetooth-Adress aginn"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Nëmme Transkriptioun",
+        "commands": "Befehler ausféieren"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Keng geschwat Äntwert"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatescht Streaming",
+        "buffered": "Op komplett Äntwert waarden"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Nei Ufro ofleenen",
+        "queue": "Eng Ufro an d'Rei setzen",
+        "replace": "Aktuell Ufro ersetzen"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Nei Ufro ofleenen",
+        "queue": "Eng Ufro an d'Rei setzen",
+        "replace": "Aktuell Äntwert ersetzen"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Gespréich weiderbenotzen",
+        "fresh": "Frëscht Gespréich pro Ufro"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Eng Ufro pro Halen",
+        "conversation": "Gespréich beim Halen (wiesselend)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Sprooch",
+        "state_attributes": {
+          "ready": {
+            "name": "Prett"
+          },
+          "last_error": {
+            "name": "Leschte Feelercode"
+          },
+          "last_error_message": {
+            "name": "Läscht Feelermeldung"
+          },
+          "mode": {
+            "name": "Sproochmodus"
+          },
+          "sessions": {
+            "name": "Sessiounen"
+          },
+          "failures": {
+            "name": "Feelschléi"
+          },
+          "rejected": {
+            "name": "Offgeleent Tastendréck"
+          },
+          "queued": {
+            "name": "Ufroen an der Rei"
+          },
+          "last_outcome": {
+            "name": "Leschte Resultat"
+          },
+          "full_duplex": {
+            "name": "Vollduplex"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Sproochtast",
+        "state_attributes": {
+          "event_type": {
+            "name": "Evenementtyp",
+            "state": {
+              "pressed": "Gedréckt",
+              "released": "Lassgelooss",
+              "accepted": "Ugeholl",
+              "rejected": "Offgeleent",
+              "queued": "An der Rei",
+              "failed": "Feelgeschloen",
+              "context_reset": "Gespréich zréckgesat",
+              "reply_skipped": "Äntwert iwwersprong"
+            }
+          },
+          "outcome": {
+            "name": "Resultat"
+          },
+          "stage": {
+            "name": "Phas"
+          },
+          "code": {
+            "name": "Code"
+          },
+          "message": {
+            "name": "Message"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikro aktiv"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Leschte Feeler",
+        "state": {
+          "none": "Kee Feeler",
+          "busy": "Déi viregt Ufro gëtt nach beäntwert.",
+          "queue_full": "Et waart schonn eng Ufro. Probéiert et w.e.g. no der Äntwert.",
+          "queue_expired": "D'waardend Ufro ass ofgelaf. Dréckt w.e.g. an a schwätzt nach eng Kéier.",
+          "queue_discarded": "D'waardend Ufro gouf verworf.",
+          "queue_failed": "D'waardend Ufro konnt net gestart ginn.",
+          "capture_limit": "D'Opnamlimit vum Mikro gouf erreecht. Benotzt w.e.g. eng méi kuerz Ufro.",
+          "buffer_overflow": "D'Mikro-Audio huet sech opgestapelt, ier de Sproochdingscht ugefaang huet, et ze liesen.",
+          "audio_sequence_gap": "D'Audiosynchronisatioun ass feelgeschloen. Dréckt w.e.g. a probéiert et nach eng Kéier.",
+          "invalid_audio_sync": "D'Fernbedienung huet eng ongëlteg Audiosynchronisatiounsmeldung geschéckt.",
+          "invalid_audio_frame": "D'Fernbedienung huet en beschiedegten Audioframe geschéckt.",
+          "invalid_control": "D'Fernbedienung huet eng ongëlteg Steierungsmeldung geschéckt.",
+          "unsupported_audio_start": "D'Fernbedienung huet Audio op eng Aart gestart, déi dës Integratioun net ënnerstëtzt.",
+          "incomplete_utterance": "D'Audio ass op en Enn gaange, ier d'Ufro komplett war.",
+          "audio_stalled": "Et kënnt keng Mikro-Audio méi un. Probéiert et w.e.g. nach eng Kéier.",
+          "audio_failed": "D'Mikro-Audio ass feelgeschloen.",
+          "no_audio": "Et gouf keng Mikro-Audio kritt.",
+          "no_speech": "Et gouf keng Sprooch erkannt.",
+          "held_mode_unsupported": "Wiesselend Gespréich brauch eng Fernbedienung mat Push-to-Talk.",
+          "held_failed": "D'Gespréich, während d'Tast gehale gouf, ass feelgeschloen.",
+          "held_turn_failed": "Eng Tour vum Gespréich ass feelgeschloen.",
+          "remote_stopped": "D'Fernbedienung huet d'Mikro onerwaart gestoppt.",
+          "disconnected": "D'Fernbedienung gouf getrennt.",
+          "cancelled": "D'Ufro gouf ofgebrach.",
+          "pipeline_finished_early": "D'Assist-Pipeline ass fäerdeg gewiescht, ier all Audio gelies gouf.",
+          "pipeline_timeout": "D'Assist-Pipeline huet ze laang gebraucht, fir ze äntweren.",
+          "pipeline_failed": "D'Assist-Pipeline ass feelgeschloen.",
+          "pipeline_removed": "Déi ausgewielten Assist-Pipeline gëtt et net méi.",
+          "playback_stop_unverified": "Et konnt net verifizéiert ginn, ob déi viregt Äntwert gestoppt gouf. Waart, bis de Lautsprecher inaktiv ass.",
+          "playback_stop_failed": "Déi viregt Äntwert konnt net gestoppt ginn.",
+          "playback_start_timeout": "De Lautsprecher huet d'Äntwert net ugefaang ofzespillen.",
+          "playback_finish_timeout": "De Lautsprecher huet d'Äntwert net an der Zäit fäerdeg ofgespillt.",
+          "playback_interrupted": "D'Äntwert gouf um Lautsprecher ënnerbrach.",
+          "speaker_unavailable": "Den Äntwert-Lautsprecher ass net verfügbar.",
+          "speaker_busy": "Den Äntwert-Lautsprecher ass beschäftegt.",
+          "speaker_cannot_play": "Den Äntwert-Lautsprecher kann keng Audio vun Home Assistant ofspillen.",
+          "missing_tts_audio": "D'Äntwert hat keng Audio zum Ofspillen.",
+          "generation_retirement_failed": "Déi viregt Ufro ass nach net gestoppt. Waart w.e.g.",
+          "replacement_retirement_failed": "Déi aktuell Ufro konnt net gestoppt ginn, fir déi nei ze starten.",
+          "microphone_open_failed": "D'Mikro vun der Fernbedienung konnt net opgemaach ginn.",
+          "microphone_open_rejected": "D'Fernbedienung huet refuséiert, hir Mikro opzemaachen.",
+          "microphone_start_timeout": "D'Fernbedienung huet hir Mikro net an der Zäit gestart.",
+          "microphone_close_failed": "D'Mikro vun der Fernbedienung konnt net zougemaach ginn.",
+          "microphone_keepalive_failed": "D'Mikroverbindung vun der Fernbedienung ass verluer gaangen.",
+          "active_generation_cancelled": "D'Äntwert, déi virbereet gouf, gouf ofgebrach an de Gespréichskontext gouf zréckgesat.",
+          "wake_remote": "Weckt d'Fernbedienung mat enger Päiltast op a probéiert et nach eng Kéier.",
+          "bluetooth_unavailable": "Lokale Bluetooth ass net verfügbar.",
+          "bluetooth_operation_failed": "Eng Bluetooth-Operatioun ass feelgeschloen.",
+          "not_paired": "D'Fernbedienung ass op dësem Host net gekoppelt.",
+          "multiple_adapters": "D'Fernbedienung ass op méi wéi engem Adapter gekoppelt.",
+          "voice_service_unavailable": "D'Fernbedienung bitt keen Sproochdingscht un.",
+          "unsupported_write": "D'Sproochsteierung vun der Fernbedienung kann net geschriwwe ginn.",
+          "unsupported_capabilities": "D'Fernbedienung huet Sproochfunktiounen gemellt, déi dës Integratioun net ënnerstëtzt.",
+          "unsupported_codec": "D'Fernbedienung benotzt en Audioformat, dat dës Integratioun net ënnerstëtzt.",
+          "invalid_frame_size": "D'Fernbedienung huet eng ongëlteg Audioframe-Gréisst gemellt.",
+          "hidraw_unavailable": "D'Aginn-Apparat vun der Fernbedienung ass net fir Home Assistant verfügbar.",
+          "hidraw_permission_denied": "Home Assistant däerf d'Aginn-Apparat vun der Fernbedienung net liesen.",
+          "opus_decoder_unavailable": "Et ass keen Opus-Audiodecoder fir Home Assistant verfügbar.",
+          "invalid_opus_packet": "D'Fernbedienung huet Audio geschéckt, déi net konnt dekodéiert ginn.",
+          "other": "Et ass en aneren Feeler opgetratt. De Feelercode gëtt d'Detailer."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Code"
+          },
+          "stage": {
+            "name": "Phas"
+          },
+          "since": {
+            "name": "Zënter"
+          },
+          "session": {
+            "name": "Ufro"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist-Pipeline feelt fir {remote}",
+      "description": "D'Fernbedienung **{remote}** ass op d'Assist-Pipeline `{pipeline}` ageschalt, déi et net méi gëtt. Sproochufroe vun dëser Fernbedienung schléie feel, bis Dir eng aner Pipeline wielt.\n\nGitt an **Astellungen → Geräter & Servicer → Bluetooth Remote Voice**, mécht d'Menü vun **{remote}** op, wielt **Konfiguréieren** a wielt eng bestoend Pipeline aus."
+    },
+    "speaker_missing": {
+      "title": "Äntwert-Lautsprecher feelt fir {remote}",
+      "description": "D'Fernbedienung **{remote}** ass agestallt, fir Äntwerten op `{speaker}` ofzespillen, deen et net méi gëtt. Befehler gi weiderhin ausgefouert, awer hir geschwat Äntwert gëtt net ofgespillt.\n\nGitt an **Astellungen → Geräter & Servicer → Bluetooth Remote Voice**, mécht d'Menü vun **{remote}** op, wielt **Konfiguréieren** a wielt en aneren Lautsprecher oder wielt keen."
+    }
+  }
+}

@@ -1,0 +1,36 @@
+name: Home Assistant beta
+on:
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  beta:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: python -m pip install -r requirements-dev.txt
+      - name: Move to the newest Home Assistant beta (only that package may be a pre-release)
+        run: |
+          beta=$(python - <<'PY'
+          import json, urllib.request
+          from packaging.version import Version
+          data = json.load(urllib.request.urlopen("https://pypi.org/pypi/homeassistant/json"))
+          versions = [Version(v) for v in data["releases"]]
+          stable = max(v for v in versions if not v.is_prerelease)
+          newer = [v for v in versions if v.is_prerelease and v > stable]
+          print(max(newer) if newer else "")
+          PY
+          )
+          if [ -z "$beta" ]; then echo "No Home Assistant beta published"; exit 0; fi
+          python -m pip install "homeassistant==$beta"
+      - name: Run the suite against the beta
+        env:
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+        run: python -m pytest -p pytest_asyncio.plugin -q

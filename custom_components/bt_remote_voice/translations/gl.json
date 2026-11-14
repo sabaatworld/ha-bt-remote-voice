@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Seleccionar mando vinculado",
+        "description": "Vincula primeiro o mando fóra de Home Assistant e logo esperta-o cun botón de frecha para poder verificalo. Escólleo da lista ou introduce o seu enderezo Bluetooth.",
+        "data": {
+          "device": "Mando vinculado"
+        },
+        "data_description": {
+          "device": "Mandos xa vinculados neste anfitrión de Home Assistant. Escolle a opción manual se o teu non aparece na lista."
+        }
+      },
+      "manual": {
+        "title": "Introducir o enderezo do mando vinculado",
+        "description": "Introduce o enderezo Bluetooth dun mando que xa está vinculado neste anfitrión.",
+        "data": {
+          "address": "Enderezo Bluetooth"
+        },
+        "data_description": {
+          "address": "Seis pares de díxitos hexadecimais separados por dous puntos, por exemplo AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Seleccionar pipeline de Assist",
+        "description": "Esperta o mando cun botón de frecha antes de enviar. A integración comeza no modo de só transcrición; cámbiao nas opcións cando funcione.",
+        "data": {
+          "pipeline_id": "Pipeline de Assist"
+        },
+        "data_description": {
+          "pipeline_id": "O pipeline de Assist que procesa a voz deste mando."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "O Bluetooth local non está dispoñible. Comproba que se pode acceder ao D-Bus do sistema.",
+      "wake_remote": "Esperta o mando vinculado cun botón de frecha e téntao de novo.",
+      "not_paired": "Vincula primeiro este mando fóra de Home Assistant.",
+      "multiple_adapters": "Este mando está vinculado a varios adaptadores. Mantén o seu vínculo nun só adaptador.",
+      "invalid_address": "Introduce un enderezo Bluetooth co formato AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Este mando non ofrece un perfil de voz ATVV v0.4/v1.0 ADPCM compatible.",
+      "invalid_pipeline": "Escolle un pipeline de Assist existente.",
+      "hidraw_unavailable": "O dispositivo de entrada do mando non está dispoñible para Home Assistant. Esperta o mando e comproba que Home Assistant pode ver os dispositivos /dev/hidraw.",
+      "hidraw_permission_denied": "Home Assistant non ten permiso para ler o dispositivo de entrada do mando. Consulta o README para saber que acceso ao dispositivo precisa este mando.",
+      "opus_decoder_unavailable": "Home Assistant non dispón de ningún decodificador de audio Opus, que este mando precisa."
+    },
+    "abort": {
+      "already_configured": "Este mando xa está configurado.",
+      "no_pipelines": "Crea un pipeline de Assist antes de engadir o mando."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Axustes de voz",
+        "description": "Estes axustes controlan como se xestionan as pulsacións e como se din as respostas. Substituír unha solicitude non pode desfacer as accións que xa realizou. O dúplex completo simultáneo non está dispoñible. Deterse despois da transcrición non desactiva as ferramentas integradas nun provedor de voz en directo; usa un provedor de só transcrición cando haxa que desactivar as accións.\n\n**Condición de resposta:** deben cumprirse todas as súas condicións para que se diga unha resposta. Compróbanse unha vez ao comezo de cada solicitude; déixaa baleira para responder sempre en voz alta, e unha condición que non se pode avaliar conta como non cumprida. As condicións de modelo poden usar as variables `speaker`, `remote` e `held`.",
+        "data": {
+          "pipeline_id": "Pipeline de Assist",
+          "mode": "Modo de voz",
+          "speaker": "Altofalante de resposta",
+          "output_mode": "Momento da resposta",
+          "stream_head_start": "Adianto da transmisión",
+          "busy_processing": "Nova pulsación durante o procesamento",
+          "busy_playback": "Nova pulsación durante a resposta",
+          "context_mode": "Contexto da conversa",
+          "input_mode": "Comportamento do botón",
+          "min_press_seconds": "Ignorar pulsacións curtas",
+          "max_request_seconds": "Duración máxima da solicitude",
+          "max_conversation_seconds": "Duración máxima da conversa",
+          "reply_condition": "Condición de resposta"
+        },
+        "data_description": {
+          "pipeline_id": "O pipeline de Assist que procesa a voz: voz a texto, axente de conversa e texto a voz. Un pipeline eliminado falla cun erro en lugar de recorrer a outro.",
+          "mode": "Só transcrición detense tras o recoñecemento de voz e non reproduce resposta. Executar comandos executa todo o pipeline e di a resposta no altofalante de resposta.",
+          "speaker": "O reprodutor multimedia que di as respostas. Só se usa ao executar comandos. Escolle «Sen resposta falada» para deter o pipeline antes de reproducir a resposta.",
+          "output_mode": "A transmisión automática comeza a falar en canto hai unha resposta en streaming lista. Esperar pola resposta completa comeza máis tarde, pero reproduce un ficheiro de audio rematado, o que evita cortes con provedores que só producen voz a un ritmo próximo ao tempo real.",
+          "stream_head_start": "Atrasa o comezo dunha resposta en streaming este número de segundos para que o altofalante poida almacenar en búfer; as respostas que rematan antes reprodúcense de inmediato. Aumenta o valor se as respostas en streaming se cortan nos primeiros segundos. Sen efecto ao esperar pola resposta completa. 0 mantén o comportamento predeterminado.",
+          "busy_processing": "Que facer cando se preme o botón antes de que se responda á solicitude anterior: rexeitar a pulsación, manter unha solicitude pendente ou substituír a solicitude actual. Substituír non pode desfacer as accións xa realizadas.",
+          "busy_playback": "Que facer cando se preme o botón mentres se reproduce unha resposta: rexeitar a pulsación, responder despois a unha solicitude pendente, ou deter a resposta e iniciar a nova solicitude.",
+          "context_mode": "Reutilizar mantén a conversa de Home Assistant para que funcionen preguntas de seguimento como «e o dobre?». Nova converte cada pulsación nunha conversa independente.",
+          "input_mode": "Unha solicitude por pulsación mantida grava ata que se solta o botón. Conversa alternada segue escoitando mentres se mantén o botón: fala, fai unha pausa, escoita a resposta e volve falar. Precisa un mando de premer para falar.",
+          "min_press_seconds": "Ignora as pulsacións do botón de voz máis curtas que este valor, para que unha pulsación espuria nunca inicie unha solicitude; unha pulsación mantida real comeza este tempo máis tarde. 0 desactívao. Útil para un mando Fire TV que falla con «Non se recibiu audio do micrófono» xusto despois de espertar: reenvía a tecla que o espertou como unha pulsación instantánea. 0,1 s é un bo punto de partida. Só para mandos Fire TV.",
+          "max_request_seconds": "A duración máxima dunha soa solicitude en calquera mando: toda a pulsación mantida no modo Unha solicitude, e cada quenda en Conversa alternada. Ao acadala, a solicitude remata cun erro de límite de captura. Redúceo para deter a gravación dun botón atascado; aumenta o valor para ditados longos. Os mandos que non son de premer para falar tamén rematan despois duns 15 segundos de voz ou co silencio, o que ocorra primeiro.",
+          "max_conversation_seconds": "A duración máxima de toda unha pulsación mantida no modo Conversa alternada. Ignórase no modo Unha solicitude e non pode ser inferior á duración máxima da solicitude.",
+          "reply_condition": "Condicións que deben cumprirse todas para que se diga unha resposta. Compróbanse unha vez ao comezo de cada solicitude (e de cada quenda en Conversa alternada). Déixao baleiro para responder sempre en voz alta. Unha condición que dá erro conta como non cumprida. As condicións de modelo poden usar as variables speaker, remote e held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Escolle un reprodutor multimedia compatible coa reprodución de audio, ou ningunha resposta falada.",
+      "invalid_preferences": "Escolle unha das preferencias de voz compatibles.",
+      "invalid_pipeline": "Escolle un pipeline de Assist existente.",
+      "invalid_reply_condition": "A condición de resposta non é válida. Revisa as condicións e téntao de novo.",
+      "pipeline_missing": "O pipeline de Assist gardado para este mando xa non existe. Escolle outro.",
+      "speaker_missing": "O altofalante de resposta gardado non está dispoñible agora mesmo, polo que as respostas non se reproducirán ata que volva. Consérvao ou escolle outro."
+    },
+    "abort": {
+      "no_pipelines": "Crea primeiro un pipeline de Assist."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Introducir enderezo Bluetooth"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Só transcrición",
+        "commands": "Executar comandos"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Sen resposta falada"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Transmisión automática",
+        "buffered": "Esperar pola resposta completa"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Rexeitar nova solicitude",
+        "queue": "Poñer unha solicitude en cola",
+        "replace": "Substituír a solicitude actual"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Rexeitar nova solicitude",
+        "queue": "Poñer unha solicitude en cola",
+        "replace": "Substituír a resposta actual"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Reutilizar conversa",
+        "fresh": "Conversa nova por solicitude"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Unha solicitude por pulsación mantida",
+        "conversation": "Conversa mentres se mantén (alternada)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Voz",
+        "state_attributes": {
+          "ready": {
+            "name": "Listo"
+          },
+          "last_error": {
+            "name": "Código do último erro"
+          },
+          "last_error_message": {
+            "name": "Mensaxe do último erro"
+          },
+          "mode": {
+            "name": "Modo de voz"
+          },
+          "sessions": {
+            "name": "Sesións"
+          },
+          "failures": {
+            "name": "Fallos"
+          },
+          "rejected": {
+            "name": "Pulsacións rexeitadas"
+          },
+          "queued": {
+            "name": "Solicitudes en cola"
+          },
+          "last_outcome": {
+            "name": "Último resultado"
+          },
+          "full_duplex": {
+            "name": "Dúplex completo"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Botón de voz",
+        "state_attributes": {
+          "event_type": {
+            "name": "Tipo de evento",
+            "state": {
+              "pressed": "Premido",
+              "released": "Solto",
+              "accepted": "Aceptado",
+              "rejected": "Rexeitado",
+              "queued": "En cola",
+              "failed": "Fallido",
+              "context_reset": "Conversa restablecida",
+              "reply_skipped": "Resposta omitida"
+            }
+          },
+          "outcome": {
+            "name": "Resultado"
+          },
+          "stage": {
+            "name": "Fase"
+          },
+          "code": {
+            "name": "Código"
+          },
+          "message": {
+            "name": "Mensaxe"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Micrófono activo"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Último erro",
+        "state": {
+          "none": "Sen erro",
+          "busy": "Aínda se está respondendo á solicitude anterior.",
+          "queue_full": "Xa hai unha solicitude en espera. Téntao despois da resposta.",
+          "queue_expired": "A solicitude en espera caducou. Preme e fala de novo.",
+          "queue_discarded": "A solicitude en espera descartouse.",
+          "queue_failed": "Non se puido iniciar a solicitude en espera.",
+          "capture_limit": "Alcanzouse o límite de captura do micrófono. Fai unha solicitude máis curta.",
+          "buffer_overflow": "O audio do micrófono acumulouse antes de que o servizo de voz comezase a lelo.",
+          "audio_sequence_gap": "Fallou a sincronización do audio. Preme e téntao de novo.",
+          "invalid_audio_sync": "O mando enviou unha mensaxe de sincronización de audio non válida.",
+          "invalid_audio_frame": "O mando enviou unha trama de audio danada.",
+          "invalid_control": "O mando enviou unha mensaxe de control non válida.",
+          "unsupported_audio_start": "O mando iniciou o audio dun xeito que esta integración non admite.",
+          "incomplete_utterance": "O audio rematou antes de que a solicitude estivese completa.",
+          "audio_stalled": "O audio do micrófono deixou de chegar. Téntao de novo.",
+          "audio_failed": "Fallou o audio do micrófono.",
+          "no_audio": "Non se recibiu audio do micrófono.",
+          "no_speech": "Non se detectou voz.",
+          "held_mode_unsupported": "A conversa alternada precisa un mando de premer para falar.",
+          "held_failed": "Fallou a conversa mentres se mantiña o botón.",
+          "held_turn_failed": "Fallou unha quenda da conversa.",
+          "remote_stopped": "O mando detivo o micrófono de forma inesperada.",
+          "disconnected": "O mando desconectouse.",
+          "cancelled": "Cancelouse a solicitude.",
+          "pipeline_finished_early": "O pipeline de Assist rematou antes de que se lese todo o audio.",
+          "pipeline_timeout": "O pipeline de Assist tardou demasiado en responder.",
+          "pipeline_failed": "Fallou o pipeline de Assist.",
+          "pipeline_removed": "O pipeline de Assist seleccionado xa non existe.",
+          "playback_stop_unverified": "Non se puido verificar que a resposta anterior se detivese. Agarda ata que o altofalante estea inactivo.",
+          "playback_stop_failed": "Non se puido deter a resposta anterior.",
+          "playback_start_timeout": "O altofalante non comezou a reproducir a resposta.",
+          "playback_finish_timeout": "O altofalante non rematou de reproducir a resposta a tempo.",
+          "playback_interrupted": "A resposta interrompeuse no altofalante.",
+          "speaker_unavailable": "O altofalante de resposta non está dispoñible.",
+          "speaker_busy": "O altofalante de resposta está ocupado.",
+          "speaker_cannot_play": "O altofalante de resposta non pode reproducir audio de Home Assistant.",
+          "missing_tts_audio": "A resposta non tiña audio para reproducir.",
+          "generation_retirement_failed": "A solicitude anterior aínda non se detivo. Agarda.",
+          "replacement_retirement_failed": "Non se puido deter a solicitude actual para iniciar a nova.",
+          "microphone_open_failed": "Non se puido abrir o micrófono do mando.",
+          "microphone_open_rejected": "O mando rexeitou abrir o seu micrófono.",
+          "microphone_start_timeout": "O mando non iniciou o seu micrófono a tempo.",
+          "microphone_close_failed": "Non se puido pechar o micrófono do mando.",
+          "microphone_keepalive_failed": "Perdeuse a conexión co micrófono do mando.",
+          "active_generation_cancelled": "Cancelouse a resposta que se estaba preparando e restableceuse o contexto da conversa.",
+          "wake_remote": "Esperta o mando cun botón de frecha e téntao de novo.",
+          "bluetooth_unavailable": "O Bluetooth local non está dispoñible.",
+          "bluetooth_operation_failed": "Fallou unha operación de Bluetooth.",
+          "not_paired": "O mando non está vinculado neste anfitrión.",
+          "multiple_adapters": "O mando está vinculado a máis dun adaptador.",
+          "voice_service_unavailable": "O mando non ofrece un servizo de voz.",
+          "unsupported_write": "Non se pode escribir no control de voz do mando.",
+          "unsupported_capabilities": "O mando informou de capacidades de voz que esta integración non admite.",
+          "unsupported_codec": "O mando usa un formato de audio que esta integración non admite.",
+          "invalid_frame_size": "O mando informou dun tamaño de trama de audio non válido.",
+          "hidraw_unavailable": "O dispositivo de entrada do mando non está dispoñible para Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant non ten permiso para ler o dispositivo de entrada do mando.",
+          "opus_decoder_unavailable": "Home Assistant non dispón de ningún decodificador de audio Opus.",
+          "invalid_opus_packet": "O mando enviou audio que non se puido decodificar.",
+          "other": "Produciuse outro erro. O código de erro dá os detalles."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Código"
+          },
+          "stage": {
+            "name": "Fase"
+          },
+          "since": {
+            "name": "Desde"
+          },
+          "session": {
+            "name": "Solicitude"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Falta o pipeline de Assist de {remote}",
+      "description": "O mando **{remote}** está configurado para usar o pipeline de Assist `{pipeline}`, que xa non existe. As solicitudes de voz deste mando fallan ata que escollas outro pipeline.\n\nVai a **Configuración → Dispositivos e servizos → Bluetooth Remote Voice**, abre o menú de **{remote}**, escolle **Configurar** e selecciona un pipeline existente."
+    },
+    "speaker_missing": {
+      "title": "Falta o altofalante de resposta de {remote}",
+      "description": "O mando **{remote}** está configurado para reproducir as respostas en `{speaker}`, que xa non existe. Os comandos seguen executándose, pero a súa resposta falada non se reproducirá.\n\nVai a **Configuración → Dispositivos e servizos → Bluetooth Remote Voice**, abre o menú de **{remote}**, escolle **Configurar** e selecciona outro altofalante ou ningún."
+    }
+  }
+}

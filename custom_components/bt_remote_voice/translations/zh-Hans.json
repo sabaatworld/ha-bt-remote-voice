@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "选择已配对的遥控器",
+        "description": "请先在 Home Assistant 之外配对遥控器，然后按方向键唤醒它以便验证。从列表中选择，或输入其 Bluetooth 地址。",
+        "data": {
+          "device": "已配对的遥控器"
+        },
+        "data_description": {
+          "device": "已在此 Home Assistant 主机上配对的遥控器。如果列表中没有您的遥控器，请选择手动选项。"
+        }
+      },
+      "manual": {
+        "title": "输入已配对遥控器的地址",
+        "description": "输入已在此主机上配对的遥控器的 Bluetooth 地址。",
+        "data": {
+          "address": "Bluetooth 地址"
+        },
+        "data_description": {
+          "address": "六组以冒号分隔的十六进制数字，例如 AA:BB:CC:DD:EE:FF。"
+        }
+      },
+      "configure": {
+        "title": "选择 Assist 管道",
+        "description": "提交前请按方向键唤醒遥控器。该集成以仅转录模式启动；待其正常工作后，可在选项中更改。",
+        "data": {
+          "pipeline_id": "Assist 管道"
+        },
+        "data_description": {
+          "pipeline_id": "处理此遥控器语音的 Assist 管道。"
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "本地 Bluetooth 不可用。请检查是否可以访问系统 D-Bus。",
+      "wake_remote": "请按方向键唤醒已配对的遥控器，然后重试。",
+      "not_paired": "请先在外部配对此遥控器。",
+      "multiple_adapters": "此遥控器已在多个适配器上配对。请仅在一个适配器上保留其绑定。",
+      "invalid_address": "请按 AA:BB:CC:DD:EE:FF 格式输入 Bluetooth 地址。",
+      "unsupported_remote": "此遥控器未提供受支持的 ATVV v0.4/v1.0 ADPCM 语音配置文件。",
+      "invalid_pipeline": "请选择现有的 Assist 管道。",
+      "hidraw_unavailable": "Home Assistant 无法使用该遥控器的输入设备。请唤醒遥控器，并检查 Home Assistant 是否能看到 /dev/hidraw 设备。",
+      "hidraw_permission_denied": "Home Assistant 无权读取该遥控器的输入设备。有关此遥控器所需的设备访问权限，请参阅 README。",
+      "opus_decoder_unavailable": "Home Assistant 没有可用的 Opus 音频解码器，而此遥控器需要它。"
+    },
+    "abort": {
+      "already_configured": "此遥控器已配置。",
+      "no_pipelines": "添加遥控器之前，请先创建 Assist 管道。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "语音设置",
+        "description": "这些设置控制如何处理按键以及如何朗读回复。替换请求无法撤销其已执行的操作。不支持同时全双工。转录后停止不会禁用实时语音提供商内置的工具；如果必须禁用操作，请使用仅转录的提供商。\n\n**回复条件：** 必须满足其所有条件才会朗读回复。条件在每个请求开始时检查一次；留空则始终朗读，无法求值的条件视为未满足。模板条件可以使用变量 `speaker`、`remote` 和 `held`。",
+        "data": {
+          "pipeline_id": "Assist 管道",
+          "mode": "语音模式",
+          "speaker": "回复扬声器",
+          "output_mode": "回复时机",
+          "stream_head_start": "流式传输提前量",
+          "busy_processing": "处理中再次按键",
+          "busy_playback": "回复期间再次按键",
+          "context_mode": "对话上下文",
+          "input_mode": "按键行为",
+          "min_press_seconds": "忽略短按",
+          "max_request_seconds": "请求最大时长",
+          "max_conversation_seconds": "对话最大时长",
+          "reply_condition": "回复条件"
+        },
+        "data_description": {
+          "pipeline_id": "处理语音的 Assist 管道：语音转文字、对话代理和文字转语音。已删除的管道会报错，而不会回退到其他管道。",
+          "mode": "仅转录在语音识别后停止，不播放回复。执行命令会运行整个管道，并在回复扬声器上朗读回复。",
+          "speaker": "朗读回复的媒体播放器。仅在执行命令时使用。选择无语音回复可在播放回复之前停止管道。",
+          "output_mode": "自动流式传输会在流式回复就绪后立即开始朗读。等待完整回复开始较晚，但会播放完整的音频文件，可避免使用仅以接近实时速度生成语音的提供商时出现断续。",
+          "stream_head_start": "将流式回复的开始时间延迟此秒数，以便扬声器缓冲；更早结束的回复会立即播放。如果流式回复在最初几秒出现断续，请调高此值。等待完整回复时无效。0 表示保持默认行为。",
+          "busy_processing": "在上一个请求得到回答之前按下按键时的处理方式：拒绝按键、保留一个待处理请求，或替换当前请求。替换无法撤销已执行的操作。",
+          "busy_playback": "在播放回复时按下按键的处理方式：拒绝按键、之后回答一个待处理请求，或停止回复并开始新请求。",
+          "context_mode": "重复使用会保留 Home Assistant 对话，因此“那再翻倍呢？”之类的追问可以正常工作。全新则让每次按键都成为独立的对话。",
+          "input_mode": "每次按住一个请求会录音直到松开按键。交替对话在按住按键期间持续聆听：说话、停顿、听取回复，然后再次说话。需要按住说话式遥控器。",
+          "min_press_seconds": "忽略短于此时长的语音按键轻点，避免误触发请求；真正的按住会相应延后开始。0 表示关闭。适用于唤醒后立即出现“无麦克风音频”错误的 Fire TV 遥控器：它会把唤醒它的按键作为瞬时轻点重新发送。建议从 0.1 s 开始。仅适用于 Fire TV 遥控器。",
+          "max_request_seconds": "任何遥控器上单个请求可持续的最长时间：单请求模式下为整个按住过程，交替对话中为每一轮。达到该时长后，请求会因捕获上限错误而结束。调低可防止按键卡住时持续录音；调高可用于长时间听写。非按住说话式遥控器还会在语音持续约 15 秒或出现静音时（以先到者为准）结束。",
+          "max_conversation_seconds": "在交替对话模式下，整个按键按住过程可持续的最长时间。在单请求模式下被忽略，且不得短于请求最大时长。",
+          "reply_condition": "必须全部满足才会朗读回复的条件。在每个请求开始时（交替对话中为每一轮开始时）检查一次。留空则始终朗读。出错的条件视为未满足。模板条件可以使用变量 speaker、remote 和 held。"
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "请选择支持播放音频的媒体播放器，或选择无语音回复。",
+      "invalid_preferences": "请选择受支持的语音偏好之一。",
+      "invalid_pipeline": "请选择现有的 Assist 管道。",
+      "invalid_reply_condition": "回复条件无效。请检查条件后重试。",
+      "pipeline_missing": "为此遥控器保存的 Assist 管道已不存在。请选择另一个。",
+      "speaker_missing": "已保存的回复扬声器目前不可用，因此在其恢复之前不会播放回复。请保留它，或选择另一个。"
+    },
+    "abort": {
+      "no_pipelines": "请先创建 Assist 管道。"
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "输入 Bluetooth 地址"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "仅转录",
+        "commands": "执行命令"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "无语音回复"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "自动流式传输",
+        "buffered": "等待完整回复"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "拒绝新请求",
+        "queue": "排队一个请求",
+        "replace": "替换当前请求"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "拒绝新请求",
+        "queue": "排队一个请求",
+        "replace": "替换当前回复"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "重复使用对话",
+        "fresh": "每个请求使用全新对话"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "每次按住一个请求",
+        "conversation": "按住期间对话（交替）"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "语音",
+        "state_attributes": {
+          "ready": {
+            "name": "就绪"
+          },
+          "last_error": {
+            "name": "上次错误代码"
+          },
+          "last_error_message": {
+            "name": "上次错误消息"
+          },
+          "mode": {
+            "name": "语音模式"
+          },
+          "sessions": {
+            "name": "会话"
+          },
+          "failures": {
+            "name": "失败次数"
+          },
+          "rejected": {
+            "name": "被拒绝的按键"
+          },
+          "queued": {
+            "name": "排队的请求"
+          },
+          "last_outcome": {
+            "name": "上次结果"
+          },
+          "full_duplex": {
+            "name": "全双工"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "语音按键",
+        "state_attributes": {
+          "event_type": {
+            "name": "事件类型",
+            "state": {
+              "pressed": "已按下",
+              "released": "已松开",
+              "accepted": "已接受",
+              "rejected": "已拒绝",
+              "queued": "已排队",
+              "failed": "失败",
+              "context_reset": "对话已重置",
+              "reply_skipped": "已跳过回复"
+            }
+          },
+          "outcome": {
+            "name": "结果"
+          },
+          "stage": {
+            "name": "阶段"
+          },
+          "code": {
+            "name": "代码"
+          },
+          "message": {
+            "name": "消息"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "麦克风已启用"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "上次错误",
+        "state": {
+          "none": "无错误",
+          "busy": "仍在回答上一个请求。",
+          "queue_full": "已有一个请求在等待。请在回复结束后再试。",
+          "queue_expired": "等待中的请求已过期。请再次按键并说话。",
+          "queue_discarded": "等待中的请求已被丢弃。",
+          "queue_failed": "无法启动等待中的请求。",
+          "capture_limit": "已达到麦克风捕获上限。请缩短请求。",
+          "buffer_overflow": "在语音服务开始读取之前，麦克风音频已经积压。",
+          "audio_sequence_gap": "音频同步失败。请按键后重试。",
+          "invalid_audio_sync": "遥控器发送了无效的音频同步消息。",
+          "invalid_audio_frame": "遥控器发送了损坏的音频帧。",
+          "invalid_control": "遥控器发送了无效的控制消息。",
+          "unsupported_audio_start": "遥控器以此集成不支持的方式启动了音频。",
+          "incomplete_utterance": "请求完成之前音频已结束。",
+          "audio_stalled": "麦克风音频不再传来。请重试。",
+          "audio_failed": "麦克风音频出现故障。",
+          "no_audio": "未收到麦克风音频。",
+          "no_speech": "未检测到语音。",
+          "held_mode_unsupported": "交替对话需要按住说话式遥控器。",
+          "held_failed": "按住按键期间的对话失败。",
+          "held_turn_failed": "对话中的一轮失败。",
+          "remote_stopped": "遥控器意外停止了麦克风。",
+          "disconnected": "遥控器已断开连接。",
+          "cancelled": "请求已取消。",
+          "pipeline_finished_early": "Assist 管道在读取完所有音频之前就已结束。",
+          "pipeline_timeout": "Assist 管道响应时间过长。",
+          "pipeline_failed": "Assist 管道失败。",
+          "pipeline_removed": "所选的 Assist 管道已不存在。",
+          "playback_stop_unverified": "无法确认上一条回复已停止。请等待扬声器空闲。",
+          "playback_stop_failed": "无法停止上一条回复。",
+          "playback_start_timeout": "扬声器未开始播放回复。",
+          "playback_finish_timeout": "扬声器未能按时播放完回复。",
+          "playback_interrupted": "回复在扬声器上被中断。",
+          "speaker_unavailable": "回复扬声器不可用。",
+          "speaker_busy": "回复扬声器正忙。",
+          "speaker_cannot_play": "回复扬声器无法播放来自 Home Assistant 的音频。",
+          "missing_tts_audio": "回复没有可播放的音频。",
+          "generation_retirement_failed": "上一个请求尚未停止。请稍候。",
+          "replacement_retirement_failed": "无法停止当前请求以启动新请求。",
+          "microphone_open_failed": "无法打开遥控器的麦克风。",
+          "microphone_open_rejected": "遥控器拒绝打开其麦克风。",
+          "microphone_start_timeout": "遥控器未按时启动其麦克风。",
+          "microphone_close_failed": "无法关闭遥控器的麦克风。",
+          "microphone_keepalive_failed": "与遥控器麦克风的连接已丢失。",
+          "active_generation_cancelled": "正在准备的回复已取消，对话上下文已重置。",
+          "wake_remote": "请按方向键唤醒遥控器，然后重试。",
+          "bluetooth_unavailable": "本地 Bluetooth 不可用。",
+          "bluetooth_operation_failed": "Bluetooth 操作失败。",
+          "not_paired": "遥控器未在此主机上配对。",
+          "multiple_adapters": "遥控器已在多个适配器上配对。",
+          "voice_service_unavailable": "遥控器不提供语音服务。",
+          "unsupported_write": "无法写入遥控器的语音控制。",
+          "unsupported_capabilities": "遥控器报告了此集成不支持的语音功能。",
+          "unsupported_codec": "遥控器使用了此集成不支持的音频格式。",
+          "invalid_frame_size": "遥控器报告了无效的音频帧大小。",
+          "hidraw_unavailable": "Home Assistant 无法使用该遥控器的输入设备。",
+          "hidraw_permission_denied": "Home Assistant 无权读取该遥控器的输入设备。",
+          "opus_decoder_unavailable": "Home Assistant 没有可用的 Opus 音频解码器。",
+          "invalid_opus_packet": "遥控器发送了无法解码的音频。",
+          "other": "发生了其他错误。详细信息请查看错误代码。"
+        },
+        "state_attributes": {
+          "code": {
+            "name": "代码"
+          },
+          "stage": {
+            "name": "阶段"
+          },
+          "since": {
+            "name": "起始时间"
+          },
+          "session": {
+            "name": "请求"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "{remote} 缺少 Assist 管道",
+      "description": "遥控器 **{remote}** 被设置为使用 Assist 管道 `{pipeline}`，但该管道已不存在。在您选择另一个管道之前，此遥控器的语音请求都会失败。\n\n请前往 **设置 → 设备与服务 → Bluetooth Remote Voice**，打开 **{remote}** 的菜单，选择 **配置**，然后选择一个现有的管道。"
+    },
+    "speaker_missing": {
+      "title": "{remote} 缺少回复扬声器",
+      "description": "遥控器 **{remote}** 被设置为在 `{speaker}` 上播放回复，但该扬声器已不存在。命令仍会执行，但不会播放其语音回复。\n\n请前往 **设置 → 设备与服务 → Bluetooth Remote Voice**，打开 **{remote}** 的菜单，选择 **配置**，然后选择另一个扬声器或选择无。"
+    }
+  }
+}

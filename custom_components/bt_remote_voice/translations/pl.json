@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Wybierz sparowanego pilota",
+        "description": "Najpierw sparuj pilota poza Home Assistant, a następnie wybudź go przyciskiem strzałki, aby można było go zweryfikować. Wybierz go z listy lub wpisz jego adres Bluetooth.",
+        "data": {
+          "device": "Sparowany pilot"
+        },
+        "data_description": {
+          "device": "Piloty już sparowane z tym hostem Home Assistant. Jeśli Twojego nie ma na liście, wybierz opcję ręczną."
+        }
+      },
+      "manual": {
+        "title": "Wpisz adres sparowanego pilota",
+        "description": "Wpisz adres Bluetooth pilota, który jest już sparowany z tym hostem.",
+        "data": {
+          "address": "Adres Bluetooth"
+        },
+        "data_description": {
+          "address": "Sześć par cyfr szesnastkowych oddzielonych dwukropkami, na przykład AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Wybierz potok Assist",
+        "description": "Przed zatwierdzeniem wybudź pilota przyciskiem strzałki. Integracja uruchamia się w trybie samej transkrypcji; zmień to w opcjach, gdy wszystko zadziała.",
+        "data": {
+          "pipeline_id": "Potok Assist"
+        },
+        "data_description": {
+          "pipeline_id": "Potok Assist, który przetwarza mowę z tego pilota."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Lokalny Bluetooth jest niedostępny. Sprawdź, czy systemowa magistrala D-Bus jest dostępna.",
+      "wake_remote": "Wybudź sparowanego pilota przyciskiem strzałki, a następnie spróbuj ponownie.",
+      "not_paired": "Najpierw sparuj tego pilota zewnętrznie.",
+      "multiple_adapters": "Ten pilot jest sparowany z wieloma adapterami. Pozostaw jego powiązanie tylko na jednym adapterze.",
+      "invalid_address": "Wpisz adres Bluetooth w formacie AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Ten pilot nie udostępnia obsługiwanego profilu głosowego ATVV v0.4/v1.0 ADPCM.",
+      "invalid_pipeline": "Wybierz istniejący potok Assist.",
+      "hidraw_unavailable": "Urządzenie wejściowe pilota jest niedostępne dla Home Assistant. Wybudź pilota i sprawdź, czy Home Assistant widzi urządzenia /dev/hidraw.",
+      "hidraw_permission_denied": "Home Assistant nie ma uprawnień do odczytu urządzenia wejściowego pilota. Zobacz README, aby sprawdzić, jakiego dostępu do urządzenia wymaga ten pilot.",
+      "opus_decoder_unavailable": "Home Assistant nie ma dostępnego dekodera audio Opus, którego wymaga ten pilot."
+    },
+    "abort": {
+      "already_configured": "Ten pilot jest już skonfigurowany.",
+      "no_pipelines": "Utwórz potok Assist przed dodaniem pilota."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Ustawienia głosowe",
+        "description": "Te ustawienia określają, jak są obsługiwane naciśnięcia i jak odczytywane są odpowiedzi. Zastąpienie żądania nie cofnie czynności, które już wykonało. Jednoczesny tryb full duplex jest niedostępny. Zatrzymanie po transkrypcji nie wyłącza narzędzi wbudowanych w dostawcę mowy na żywo; jeśli czynności muszą być wyłączone, użyj dostawcy wyłącznie do transkrypcji.\n\n**Warunek odpowiedzi:** aby odpowiedź została odczytana, wszystkie jego warunki muszą być spełnione. Są sprawdzane raz na początku każdego żądania; pozostaw pole puste, aby zawsze odczytywać odpowiedzi, a warunek, którego nie można ocenić, jest traktowany jako niespełniony. Warunki szablonowe mogą używać zmiennych `speaker`, `remote` i `held`.",
+        "data": {
+          "pipeline_id": "Potok Assist",
+          "mode": "Tryb głosowy",
+          "speaker": "Głośnik odpowiedzi",
+          "output_mode": "Moment odpowiedzi",
+          "stream_head_start": "Wyprzedzenie strumieniowania",
+          "busy_processing": "Nowe naciśnięcie podczas przetwarzania",
+          "busy_playback": "Nowe naciśnięcie podczas odpowiedzi",
+          "context_mode": "Kontekst rozmowy",
+          "input_mode": "Działanie przycisku",
+          "min_press_seconds": "Ignoruj krótkie naciśnięcia",
+          "max_request_seconds": "Maksymalna długość żądania",
+          "max_conversation_seconds": "Maksymalna długość rozmowy",
+          "reply_condition": "Warunek odpowiedzi"
+        },
+        "data_description": {
+          "pipeline_id": "Potok Assist, który przetwarza mowę: zamianę mowy na tekst, agenta konwersacji i zamianę tekstu na mowę. Usunięty potok powoduje błąd zamiast przełączenia na inny.",
+          "mode": "Tylko transkrypcja zatrzymuje się po rozpoznaniu mowy i nie odtwarza odpowiedzi. Wykonywanie poleceń uruchamia cały potok i odczytuje odpowiedź na głośniku odpowiedzi.",
+          "speaker": "Odtwarzacz multimediów, który odczytuje odpowiedzi. Używany tylko podczas wykonywania poleceń. Wybierz brak odpowiedzi głosowej, aby zatrzymać potok przed odtworzeniem odpowiedzi.",
+          "output_mode": "Automatyczne strumieniowanie zaczyna mówić, gdy tylko strumieniowana odpowiedź jest gotowa. Oczekiwanie na pełną odpowiedź zaczyna później, ale odtwarza gotowy plik audio, co zapobiega przerywaniu u dostawców, którzy generują mowę tylko w tempie zbliżonym do czasu rzeczywistego.",
+          "stream_head_start": "Opóźnia rozpoczęcie strumieniowanej odpowiedzi o tyle sekund, aby głośnik mógł zbuforować dźwięk; odpowiedzi, które kończą się wcześniej, są odtwarzane od razu. Zwiększ tę wartość, jeśli strumieniowane odpowiedzi przerywają się w pierwszych sekundach. Bez wpływu przy oczekiwaniu na pełną odpowiedź. 0 oznacza zachowanie domyślne.",
+          "busy_processing": "Co zrobić, gdy przycisk zostanie naciśnięty przed udzieleniem odpowiedzi na poprzednie żądanie: odrzucić naciśnięcie, zachować jedno oczekujące żądanie lub zastąpić bieżące żądanie. Zastąpienie nie cofa czynności, które już wykonano.",
+          "busy_playback": "Co zrobić, gdy przycisk zostanie naciśnięty podczas odtwarzania odpowiedzi: odrzucić naciśnięcie, odpowiedzieć potem na jedno oczekujące żądanie lub zatrzymać odpowiedź i rozpocząć nowe żądanie.",
+          "context_mode": "Ponowne użycie zachowuje rozmowę w Home Assistant, dzięki czemu działają pytania uzupełniające, takie jak „a dwa razy tyle?”. Nowa rozmowa sprawia, że każde naciśnięcie jest niezależną rozmową.",
+          "input_mode": "Jedno żądanie na przytrzymanie nagrywa do zwolnienia przycisku. Rozmowa naprzemienna słucha, dopóki przycisk jest przytrzymany: mówisz, robisz pauzę, słyszysz odpowiedź, a potem mówisz ponownie. Wymaga pilota z funkcją „przytrzymaj, aby mówić”.",
+          "min_press_seconds": "Ignoruje krótkie dotknięcia przycisku głosowego, trwające krócej niż ta wartość, aby przypadkowe dotknięcie nie rozpoczynało żądania; prawdziwe przytrzymanie zaczyna się o tyle później. 0 wyłącza tę funkcję. Przydatne w pilocie Fire TV, który po wybudzeniu kończy się błędem „Brak dźwięku z mikrofonu”: ponownie wysyła klawisz, który go wybudził, jako natychmiastowe dotknięcie. Dobrym punktem wyjścia jest 0,1 s. Tylko piloty Fire TV.",
+          "max_request_seconds": "Najdłuższy czas pojedynczego żądania na dowolnym pilocie: całe przytrzymanie w trybie jednego żądania oraz każda tura w rozmowie naprzemiennej. Osiągnięcie limitu kończy żądanie błędem limitu nagrywania. Zmniejsz, aby zatrzymać nagrywanie zablokowanego przycisku; zwiększ przy długim dyktowaniu. Piloty bez funkcji „przytrzymaj, aby mówić” kończą też po około 15 sekundach mowy lub po ciszy, zależnie od tego, co nastąpi pierwsze.",
+          "max_conversation_seconds": "Najdłuższy czas całego przytrzymania przycisku w trybie rozmowy naprzemiennej. Jest ignorowany w trybie jednego żądania i nie może być krótszy niż maksymalna długość żądania.",
+          "reply_condition": "Warunki, które muszą być wszystkie spełnione, aby odpowiedź została odczytana. Sprawdzane raz na początku każdego żądania (oraz każdej tury w rozmowie naprzemiennej). Pozostaw puste, aby zawsze odczytywać. Warunek, który powoduje błąd, jest traktowany jako niespełniony. Warunki szablonowe mogą używać zmiennych speaker, remote i held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Wybierz odtwarzacz multimediów, który obsługuje odtwarzanie dźwięku, lub brak odpowiedzi głosowej.",
+      "invalid_preferences": "Wybierz jedną z obsługiwanych preferencji głosowych.",
+      "invalid_pipeline": "Wybierz istniejący potok Assist.",
+      "invalid_reply_condition": "Warunek odpowiedzi jest nieprawidłowy. Sprawdź warunki i spróbuj ponownie.",
+      "pipeline_missing": "Potok Assist zapisany dla tego pilota już nie istnieje. Wybierz inny.",
+      "speaker_missing": "Zapisany głośnik odpowiedzi jest obecnie niedostępny, więc odpowiedzi nie będą odtwarzane, dopóki nie wróci. Zachowaj go lub wybierz inny."
+    },
+    "abort": {
+      "no_pipelines": "Najpierw utwórz potok Assist."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Wpisz adres Bluetooth"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Tylko transkrypcja",
+        "commands": "Wykonuj polecenia"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Brak odpowiedzi głosowej"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatyczne strumieniowanie",
+        "buffered": "Czekaj na pełną odpowiedź"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Odrzuć nowe żądanie",
+        "queue": "Kolejkuj jedno żądanie",
+        "replace": "Zastąp bieżące żądanie"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Odrzuć nowe żądanie",
+        "queue": "Kolejkuj jedno żądanie",
+        "replace": "Zastąp bieżącą odpowiedź"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Użyj ponownie rozmowy",
+        "fresh": "Nowa rozmowa dla każdego żądania"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Jedno żądanie na przytrzymanie",
+        "conversation": "Rozmowa podczas przytrzymania (naprzemienna)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Głos",
+        "state_attributes": {
+          "ready": {
+            "name": "Gotowość"
+          },
+          "last_error": {
+            "name": "Kod ostatniego błędu"
+          },
+          "last_error_message": {
+            "name": "Komunikat ostatniego błędu"
+          },
+          "mode": {
+            "name": "Tryb głosowy"
+          },
+          "sessions": {
+            "name": "Sesje"
+          },
+          "failures": {
+            "name": "Niepowodzenia"
+          },
+          "rejected": {
+            "name": "Odrzucone naciśnięcia"
+          },
+          "queued": {
+            "name": "Żądania w kolejce"
+          },
+          "last_outcome": {
+            "name": "Ostatni wynik"
+          },
+          "full_duplex": {
+            "name": "Pełny dupleks"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Przycisk głosowy",
+        "state_attributes": {
+          "event_type": {
+            "name": "Typ zdarzenia",
+            "state": {
+              "pressed": "Naciśnięty",
+              "released": "Zwolniony",
+              "accepted": "Zaakceptowane",
+              "rejected": "Odrzucone",
+              "queued": "W kolejce",
+              "failed": "Niepowodzenie",
+              "context_reset": "Zresetowano rozmowę",
+              "reply_skipped": "Pominięto odpowiedź"
+            }
+          },
+          "outcome": {
+            "name": "Wynik"
+          },
+          "stage": {
+            "name": "Etap"
+          },
+          "code": {
+            "name": "Kod"
+          },
+          "message": {
+            "name": "Komunikat"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofon aktywny"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Ostatni błąd",
+        "state": {
+          "none": "Brak błędu",
+          "busy": "Nadal trwa odpowiadanie na poprzednie żądanie.",
+          "queue_full": "Żądanie już czeka. Spróbuj po zakończeniu odpowiedzi.",
+          "queue_expired": "Oczekujące żądanie wygasło. Naciśnij i mów ponownie.",
+          "queue_discarded": "Oczekujące żądanie zostało odrzucone.",
+          "queue_failed": "Nie udało się rozpocząć oczekującego żądania.",
+          "capture_limit": "Osiągnięto limit nagrywania z mikrofonu. Użyj krótszego żądania.",
+          "buffer_overflow": "Dźwięk z mikrofonu nagromadził się, zanim usługa mowy zaczęła go odczytywać.",
+          "audio_sequence_gap": "Synchronizacja dźwięku nie powiodła się. Naciśnij i spróbuj ponownie.",
+          "invalid_audio_sync": "Pilot wysłał nieprawidłowy komunikat synchronizacji dźwięku.",
+          "invalid_audio_frame": "Pilot wysłał uszkodzoną ramkę audio.",
+          "invalid_control": "Pilot wysłał nieprawidłowy komunikat sterujący.",
+          "unsupported_audio_start": "Pilot rozpoczął przesyłanie dźwięku w sposób, którego ta integracja nie obsługuje.",
+          "incomplete_utterance": "Dźwięk zakończył się przed ukończeniem żądania.",
+          "audio_stalled": "Dźwięk z mikrofonu przestał docierać. Spróbuj ponownie.",
+          "audio_failed": "Dźwięk z mikrofonu uległ awarii.",
+          "no_audio": "Nie odebrano dźwięku z mikrofonu.",
+          "no_speech": "Nie wykryto mowy.",
+          "held_mode_unsupported": "Rozmowa naprzemienna wymaga pilota z funkcją „przytrzymaj, aby mówić”.",
+          "held_failed": "Rozmowa podczas przytrzymania przycisku nie powiodła się.",
+          "held_turn_failed": "Tura rozmowy nie powiodła się.",
+          "remote_stopped": "Pilot nieoczekiwanie zatrzymał mikrofon.",
+          "disconnected": "Pilot się rozłączył.",
+          "cancelled": "Żądanie zostało anulowane.",
+          "pipeline_finished_early": "Potok Assist zakończył działanie, zanim odczytano cały dźwięk.",
+          "pipeline_timeout": "Potok Assist odpowiadał zbyt długo.",
+          "pipeline_failed": "Potok Assist zakończył się niepowodzeniem.",
+          "pipeline_removed": "Wybrany potok Assist już nie istnieje.",
+          "playback_stop_unverified": "Nie udało się sprawdzić, czy poprzednia odpowiedź została zatrzymana. Poczekaj, aż głośnik będzie bezczynny.",
+          "playback_stop_failed": "Nie udało się zatrzymać poprzedniej odpowiedzi.",
+          "playback_start_timeout": "Głośnik nie rozpoczął odtwarzania odpowiedzi.",
+          "playback_finish_timeout": "Głośnik nie zakończył odtwarzania odpowiedzi na czas.",
+          "playback_interrupted": "Odpowiedź została przerwana na głośniku.",
+          "speaker_unavailable": "Głośnik odpowiedzi jest niedostępny.",
+          "speaker_busy": "Głośnik odpowiedzi jest zajęty.",
+          "speaker_cannot_play": "Głośnik odpowiedzi nie może odtwarzać dźwięku z Home Assistant.",
+          "missing_tts_audio": "Odpowiedź nie zawierała dźwięku do odtworzenia.",
+          "generation_retirement_failed": "Poprzednie żądanie jeszcze się nie zatrzymało. Poczekaj.",
+          "replacement_retirement_failed": "Nie udało się zatrzymać bieżącego żądania, aby rozpocząć nowe.",
+          "microphone_open_failed": "Nie udało się otworzyć mikrofonu pilota.",
+          "microphone_open_rejected": "Pilot odmówił otwarcia mikrofonu.",
+          "microphone_start_timeout": "Pilot nie uruchomił mikrofonu na czas.",
+          "microphone_close_failed": "Nie udało się zamknąć mikrofonu pilota.",
+          "microphone_keepalive_failed": "Utracono połączenie z mikrofonem pilota.",
+          "active_generation_cancelled": "Przygotowywana odpowiedź została anulowana, a kontekst rozmowy zresetowany.",
+          "wake_remote": "Wybudź pilota przyciskiem strzałki, a następnie spróbuj ponownie.",
+          "bluetooth_unavailable": "Lokalny Bluetooth jest niedostępny.",
+          "bluetooth_operation_failed": "Operacja Bluetooth nie powiodła się.",
+          "not_paired": "Pilot nie jest sparowany z tym hostem.",
+          "multiple_adapters": "Pilot jest sparowany z więcej niż jednym adapterem.",
+          "voice_service_unavailable": "Pilot nie udostępnia usługi głosowej.",
+          "unsupported_write": "Nie można zapisać sterowania głosowego pilota.",
+          "unsupported_capabilities": "Pilot zgłosił możliwości głosowe, których ta integracja nie obsługuje.",
+          "unsupported_codec": "Pilot używa formatu audio, którego ta integracja nie obsługuje.",
+          "invalid_frame_size": "Pilot zgłosił nieprawidłowy rozmiar ramki audio.",
+          "hidraw_unavailable": "Urządzenie wejściowe pilota jest niedostępne dla Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant nie ma uprawnień do odczytu urządzenia wejściowego pilota.",
+          "opus_decoder_unavailable": "Home Assistant nie ma dostępnego dekodera audio Opus.",
+          "invalid_opus_packet": "Pilot wysłał dźwięk, którego nie udało się zdekodować.",
+          "other": "Wystąpił inny błąd. Szczegóły podaje kod błędu."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kod"
+          },
+          "stage": {
+            "name": "Etap"
+          },
+          "since": {
+            "name": "Od"
+          },
+          "session": {
+            "name": "Żądanie"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Brak potoku Assist dla {remote}",
+      "description": "Pilot **{remote}** jest ustawiony na używanie potoku Assist `{pipeline}`, który już nie istnieje. Żądania głosowe z tego pilota kończą się błędem, dopóki nie wybierzesz innego potoku.\n\nPrzejdź do **Ustawienia → Urządzenia i usługi → Bluetooth Remote Voice**, otwórz menu **{remote}**, wybierz **Skonfiguruj** i wskaż istniejący potok."
+    },
+    "speaker_missing": {
+      "title": "Brak głośnika odpowiedzi dla {remote}",
+      "description": "Pilot **{remote}** jest ustawiony na odtwarzanie odpowiedzi na `{speaker}`, który już nie istnieje. Polecenia nadal są wykonywane, ale ich odpowiedź głosowa nie będzie odtwarzana.\n\nPrzejdź do **Ustawienia → Urządzenia i usługi → Bluetooth Remote Voice**, otwórz menu **{remote}**, wybierz **Skonfiguruj** i wskaż inny głośnik lub wybierz brak."
+    }
+  }
+}

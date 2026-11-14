@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Zgjidhni telekomandën e çiftuar",
+        "description": "Çiftoni fillimisht telekomandën jashtë Home Assistant, pastaj zgjojeni me një buton shigjete që të mund të verifikohet. Zgjidhni nga lista ose futni adresën e saj Bluetooth.",
+        "data": {
+          "device": "Telekomanda e çiftuar"
+        },
+        "data_description": {
+          "device": "Telekomanda që janë çiftuar tashmë me këtë host të Home Assistant. Zgjidhni opsionin manual nëse e juaja nuk është në listë."
+        }
+      },
+      "manual": {
+        "title": "Futni adresën e telekomandës së çiftuar",
+        "description": "Futni adresën Bluetooth të një telekomande që është çiftuar tashmë me këtë host.",
+        "data": {
+          "address": "Adresa Bluetooth"
+        },
+        "data_description": {
+          "address": "Gjashtë çifte shifrash heksadecimale të ndara me dy pika, për shembull AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Zgjidhni pipeline-in e Assist",
+        "description": "Zgjojeni telekomandën me një buton shigjete përpara se ta dërgoni. Integrimi nis në modalitetin vetëm me transkriptim; ndryshojeni këtë te opsionet kur të funksionojë.",
+        "data": {
+          "pipeline_id": "Pipeline-i i Assist"
+        },
+        "data_description": {
+          "pipeline_id": "Pipeline-i i Assist që përpunon të folurit nga kjo telekomandë."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Bluetooth-i lokal nuk është i disponueshëm. Kontrolloni që D-Bus i sistemit të jetë i aksesueshëm.",
+      "wake_remote": "Zgjojeni telekomandën e çiftuar me një buton shigjete, pastaj provoni përsëri.",
+      "not_paired": "Çiftojeni fillimisht këtë telekomandë jashtë Home Assistant.",
+      "multiple_adapters": "Kjo telekomandë është çiftuar në disa përshtatës. Mbajeni çiftimin vetëm në një përshtatës.",
+      "invalid_address": "Futni një adresë Bluetooth në formatin AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Kjo telekomandë nuk ofron një profil zanor të mbështetur ATVV v0.4/v1.0 ADPCM.",
+      "invalid_pipeline": "Zgjidhni një pipeline ekzistues të Assist.",
+      "hidraw_unavailable": "Pajisja e hyrjes së telekomandës nuk është e disponueshme për Home Assistant. Zgjojeni telekomandën dhe kontrolloni që Home Assistant t'i shohë pajisjet /dev/hidraw.",
+      "hidraw_permission_denied": "Home Assistant nuk ka leje të lexojë pajisjen e hyrjes së telekomandës. Shihni README për qasjen në pajisje që i nevojitet kësaj telekomande.",
+      "opus_decoder_unavailable": "Home Assistant nuk ka në dispozicion një dekoder audio Opus, që i nevojitet kësaj telekomande."
+    },
+    "abort": {
+      "already_configured": "Kjo telekomandë është konfiguruar tashmë.",
+      "no_pipelines": "Krijoni një pipeline të Assist përpara se të shtoni telekomandën."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Cilësimet e zërit",
+        "description": "Këto cilësime kontrollojnë si trajtohen shtypjet dhe si lexohen përgjigjet. Zëvendësimi i një kërkese nuk mund t'i zhbëjë veprimet që ajo ka kryer tashmë. Dupleksi i plotë i njëkohshëm nuk është i disponueshëm. Ndalimi pas transkriptimit nuk çaktivizon mjetet e integruara në një ofrues të të folurit live; përdorni një ofrues vetëm për transkriptim kur veprimet duhet të çaktivizohen.\n\n**Kushti i përgjigjes:** të gjitha kushtet e tij duhet të plotësohen që përgjigjja të lexohet. Kontrollohen një herë në fillim të çdo kërkese; lëreni bosh që të lexohet gjithmonë, dhe një kusht që nuk mund të vlerësohet konsiderohet i paplotësuar. Kushtet me shabllon mund të përdorin ndryshoret `speaker`, `remote` dhe `held`.",
+        "data": {
+          "pipeline_id": "Pipeline-i i Assist",
+          "mode": "Modaliteti i zërit",
+          "speaker": "Altoparlanti i përgjigjeve",
+          "output_mode": "Koha e përgjigjes",
+          "stream_head_start": "Avantazhi i transmetimit",
+          "busy_processing": "Shtypje e re gjatë përpunimit",
+          "busy_playback": "Shtypje e re gjatë përgjigjes",
+          "context_mode": "Konteksti i bisedës",
+          "input_mode": "Sjellja e butonit",
+          "min_press_seconds": "Injoro shtypjet e shkurtra",
+          "max_request_seconds": "Gjatësia maksimale e kërkesës",
+          "max_conversation_seconds": "Gjatësia maksimale e bisedës",
+          "reply_condition": "Kushti i përgjigjes"
+        },
+        "data_description": {
+          "pipeline_id": "Pipeline-i i Assist që përpunon të folurit: të folurit në tekst, agjenti i bisedës dhe teksti në të folur. Një pipeline i hequr dështon me gabim në vend që të kalojë te një tjetër.",
+          "mode": "Vetëm transkriptim ndalon pas njohjes së të folurit dhe nuk luan përgjigje. Ekzekuto komandat ekzekuton gjithë pipeline-in dhe e lexon përgjigjen te altoparlanti i përgjigjeve.",
+          "speaker": "Media player-i që i lexon përgjigjet. Përdoret vetëm gjatë ekzekutimit të komandave. Zgjidhni „Pa përgjigje me zë“ që pipeline-i të ndalojë përpara se të luhet përgjigjja.",
+          "output_mode": "Transmetimi automatik fillon të flasë sapo përgjigjja e transmetuar është gati. Pritja e përgjigjes së plotë fillon më vonë, por luan një skedar audio të gatshëm, që shmang ndërprerjet te ofruesit që prodhojnë të folur vetëm afërsisht në kohë reale.",
+          "stream_head_start": "E vonon fillimin e një përgjigjeje të transmetuar me kaq sekonda, që altoparlanti të mund të mbledhë buffer; përgjigjet që mbarojnë më shpejt luhen menjëherë. Rriteni nëse përgjigjet e transmetuara ndërpriten në sekondat e para. Nuk ka efekt kur pritet përgjigjja e plotë. 0 e mban sjelljen e parazgjedhur.",
+          "busy_processing": "Çfarë të bëhet kur butoni shtypet përpara se kërkesa e mëparshme të ketë marrë përgjigje: refuzimi i shtypjes, mbajtja e një kërkese në pritje ose zëvendësimi i kërkesës aktuale. Zëvendësimi nuk mund t'i zhbëjë veprimet e kryera tashmë.",
+          "busy_playback": "Çfarë të bëhet kur butoni shtypet ndërsa luhet një përgjigje: refuzimi i shtypjes, përgjigjja pas kësaj e një kërkese në pritje ose ndalimi i përgjigjes dhe nisja e kërkesës së re.",
+          "context_mode": "Ripërdorimi e mban bisedën e Home Assistant që vazhdimet si „dhe dyfisho atë?“ të funksionojnë. Biseda e re e bën çdo shtypje një bisedë të pavarur.",
+          "input_mode": "Një kërkesë për çdo mbajtje regjistron derisa butoni të lëshohet. Bisedë gjatë mbajtjes (me radhë) vazhdon të dëgjojë ndërsa butoni mbahet: flisni, bëni pauzë, dëgjoni përgjigjen, pastaj flisni përsëri. Kërkon telekomandë me të folur gjatë mbajtjes.",
+          "min_press_seconds": "Injoron prekjet e butonit të zërit më të shkurtra se kjo vlerë, që një prekje e rreme të mos nisë kurrë një kërkesë; një mbajtje e vërtetë fillon kaq më vonë. 0 e çaktivizon. E dobishme për një telekomandë Fire TV që dështon me „Nuk u mor audio nga mikrofoni“ menjëherë pas zgjimit: ajo ridërgon tastin që e zgjoi si prekje të çastit. 0,1 s është pikë e mirë fillimi. Vetëm për telekomandat Fire TV.",
+          "max_request_seconds": "Kohëzgjatja më e gjatë e një kërkese të vetme në çdo telekomandë: gjithë mbajtja në modalitetin e një kërkese dhe çdo radhë në bisedën me radhë. Kur arrihet, kërkesa mbaron me gabim të kufirit të regjistrimit. Ulni për të ndaluar regjistrimin e një butoni të bllokuar; rriteni për diktim të gjatë. Telekomandat pa të folur gjatë mbajtjes mbarojnë gjithashtu pas rreth 15 sekondash të folurit ose në heshtje, cilado vjen e para.",
+          "max_conversation_seconds": "Kohëzgjatja më e gjatë e gjithë mbajtjes së butonit në modalitetin e bisedës me radhë. Injorohet në modalitetin e një kërkese dhe nuk duhet të jetë më e shkurtër se gjatësia maksimale e kërkesës.",
+          "reply_condition": "Kushtet që duhet të plotësohen të gjitha që përgjigjja të lexohet. Kontrollohen një herë në fillim të çdo kërkese (dhe çdo radhe në bisedën me radhë). Lëreni bosh që të lexohet gjithmonë. Një kusht me gabim konsiderohet i paplotësuar. Kushtet me shabllon mund të përdorin ndryshoret speaker, remote dhe held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Zgjidhni një media player që mbështet luajtjen e audios, ose pa përgjigje me zë.",
+      "invalid_preferences": "Zgjidhni një nga preferencat e mbështetura të zërit.",
+      "invalid_pipeline": "Zgjidhni një pipeline ekzistues të Assist.",
+      "invalid_reply_condition": "Kushti i përgjigjes nuk është i vlefshëm. Kontrolloni kushtet dhe provoni përsëri.",
+      "pipeline_missing": "Pipeline-i i Assist i ruajtur për këtë telekomandë nuk ekziston më. Zgjidhni një tjetër.",
+      "speaker_missing": "Altoparlanti i ruajtur i përgjigjeve nuk është i disponueshëm tani, prandaj përgjigjet nuk do të luhen derisa të kthehet. Mbajeni ose zgjidhni një tjetër."
+    },
+    "abort": {
+      "no_pipelines": "Krijoni fillimisht një pipeline të Assist."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Fut adresën Bluetooth"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Vetëm transkriptim",
+        "commands": "Ekzekuto komandat"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Pa përgjigje me zë"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Transmetim automatik",
+        "buffered": "Prit përgjigjen e plotë"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Refuzo kërkesën e re",
+        "queue": "Radhit një kërkesë",
+        "replace": "Zëvendëso kërkesën aktuale"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Refuzo kërkesën e re",
+        "queue": "Radhit një kërkesë",
+        "replace": "Zëvendëso përgjigjen aktuale"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Ripërdor bisedën",
+        "fresh": "Bisedë e re për çdo kërkesë"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Një kërkesë për çdo mbajtje",
+        "conversation": "Bisedë gjatë mbajtjes (me radhë)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Zëri",
+        "state_attributes": {
+          "ready": {
+            "name": "Gati"
+          },
+          "last_error": {
+            "name": "Kodi i gabimit të fundit"
+          },
+          "last_error_message": {
+            "name": "Mesazhi i gabimit të fundit"
+          },
+          "mode": {
+            "name": "Modaliteti i zërit"
+          },
+          "sessions": {
+            "name": "Sesionet"
+          },
+          "failures": {
+            "name": "Dështimet"
+          },
+          "rejected": {
+            "name": "Shtypjet e refuzuara"
+          },
+          "queued": {
+            "name": "Kërkesat në radhë"
+          },
+          "last_outcome": {
+            "name": "Rezultati i fundit"
+          },
+          "full_duplex": {
+            "name": "Dupleks i plotë"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Butoni i zërit",
+        "state_attributes": {
+          "event_type": {
+            "name": "Lloji i ngjarjes",
+            "state": {
+              "pressed": "Shtypur",
+              "released": "Lëshuar",
+              "accepted": "Pranuar",
+              "rejected": "Refuzuar",
+              "queued": "Në radhë",
+              "failed": "Dështoi",
+              "context_reset": "Biseda u rivendos",
+              "reply_skipped": "Përgjigjja u kapërcye"
+            }
+          },
+          "outcome": {
+            "name": "Rezultati"
+          },
+          "stage": {
+            "name": "Faza"
+          },
+          "code": {
+            "name": "Kodi"
+          },
+          "message": {
+            "name": "Mesazhi"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofoni aktiv"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Gabimi i fundit",
+        "state": {
+          "none": "Pa gabim",
+          "busy": "Ende po i përgjigjet kërkesës së mëparshme.",
+          "queue_full": "Një kërkesë po pret tashmë. Provoni pas përgjigjes.",
+          "queue_expired": "Kërkesa në pritje skadoi. Shtypni dhe flisni përsëri.",
+          "queue_discarded": "Kërkesa në pritje u hodh poshtë.",
+          "queue_failed": "Kërkesa në pritje nuk mund të nisej.",
+          "capture_limit": "U arrit kufiri i regjistrimit të mikrofonit. Përdorni një kërkesë më të shkurtër.",
+          "buffer_overflow": "Audioja e mikrofonit u grumbullua përpara se shërbimi i të folurit të fillonte ta lexonte.",
+          "audio_sequence_gap": "Sinkronizimi i audios dështoi. Shtypni dhe provoni përsëri.",
+          "invalid_audio_sync": "Telekomanda dërgoi një mesazh të pavlefshëm sinkronizimi të audios.",
+          "invalid_audio_frame": "Telekomanda dërgoi një kornizë audio të dëmtuar.",
+          "invalid_control": "Telekomanda dërgoi një mesazh kontrolli të pavlefshëm.",
+          "unsupported_audio_start": "Telekomanda nisi audion në një mënyrë që ky integrim nuk e mbështet.",
+          "incomplete_utterance": "Audioja mbaroi përpara se kërkesa të ishte e plotë.",
+          "audio_stalled": "Audioja e mikrofonit pushoi së mbërrituri. Provoni përsëri.",
+          "audio_failed": "Audioja e mikrofonit dështoi.",
+          "no_audio": "Nuk u mor audio nga mikrofoni.",
+          "no_speech": "Nuk u zbulua të folur.",
+          "held_mode_unsupported": "Biseda me radhë kërkon telekomandë me të folur gjatë mbajtjes.",
+          "held_failed": "Biseda gjatë mbajtjes së butonit dështoi.",
+          "held_turn_failed": "Një radhë e bisedës dështoi.",
+          "remote_stopped": "Telekomanda e ndaloi papritur mikrofonin.",
+          "disconnected": "Telekomanda u shkëput.",
+          "cancelled": "Kërkesa u anulua.",
+          "pipeline_finished_early": "Pipeline-i i Assist mbaroi përpara se të lexohej e gjithë audioja.",
+          "pipeline_timeout": "Pipeline-i i Assist e zgjati shumë përgjigjen.",
+          "pipeline_failed": "Pipeline-i i Assist dështoi.",
+          "pipeline_removed": "Pipeline-i i zgjedhur i Assist nuk ekziston më.",
+          "playback_stop_unverified": "Nuk u verifikua që përgjigjja e mëparshme u ndal. Prisni derisa altoparlanti të jetë i lirë.",
+          "playback_stop_failed": "Përgjigjja e mëparshme nuk mund të ndalej.",
+          "playback_start_timeout": "Altoparlanti nuk e nisi luajtjen e përgjigjes.",
+          "playback_finish_timeout": "Altoparlanti nuk e mbaroi luajtjen e përgjigjes në kohë.",
+          "playback_interrupted": "Përgjigjja u ndërpre në altoparlant.",
+          "speaker_unavailable": "Altoparlanti i përgjigjeve nuk është i disponueshëm.",
+          "speaker_busy": "Altoparlanti i përgjigjeve është i zënë.",
+          "speaker_cannot_play": "Altoparlanti i përgjigjeve nuk mund të luajë audio nga Home Assistant.",
+          "missing_tts_audio": "Përgjigjja nuk kishte audio për t'u luajtur.",
+          "generation_retirement_failed": "Kërkesa e mëparshme nuk është ndalur ende. Prisni.",
+          "replacement_retirement_failed": "Kërkesa aktuale nuk mund të ndalej për të nisur të renë.",
+          "microphone_open_failed": "Mikrofoni i telekomandës nuk mund të hapej.",
+          "microphone_open_rejected": "Telekomanda refuzoi të hapte mikrofonin e saj.",
+          "microphone_start_timeout": "Telekomanda nuk e nisi mikrofonin e saj në kohë.",
+          "microphone_close_failed": "Mikrofoni i telekomandës nuk mund të mbyllej.",
+          "microphone_keepalive_failed": "Lidhja me mikrofonin e telekomandës u humb.",
+          "active_generation_cancelled": "Përgjigjja që po përgatitej u anulua dhe konteksti i bisedës u rivendos.",
+          "wake_remote": "Zgjojeni telekomandën me një buton shigjete, pastaj provoni përsëri.",
+          "bluetooth_unavailable": "Bluetooth-i lokal nuk është i disponueshëm.",
+          "bluetooth_operation_failed": "Një veprim Bluetooth dështoi.",
+          "not_paired": "Telekomanda nuk është çiftuar me këtë host.",
+          "multiple_adapters": "Telekomanda është çiftuar në më shumë se një përshtatës.",
+          "voice_service_unavailable": "Telekomanda nuk ofron shërbim zëri.",
+          "unsupported_write": "Kontrolli zanor i telekomandës nuk mund të shkruhet.",
+          "unsupported_capabilities": "Telekomanda raportoi aftësi zanore që ky integrim nuk i mbështet.",
+          "unsupported_codec": "Telekomanda përdor një format audio që ky integrim nuk e mbështet.",
+          "invalid_frame_size": "Telekomanda raportoi një madhësi të pavlefshme të kornizës audio.",
+          "hidraw_unavailable": "Pajisja e hyrjes së telekomandës nuk është e disponueshme për Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant nuk ka leje të lexojë pajisjen e hyrjes së telekomandës.",
+          "opus_decoder_unavailable": "Home Assistant nuk ka në dispozicion një dekoder audio Opus.",
+          "invalid_opus_packet": "Telekomanda dërgoi audio që nuk mund të dekodohej.",
+          "other": "Ndodhi një gabim tjetër. Kodi i gabimit jep detajet."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kodi"
+          },
+          "stage": {
+            "name": "Faza"
+          },
+          "since": {
+            "name": "Që nga"
+          },
+          "session": {
+            "name": "Kërkesa"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Mungon pipeline-i i Assist për {remote}",
+      "description": "Telekomanda **{remote}** është caktuar të përdorë pipeline-in e Assist `{pipeline}`, që nuk ekziston më. Kërkesat zanore nga kjo telekomandë dështojnë derisa të zgjidhni një pipeline tjetër.\n\nShkoni te **Cilësimet → Pajisjet dhe shërbimet → Bluetooth Remote Voice**, hapni menunë e **{remote}**, zgjidhni **Konfiguro** dhe zgjidhni një pipeline ekzistues."
+    },
+    "speaker_missing": {
+      "title": "Mungon altoparlanti i përgjigjeve për {remote}",
+      "description": "Telekomanda **{remote}** është caktuar të luajë përgjigjet te `{speaker}`, që nuk ekziston më. Komandat vazhdojnë të ekzekutohen, por përgjigjja e tyre me zë nuk do të luhet.\n\nShkoni te **Cilësimet → Pajisjet dhe shërbimet → Bluetooth Remote Voice**, hapni menunë e **{remote}**, zgjidhni **Konfiguro** dhe zgjidhni një altoparlant tjetër ose asnjë."
+    }
+  }
+}

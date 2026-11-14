@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Dewis teclyn pâr",
+        "description": "Paru eich teclyn y tu allan i Home Assistant yn gyntaf, yna deffrwch ef gyda botwm saeth fel y gellir ei wirio. Dewiswch ef o'r rhestr, neu rhowch ei gyfeiriad Bluetooth.",
+        "data": {
+          "device": "Teclyn pâr"
+        },
+        "data_description": {
+          "device": "Teclynnau sydd eisoes wedi'u paru ar y gwesteiwr Home Assistant hwn. Dewiswch yr opsiwn â llaw os nad yw eich un chi wedi'i restru."
+        }
+      },
+      "manual": {
+        "title": "Rhowch gyfeiriad y teclyn pâr",
+        "description": "Rhowch gyfeiriad Bluetooth teclyn sydd eisoes wedi'i baru ar y gwesteiwr hwn.",
+        "data": {
+          "address": "Cyfeiriad Bluetooth"
+        },
+        "data_description": {
+          "address": "Chwe pâr o ddigidau hecsadegol wedi'u gwahanu gan golonau, er enghraifft AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Dewis piblinell Assist",
+        "description": "Deffrwch y teclyn gyda botwm saeth cyn cyflwyno. Mae'r integreiddio'n cychwyn yn y modd trawsgrifio yn unig; newidiwch hyn yn yr opsiynau unwaith y bydd yn gweithio.",
+        "data": {
+          "pipeline_id": "Piblinell Assist"
+        },
+        "data_description": {
+          "pipeline_id": "Y biblinell Assist sy'n prosesu lleferydd o'r teclyn hwn."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Nid yw Bluetooth lleol ar gael. Gwiriwch fod D-Bus y system yn hygyrch.",
+      "wake_remote": "Deffrwch y teclyn pâr gyda botwm saeth, yna ceisiwch eto.",
+      "not_paired": "Paru'r teclyn hwn yn allanol yn gyntaf.",
+      "multiple_adapters": "Mae'r teclyn hwn wedi'i baru ar sawl addasydd. Cadwch ei fond ar un addasydd.",
+      "invalid_address": "Rhowch gyfeiriad Bluetooth yn y fformat AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Nid yw'r teclyn hwn yn darparu proffil llais ATVV v0.4/v1.0 ADPCM â chymorth.",
+      "invalid_pipeline": "Dewiswch biblinell Assist sy'n bodoli.",
+      "hidraw_unavailable": "Nid yw dyfais fewnbwn y teclyn ar gael i Home Assistant. Deffrwch y teclyn a gwiriwch y gall Home Assistant weld dyfeisiau /dev/hidraw.",
+      "hidraw_permission_denied": "Nid yw Home Assistant yn cael darllen dyfais fewnbwn y teclyn. Gweler y README am y mynediad i'r ddyfais sydd ei angen ar y teclyn hwn.",
+      "opus_decoder_unavailable": "Nid oes datgodiwr sain Opus ar gael i Home Assistant, ac mae ei angen ar y teclyn hwn."
+    },
+    "abort": {
+      "already_configured": "Mae'r teclyn hwn eisoes wedi'i ffurfweddu.",
+      "no_pipelines": "Crëwch biblinell Assist cyn ychwanegu'r teclyn."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Gosodiadau llais",
+        "description": "Mae'r gosodiadau hyn yn rheoli sut mae gwasgiadau'n cael eu trin a sut mae atebion yn cael eu llefaru. Ni all disodli cais ddadwneud camau a gyflawnwyd eisoes. Nid yw deublyg llawn ar yr un pryd ar gael. Nid yw stopio ar ôl trawsgrifio yn analluogi offer sydd wedi'u cynnwys mewn darparwr lleferydd byw; defnyddiwch ddarparwr trawsgrifio yn unig pan fo angen analluogi camau gweithredu.\n\n**Amod ateb:** rhaid i'w holl amodau fod yn wir er mwyn llefaru ateb. Cânt eu gwirio unwaith ar ddechrau pob cais; gadewch yn wag i lefaru bob tro, ac mae amod na ellir ei werthuso yn cyfrif fel un heb ei fodloni. Gall amodau templed ddefnyddio'r newidynnau `speaker`, `remote` a `held`.",
+        "data": {
+          "pipeline_id": "Piblinell Assist",
+          "mode": "Modd llais",
+          "speaker": "Uchelseinydd ateb",
+          "output_mode": "Amseriad ateb",
+          "stream_head_start": "Cychwyn cynnar ffrydio",
+          "busy_processing": "Gwasgiad newydd wrth brosesu",
+          "busy_playback": "Gwasgiad newydd yn ystod ateb",
+          "context_mode": "Cyd-destun sgwrs",
+          "input_mode": "Ymddygiad botwm",
+          "min_press_seconds": "Anwybyddu gwasgiadau byr",
+          "max_request_seconds": "Hyd uchaf cais",
+          "max_conversation_seconds": "Hyd uchaf sgwrs",
+          "reply_condition": "Amod ateb"
+        },
+        "data_description": {
+          "pipeline_id": "Y biblinell Assist sy'n prosesu lleferydd: lleferydd-i-destun, asiant sgwrsio a thestun-i-leferydd. Mae piblinell sydd wedi'i thynnu yn methu â gwall yn hytrach na disgyn yn ôl i un arall.",
+          "mode": "Mae trawsgrifio yn unig yn stopio ar ôl adnabod lleferydd ac nid yw'n chwarae ateb. Mae gweithredu gorchmynion yn rhedeg y biblinell gyfan ac yn llefaru'r ateb ar yr uchelseinydd ateb.",
+          "speaker": "Y chwaraewr cyfryngau sy'n llefaru atebion. Dim ond yn cael ei ddefnyddio wrth weithredu gorchmynion. Dewiswch dim ateb llafar i stopio'r biblinell cyn chwarae'r ateb.",
+          "output_mode": "Mae ffrydio awtomatig yn dechrau llefaru cyn gynted ag y bydd ateb wedi'i ffrydio yn barod. Mae aros am yr ateb cyflawn yn dechrau'n hwyrach ond yn chwarae ffeil sain orffenedig, sy'n osgoi torri i fyny gyda darparwyr sydd ond yn cynhyrchu lleferydd ar gyflymder tua amser real.",
+          "stream_head_start": "Yn gohirio dechrau ateb wedi'i ffrydio gan y nifer hwn o eiliadau fel y gall yr uchelseinydd glustnodi; mae atebion sy'n gorffen yn gynt yn chwarae ar unwaith. Cynyddwch ef os yw atebion wedi'u ffrydio'n torri i fyny yn yr eiliadau cyntaf. Dim effaith wrth aros am yr ateb cyflawn. Mae 0 yn cadw'r ymddygiad rhagosodedig.",
+          "busy_processing": "Beth i'w wneud pan fydd y botwm yn cael ei wasgu cyn i'r cais blaenorol gael ei ateb: gwrthod y gwasgiad, cadw un cais yn aros, neu ddisodli'r cais cyfredol. Ni all disodli ddadwneud camau a gyflawnwyd eisoes.",
+          "busy_playback": "Beth i'w wneud pan fydd y botwm yn cael ei wasgu wrth i ateb chwarae: gwrthod y gwasgiad, ateb un cais sy'n aros wedyn, neu stopio'r ateb a dechrau'r cais newydd.",
+          "context_mode": "Mae ailddefnyddio yn cadw sgwrs Home Assistant fel bod cwestiynau dilynol fel 'a dwbl hynny?' yn gweithio. Mae ffres yn gwneud pob gwasgiad yn sgwrs annibynnol.",
+          "input_mode": "Mae un cais fesul daliad yn recordio nes bod y botwm yn cael ei ryddhau. Mae sgwrs bob yn ail yn dal i wrando tra bod y botwm yn cael ei ddal: siaradwch, oedwch, clywch yr ateb, yna siaradwch eto. Mae angen teclyn dal-i-siarad.",
+          "min_press_seconds": "Yn anwybyddu tapiau byrrach na hyn ar y botwm llais, fel na fydd tap ffug byth yn cychwyn cais; mae daliad go iawn yn cychwyn mor hwyr â hyn. Mae 0 yn ei ddiffodd. Defnyddiol ar gyfer teclyn Fire TV sy'n methu gyda \"No microphone audio\" yn syth ar ôl deffro: mae'n ailanfon yr allwedd a'i deffrodd fel tap ar unwaith. Mae 0.1 s yn fan cychwyn da. Teclynnau Fire TV yn unig.",
+          "max_request_seconds": "Yr hiraf y gall un cais bara ar unrhyw declyn: daliad cyfan yn y modd Un cais, a phob tro yn y Sgwrs bob yn ail. Mae ei gyrraedd yn gorffen y cais â gwall terfyn dal. Gostyngwch ef i atal recordio botwm sy'n sownd; cynyddwch ef ar gyfer arddweud hir. Mae teclynnau nad ydynt yn dal-i-siarad hefyd yn gorffen ar ôl tua 15 eiliad o leferydd neu ar ddistawrwydd, pa un bynnag ddaw gyntaf.",
+          "max_conversation_seconds": "Yr hiraf y gall daliad botwm cyfan bara yn y modd Sgwrs bob yn ail. Caiff ei anwybyddu yn y modd Un cais ac ni all fod yn fyrrach na hyd uchaf cais.",
+          "reply_condition": "Amodau y mae'n rhaid i bob un ohonynt fod yn wir er mwyn llefaru ateb. Cânt eu gwirio unwaith ar ddechrau pob cais (a phob tro yn y Sgwrs bob yn ail). Gadewch yn wag i lefaru bob tro. Mae amod sy'n rhoi gwall yn cyfrif fel un heb ei fodloni. Gall amodau templed ddefnyddio'r newidynnau speaker, remote a held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Dewiswch chwaraewr cyfryngau sy'n cefnogi chwarae sain, neu dim ateb llafar.",
+      "invalid_preferences": "Dewiswch un o'r dewisiadau llais a gefnogir.",
+      "invalid_pipeline": "Dewiswch biblinell Assist sy'n bodoli.",
+      "invalid_reply_condition": "Nid yw'r amod ateb yn ddilys. Gwiriwch yr amodau a rhowch gynnig arall arni.",
+      "pipeline_missing": "Nid yw'r biblinell Assist a gadwyd ar gyfer y teclyn hwn yn bodoli mwyach. Dewiswch un arall.",
+      "speaker_missing": "Nid yw'r uchelseinydd ateb a gadwyd ar gael ar hyn o bryd, felly ni fydd atebion yn chwarae nes iddo ddychwelyd. Cadwch ef, neu dewiswch un arall."
+    },
+    "abort": {
+      "no_pipelines": "Crëwch biblinell Assist yn gyntaf."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Rhowch gyfeiriad Bluetooth"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Trawsgrifio yn unig",
+        "commands": "Gweithredu gorchmynion"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Dim ateb llafar"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Ffrydio awtomatig",
+        "buffered": "Aros am yr ateb cyflawn"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Gwrthod cais newydd",
+        "queue": "Ciwio un cais",
+        "replace": "Disodli'r cais cyfredol"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Gwrthod cais newydd",
+        "queue": "Ciwio un cais",
+        "replace": "Disodli'r ateb cyfredol"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Ailddefnyddio'r sgwrs",
+        "fresh": "Sgwrs ffres fesul cais"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Un cais fesul daliad",
+        "conversation": "Sgwrs wrth ddal (bob yn ail)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Llais",
+        "state_attributes": {
+          "ready": {
+            "name": "Yn barod"
+          },
+          "last_error": {
+            "name": "Cod y gwall diwethaf"
+          },
+          "last_error_message": {
+            "name": "Neges y gwall diwethaf"
+          },
+          "mode": {
+            "name": "Modd llais"
+          },
+          "sessions": {
+            "name": "Sesiynau"
+          },
+          "failures": {
+            "name": "Methiannau"
+          },
+          "rejected": {
+            "name": "Gwasgiadau a wrthodwyd"
+          },
+          "queued": {
+            "name": "Ceisiadau mewn ciw"
+          },
+          "last_outcome": {
+            "name": "Canlyniad diwethaf"
+          },
+          "full_duplex": {
+            "name": "Deublyg llawn"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Botwm llais",
+        "state_attributes": {
+          "event_type": {
+            "name": "Math o ddigwyddiad",
+            "state": {
+              "pressed": "Gwasgwyd",
+              "released": "Rhyddhawyd",
+              "accepted": "Derbyniwyd",
+              "rejected": "Gwrthodwyd",
+              "queued": "Mewn ciw",
+              "failed": "Methwyd",
+              "context_reset": "Ailosod y sgwrs",
+              "reply_skipped": "Hepgorwyd yr ateb"
+            }
+          },
+          "outcome": {
+            "name": "Canlyniad"
+          },
+          "stage": {
+            "name": "Cam"
+          },
+          "code": {
+            "name": "Cod"
+          },
+          "message": {
+            "name": "Neges"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Meicroffon yn weithredol"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Gwall diwethaf",
+        "state": {
+          "none": "Dim gwall",
+          "busy": "Yn dal i ateb y cais blaenorol.",
+          "queue_full": "Mae cais eisoes yn aros. Rhowch gynnig arni ar ôl yr ateb.",
+          "queue_expired": "Daeth y cais a oedd yn aros i ben. Pwyswch a siaradwch eto.",
+          "queue_discarded": "Cafodd y cais a oedd yn aros ei daflu.",
+          "queue_failed": "Ni ellid cychwyn y cais a oedd yn aros.",
+          "capture_limit": "Cyrhaeddwyd terfyn dal y meicroffon. Defnyddiwch gais byrrach.",
+          "buffer_overflow": "Cronnodd sain y meicroffon cyn i'r gwasanaeth lleferydd ddechrau ei darllen.",
+          "audio_sequence_gap": "Methodd cydamseru'r sain. Pwyswch a rhowch gynnig arall arni.",
+          "invalid_audio_sync": "Anfonodd y teclyn neges cydamseru sain annilys.",
+          "invalid_audio_frame": "Anfonodd y teclyn ffrâm sain wedi'i difrodi.",
+          "invalid_control": "Anfonodd y teclyn neges reoli annilys.",
+          "unsupported_audio_start": "Dechreuodd y teclyn sain mewn ffordd nad yw'r integreiddio hwn yn ei chefnogi.",
+          "incomplete_utterance": "Daeth y sain i ben cyn i'r cais gael ei gwblhau.",
+          "audio_stalled": "Peidiodd sain y meicroffon â chyrraedd. Rhowch gynnig arall arni.",
+          "audio_failed": "Methodd sain y meicroffon.",
+          "no_audio": "Ni dderbyniwyd sain meicroffon.",
+          "no_speech": "Ni chanfuwyd lleferydd.",
+          "held_mode_unsupported": "Mae sgwrs bob yn ail angen teclyn dal-i-siarad.",
+          "held_failed": "Methodd y sgwrs wrth ddal y botwm.",
+          "held_turn_failed": "Methodd un tro o'r sgwrs.",
+          "remote_stopped": "Stopiodd y teclyn y meicroffon yn annisgwyl.",
+          "disconnected": "Datgysylltodd y teclyn.",
+          "cancelled": "Diddymwyd y cais.",
+          "pipeline_finished_early": "Daeth y biblinell Assist i ben cyn i'r sain gyfan gael ei darllen.",
+          "pipeline_timeout": "Cymerodd y biblinell Assist ormod o amser i ymateb.",
+          "pipeline_failed": "Methodd y biblinell Assist.",
+          "pipeline_removed": "Nid yw'r biblinell Assist a ddewiswyd yn bodoli mwyach.",
+          "playback_stop_unverified": "Ni ellid gwirio bod yr ateb blaenorol wedi stopio. Arhoswch nes bod yr uchelseinydd yn segur.",
+          "playback_stop_failed": "Ni ellid stopio'r ateb blaenorol.",
+          "playback_start_timeout": "Ni ddechreuodd yr uchelseinydd chwarae'r ateb.",
+          "playback_finish_timeout": "Ni orffennodd yr uchelseinydd chwarae'r ateb mewn pryd.",
+          "playback_interrupted": "Torrwyd ar draws yr ateb ar yr uchelseinydd.",
+          "speaker_unavailable": "Nid yw'r uchelseinydd ateb ar gael.",
+          "speaker_busy": "Mae'r uchelseinydd ateb yn brysur.",
+          "speaker_cannot_play": "Ni all yr uchelseinydd ateb chwarae sain o Home Assistant.",
+          "missing_tts_audio": "Doedd dim sain i'w chwarae yn yr ateb.",
+          "generation_retirement_failed": "Nid yw'r cais blaenorol wedi stopio eto. Arhoswch.",
+          "replacement_retirement_failed": "Ni ellid stopio'r cais cyfredol i gychwyn yr un newydd.",
+          "microphone_open_failed": "Ni ellid agor meicroffon y teclyn.",
+          "microphone_open_rejected": "Gwrthododd y teclyn agor ei feicroffon.",
+          "microphone_start_timeout": "Ni chychwynnodd y teclyn ei feicroffon mewn pryd.",
+          "microphone_close_failed": "Ni ellid cau meicroffon y teclyn.",
+          "microphone_keepalive_failed": "Collwyd cysylltiad meicroffon y teclyn.",
+          "active_generation_cancelled": "Diddymwyd yr ateb a oedd yn cael ei baratoi ac ailosodwyd cyd-destun y sgwrs.",
+          "wake_remote": "Deffrwch y teclyn gyda botwm saeth, yna ceisiwch eto.",
+          "bluetooth_unavailable": "Nid yw Bluetooth lleol ar gael.",
+          "bluetooth_operation_failed": "Methodd gweithrediad Bluetooth.",
+          "not_paired": "Nid yw'r teclyn wedi'i baru ar y gwesteiwr hwn.",
+          "multiple_adapters": "Mae'r teclyn wedi'i baru ar fwy nag un addasydd.",
+          "voice_service_unavailable": "Nid yw'r teclyn yn cynnig gwasanaeth llais.",
+          "unsupported_write": "Ni ellir ysgrifennu i reolaeth llais y teclyn.",
+          "unsupported_capabilities": "Adroddodd y teclyn alluoedd llais nad yw'r integreiddio hwn yn eu cefnogi.",
+          "unsupported_codec": "Mae'r teclyn yn defnyddio fformat sain nad yw'r integreiddio hwn yn ei gefnogi.",
+          "invalid_frame_size": "Adroddodd y teclyn faint ffrâm sain annilys.",
+          "hidraw_unavailable": "Nid yw dyfais fewnbwn y teclyn ar gael i Home Assistant.",
+          "hidraw_permission_denied": "Nid yw Home Assistant yn cael darllen dyfais fewnbwn y teclyn.",
+          "opus_decoder_unavailable": "Nid oes datgodiwr sain Opus ar gael i Home Assistant.",
+          "invalid_opus_packet": "Anfonodd y teclyn sain na ellid ei datgodio.",
+          "other": "Digwyddodd gwall arall. Mae cod y gwall yn rhoi'r manylion."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Cod"
+          },
+          "stage": {
+            "name": "Cam"
+          },
+          "since": {
+            "name": "Ers"
+          },
+          "session": {
+            "name": "Cais"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Piblinell Assist ar goll ar gyfer {remote}",
+      "description": "Mae'r teclyn **{remote}** wedi'i osod i ddefnyddio'r biblinell Assist `{pipeline}`, nad yw'n bodoli mwyach. Mae ceisiadau llais o'r teclyn hwn yn methu nes i chi ddewis piblinell arall.\n\nAewch i **Gosodiadau → Dyfeisiau a gwasanaethau → Bluetooth Remote Voice**, agorwch ddewislen **{remote}**, dewiswch **Ffurfweddu**, a dewiswch biblinell sy'n bodoli."
+    },
+    "speaker_missing": {
+      "title": "Uchelseinydd ateb ar goll ar gyfer {remote}",
+      "description": "Mae'r teclyn **{remote}** wedi'i osod i chwarae atebion ar `{speaker}`, nad yw'n bodoli mwyach. Mae gorchmynion yn dal i redeg, ond ni fydd eu hateb llafar yn chwarae.\n\nAewch i **Gosodiadau → Dyfeisiau a gwasanaethau → Bluetooth Remote Voice**, agorwch ddewislen **{remote}**, dewiswch **Ffurfweddu**, a dewiswch uchelseinydd arall neu dewiswch ddim un."
+    }
+  }
+}

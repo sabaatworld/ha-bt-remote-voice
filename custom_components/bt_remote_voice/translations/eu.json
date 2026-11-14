@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Hautatu parekatutako urrutiko agintea",
+        "description": "Parekatu urrutiko agintea lehenik Home Assistant-etik kanpo, eta esnatu gero gezi-botoi batekin egiaztatu ahal izateko. Hautatu zerrendatik, edo sartu bere Bluetooth helbidea.",
+        "data": {
+          "device": "Parekatutako urrutiko agintea"
+        },
+        "data_description": {
+          "device": "Home Assistant ostalari honetan jada parekatuta dauden urrutiko aginteak. Hautatu eskuzko aukera zurea zerrendan ez badago."
+        }
+      },
+      "manual": {
+        "title": "Sartu parekatutako urrutiko agintearen helbidea",
+        "description": "Sartu ostalari honetan jada parekatuta dagoen urrutiko agintearen Bluetooth helbidea.",
+        "data": {
+          "address": "Bluetooth helbidea"
+        },
+        "data_description": {
+          "address": "Sei hamaseitar digitu-bikote bi puntuz bereizita, adibidez AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Hautatu Assist kanalizazioa",
+        "description": "Esnatu urrutiko agintea gezi-botoi batekin bidali aurretik. Integrazioa transkripzio soileko moduan hasten da; aldatu hau aukeretan funtzionatzen duenean.",
+        "data": {
+          "pipeline_id": "Assist kanalizazioa"
+        },
+        "data_description": {
+          "pipeline_id": "Urrutiko aginte honen hizketa prozesatzen duen Assist kanalizazioa."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Bluetooth lokala ez dago erabilgarri. Egiaztatu sistemako D-Bus eskuragarri dagoela.",
+      "wake_remote": "Esnatu parekatutako urrutiko agintea gezi-botoi batekin eta saiatu berriro.",
+      "not_paired": "Parekatu urrutiko agintea lehenik kanpotik.",
+      "multiple_adapters": "Urrutiko aginte hau egokitzaile anitzetan parekatuta dago. Mantendu bere lotura egokitzaile bakarrean.",
+      "invalid_address": "Sartu Bluetooth helbidea AA:BB:CC:DD:EE:FF formatuan.",
+      "unsupported_remote": "Urrutiko aginte honek ez du onartutako ATVV v0.4/v1.0 ADPCM ahots-profilik eskaintzen.",
+      "invalid_pipeline": "Hautatu lehendik dagoen Assist kanalizazio bat.",
+      "hidraw_unavailable": "Urrutiko agintearen sarrera-gailua ez dago Home Assistant-entzat erabilgarri. Esnatu urrutiko agintea eta egiaztatu Home Assistant-ek /dev/hidraw gailuak ikus ditzakeela.",
+      "hidraw_permission_denied": "Home Assistant-ek ez du urrutiko agintearen sarrera-gailua irakurtzeko baimenik. Ikusi README urrutiko aginte honek behar duen gailu-sarbiderako.",
+      "opus_decoder_unavailable": "Home Assistant-entzat ez dago Opus audio-deskodetzailerik erabilgarri, eta urrutiko aginte honek hura behar du."
+    },
+    "abort": {
+      "already_configured": "Urrutiko aginte hau jada konfiguratuta dago.",
+      "no_pipelines": "Sortu Assist kanalizazio bat urrutiko agintea gehitu aurretik."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Ahots-ezarpenak",
+        "description": "Ezarpen hauek kontrolatzen dute sakatzeak nola kudeatzen diren eta erantzunak nola ahoskatzen diren. Eskaera bat ordezkatzeak ezin ditu dagoeneko egindako ekintzak desegin. Aldibereko full duplex ez dago erabilgarri. Transkripzioaren ondoren gelditzeak ez ditu desgaitzen zuzeneko hizketa-hornitzaile batean integratutako tresnak; erabili transkripzio soileko hornitzailea ekintzak desgaitu behar direnean.\n\n**Erantzun-baldintza:** bere baldintza guztiak bete behar dira erantzun bat ahoskatzeko. Eskaera bakoitzaren hasieran behin egiaztatzen dira; utzi hutsik beti ahoskatzeko, eta ebaluatu ezin den baldintza bat bete gabe dagoela jotzen da. Txantiloi-baldintzek `speaker`, `remote` eta `held` aldagaiak erabil ditzakete.",
+        "data": {
+          "pipeline_id": "Assist kanalizazioa",
+          "mode": "Ahots-modua",
+          "speaker": "Erantzun-bozgorailua",
+          "output_mode": "Erantzunaren denbora",
+          "stream_head_start": "Streaming-aren abantaila",
+          "busy_processing": "Sakatze berria prozesatzean",
+          "busy_playback": "Sakatze berria erantzunean",
+          "context_mode": "Elkarrizketaren testuingurua",
+          "input_mode": "Botoiaren portaera",
+          "min_press_seconds": "Ez ikusi sakatze laburrak",
+          "max_request_seconds": "Eskaeraren gehienezko iraupena",
+          "max_conversation_seconds": "Elkarrizketaren gehienezko iraupena",
+          "reply_condition": "Erantzun-baldintza"
+        },
+        "data_description": {
+          "pipeline_id": "Hizketa prozesatzen duen Assist kanalizazioa: hizketa-testu bihurketa, elkarrizketa-agentea eta testu-hizketa bihurketa. Kendutako kanalizazio batek errorea eragiten du, beste batera itzuli beharrean.",
+          "mode": "Transkripzio soilak hizketa-ezagutzaren ondoren gelditzen da eta ez du erantzunik erreproduzitzen. Exekutatu komandoak aukerak kanalizazio osoa exekutatzen du eta erantzuna erantzun-bozgorailuan ahoskatzen du.",
+          "speaker": "Erantzunak ahoskatzen dituen multimedia-erreproduzitzailea. Komandoak exekutatzean soilik erabiltzen da. Hautatu “Ahoskatutako erantzunik ez” kanalizazioa erantzuna erreproduzitu aurretik gelditzeko.",
+          "output_mode": "Streaming automatikoak hitz egiten hasten da streaming bidezko erantzuna prest dagoen bezain laster. Erantzun osoaren zain egoteak geroago hasten da, baina amaitutako audio-fitxategi bat erreproduzitzen du, eta horrek mozketak saihesten ditu hizketa denbora errealaren erritmo gutxi gorabeherakoan soilik sortzen duten hornitzaileekin.",
+          "stream_head_start": "Streaming bidezko erantzun baten hasiera segundo horiekin atzeratzen du, bozgorailuak buffer-a egin dezan; lehenago amaitzen diren erantzunak berehala erreproduzitzen dira. Handitu streaming bidezko erantzunak lehen segundoetan mozten badira. Ez du eraginik erantzun osoaren zain dagoenean. 0 balioak lehenetsitako portaera mantentzen du.",
+          "busy_processing": "Zer egin botoia sakatzen denean aurreko eskaerari erantzun aurretik: sakatzea baztertu, zain dagoen eskaera bat mantendu edo uneko eskaera ordezkatu. Ordezkatzeak ezin ditu dagoeneko egindako ekintzak desegin.",
+          "busy_playback": "Zer egin botoia sakatzen denean erantzun bat erreproduzitzen ari den bitartean: sakatzea baztertu, ondoren zain dagoen eskaera bati erantzun edo erantzuna gelditu eta eskaera berria hasi.",
+          "context_mode": "Berrerabiltzeak Home Assistant-en elkarrizketa mantentzen du, “eta bikoitza?” bezalako jarraipen-galderek funtziona dezaten. Elkarrizketa berriak sakatze bakoitza elkarrizketa independente bihurtzen du.",
+          "input_mode": "Eskaera bat sakatze-aldi bakoitzeko botoia askatu arte grabatzen du. Txandakatutako elkarrizketak entzuten jarraitzen du botoia sakatuta dagoen bitartean: hitz egin, pausatu, erantzuna entzun eta berriro hitz egin. Sakatuta hitz egiteko urrutiko agintea behar du.",
+          "min_press_seconds": "Hau baino laburragoak diren ahots-botoiaren ukituak ez ditu kontuan hartzen, ukitu faltsu batek inoiz eskaerarik ez hasteko; benetako sakatze luze batek hainbeste beranduago hasten da. 0 balioak desaktibatzen du. Esnatu ondoren berehala “Mikrofonoaren audiorik ez” errorearekin huts egiten duen Fire TV urrutiko agintearentzat erabilgarria: esnatu zuen tekla berriro bidaltzen du berehalako ukitu gisa. 0,1 s abiapuntu ona da. Fire TV urrutiko aginteentzat soilik.",
+          "max_request_seconds": "Eskaera bakar batek urrutiko aginte edozeinetan iraun dezakeen denbora luzeena: sakatze osoa Eskaera bakarra moduan, eta txanda bakoitza Txandakatutako elkarrizketan. Hori lortzean eskaera grabazio-mugaren errorearekin amaitzen da. Murriztu trabatutako botoi baten grabazioa gelditzeko; handitu diktatu luzeetarako. Sakatuta hitz egiteko ez diren urrutiko aginteak ere 15 segundo inguruko hizketaren edo isiltasunaren ondoren amaitzen dira, lehenengoa gertatzen dena.",
+          "max_conversation_seconds": "Botoi-sakatze oso batek Txandakatutako elkarrizketa moduan iraun dezakeen denbora luzeena. Ez da kontuan hartzen Eskaera bakarra moduan, eta ezin da eskaeraren gehienezko iraupena baino laburragoa izan.",
+          "reply_condition": "Erantzun bat ahoskatzeko guztiak bete behar diren baldintzak. Eskaera bakoitzaren hasieran behin egiaztatzen dira (eta txanda bakoitzean Txandakatutako elkarrizketan). Utzi hutsik beti ahoskatzeko. Errorea ematen duen baldintza bat bete gabe dagoela jotzen da. Txantiloi-baldintzek speaker, remote eta held aldagaiak erabil ditzakete."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Hautatu audioa erreproduzitzea onartzen duen multimedia-erreproduzitzaile bat, edo ahoskatutako erantzunik ez.",
+      "invalid_preferences": "Hautatu onartutako ahots-lehentasunetako bat.",
+      "invalid_pipeline": "Hautatu lehendik dagoen Assist kanalizazio bat.",
+      "invalid_reply_condition": "Erantzun-baldintza ez da baliozkoa. Egiaztatu baldintzak eta saiatu berriro.",
+      "pipeline_missing": "Urrutiko aginte honentzat gordetako Assist kanalizazioa ez dago jada. Hautatu beste bat.",
+      "speaker_missing": "Gordetako erantzun-bozgorailua ez dago erabilgarri une honetan, beraz, erantzunak ez dira erreproduzituko itzuli arte. Mantendu edo hautatu beste bat."
+    },
+    "abort": {
+      "no_pipelines": "Sortu lehenik Assist kanalizazio bat."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Sartu Bluetooth helbidea"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Transkripzio soila",
+        "commands": "Exekutatu komandoak"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Ahoskatutako erantzunik ez"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Streaming automatikoa",
+        "buffered": "Itxaron erantzun osoari"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Baztertu eskaera berria",
+        "queue": "Jarri eskaera bat ilaran",
+        "replace": "Ordezkatu uneko eskaera"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Baztertu eskaera berria",
+        "queue": "Jarri eskaera bat ilaran",
+        "replace": "Ordezkatu uneko erantzuna"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Berrerabili elkarrizketa",
+        "fresh": "Elkarrizketa berria eskaera bakoitzeko"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Eskaera bat sakatze-aldi bakoitzeko",
+        "conversation": "Elkarrizketa sakatuta dagoen bitartean (txandakatua)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Ahotsa",
+        "state_attributes": {
+          "ready": {
+            "name": "Prest"
+          },
+          "last_error": {
+            "name": "Azken errore-kodea"
+          },
+          "last_error_message": {
+            "name": "Azken errore-mezua"
+          },
+          "mode": {
+            "name": "Ahots-modua"
+          },
+          "sessions": {
+            "name": "Saioak"
+          },
+          "failures": {
+            "name": "Hutsegiteak"
+          },
+          "rejected": {
+            "name": "Baztertutako sakatzeak"
+          },
+          "queued": {
+            "name": "Ilarako eskaerak"
+          },
+          "last_outcome": {
+            "name": "Azken emaitza"
+          },
+          "full_duplex": {
+            "name": "Dupleks osoa"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Ahots-botoia",
+        "state_attributes": {
+          "event_type": {
+            "name": "Gertaera mota",
+            "state": {
+              "pressed": "Sakatuta",
+              "released": "Askatuta",
+              "accepted": "Onartuta",
+              "rejected": "Baztertuta",
+              "queued": "Ilaran",
+              "failed": "Huts egin du",
+              "context_reset": "Elkarrizketa berrezarrita",
+              "reply_skipped": "Erantzuna saltatuta"
+            }
+          },
+          "outcome": {
+            "name": "Emaitza"
+          },
+          "stage": {
+            "name": "Fasea"
+          },
+          "code": {
+            "name": "Kodea"
+          },
+          "message": {
+            "name": "Mezua"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofonoa aktibo"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Azken errorea",
+        "state": {
+          "none": "Errorerik ez",
+          "busy": "Oraindik aurreko eskaerari erantzuten ari da.",
+          "queue_full": "Eskaera bat dagoeneko zain dago. Saiatu mesedez erantzunaren ondoren.",
+          "queue_expired": "Zain zegoen eskaera iraungi da. Sakatu eta hitz egin berriro.",
+          "queue_discarded": "Zain zegoen eskaera baztertu da.",
+          "queue_failed": "Zain zegoen eskaera ezin izan da hasi.",
+          "capture_limit": "Mikrofonoaren grabazio-mugara iritsi da. Erabili mesedez eskaera laburragoa.",
+          "buffer_overflow": "Mikrofonoaren audioa pilatu egin da hizketa-zerbitzuak irakurtzen hasi aurretik.",
+          "audio_sequence_gap": "Audio-sinkronizazioak huts egin du. Sakatu eta saiatu berriro.",
+          "invalid_audio_sync": "Urrutiko aginteak audio-sinkronizazio mezu baliogabea bidali du.",
+          "invalid_audio_frame": "Urrutiko aginteak audio-markoa hondatua bidali du.",
+          "invalid_control": "Urrutiko aginteak kontrol-mezu baliogabea bidali du.",
+          "unsupported_audio_start": "Urrutiko aginteak integrazio honek onartzen ez duen moduan hasi du audioa.",
+          "incomplete_utterance": "Audioa eskaera osatu aurretik amaitu da.",
+          "audio_stalled": "Mikrofonoaren audioa heltzeari utzi dio. Saiatu mesedez berriro.",
+          "audio_failed": "Mikrofonoaren audioak huts egin du.",
+          "no_audio": "Ez da mikrofonoaren audiorik jaso.",
+          "no_speech": "Ez da hizketarik antzeman.",
+          "held_mode_unsupported": "Txandakatutako elkarrizketak sakatuta hitz egiteko urrutiko agintea behar du.",
+          "held_failed": "Botoia sakatuta mantenduz egindako elkarrizketak huts egin du.",
+          "held_turn_failed": "Elkarrizketaren txanda batek huts egin du.",
+          "remote_stopped": "Urrutiko aginteak mikrofonoa ustekabean gelditu du.",
+          "disconnected": "Urrutiko agintea deskonektatu da.",
+          "cancelled": "Eskaera bertan behera utzi da.",
+          "pipeline_finished_early": "Assist kanalizazioa audio guztia irakurri aurretik amaitu da.",
+          "pipeline_timeout": "Assist kanalizazioak denbora gehiegi behar izan du erantzuteko.",
+          "pipeline_failed": "Assist kanalizazioak huts egin du.",
+          "pipeline_removed": "Hautatutako Assist kanalizazioa ez dago jada.",
+          "playback_stop_unverified": "Ezin izan da egiaztatu aurreko erantzuna gelditu dela. Itxaron bozgorailua inaktibo egon arte.",
+          "playback_stop_failed": "Aurreko erantzuna ezin izan da gelditu.",
+          "playback_start_timeout": "Bozgorailuak ez du erantzuna erreproduzitzen hasi.",
+          "playback_finish_timeout": "Bozgorailuak ez du erantzunaren erreprodukzioa garaiz amaitu.",
+          "playback_interrupted": "Erantzuna etenda geratu da bozgorailuan.",
+          "speaker_unavailable": "Erantzun-bozgorailua ez dago erabilgarri.",
+          "speaker_busy": "Erantzun-bozgorailua lanpetuta dago.",
+          "speaker_cannot_play": "Erantzun-bozgorailuak ezin du Home Assistant-en audiorik erreproduzitu.",
+          "missing_tts_audio": "Erantzunak ez zuen erreproduzitzeko audiorik.",
+          "generation_retirement_failed": "Aurreko eskaera ez da oraindik gelditu. Itxaron mesedez.",
+          "replacement_retirement_failed": "Uneko eskaera ezin izan da gelditu berria hasteko.",
+          "microphone_open_failed": "Urrutiko agintearen mikrofonoa ezin izan da ireki.",
+          "microphone_open_rejected": "Urrutiko aginteak bere mikrofonoa irekitzeari uko egin dio.",
+          "microphone_start_timeout": "Urrutiko aginteak ez du bere mikrofonoa garaiz hasi.",
+          "microphone_close_failed": "Urrutiko agintearen mikrofonoa ezin izan da itxi.",
+          "microphone_keepalive_failed": "Urrutiko agintearen mikrofono-konexioa galdu da.",
+          "active_generation_cancelled": "Prestatzen ari zen erantzuna bertan behera utzi da eta elkarrizketaren testuingurua berrezarri da.",
+          "wake_remote": "Esnatu urrutiko agintea gezi-botoi batekin eta saiatu berriro.",
+          "bluetooth_unavailable": "Bluetooth lokala ez dago erabilgarri.",
+          "bluetooth_operation_failed": "Bluetooth eragiketak huts egin du.",
+          "not_paired": "Urrutiko agintea ez dago ostalari honetan parekatuta.",
+          "multiple_adapters": "Urrutiko agintea egokitzaile batean baino gehiagotan parekatuta dago.",
+          "voice_service_unavailable": "Urrutiko aginteak ez du ahots-zerbitzurik eskaintzen.",
+          "unsupported_write": "Urrutiko agintearen ahots-kontrolean ezin da idatzi.",
+          "unsupported_capabilities": "Urrutiko aginteak integrazio honek onartzen ez dituen ahots-ahalmenak jakinarazi ditu.",
+          "unsupported_codec": "Urrutiko aginteak integrazio honek onartzen ez duen audio-formatua erabiltzen du.",
+          "invalid_frame_size": "Urrutiko aginteak audio-markoaren tamaina baliogabea jakinarazi du.",
+          "hidraw_unavailable": "Urrutiko agintearen sarrera-gailua ez dago Home Assistant-entzat erabilgarri.",
+          "hidraw_permission_denied": "Home Assistant-ek ez du urrutiko agintearen sarrera-gailua irakurtzeko baimenik.",
+          "opus_decoder_unavailable": "Home Assistant-entzat ez dago Opus audio-deskodetzailerik erabilgarri.",
+          "invalid_opus_packet": "Urrutiko aginteak deskodetu ezin izan den audioa bidali du.",
+          "other": "Beste errore bat gertatu da. Errore-kodeak xehetasunak ematen ditu."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kodea"
+          },
+          "stage": {
+            "name": "Fasea"
+          },
+          "since": {
+            "name": "Noiztik"
+          },
+          "session": {
+            "name": "Eskaera"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "{remote} urrutiko agintearen Assist kanalizazioa falta da",
+      "description": "**{remote}** urrutiko agintea `{pipeline}` Assist kanalizazioa erabiltzeko ezarrita dago, baina ez dago jada. Urrutiko aginte honen ahots-eskaerek huts egiten dute beste kanalizazio bat hautatu arte.\n\nJoan **Ezarpenak → Gailuak eta zerbitzuak → Bluetooth Remote Voice** atalera, ireki **{remote}** gailuaren menua, hautatu **Konfiguratu** eta aukeratu lehendik dagoen kanalizazio bat."
+    },
+    "speaker_missing": {
+      "title": "{remote} urrutiko agintearen erantzun-bozgorailua falta da",
+      "description": "**{remote}** urrutiko agintea erantzunak `{speaker}` gailuan erreproduzitzeko ezarrita dago, baina ez dago jada. Komandoak exekutatzen jarraitzen dute, baina haien ahoskatutako erantzuna ez da erreproduzituko.\n\nJoan **Ezarpenak → Gailuak eta zerbitzuak → Bluetooth Remote Voice** atalera, ireki **{remote}** gailuaren menua, hautatu **Konfiguratu** eta aukeratu beste bozgorailu bat edo ez aukeratu bat ere."
+    }
+  }
+}

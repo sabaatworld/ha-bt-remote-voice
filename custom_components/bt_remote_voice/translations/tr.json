@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Eşleştirilmiş uzaktan kumandayı seçin",
+        "description": "Önce uzaktan kumandayı Home Assistant dışında eşleştirin, ardından doğrulanabilmesi için bir ok tuşuyla uyandırın. Listeden seçin veya Bluetooth adresini girin.",
+        "data": {
+          "device": "Eşleştirilmiş uzaktan kumanda"
+        },
+        "data_description": {
+          "device": "Bu Home Assistant ana bilgisayarında zaten eşleştirilmiş uzaktan kumandalar. Sizinki listede yoksa manuel seçeneği seçin."
+        }
+      },
+      "manual": {
+        "title": "Eşleştirilmiş uzaktan kumanda adresini girin",
+        "description": "Bu ana bilgisayarda zaten eşleştirilmiş bir uzaktan kumandanın Bluetooth adresini girin.",
+        "data": {
+          "address": "Bluetooth adresi"
+        },
+        "data_description": {
+          "address": "İki nokta üst üste ile ayrılmış altı onaltılık rakam çifti, örneğin AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Assist ardışık düzenini seçin",
+        "description": "Göndermeden önce uzaktan kumandayı bir ok tuşuyla uyandırın. Entegrasyon yalnızca yazıya dökme modunda başlar; çalıştıktan sonra bunu seçeneklerden değiştirin.",
+        "data": {
+          "pipeline_id": "Assist ardışık düzeni"
+        },
+        "data_description": {
+          "pipeline_id": "Bu uzaktan kumandadan gelen konuşmayı işleyen Assist ardışık düzeni."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Yerel Bluetooth kullanılamıyor. Sistem D-Bus'ına erişilebildiğini kontrol edin.",
+      "wake_remote": "Eşleştirilmiş uzaktan kumandayı bir ok tuşuyla uyandırın, ardından tekrar deneyin.",
+      "not_paired": "Önce bu uzaktan kumandayı harici olarak eşleştirin.",
+      "multiple_adapters": "Bu uzaktan kumanda birden fazla adaptörde eşleştirilmiş. Eşleşmesini yalnızca bir adaptörde tutun.",
+      "invalid_address": "Bluetooth adresini AA:BB:CC:DD:EE:FF biçiminde girin.",
+      "unsupported_remote": "Bu uzaktan kumanda desteklenen bir ATVV v0.4/v1.0 ADPCM ses profili sağlamıyor.",
+      "invalid_pipeline": "Mevcut bir Assist ardışık düzeni seçin.",
+      "hidraw_unavailable": "Uzaktan kumandanın giriş cihazı Home Assistant tarafından kullanılamıyor. Uzaktan kumandayı uyandırın ve Home Assistant'ın /dev/hidraw cihazlarını görebildiğini kontrol edin.",
+      "hidraw_permission_denied": "Home Assistant'ın uzaktan kumandanın giriş cihazını okumasına izin verilmiyor. Bu uzaktan kumandanın ihtiyaç duyduğu cihaz erişimi için README dosyasına bakın.",
+      "opus_decoder_unavailable": "Home Assistant için, bu uzaktan kumandanın gerektirdiği bir Opus ses kod çözücüsü yok."
+    },
+    "abort": {
+      "already_configured": "Bu uzaktan kumanda zaten yapılandırılmış.",
+      "no_pipelines": "Uzaktan kumandayı eklemeden önce bir Assist ardışık düzeni oluşturun."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Ses ayarları",
+        "description": "Bu ayarlar, basışların nasıl işleneceğini ve yanıtların nasıl sesli okunacağını belirler. Bir isteği değiştirmek, zaten gerçekleştirdiği eylemleri geri alamaz. Eşzamanlı tam çift yönlü (full duplex) kullanılamıyor. Yazıya dökmeden sonra durmak, canlı konuşma sağlayıcısında yerleşik araçları devre dışı bırakmaz; eylemlerin devre dışı bırakılması gerekiyorsa yalnızca yazıya döken bir sağlayıcı kullanın.\n\n**Yanıt koşulu:** bir yanıtın sesli okunması için tüm koşullarının sağlanması gerekir. Her isteğin başında bir kez denetlenirler; her zaman sesli okumak için boş bırakın, değerlendirilemeyen bir koşul sağlanmamış sayılır. Şablon koşulları `speaker`, `remote` ve `held` değişkenlerini kullanabilir.",
+        "data": {
+          "pipeline_id": "Assist ardışık düzeni",
+          "mode": "Ses modu",
+          "speaker": "Yanıt hoparlörü",
+          "output_mode": "Yanıt zamanlaması",
+          "stream_head_start": "Akış ön payı",
+          "busy_processing": "İşleme sırasında yeni basış",
+          "busy_playback": "Yanıt sırasında yeni basış",
+          "context_mode": "Konuşma bağlamı",
+          "input_mode": "Düğme davranışı",
+          "min_press_seconds": "Kısa basışları yoksay",
+          "max_request_seconds": "Maksimum istek uzunluğu",
+          "max_conversation_seconds": "Maksimum konuşma uzunluğu",
+          "reply_condition": "Yanıt koşulu"
+        },
+        "data_description": {
+          "pipeline_id": "Konuşmayı işleyen Assist ardışık düzeni: konuşmayı metne çevirme, konuşma aracısı ve metni konuşmaya çevirme. Kaldırılan bir ardışık düzen, başka birine geçmek yerine hata verir.",
+          "mode": "Yalnızca yazıya dökme, konuşma tanımadan sonra durur ve yanıt oynatmaz. Komutları yürüt, tüm ardışık düzeni çalıştırır ve yanıtı yanıt hoparlöründe sesli okur.",
+          "speaker": "Yanıtları sesli okuyan medya oynatıcı. Yalnızca komutlar yürütülürken kullanılır. Ardışık düzeni yanıt oynatılmadan önce durdurmak için “Sesli yanıt yok” seçeneğini seçin.",
+          "output_mode": "Otomatik akış, akışlı bir yanıt hazır olur olmaz konuşmaya başlar. Tam yanıtı bekleme daha geç başlar ancak bitmiş bir ses dosyası oynatır; bu, konuşmayı yalnızca yaklaşık gerçek zamanlı hızda üreten sağlayıcılarda kesilmeyi önler.",
+          "stream_head_start": "Akışlı bir yanıtın başlangıcını bu kadar saniye geciktirir; böylece hoparlör arabelleğe alabilir; daha erken biten yanıtlar hemen oynatılır. Akışlı yanıtlar ilk saniyelerde kesiliyorsa artırın. Tam yanıt beklenirken etkisi yoktur. 0 varsayılan davranışı korur.",
+          "busy_processing": "Önceki istek yanıtlanmadan düğmeye basıldığında ne yapılacağı: basışı reddet, bir bekleyen isteği tut veya geçerli isteği değiştir. Değiştirme, zaten gerçekleştirilmiş eylemleri geri alamaz.",
+          "busy_playback": "Bir yanıt oynatılırken düğmeye basıldığında ne yapılacağı: basışı reddet, sonrasında bir bekleyen isteği yanıtla veya yanıtı durdurup yeni isteği başlat.",
+          "context_mode": "Yeniden kullanma, “peki bunun iki katı?” gibi takip soruları çalışsın diye Home Assistant konuşmasını korur. Yeni konuşma, her basışı bağımsız bir konuşma yapar.",
+          "input_mode": "Basılı tutma başına tek istek, düğme bırakılana kadar kaydeder. Dönüşümlü konuşma, düğme basılı tutulurken dinlemeye devam eder: konuşun, duraklayın, yanıtı dinleyin, sonra tekrar konuşun. Basılı tutarak konuşma özellikli bir uzaktan kumanda gerektirir.",
+          "min_press_seconds": "Bundan kısa ses düğmesi dokunuşlarını yoksayar; böylece sahte bir dokunuş asla istek başlatmaz; gerçek bir basılı tutma bu kadar geç başlar. 0 bunu kapatır. Uyandıktan hemen sonra “Mikrofon sesi yok” hatasıyla başarısız olan Fire TV uzaktan kumandası için yararlıdır: onu uyandıran tuşu anlık bir dokunuş olarak yeniden gönderir. 0,1 s iyi bir başlangıç noktasıdır. Yalnızca Fire TV uzaktan kumandaları için.",
+          "max_request_seconds": "Herhangi bir uzaktan kumandada tek bir isteğin sürebileceği en uzun süre: Tek istek modunda basılı tutmanın tamamı ve Dönüşümlü konuşmada her tur. Buna ulaşmak, isteği yakalama sınırı hatasıyla sonlandırır. Takılı kalmış bir düğmenin kaydını durdurmak için düşürün; uzun dikte için artırın. Basılı tutarak konuşma özelliği olmayan uzaktan kumandalar ayrıca yaklaşık 15 saniyelik konuşmada veya sessizlikte, hangisi önce gerçekleşirse, sonlanır.",
+          "max_conversation_seconds": "Dönüşümlü konuşma modunda tüm bir düğme basılı tutmanın sürebileceği en uzun süre. Tek istek modunda yoksayılır ve maksimum istek uzunluğundan kısa olmamalıdır.",
+          "reply_condition": "Bir yanıtın sesli okunması için hepsinin sağlanması gereken koşullar. Her isteğin başında (ve Dönüşümlü konuşmada her turda) bir kez denetlenir. Her zaman sesli okumak için boş bırakın. Hata veren bir koşul sağlanmamış sayılır. Şablon koşulları speaker, remote ve held değişkenlerini kullanabilir."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Ses oynatmayı destekleyen bir medya oynatıcı veya sesli yanıt yok seçeneğini seçin.",
+      "invalid_preferences": "Desteklenen ses tercihlerinden birini seçin.",
+      "invalid_pipeline": "Mevcut bir Assist ardışık düzeni seçin.",
+      "invalid_reply_condition": "Yanıt koşulu geçerli değil. Koşulları kontrol edip tekrar deneyin.",
+      "pipeline_missing": "Bu uzaktan kumanda için kaydedilen Assist ardışık düzeni artık mevcut değil. Başka birini seçin.",
+      "speaker_missing": "Kaydedilen yanıt hoparlörü şu anda kullanılamıyor, bu nedenle geri dönene kadar yanıtlar oynatılmayacak. Koruyun veya başka birini seçin."
+    },
+    "abort": {
+      "no_pipelines": "Önce bir Assist ardışık düzeni oluşturun."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Bluetooth adresi gir"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Yalnızca yazıya dökme",
+        "commands": "Komutları yürüt"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Sesli yanıt yok"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Otomatik akış",
+        "buffered": "Tam yanıtı bekle"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Yeni isteği reddet",
+        "queue": "Bir isteği kuyruğa al",
+        "replace": "Geçerli isteği değiştir"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Yeni isteği reddet",
+        "queue": "Bir isteği kuyruğa al",
+        "replace": "Geçerli yanıtı değiştir"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Konuşmayı yeniden kullan",
+        "fresh": "Her istek için yeni konuşma"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Basılı tutma başına tek istek",
+        "conversation": "Basılıyken konuşma (dönüşümlü)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Ses",
+        "state_attributes": {
+          "ready": {
+            "name": "Hazır"
+          },
+          "last_error": {
+            "name": "Son hata kodu"
+          },
+          "last_error_message": {
+            "name": "Son hata mesajı"
+          },
+          "mode": {
+            "name": "Ses modu"
+          },
+          "sessions": {
+            "name": "Oturumlar"
+          },
+          "failures": {
+            "name": "Hatalar"
+          },
+          "rejected": {
+            "name": "Reddedilen basışlar"
+          },
+          "queued": {
+            "name": "Kuyruktaki istekler"
+          },
+          "last_outcome": {
+            "name": "Son sonuç"
+          },
+          "full_duplex": {
+            "name": "Tam çift yönlü"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Ses düğmesi",
+        "state_attributes": {
+          "event_type": {
+            "name": "Olay türü",
+            "state": {
+              "pressed": "Basıldı",
+              "released": "Bırakıldı",
+              "accepted": "Kabul edildi",
+              "rejected": "Reddedildi",
+              "queued": "Kuyruğa alındı",
+              "failed": "Başarısız",
+              "context_reset": "Konuşma sıfırlandı",
+              "reply_skipped": "Yanıt atlandı"
+            }
+          },
+          "outcome": {
+            "name": "Sonuç"
+          },
+          "stage": {
+            "name": "Aşama"
+          },
+          "code": {
+            "name": "Kod"
+          },
+          "message": {
+            "name": "Mesaj"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofon etkin"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Son hata",
+        "state": {
+          "none": "Hata yok",
+          "busy": "Önceki isteğe hâlâ yanıt veriliyor.",
+          "queue_full": "Bir istek zaten bekliyor. Lütfen yanıttan sonra deneyin.",
+          "queue_expired": "Bekleyen isteğin süresi doldu. Lütfen tekrar basıp konuşun.",
+          "queue_discarded": "Bekleyen istek atıldı.",
+          "queue_failed": "Bekleyen istek başlatılamadı.",
+          "capture_limit": "Mikrofon yakalama sınırına ulaşıldı. Lütfen daha kısa bir istek kullanın.",
+          "buffer_overflow": "Konuşma hizmeti okumaya başlamadan önce mikrofon sesi birikti.",
+          "audio_sequence_gap": "Ses senkronizasyonu başarısız oldu. Lütfen basıp tekrar deneyin.",
+          "invalid_audio_sync": "Uzaktan kumanda geçersiz bir ses senkronizasyon mesajı gönderdi.",
+          "invalid_audio_frame": "Uzaktan kumanda hasarlı bir ses karesi gönderdi.",
+          "invalid_control": "Uzaktan kumanda geçersiz bir denetim mesajı gönderdi.",
+          "unsupported_audio_start": "Uzaktan kumanda sesi, bu entegrasyonun desteklemediği bir şekilde başlattı.",
+          "incomplete_utterance": "Ses, istek tamamlanmadan önce bitti.",
+          "audio_stalled": "Mikrofon sesi gelmeyi durdurdu. Lütfen tekrar deneyin.",
+          "audio_failed": "Mikrofon sesi başarısız oldu.",
+          "no_audio": "Mikrofon sesi alınmadı.",
+          "no_speech": "Konuşma algılanmadı.",
+          "held_mode_unsupported": "Dönüşümlü konuşma, basılı tutarak konuşma özellikli bir uzaktan kumanda gerektirir.",
+          "held_failed": "Düğme basılıyken yapılan konuşma başarısız oldu.",
+          "held_turn_failed": "Konuşmanın bir turu başarısız oldu.",
+          "remote_stopped": "Uzaktan kumanda mikrofonu beklenmedik şekilde durdurdu.",
+          "disconnected": "Uzaktan kumandanın bağlantısı kesildi.",
+          "cancelled": "İstek iptal edildi.",
+          "pipeline_finished_early": "Assist ardışık düzeni, tüm ses okunmadan önce bitti.",
+          "pipeline_timeout": "Assist ardışık düzeninin yanıt vermesi çok uzun sürdü.",
+          "pipeline_failed": "Assist ardışık düzeni başarısız oldu.",
+          "pipeline_removed": "Seçilen Assist ardışık düzeni artık mevcut değil.",
+          "playback_stop_unverified": "Önceki yanıtın durduğu doğrulanamadı. Hoparlör boşa geçene kadar bekleyin.",
+          "playback_stop_failed": "Önceki yanıt durdurulamadı.",
+          "playback_start_timeout": "Hoparlör yanıtı oynatmaya başlamadı.",
+          "playback_finish_timeout": "Hoparlör yanıtı oynatmayı zamanında bitirmedi.",
+          "playback_interrupted": "Yanıt hoparlörde kesintiye uğradı.",
+          "speaker_unavailable": "Yanıt hoparlörü kullanılamıyor.",
+          "speaker_busy": "Yanıt hoparlörü meşgul.",
+          "speaker_cannot_play": "Yanıt hoparlörü Home Assistant'tan ses oynatamıyor.",
+          "missing_tts_audio": "Yanıtta oynatılacak ses yoktu.",
+          "generation_retirement_failed": "Önceki istek henüz durmadı. Lütfen bekleyin.",
+          "replacement_retirement_failed": "Geçerli istek, yenisini başlatmak için durdurulamadı.",
+          "microphone_open_failed": "Uzaktan kumandanın mikrofonu açılamadı.",
+          "microphone_open_rejected": "Uzaktan kumanda mikrofonunu açmayı reddetti.",
+          "microphone_start_timeout": "Uzaktan kumanda mikrofonunu zamanında başlatmadı.",
+          "microphone_close_failed": "Uzaktan kumandanın mikrofonu kapatılamadı.",
+          "microphone_keepalive_failed": "Uzaktan kumandanın mikrofon bağlantısı kesildi.",
+          "active_generation_cancelled": "Hazırlanmakta olan yanıt iptal edildi ve konuşma bağlamı sıfırlandı.",
+          "wake_remote": "Uzaktan kumandayı bir ok tuşuyla uyandırın, ardından tekrar deneyin.",
+          "bluetooth_unavailable": "Yerel Bluetooth kullanılamıyor.",
+          "bluetooth_operation_failed": "Bir Bluetooth işlemi başarısız oldu.",
+          "not_paired": "Uzaktan kumanda bu ana bilgisayarda eşleştirilmemiş.",
+          "multiple_adapters": "Uzaktan kumanda birden fazla adaptörde eşleştirilmiş.",
+          "voice_service_unavailable": "Uzaktan kumanda bir ses hizmeti sunmuyor.",
+          "unsupported_write": "Uzaktan kumandanın ses denetimine yazılamıyor.",
+          "unsupported_capabilities": "Uzaktan kumanda, bu entegrasyonun desteklemediği ses yetenekleri bildirdi.",
+          "unsupported_codec": "Uzaktan kumanda, bu entegrasyonun desteklemediği bir ses biçimi kullanıyor.",
+          "invalid_frame_size": "Uzaktan kumanda geçersiz bir ses kare boyutu bildirdi.",
+          "hidraw_unavailable": "Uzaktan kumandanın giriş cihazı Home Assistant tarafından kullanılamıyor.",
+          "hidraw_permission_denied": "Home Assistant'ın uzaktan kumandanın giriş cihazını okumasına izin verilmiyor.",
+          "opus_decoder_unavailable": "Home Assistant için Opus ses kod çözücüsü yok.",
+          "invalid_opus_packet": "Uzaktan kumanda, kodu çözülemeyen bir ses gönderdi.",
+          "other": "Başka bir hata oluştu. Ayrıntıları hata kodu verir."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kod"
+          },
+          "stage": {
+            "name": "Aşama"
+          },
+          "since": {
+            "name": "Başlangıç"
+          },
+          "session": {
+            "name": "İstek"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "{remote} için Assist ardışık düzeni eksik",
+      "description": "**{remote}** uzaktan kumandası, artık mevcut olmayan `{pipeline}` Assist ardışık düzenini kullanacak şekilde ayarlı. Başka bir ardışık düzen seçene kadar bu uzaktan kumandadan gelen ses istekleri başarısız olur.\n\n**Ayarlar → Cihazlar ve hizmetler → Bluetooth Remote Voice** bölümüne gidin, **{remote}** menüsünü açın, **Yapılandır**'ı seçin ve mevcut bir ardışık düzen seçin."
+    },
+    "speaker_missing": {
+      "title": "{remote} için yanıt hoparlörü eksik",
+      "description": "**{remote}** uzaktan kumandası, yanıtları artık mevcut olmayan `{speaker}` üzerinde oynatacak şekilde ayarlı. Komutlar yine de çalışır, ancak sesli yanıtları oynatılmaz.\n\n**Ayarlar → Cihazlar ve hizmetler → Bluetooth Remote Voice** bölümüne gidin, **{remote}** menüsünü açın, **Yapılandır**'ı seçin ve başka bir hoparlör seçin veya hiçbirini seçmeyin."
+    }
+  }
+}

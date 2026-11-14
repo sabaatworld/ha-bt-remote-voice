@@ -37,7 +37,7 @@ NONE = "none"  # sentinel for "no spoken reply"; stored as an empty speaker
 
 
 def dropdown(options, translation_key):
-    """A dropdown whose option labels are translated from strings.json."""
+    """A dropdown whose option labels are translated from translations/en.json."""
     return SelectSelector(
         SelectSelectorConfig(
             options=options, mode=SelectSelectorMode.DROPDOWN, translation_key=translation_key

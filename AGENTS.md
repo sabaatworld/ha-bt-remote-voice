@@ -20,7 +20,7 @@ Module map:
 - `coordinator.py` — owns connection, capture ownership, busy policy (reject/queue/replace), recovery gates, outcomes.
 - `assist_satellite.py`, `pipeline.py` — runs HA's native pipeline; early streamed playback; generation retirement.
 - `playback.py` — plays replies on a media player and observes real start/finish.
-- `preferences.py`, `config_flow.py`, `strings.json`, `translations/en.json` — options, validation, UI text.
+- `preferences.py`, `config_flow.py`, `translations/en.json` — options, validation, UI text (`en.json` is the only source; the other languages sit beside it).
 - `fire.py`, `opus.py` — Fire TV voice remote: hidraw transport (ATVV-shaped control + raw Opus packets to the coordinator) and the Opus decoder adapter (PyAV, ctypes fallback).
 - `reply_condition.py` — the reply-speaker condition (raw-list selector, per-request decision).
 - `event.py`, `binary_sensor.py`, `sensor.py`, `diagnostics.py`, `history.py` — entities, diagnostics, bounded anonymous history.
@@ -31,6 +31,7 @@ Module map:
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -p pytest_asyncio.plugin -q
 ruff check . && ruff format --check .
 python scripts/check_package.py
+python scripts/translation_tools.py status   # every language file clean
 ```
 
 Install `requirements-dev.txt` into a virtualenv first. Run the full suite on
@@ -59,15 +60,25 @@ the HA audio dependencies; mount the repo read-only and set
   `translation_key`, choice labels via `SelectSelector(translation_key=...)` with
   `selector` entries, every form field needs `data` and `data_description`,
   every error/abort key exists, and failure codes are `ERROR_CODES` with a state
-  translation each. Edit `strings.json` and keep `translations/en.json` identical
-  (`tests/test_translations.py` enforces this, including field coverage).
+  translation each. `translations/en.json` is the only source (there is no
+  `strings.json`).
+- **Every language, every time.** The integration ships a file for every language in
+  `homeassistant.generated.languages.LANGUAGES` (63 besides `en`). Whenever you add or change
+  a user-visible string, add or update it in **all** of those files in the same change: keep
+  every `{placeholder}`, Markdown marker and newline, leave product terms (Assist, ATVV, Fire TV,
+  BlueZ, Opus, Bluetooth, Home Assistant) untranslated, use Home Assistant's own wording for UI
+  terms, and write real UTF-8 characters. Batch the languages across subagents when the change is
+  large. Then run `python scripts/translation_tools.py status` and
+  `python scripts/translation_tools.py refresh-hashes`, and make `tests/test_language_files.py`
+  pass. Never leave a language behind, never edit a translation without its English source, and
+  tell the user the translations are AI-generated if asked about their quality.
 - **Repairs for external dependencies.** Any option that points at something this
   integration does not own (an Assist pipeline, a media player, and any future
   entity, device, service or other reference) must raise a Repairs issue in
   `issues.py` when the target is missing: created at startup (after HA has
   started) and re-checked when the target changes, cleared when it returns and on
-  unload, with `strings.json` `issues` text (title, description with the Configure
-  path) in `translations/en.json` too. The options form must also keep a missing
+  unload, with the `issues` text (title, description with the Configure
+  path) in every translation file. The options form must also keep a missing
   saved value visible with a field error, never silently substitute another, and
   must still let other settings be saved. Test all of it (`tests/test_issues.py`,
   `tests/test_config_flow.py`). Temporary unavailability is not a repair.
@@ -76,8 +87,8 @@ the HA audio dependencies; mount the repo read-only and set
   policies, context, button behavior, short-press filter, then limits). Put new options in that
   grouping and keep the README configuration table in the same order.
 - **Behavior-preserving defaults.** A new option must default to existing behavior,
-  be validated in `preferences.py`, appear in `config_flow.py`, `strings.json`
-  and `translations/en.json`, and be documented in the README's Configuration
+  be validated in `preferences.py`, appear in `config_flow.py` and in every translation file (`en.json` first),
+  and be documented in the README's Configuration
   reference with *when to use it*. Update the README in the same change.
 - **HA thread-safety and deprecations.** State-change and event listeners passed
   to HA must be `@callback` functions (an undecorated listener runs in an executor
@@ -103,6 +114,13 @@ the HA audio dependencies; mount the repo read-only and set
 - **Naming.** The product is "Bluetooth Remote Voice". Write "ATVV" only when naming that
   protocol (profiles, parsing, compatibility rows, the ATVVoice credit). Background task names,
   docstrings and user-facing text must not present the whole integration as ATVV.
+- **Marketplace publishing.** Home Assistant 2026.11 replaced HACS with the built-in Marketplace
+  (same `hacs.json`, same catalog). Keep `hacs.json` to documented keys, the manifest `version`
+  equal to the release tag, `issue_tracker`, `documentation` and 1 to 3 `categories`, a public
+  repo with description, topics and issues, and the GitHub-only README sections wrapped in
+  `<!-- ha-marketplace:exclude-start -->` / `<!-- ha-marketplace:exclude-end -->`. Install
+  instructions say Marketplace, not HACS. The `hacs/default` listing pull request needs the
+  maintainer's go-ahead. Spec: https://contributors.home-assistant.io/marketplace/guides/integrations/
 - **Hardware safety.** Never press or script a remote's power buttons. Do not
   open a microphone without a physical voice notification.
 - **Image resolution.** Generate and use `@3x` raster variants wherever supported,

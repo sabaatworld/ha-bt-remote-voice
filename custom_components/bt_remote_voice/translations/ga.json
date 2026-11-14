@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Roghnaigh cianrialtán péireáilte",
+        "description": "Péireáil do chianrialtán lasmuigh de Home Assistant ar dtús, ansin dúisigh é le cnaipe saighde ionas gur féidir é a fhíorú. Roghnaigh as an liosta é, nó cuir isteach a sheoladh Bluetooth.",
+        "data": {
+          "device": "Cianrialtán péireáilte"
+        },
+        "data_description": {
+          "device": "Cianrialtáin atá péireáilte cheana ar an óstríomhaire Home Assistant seo. Roghnaigh an rogha láimhe mura bhfuil do cheannsa liostaithe."
+        }
+      },
+      "manual": {
+        "title": "Cuir isteach seoladh an chianrialtáin phéireáilte",
+        "description": "Cuir isteach seoladh Bluetooth cianrialtáin atá péireáilte cheana ar an óstríomhaire seo.",
+        "data": {
+          "address": "Seoladh Bluetooth"
+        },
+        "data_description": {
+          "address": "Sé phéire digit heicsidheachúlach scartha le idirstadanna, mar shampla AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Roghnaigh píblíne Assist",
+        "description": "Dúisigh an cianrialtán le cnaipe saighde sula gcuireann tú isteach é. Tosaíonn an comhtháthú i mód trascríbhinne amháin; athraigh é seo sna roghanna nuair a oibríonn sé.",
+        "data": {
+          "pipeline_id": "Píblíne Assist"
+        },
+        "data_description": {
+          "pipeline_id": "An phíblíne Assist a phróiseálann caint ón gcianrialtán seo."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Níl Bluetooth áitiúil ar fáil. Seiceáil go bhfuil rochtain ar D-Bus an chórais.",
+      "wake_remote": "Dúisigh an cianrialtán péireáilte le cnaipe saighde, ansin bain triail eile as.",
+      "not_paired": "Péireáil an cianrialtán seo go seachtrach ar dtús.",
+      "multiple_adapters": "Tá an cianrialtán seo péireáilte ar iliomad cuibheoirí. Coinnigh a cheangal ar chuibheoir amháin.",
+      "invalid_address": "Cuir isteach seoladh Bluetooth san fhormáid AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Ní sholáthraíonn an cianrialtán seo próifíl ghutha ATVV v0.4/v1.0 ADPCM tacaithe.",
+      "invalid_pipeline": "Roghnaigh píblíne Assist atá ann cheana.",
+      "hidraw_unavailable": "Níl gléas ionchuir an chianrialtáin ar fáil do Home Assistant. Dúisigh an cianrialtán agus seiceáil an bhfeiceann Home Assistant gléasanna /dev/hidraw.",
+      "hidraw_permission_denied": "Níl cead ag Home Assistant gléas ionchuir an chianrialtáin a léamh. Féach an README le haghaidh na rochtana gléis a theastaíonn ón gcianrialtán seo.",
+      "opus_decoder_unavailable": "Níl díchódóir fuaime Opus ar fáil do Home Assistant, rud a theastaíonn ón gcianrialtán seo."
+    },
+    "abort": {
+      "already_configured": "Tá an cianrialtán seo cumraithe cheana.",
+      "no_pipelines": "Cruthaigh píblíne Assist sula gcuireann tú an cianrialtán leis."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Socruithe gutha",
+        "description": "Rialaíonn na socruithe seo conas a láimhseáiltear brúnna agus conas a labhraítear freagraí. Ní féidir le hathsholáthar iarratais gníomhartha a rinneadh cheana a chealú. Níl lán-duplex comhuaineach ar fáil. Ní dhíchumasaíonn stopadh tar éis trascríbhinne uirlisí atá ionsuite i soláthraí gutha beo; úsáid soláthraí trascríbhinne amháin nuair is gá gníomhartha a dhíchumasú.\n\n**Coinníoll freagra:** caithfidh a choinníollacha go léir a bheith comhlíonta chun freagra a labhairt. Seiceáiltear iad uair amháin ag tús gach iarratais; fág folamh é chun labhairt i gcónaí, agus áirítear coinníoll nach féidir a mheas mar choinníoll nach bhfuil comhlíonta. Is féidir le coinníollacha teimpléid na hathróga `speaker`, `remote` agus `held` a úsáid.",
+        "data": {
+          "pipeline_id": "Píblíne Assist",
+          "mode": "Mód gutha",
+          "speaker": "Callaire freagra",
+          "output_mode": "Uainiú freagra",
+          "stream_head_start": "Tús tosaigh sruthaithe",
+          "busy_processing": "Brú nua le linn próiseála",
+          "busy_playback": "Brú nua le linn freagra",
+          "context_mode": "Comhthéacs comhrá",
+          "input_mode": "Iompar cnaipe",
+          "min_press_seconds": "Déan neamhaird de bhrúnna gearra",
+          "max_request_seconds": "Fad uasta iarratais",
+          "max_conversation_seconds": "Fad uasta comhrá",
+          "reply_condition": "Coinníoll freagra"
+        },
+        "data_description": {
+          "pipeline_id": "An phíblíne Assist a phróiseálann caint: caint-go-téacs, gníomhaire comhrá agus téacs-go-caint. Teipeann píblíne bhainte le hearráid in ionad titim siar.",
+          "mode": "Stopann trascríbhinn amháin tar éis aitheantas cainte agus ní sheinneann sí freagra. Rithfidh Rith orduithe an phíblíne iomlán agus labhraíonn sé an freagra ar an gcallaire freagra.",
+          "speaker": "An seinnteoir meán a labhraíonn freagraí. Ní úsáidtear é ach agus orduithe á rith. Roghnaigh gan freagra labhartha chun an phíblíne a stopadh sula seinntear an freagra.",
+          "output_mode": "Tosaíonn sruthú uathoibríoch ag labhairt a luaithe a bhíonn freagra sruthaithe réidh. Tosaíonn fanacht leis an bhfreagra iomlán níos déanaí ach seinneann sé comhad fuaime críochnaithe, rud a sheachnaíonn briseadh le soláthraithe nach dtáirgeann caint ach ag luas thart ar fhíor-am.",
+          "stream_head_start": "Cuireann sé tús freagra sruthaithe ar athlá leis an líon soicindí seo ionas gur féidir leis an gcallaire maolánú; seinntear freagraí a chríochnaíonn níos luaithe láithreach. Ardaigh é má bhriseann freagraí sruthaithe sna chéad soicindí. Gan tionchar agus fanacht leis an bhfreagra iomlán. Coinníonn 0 an t-iompar réamhshocraithe.",
+          "busy_processing": "Cad atá le déanamh nuair a bhrúitear an cnaipe sula bhfreagraítear an t-iarratas roimhe: an brú a dhiúltú, iarratas ar feitheamh amháin a choinneáil, nó an t-iarratas reatha a athsholáthar. Ní féidir le hathsholáthar gníomhartha a rinneadh cheana a chealú.",
+          "busy_playback": "Cad atá le déanamh nuair a bhrúitear an cnaipe agus freagra á sheinm: an brú a dhiúltú, iarratas ar feitheamh amháin a fhreagairt ina dhiaidh, nó an freagra a stopadh agus an t-iarratas nua a thosú.",
+          "context_mode": "Coinníonn Athúsáid comhrá Home Assistant ionas n-oibríonn ceisteanna leantacha amhail 'agus faoi dhó sin?'. Déanann Úr comhrá neamhspleách de gach brú.",
+          "input_mode": "Taifeadann Iarratas amháin in aghaidh gach coinneála go dtí go scaoiltear an cnaipe. Coinníonn Comhrá malartach ag éisteacht fad is a choinnítear an cnaipe: labhair, déan sos, cloisigh an freagra, ansin labhair arís. Teastaíonn cianrialtán coinnigh-chun-labhairt uaidh.",
+          "min_press_seconds": "Déanann sé neamhaird de thapáil ar an gcnaipe gutha atá níos giorra ná seo, ionas nach dtosaíonn tapáil bhréagach iarratas; tosaíonn fíor-choinneáil an méid seo níos déanaí. Casann 0 as é. Úsáideach do chianrialtán Fire TV a theipeann leis le “Níl aon fhuaim micreafóin” díreach tar éis dúiseacht: athsheolann sé an eochair a dhúisigh é mar thapáil ar an toirt. Is pointe tosaigh maith é 0.1 s. Cianrialtáin Fire TV amháin.",
+          "max_request_seconds": "An t-am is faide is féidir le hiarratas amháin a mhaireachtáil ar aon chianrialtán: coinneáil iomlán i mód Iarratas amháin, agus gach casadh i gComhrá malartach. Má shroichtear é, críochnaíonn an t-iarratas le hearráid teorann gabhála. Laghdaigh é chun taifeadadh cnaipe greamaithe a stopadh; ardaigh é le haghaidh dictála fada. Críochnaíonn cianrialtáin nach bhfuil coinnigh-chun-labhairt tar éis thart ar 15 soicind cainte nó ag tost, cibé acu is túisce.",
+          "max_conversation_seconds": "An t-am is faide is féidir le coinneáil iomlán cnaipe a mhaireachtáil i mód Comhrá malartach. Déantar neamhaird de i mód Iarratas amháin agus ní mór dó a bheith chomh fada leis an uasfhad iarratais ar a laghad.",
+          "reply_condition": "Coinníollacha ar chóir dóibh go léir a bheith comhlíonta chun freagra a labhairt. Seiceáiltear uair amháin ag tús gach iarratais é (agus gach casadh i gComhrá malartach). Fág folamh é chun labhairt i gcónaí. Áirítear coinníoll a thugann earráid mar choinníoll nach bhfuil comhlíonta. Is féidir le coinníollacha teimpléid na hathróga speaker, remote agus held a úsáid."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Roghnaigh seinnteoir meán a thacaíonn le fuaim a sheinm, nó gan freagra labhartha.",
+      "invalid_preferences": "Roghnaigh ceann de na sainroghanna gutha tacaithe.",
+      "invalid_pipeline": "Roghnaigh píblíne Assist atá ann cheana.",
+      "invalid_reply_condition": "Níl an coinníoll freagra bailí. Seiceáil na coinníollacha agus bain triail eile as.",
+      "pipeline_missing": "Níl an phíblíne Assist a sábháladh don chianrialtán seo ann a thuilleadh. Roghnaigh ceann eile.",
+      "speaker_missing": "Níl an callaire freagra sábháilte ar fáil faoi láthair, mar sin ní sheinnfear freagraí go dtí go bhfillfidh sé. Coinnigh é, nó roghnaigh ceann eile."
+    },
+    "abort": {
+      "no_pipelines": "Cruthaigh píblíne Assist ar dtús."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Cuir isteach seoladh Bluetooth"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Trascríbhinn amháin",
+        "commands": "Rith orduithe"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Gan freagra labhartha"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Sruthú uathoibríoch",
+        "buffered": "Fan leis an bhfreagra iomlán"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Diúltaigh d'iarratas nua",
+        "queue": "Cuir iarratas amháin i scuaine",
+        "replace": "Athsholáthair an t-iarratas reatha"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Diúltaigh d'iarratas nua",
+        "queue": "Cuir iarratas amháin i scuaine",
+        "replace": "Athsholáthair an freagra reatha"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Athúsáid comhrá",
+        "fresh": "Comhrá úr in aghaidh an iarratais"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Iarratas amháin in aghaidh gach coinneála",
+        "conversation": "Comhrá agus an cnaipe coinnithe (malartach)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Guth",
+        "state_attributes": {
+          "ready": {
+            "name": "Réidh"
+          },
+          "last_error": {
+            "name": "Cód na earráide deireanaí"
+          },
+          "last_error_message": {
+            "name": "Teachtaireacht na earráide deireanaí"
+          },
+          "mode": {
+            "name": "Mód gutha"
+          },
+          "sessions": {
+            "name": "Seisiúin"
+          },
+          "failures": {
+            "name": "Teipeanna"
+          },
+          "rejected": {
+            "name": "Brúnna diúltaithe"
+          },
+          "queued": {
+            "name": "Iarratais i scuaine"
+          },
+          "last_outcome": {
+            "name": "An toradh deireanach"
+          },
+          "full_duplex": {
+            "name": "Lán-duplex"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Cnaipe gutha",
+        "state_attributes": {
+          "event_type": {
+            "name": "Cineál imeachta",
+            "state": {
+              "pressed": "Brúite",
+              "released": "Scaoilte",
+              "accepted": "Glactha",
+              "rejected": "Diúltaithe",
+              "queued": "I scuaine",
+              "failed": "Theip",
+              "context_reset": "Comhrá athshocraithe",
+              "reply_skipped": "Freagra scipeáilte"
+            }
+          },
+          "outcome": {
+            "name": "Toradh"
+          },
+          "stage": {
+            "name": "Céim"
+          },
+          "code": {
+            "name": "Cód"
+          },
+          "message": {
+            "name": "Teachtaireacht"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Micreafón gníomhach"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Earráid dheireanach",
+        "state": {
+          "none": "Gan earráid",
+          "busy": "Fós ag freagairt an iarratais roimhe.",
+          "queue_full": "Tá iarratas ag fanacht cheana. Bain triail as tar éis an fhreagra.",
+          "queue_expired": "Tá an t-iarratas a bhí ag fanacht imithe in éag. Brúigh agus labhair arís.",
+          "queue_discarded": "Caitheadh an t-iarratas a bhí ag fanacht i dtraipisí.",
+          "queue_failed": "Níorbh fhéidir an t-iarratas a bhí ag fanacht a thosú.",
+          "capture_limit": "Sroichadh teorainn ghabhála an mhicreafóin. Úsáid iarratas níos giorra le do thoil.",
+          "buffer_overflow": "Bhailigh fuaim an mhicreafóin sula ndeachaigh an tseirbhís cainte ag léamh.",
+          "audio_sequence_gap": "Theip ar shioncronú fuaime. Brúigh agus bain triail eile as.",
+          "invalid_audio_sync": "Sheol an cianrialtán teachtaireacht neamhbhailí sioncronaithe fuaime.",
+          "invalid_audio_frame": "Sheol an cianrialtán fráma fuaime damáistithe.",
+          "invalid_control": "Sheol an cianrialtán teachtaireacht rialaithe neamhbhailí.",
+          "unsupported_audio_start": "Thosaigh an cianrialtán fuaim ar bhealach nach dtacaíonn an comhtháthú seo leis.",
+          "incomplete_utterance": "Chríochnaigh an fhuaim sular chríochnaigh an t-iarratas.",
+          "audio_stalled": "Stop fuaim an mhicreafóin ag teacht. Bain triail eile as.",
+          "audio_failed": "Theip ar fhuaim an mhicreafóin.",
+          "no_audio": "Ní bhfuarthas aon fhuaim micreafóin.",
+          "no_speech": "Níor braitheadh aon chaint.",
+          "held_mode_unsupported": "Teastaíonn cianrialtán coinnigh-chun-labhairt ó Chomhrá malartach.",
+          "held_failed": "Theip ar an gcomhrá agus an cnaipe coinnithe.",
+          "held_turn_failed": "Theip ar chasadh den chomhrá.",
+          "remote_stopped": "Stop an cianrialtán an micreafón gan choinne.",
+          "disconnected": "Dícheangail an cianrialtán.",
+          "cancelled": "Cealaíodh an t-iarratas.",
+          "pipeline_finished_early": "Chríochnaigh an phíblíne Assist sular léadh an fhuaim go léir.",
+          "pipeline_timeout": "Thóg an phíblíne Assist an iomarca ama ar fhreagairt.",
+          "pipeline_failed": "Theip ar an bpíblíne Assist.",
+          "pipeline_removed": "Níl an phíblíne Assist roghnaithe ann a thuilleadh.",
+          "playback_stop_unverified": "Níorbh fhéidir a fhíorú gur stop an freagra roimhe. Fan go mbeidh an callaire díomhaoin.",
+          "playback_stop_failed": "Níorbh fhéidir an freagra roimhe a stopadh.",
+          "playback_start_timeout": "Níor thosaigh an callaire ag seinm an fhreagra.",
+          "playback_finish_timeout": "Níor chríochnaigh an callaire ag seinm an fhreagra in am.",
+          "playback_interrupted": "Cuireadh isteach ar an bhfreagra ar an gcallaire.",
+          "speaker_unavailable": "Níl an callaire freagra ar fáil.",
+          "speaker_busy": "Tá an callaire freagra gnóthach.",
+          "speaker_cannot_play": "Ní féidir leis an gcallaire freagra fuaim a sheinm ó Home Assistant.",
+          "missing_tts_audio": "Ní raibh aon fhuaim le seinm sa fhreagra.",
+          "generation_retirement_failed": "Níor stop an t-iarratas roimhe fós. Fan le do thoil.",
+          "replacement_retirement_failed": "Níorbh fhéidir an t-iarratas reatha a stopadh chun an ceann nua a thosú.",
+          "microphone_open_failed": "Níorbh fhéidir micreafón an chianrialtáin a oscailt.",
+          "microphone_open_rejected": "Dhiúltaigh an cianrialtán a mhicreafón a oscailt.",
+          "microphone_start_timeout": "Níor thosaigh an cianrialtán a mhicreafón in am.",
+          "microphone_close_failed": "Níorbh fhéidir micreafón an chianrialtáin a dhúnadh.",
+          "microphone_keepalive_failed": "Cailleadh nasc mhicreafón an chianrialtáin.",
+          "active_generation_cancelled": "Cealaíodh an freagra a bhí á ullmhú agus athshocraíodh comhthéacs an chomhrá.",
+          "wake_remote": "Dúisigh an cianrialtán le cnaipe saighde, ansin bain triail eile as.",
+          "bluetooth_unavailable": "Níl Bluetooth áitiúil ar fáil.",
+          "bluetooth_operation_failed": "Theip ar oibríocht Bluetooth.",
+          "not_paired": "Níl an cianrialtán péireáilte ar an óstríomhaire seo.",
+          "multiple_adapters": "Tá an cianrialtán péireáilte ar níos mó ná cuibheoir amháin.",
+          "voice_service_unavailable": "Ní thairgeann an cianrialtán seirbhís gutha.",
+          "unsupported_write": "Ní féidir scríobh chuig rialú gutha an chianrialtáin.",
+          "unsupported_capabilities": "Thuairiscigh an cianrialtán cumais ghutha nach dtacaíonn an comhtháthú seo leo.",
+          "unsupported_codec": "Úsáideann an cianrialtán formáid fuaime nach dtacaíonn an comhtháthú seo léi.",
+          "invalid_frame_size": "Thuairiscigh an cianrialtán méid neamhbhailí fráma fuaime.",
+          "hidraw_unavailable": "Níl gléas ionchuir an chianrialtáin ar fáil do Home Assistant.",
+          "hidraw_permission_denied": "Níl cead ag Home Assistant gléas ionchuir an chianrialtáin a léamh.",
+          "opus_decoder_unavailable": "Níl díchódóir fuaime Opus ar fáil do Home Assistant.",
+          "invalid_opus_packet": "Sheol an cianrialtán fuaim nárbh fhéidir a dhíchódú.",
+          "other": "Tharla earráid eile. Tugann cód na hearráide na sonraí."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Cód"
+          },
+          "stage": {
+            "name": "Céim"
+          },
+          "since": {
+            "name": "Ó"
+          },
+          "session": {
+            "name": "Iarratas"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Píblíne Assist ar iarraidh do {remote}",
+      "description": "Tá an cianrialtán **{remote}** socraithe chun an phíblíne Assist `{pipeline}` a úsáid, nach bhfuil ann a thuilleadh. Teipeann ar iarratais ghutha ón gcianrialtán seo go dtí go roghnaíonn tú píblíne eile.\n\nTéigh go **Socruithe → Feistí & seirbhísí → Bluetooth Remote Voice**, oscail roghchlár **{remote}**, roghnaigh **Cumraigh**, agus roghnaigh píblíne atá ann cheana."
+    },
+    "speaker_missing": {
+      "title": "Callaire freagra ar iarraidh do {remote}",
+      "description": "Tá an cianrialtán **{remote}** socraithe chun freagraí a sheinm ar `{speaker}`, nach bhfuil ann a thuilleadh. Rithfear orduithe fós, ach ní sheinnfear a bhfreagra labhartha.\n\nTéigh go **Socruithe → Feistí & seirbhísí → Bluetooth Remote Voice**, oscail roghchlár **{remote}**, roghnaigh **Cumraigh**, agus roghnaigh callaire eile nó roghnaigh gan aon cheann."
+    }
+  }
+}

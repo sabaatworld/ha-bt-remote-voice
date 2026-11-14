@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Vyberte spárovaný ovladač",
+        "description": "Nejprve spárujte ovladač mimo Home Assistant a poté ho probuďte tlačítkem se šipkou, aby bylo možné ho ověřit. Vyberte ho ze seznamu nebo zadejte jeho adresu Bluetooth.",
+        "data": {
+          "device": "Spárovaný ovladač"
+        },
+        "data_description": {
+          "device": "Ovladače, které jsou již spárované s tímto hostitelem Home Assistant. Pokud váš v seznamu chybí, zvolte ruční možnost."
+        }
+      },
+      "manual": {
+        "title": "Zadejte adresu spárovaného ovladače",
+        "description": "Zadejte adresu Bluetooth ovladače, který je již spárovaný s tímto hostitelem.",
+        "data": {
+          "address": "Adresa Bluetooth"
+        },
+        "data_description": {
+          "address": "Šest dvojic šestnáctkových číslic oddělených dvojtečkami, například AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Vyberte pipeline Assist",
+        "description": "Před odesláním probuďte ovladač tlačítkem se šipkou. Integrace se spouští v režimu pouhého přepisu; jakmile vše funguje, změňte to v možnostech.",
+        "data": {
+          "pipeline_id": "Pipeline Assist"
+        },
+        "data_description": {
+          "pipeline_id": "Pipeline Assist, která zpracovává řeč z tohoto ovladače."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Místní Bluetooth není k dispozici. Zkontrolujte, zda je přístupná systémová sběrnice D-Bus.",
+      "wake_remote": "Probuďte spárovaný ovladač tlačítkem se šipkou a zkuste to znovu.",
+      "not_paired": "Nejprve tento ovladač spárujte externě.",
+      "multiple_adapters": "Tento ovladač je spárován s více adaptéry. Ponechte jeho párování pouze na jednom adaptéru.",
+      "invalid_address": "Zadejte adresu Bluetooth ve formátu AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Tento ovladač neposkytuje podporovaný hlasový profil ATVV v0.4/v1.0 ADPCM.",
+      "invalid_pipeline": "Vyberte existující pipeline Assist.",
+      "hidraw_unavailable": "Vstupní zařízení ovladače není pro Home Assistant dostupné. Probuďte ovladač a zkontrolujte, zda Home Assistant vidí zařízení /dev/hidraw.",
+      "hidraw_permission_denied": "Home Assistant nemá oprávnění číst vstupní zařízení ovladače. Potřebný přístup k zařízení najdete v souboru README.",
+      "opus_decoder_unavailable": "Home Assistant nemá k dispozici audio dekodér Opus, který tento ovladač vyžaduje."
+    },
+    "abort": {
+      "already_configured": "Tento ovladač je již nakonfigurován.",
+      "no_pipelines": "Před přidáním ovladače vytvořte pipeline Assist."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Hlasová nastavení",
+        "description": "Tato nastavení určují, jak se zpracovávají stisky a jak se vyslovují odpovědi. Nahrazení požadavku nemůže vrátit zpět akce, které již provedl. Současný plný duplex není k dispozici. Zastavení po přepisu nevypíná nástroje zabudované v poskytovateli živé řeči; pokud je nutné akce zakázat, použijte poskytovatele pouze pro přepis.\n\n**Podmínka odpovědi:** aby byla odpověď vyslovena, musí být splněny všechny její podmínky. Kontrolují se jednou na začátku každého požadavku; ponechte prázdné, aby se odpovědi vyslovovaly vždy, a podmínka, kterou nelze vyhodnotit, se považuje za nesplněnou. Podmínky šablony mohou používat proměnné `speaker`, `remote` a `held`.",
+        "data": {
+          "pipeline_id": "Pipeline Assist",
+          "mode": "Hlasový režim",
+          "speaker": "Reproduktor odpovědí",
+          "output_mode": "Načasování odpovědi",
+          "stream_head_start": "Náskok streamování",
+          "busy_processing": "Nový stisk během zpracování",
+          "busy_playback": "Nový stisk během odpovědi",
+          "context_mode": "Kontext konverzace",
+          "input_mode": "Chování tlačítka",
+          "min_press_seconds": "Ignorovat krátké stisky",
+          "max_request_seconds": "Maximální délka požadavku",
+          "max_conversation_seconds": "Maximální délka konverzace",
+          "reply_condition": "Podmínka odpovědi"
+        },
+        "data_description": {
+          "pipeline_id": "Pipeline Assist, která zpracovává řeč: převod řeči na text, konverzačního agenta a převod textu na řeč. Odebraná pipeline skončí chybou a nepřepne se na jinou.",
+          "mode": "Pouze přepis se zastaví po rozpoznání řeči a nepřehraje žádnou odpověď. Provádění příkazů spustí celou pipeline a odpověď vysloví na reproduktoru odpovědí.",
+          "speaker": "Přehrávač médií, který odpovědi vyslovuje. Používá se pouze při provádění příkazů. Zvolte bez hlasové odpovědi, aby se pipeline zastavila před přehráním odpovědi.",
+          "output_mode": "Automatické streamování začne mluvit, jakmile je streamovaná odpověď připravena. Čekání na úplnou odpověď začne později, ale přehraje hotový zvukový soubor, což zabrání přerušování u poskytovatelů, kteří generují řeč jen přibližně v reálném čase.",
+          "stream_head_start": "Zdrží začátek streamované odpovědi o tolik sekund, aby si reproduktor mohl vytvořit vyrovnávací paměť; odpovědi, které skončí dříve, se přehrají hned. Zvyšte, pokud se streamované odpovědi v prvních sekundách přerušují. Bez účinku při čekání na úplnou odpověď. 0 ponechává výchozí chování.",
+          "busy_processing": "Co udělat, když je tlačítko stisknuto dříve, než je zodpovězen předchozí požadavek: stisk odmítnout, ponechat jeden čekající požadavek, nebo nahradit aktuální požadavek. Nahrazení nemůže vrátit zpět akce, které již byly provedeny.",
+          "busy_playback": "Co udělat, když je tlačítko stisknuto během přehrávání odpovědi: stisk odmítnout, poté zodpovědět jeden čekající požadavek, nebo odpověď zastavit a zahájit nový požadavek.",
+          "context_mode": "Opětovné použití zachová konverzaci Home Assistant, aby fungovaly navazující dotazy jako „a dvakrát tolik?“. Nová konverzace z každého stisku udělá samostatnou konverzaci.",
+          "input_mode": "Jeden požadavek na podržení nahrává, dokud se tlačítko nepustí. Střídavá konverzace poslouchá, dokud je tlačítko podrženo: mluvíte, uděláte pauzu, vyslechnete odpověď a mluvíte znovu. Vyžaduje ovladač s funkcí „podrž a mluv“.",
+          "min_press_seconds": "Ignoruje klepnutí na hlasové tlačítko kratší než tato hodnota, aby falešné klepnutí nikdy nezahájilo požadavek; skutečné podržení začne o tolik později. 0 to vypne. Užitečné pro ovladač Fire TV, který po probuzení selže s chybou „Žádný zvuk z mikrofonu“: znovu odešle klávesu, která ho probudila, jako okamžité klepnutí. Dobrým začátkem je 0,1 s. Pouze ovladače Fire TV.",
+          "max_request_seconds": "Nejdelší doba jednoho požadavku na libovolném ovladači: celé podržení v režimu jednoho požadavku a každé kolo ve střídavé konverzaci. Dosažení limitu ukončí požadavek chybou limitu záznamu. Snižte, aby se zastavilo nahrávání zaseknutého tlačítka; zvyšte pro dlouhé diktování. Ovladače bez funkce „podrž a mluv“ také končí po zhruba 15 sekundách řeči nebo při tichu, podle toho, co nastane dříve.",
+          "max_conversation_seconds": "Nejdelší doba celého podržení tlačítka v režimu střídavé konverzace. V režimu jednoho požadavku se ignoruje a nesmí být kratší než maximální délka požadavku.",
+          "reply_condition": "Podmínky, které musí být všechny splněny, aby byla odpověď vyslovena. Kontrolují se jednou na začátku každého požadavku (a každého kola ve střídavé konverzaci). Ponechte prázdné, aby se vyslovovalo vždy. Podmínka, která skončí chybou, se považuje za nesplněnou. Podmínky šablony mohou používat proměnné speaker, remote a held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Zvolte přehrávač médií, který podporuje přehrávání zvuku, nebo žádnou hlasovou odpověď.",
+      "invalid_preferences": "Zvolte jednu z podporovaných hlasových předvoleb.",
+      "invalid_pipeline": "Vyberte existující pipeline Assist.",
+      "invalid_reply_condition": "Podmínka odpovědi není platná. Zkontrolujte podmínky a zkuste to znovu.",
+      "pipeline_missing": "Pipeline Assist uložená pro tento ovladač již neexistuje. Vyberte jinou.",
+      "speaker_missing": "Uložený reproduktor odpovědí není právě dostupný, takže se odpovědi nepřehrají, dokud se nevrátí. Ponechte ho, nebo vyberte jiný."
+    },
+    "abort": {
+      "no_pipelines": "Nejprve vytvořte pipeline Assist."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Zadat adresu Bluetooth"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Pouze přepis",
+        "commands": "Provádět příkazy"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Bez hlasové odpovědi"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatické streamování",
+        "buffered": "Počkat na úplnou odpověď"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Odmítnout nový požadavek",
+        "queue": "Zařadit jeden požadavek do fronty",
+        "replace": "Nahradit aktuální požadavek"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Odmítnout nový požadavek",
+        "queue": "Zařadit jeden požadavek do fronty",
+        "replace": "Nahradit aktuální odpověď"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Znovu použít konverzaci",
+        "fresh": "Nová konverzace pro každý požadavek"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Jeden požadavek na podržení",
+        "conversation": "Konverzace při podržení (střídavě)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Hlas",
+        "state_attributes": {
+          "ready": {
+            "name": "Připraveno"
+          },
+          "last_error": {
+            "name": "Kód poslední chyby"
+          },
+          "last_error_message": {
+            "name": "Zpráva poslední chyby"
+          },
+          "mode": {
+            "name": "Hlasový režim"
+          },
+          "sessions": {
+            "name": "Relace"
+          },
+          "failures": {
+            "name": "Selhání"
+          },
+          "rejected": {
+            "name": "Odmítnuté stisky"
+          },
+          "queued": {
+            "name": "Požadavky ve frontě"
+          },
+          "last_outcome": {
+            "name": "Poslední výsledek"
+          },
+          "full_duplex": {
+            "name": "Plný duplex"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Hlasové tlačítko",
+        "state_attributes": {
+          "event_type": {
+            "name": "Typ události",
+            "state": {
+              "pressed": "Stisknuto",
+              "released": "Uvolněno",
+              "accepted": "Přijato",
+              "rejected": "Odmítnuto",
+              "queued": "Ve frontě",
+              "failed": "Selhalo",
+              "context_reset": "Konverzace resetována",
+              "reply_skipped": "Odpověď přeskočena"
+            }
+          },
+          "outcome": {
+            "name": "Výsledek"
+          },
+          "stage": {
+            "name": "Fáze"
+          },
+          "code": {
+            "name": "Kód"
+          },
+          "message": {
+            "name": "Zpráva"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofon aktivní"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Poslední chyba",
+        "state": {
+          "none": "Žádná chyba",
+          "busy": "Stále se odpovídá na předchozí požadavek.",
+          "queue_full": "Jeden požadavek již čeká. Zkuste to po odpovědi.",
+          "queue_expired": "Čekající požadavek vypršel. Stiskněte tlačítko a mluvte znovu.",
+          "queue_discarded": "Čekající požadavek byl zahozen.",
+          "queue_failed": "Čekající požadavek se nepodařilo spustit.",
+          "capture_limit": "Byl dosažen limit záznamu z mikrofonu. Použijte kratší požadavek.",
+          "buffer_overflow": "Zvuk z mikrofonu se nahromadil dříve, než ho začala číst služba řeči.",
+          "audio_sequence_gap": "Synchronizace zvuku selhala. Stiskněte tlačítko a zkuste to znovu.",
+          "invalid_audio_sync": "Ovladač odeslal neplatnou zprávu o synchronizaci zvuku.",
+          "invalid_audio_frame": "Ovladač odeslal poškozený zvukový rámec.",
+          "invalid_control": "Ovladač odeslal neplatnou řídicí zprávu.",
+          "unsupported_audio_start": "Ovladač zahájil zvuk způsobem, který tato integrace nepodporuje.",
+          "incomplete_utterance": "Zvuk skončil dříve, než byl požadavek úplný.",
+          "audio_stalled": "Zvuk z mikrofonu přestal přicházet. Zkuste to znovu.",
+          "audio_failed": "Zvuk z mikrofonu selhal.",
+          "no_audio": "Nebyl přijat žádný zvuk z mikrofonu.",
+          "no_speech": "Nebyla zjištěna žádná řeč.",
+          "held_mode_unsupported": "Střídavá konverzace vyžaduje ovladač s funkcí „podrž a mluv“.",
+          "held_failed": "Konverzace při podržení tlačítka selhala.",
+          "held_turn_failed": "Kolo konverzace selhalo.",
+          "remote_stopped": "Ovladač neočekávaně zastavil mikrofon.",
+          "disconnected": "Ovladač se odpojil.",
+          "cancelled": "Požadavek byl zrušen.",
+          "pipeline_finished_early": "Pipeline Assist skončila dříve, než byl přečten všechen zvuk.",
+          "pipeline_timeout": "Pipeline Assist odpovídala příliš dlouho.",
+          "pipeline_failed": "Pipeline Assist selhala.",
+          "pipeline_removed": "Vybraná pipeline Assist již neexistuje.",
+          "playback_stop_unverified": "Nepodařilo se ověřit, že se předchozí odpověď zastavila. Počkejte, až bude reproduktor nečinný.",
+          "playback_stop_failed": "Předchozí odpověď se nepodařilo zastavit.",
+          "playback_start_timeout": "Reproduktor nezačal odpověď přehrávat.",
+          "playback_finish_timeout": "Reproduktor nedokončil přehrávání odpovědi včas.",
+          "playback_interrupted": "Odpověď byla na reproduktoru přerušena.",
+          "speaker_unavailable": "Reproduktor odpovědí není dostupný.",
+          "speaker_busy": "Reproduktor odpovědí je zaneprázdněn.",
+          "speaker_cannot_play": "Reproduktor odpovědí nemůže přehrávat zvuk z Home Assistant.",
+          "missing_tts_audio": "Odpověď neměla žádný zvuk k přehrání.",
+          "generation_retirement_failed": "Předchozí požadavek se ještě nezastavil. Počkejte prosím.",
+          "replacement_retirement_failed": "Aktuální požadavek se nepodařilo zastavit, aby mohl začít nový.",
+          "microphone_open_failed": "Mikrofon ovladače se nepodařilo otevřít.",
+          "microphone_open_rejected": "Ovladač odmítl otevřít svůj mikrofon.",
+          "microphone_start_timeout": "Ovladač nespustil svůj mikrofon včas.",
+          "microphone_close_failed": "Mikrofon ovladače se nepodařilo zavřít.",
+          "microphone_keepalive_failed": "Připojení k mikrofonu ovladače bylo ztraceno.",
+          "active_generation_cancelled": "Připravovaná odpověď byla zrušena a kontext konverzace byl resetován.",
+          "wake_remote": "Probuďte ovladač tlačítkem se šipkou a zkuste to znovu.",
+          "bluetooth_unavailable": "Místní Bluetooth není k dispozici.",
+          "bluetooth_operation_failed": "Operace Bluetooth selhala.",
+          "not_paired": "Ovladač není s tímto hostitelem spárován.",
+          "multiple_adapters": "Ovladač je spárován s více než jedním adaptérem.",
+          "voice_service_unavailable": "Ovladač nenabízí hlasovou službu.",
+          "unsupported_write": "Do hlasového ovládání ovladače nelze zapisovat.",
+          "unsupported_capabilities": "Ovladač ohlásil hlasové schopnosti, které tato integrace nepodporuje.",
+          "unsupported_codec": "Ovladač používá zvukový formát, který tato integrace nepodporuje.",
+          "invalid_frame_size": "Ovladač ohlásil neplatnou velikost zvukového rámce.",
+          "hidraw_unavailable": "Vstupní zařízení ovladače není pro Home Assistant dostupné.",
+          "hidraw_permission_denied": "Home Assistant nemá oprávnění číst vstupní zařízení ovladače.",
+          "opus_decoder_unavailable": "Home Assistant nemá k dispozici audio dekodér Opus.",
+          "invalid_opus_packet": "Ovladač odeslal zvuk, který nešlo dekódovat.",
+          "other": "Došlo k jiné chybě. Podrobnosti uvádí kód chyby."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kód"
+          },
+          "stage": {
+            "name": "Fáze"
+          },
+          "since": {
+            "name": "Od"
+          },
+          "session": {
+            "name": "Požadavek"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Chybí pipeline Assist pro {remote}",
+      "description": "Ovladač **{remote}** je nastaven na použití pipeline Assist `{pipeline}`, která již neexistuje. Hlasové požadavky z tohoto ovladače selhávají, dokud nevyberete jinou pipeline.\n\nPřejděte do **Nastavení → Zařízení a služby → Bluetooth Remote Voice**, otevřete nabídku **{remote}**, zvolte **Nakonfigurovat** a vyberte existující pipeline."
+    },
+    "speaker_missing": {
+      "title": "Chybí reproduktor odpovědí pro {remote}",
+      "description": "Ovladač **{remote}** je nastaven na přehrávání odpovědí na `{speaker}`, který již neexistuje. Příkazy se stále provádějí, ale jejich hlasová odpověď se nepřehraje.\n\nPřejděte do **Nastavení → Zařízení a služby → Bluetooth Remote Voice**, otevřete nabídku **{remote}**, zvolte **Nakonfigurovat** a vyberte jiný reproduktor nebo zvolte žádný."
+    }
+  }
+}

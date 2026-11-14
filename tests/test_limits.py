@@ -223,9 +223,9 @@ def test_readme_options_table_follows_form_order():
     from pathlib import Path
 
     root = Path(__file__).parents[1]
-    labels = json.loads((root / "custom_components/bt_remote_voice/strings.json").read_text())[
-        "options"
-    ]["step"]["init"]["data"]
+    labels = json.loads(
+        (root / "custom_components/bt_remote_voice/translations/en.json").read_text()
+    )["options"]["step"]["init"]["data"]
     readme = (root / "README.md").read_text()
     table = readme.split("### Options")[1].split("\n\n")[1]
     rows = [re.match(r"\| ([^|]+) \|", line).group(1).strip() for line in table.splitlines()[2:]]

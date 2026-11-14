@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Selectați telecomanda asociată",
+        "description": "Asociați mai întâi telecomanda în afara Home Assistant, apoi activați-o cu un buton săgeată pentru a putea fi verificată. Alegeți-o din listă sau introduceți adresa ei Bluetooth.",
+        "data": {
+          "device": "Telecomandă asociată"
+        },
+        "data_description": {
+          "device": "Telecomenzi deja asociate cu această gazdă Home Assistant. Alegeți opțiunea manuală dacă a dumneavoastră nu apare în listă."
+        }
+      },
+      "manual": {
+        "title": "Introduceți adresa telecomenzii asociate",
+        "description": "Introduceți adresa Bluetooth a unei telecomenzi deja asociate cu această gazdă.",
+        "data": {
+          "address": "Adresă Bluetooth"
+        },
+        "data_description": {
+          "address": "Șase perechi de cifre hexazecimale separate prin două puncte, de exemplu AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Selectați pipeline-ul Assist",
+        "description": "Activați telecomanda cu un buton săgeată înainte de trimitere. Integrarea pornește în modul doar transcriere; schimbați acest lucru în opțiuni după ce funcționează.",
+        "data": {
+          "pipeline_id": "Pipeline Assist"
+        },
+        "data_description": {
+          "pipeline_id": "Pipeline-ul Assist care procesează vocea de la această telecomandă."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Bluetooth-ul local nu este disponibil. Verificați dacă D-Bus-ul sistemului este accesibil.",
+      "wake_remote": "Activați telecomanda asociată cu un buton săgeată, apoi încercați din nou.",
+      "not_paired": "Asociați mai întâi această telecomandă din exterior.",
+      "multiple_adapters": "Această telecomandă este asociată pe mai multe adaptoare. Păstrați asocierea pe un singur adaptor.",
+      "invalid_address": "Introduceți o adresă Bluetooth în formatul AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Această telecomandă nu oferă un profil vocal ADPCM ATVV v0.4/v1.0 acceptat.",
+      "invalid_pipeline": "Alegeți un pipeline Assist existent.",
+      "hidraw_unavailable": "Dispozitivul de intrare al telecomenzii nu este disponibil pentru Home Assistant. Activați telecomanda și verificați dacă Home Assistant vede dispozitivele /dev/hidraw.",
+      "hidraw_permission_denied": "Home Assistant nu are permisiunea de a citi dispozitivul de intrare al telecomenzii. Consultați README pentru accesul la dispozitiv necesar acestei telecomenzi.",
+      "opus_decoder_unavailable": "Home Assistant nu dispune de un decodor audio Opus, necesar pentru această telecomandă."
+    },
+    "abort": {
+      "already_configured": "Această telecomandă este deja configurată.",
+      "no_pipelines": "Creați un pipeline Assist înainte de a adăuga telecomanda."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Setări vocale",
+        "description": "Aceste setări controlează modul în care sunt tratate apăsările și modul în care sunt rostite răspunsurile. Înlocuirea unei cereri nu poate anula acțiunile deja efectuate. Duplexul complet simultan nu este disponibil. Oprirea după transcriere nu dezactivează instrumentele integrate într-un furnizor de voce live; utilizați un furnizor doar pentru transcriere când acțiunile trebuie dezactivate.\n\n**Condiție de răspuns:** toate condițiile sale trebuie îndeplinite pentru ca un răspuns să fie rostit. Sunt verificate o singură dată la începutul fiecărei cereri; lăsați-o goală pentru a rosti întotdeauna răspunsul, iar o condiție care nu poate fi evaluată se consideră neîndeplinită. Condițiile de tip șablon pot folosi variabilele `speaker`, `remote` și `held`.",
+        "data": {
+          "pipeline_id": "Pipeline Assist",
+          "mode": "Mod vocal",
+          "speaker": "Difuzor pentru răspuns",
+          "output_mode": "Momentul răspunsului",
+          "stream_head_start": "Avans pentru streaming",
+          "busy_processing": "Apăsare nouă în timpul procesării",
+          "busy_playback": "Apăsare nouă în timpul răspunsului",
+          "context_mode": "Contextul conversației",
+          "input_mode": "Comportamentul butonului",
+          "min_press_seconds": "Ignoră apăsările scurte",
+          "max_request_seconds": "Durata maximă a cererii",
+          "max_conversation_seconds": "Durata maximă a conversației",
+          "reply_condition": "Condiție de răspuns"
+        },
+        "data_description": {
+          "pipeline_id": "Pipeline-ul Assist care procesează vocea: conversia vorbirii în text, agentul de conversație și conversia textului în vorbire. Un pipeline eliminat generează o eroare în loc să se treacă la altul.",
+          "mode": "Doar transcriere se oprește după recunoașterea vorbirii și nu redă niciun răspuns. Execută comenzi rulează întregul pipeline și rostește răspunsul pe difuzorul pentru răspuns.",
+          "speaker": "Playerul media care rostește răspunsurile. Folosit doar la executarea comenzilor. Alegeți fără răspuns vocal pentru a opri pipeline-ul înainte de redarea răspunsului.",
+          "output_mode": "Streamingul automat începe să vorbească imediat ce un răspuns transmis în flux este gata. Așteptarea răspunsului complet începe mai târziu, dar redă un fișier audio finalizat, evitând întreruperile la furnizorii care produc vorbirea doar aproximativ în timp real.",
+          "stream_head_start": "Întârzie începutul unui răspuns transmis în flux cu acest număr de secunde, pentru ca difuzorul să poată face buffering; răspunsurile care se termină mai repede sunt redate imediat. Măriți valoarea dacă răspunsurile în flux se întrerup în primele secunde. Fără efect la așteptarea răspunsului complet. 0 păstrează comportamentul implicit.",
+          "busy_processing": "Ce se întâmplă când butonul este apăsat înainte ca cererea anterioară să primească răspuns: respinge apăsarea, păstrează o cerere în așteptare sau înlocuiește cererea curentă. Înlocuirea nu poate anula acțiunile deja efectuate.",
+          "busy_playback": "Ce se întâmplă când butonul este apăsat în timp ce se redă un răspuns: respinge apăsarea, răspunde ulterior unei cereri în așteptare sau oprește răspunsul și pornește noua cerere.",
+          "context_mode": "Reutilizare păstrează conversația Home Assistant, astfel încât întrebările ulterioare, cum ar fi „și dublul?”, funcționează. Nouă face din fiecare apăsare o conversație independentă.",
+          "input_mode": "O cerere per apăsare înregistrează până la eliberarea butonului. Conversația alternativă continuă să asculte cât timp butonul este ținut apăsat: vorbiți, faceți o pauză, auziți răspunsul, apoi vorbiți din nou. Necesită o telecomandă cu apăsare pentru vorbit.",
+          "min_press_seconds": "Ignoră atingerile butonului vocal mai scurte decât această valoare, astfel încât o atingere accidentală să nu pornească niciodată o cerere; o apăsare reală pornește cu această întârziere. 0 dezactivează funcția. Util pentru o telecomandă Fire TV care eșuează cu „Niciun sunet de la microfon” imediat după activare: retrimite tasta care a activat-o ca o atingere instantanee. 0,1 s este un bun punct de plecare. Doar pentru telecomenzile Fire TV.",
+          "max_request_seconds": "Durata maximă a unei singure cereri pe orice telecomandă: o apăsare întreagă în modul O cerere și fiecare tură în conversația alternativă. La atingerea ei, cererea se încheie cu o eroare de limită de captură. Micșorați-o pentru a opri înregistrarea cu butonul blocat; măriți-o pentru dictare lungă. Telecomenzile fără apăsare pentru vorbit se încheie și după aproximativ 15 secunde de vorbire sau la tăcere, oricare survine prima.",
+          "max_conversation_seconds": "Durata maximă a unei apăsări întregi a butonului în modul conversație alternativă. Este ignorată în modul O cerere și nu trebuie să fie mai scurtă decât durata maximă a cererii.",
+          "reply_condition": "Condiții care trebuie să fie toate îndeplinite pentru ca un răspuns să fie rostit. Verificate o singură dată la începutul fiecărei cereri (și al fiecărei ture în conversația alternativă). Lăsați gol pentru a rosti întotdeauna răspunsul. O condiție care generează o eroare se consideră neîndeplinită. Condițiile de tip șablon pot folosi variabilele speaker, remote și held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Alegeți un player media care acceptă redarea audio sau fără răspuns vocal.",
+      "invalid_preferences": "Alegeți una dintre preferințele vocale acceptate.",
+      "invalid_pipeline": "Alegeți un pipeline Assist existent.",
+      "invalid_reply_condition": "Condiția de răspuns nu este validă. Verificați condițiile și încercați din nou.",
+      "pipeline_missing": "Pipeline-ul Assist salvat pentru această telecomandă nu mai există. Alegeți altul.",
+      "speaker_missing": "Difuzorul de răspuns salvat nu este disponibil momentan, deci răspunsurile nu vor fi redate până când revine. Păstrați-l sau alegeți altul."
+    },
+    "abort": {
+      "no_pipelines": "Creați mai întâi un pipeline Assist."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Introduceți adresa Bluetooth"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Doar transcriere",
+        "commands": "Execută comenzi"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Fără răspuns vocal"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Streaming automat",
+        "buffered": "Așteaptă răspunsul complet"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Respinge cererea nouă",
+        "queue": "Pune în coadă o cerere",
+        "replace": "Înlocuiește cererea curentă"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Respinge cererea nouă",
+        "queue": "Pune în coadă o cerere",
+        "replace": "Înlocuiește răspunsul curent"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Reutilizează conversația",
+        "fresh": "Conversație nouă pentru fiecare cerere"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "O cerere per apăsare",
+        "conversation": "Conversație cât timp este apăsat (alternativ)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Voce",
+        "state_attributes": {
+          "ready": {
+            "name": "Gata"
+          },
+          "last_error": {
+            "name": "Codul ultimei erori"
+          },
+          "last_error_message": {
+            "name": "Mesajul ultimei erori"
+          },
+          "mode": {
+            "name": "Mod vocal"
+          },
+          "sessions": {
+            "name": "Sesiuni"
+          },
+          "failures": {
+            "name": "Eșecuri"
+          },
+          "rejected": {
+            "name": "Apăsări respinse"
+          },
+          "queued": {
+            "name": "Cereri în coadă"
+          },
+          "last_outcome": {
+            "name": "Ultimul rezultat"
+          },
+          "full_duplex": {
+            "name": "Duplex complet"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Buton vocal",
+        "state_attributes": {
+          "event_type": {
+            "name": "Tip eveniment",
+            "state": {
+              "pressed": "Apăsat",
+              "released": "Eliberat",
+              "accepted": "Acceptat",
+              "rejected": "Respins",
+              "queued": "În coadă",
+              "failed": "Eșuat",
+              "context_reset": "Conversație resetată",
+              "reply_skipped": "Răspuns omis"
+            }
+          },
+          "outcome": {
+            "name": "Rezultat"
+          },
+          "stage": {
+            "name": "Etapă"
+          },
+          "code": {
+            "name": "Cod"
+          },
+          "message": {
+            "name": "Mesaj"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Microfon activ"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Ultima eroare",
+        "state": {
+          "none": "Nicio eroare",
+          "busy": "Încă se răspunde la cererea anterioară.",
+          "queue_full": "O cerere este deja în așteptare. Încercați după răspuns.",
+          "queue_expired": "Cererea în așteptare a expirat. Apăsați și vorbiți din nou.",
+          "queue_discarded": "Cererea în așteptare a fost eliminată.",
+          "queue_failed": "Cererea în așteptare nu a putut fi pornită.",
+          "capture_limit": "Limita de captură a microfonului a fost atinsă. Folosiți o cerere mai scurtă.",
+          "buffer_overflow": "Sunetul de la microfon s-a acumulat înainte ca serviciul vocal să înceapă să îl citească.",
+          "audio_sequence_gap": "Sincronizarea audio a eșuat. Apăsați și încercați din nou.",
+          "invalid_audio_sync": "Telecomanda a trimis un mesaj de sincronizare audio nevalid.",
+          "invalid_audio_frame": "Telecomanda a trimis un cadru audio deteriorat.",
+          "invalid_control": "Telecomanda a trimis un mesaj de control nevalid.",
+          "unsupported_audio_start": "Telecomanda a pornit sunetul într-un mod pe care această integrare nu îl acceptă.",
+          "incomplete_utterance": "Sunetul s-a încheiat înainte ca cererea să fie completă.",
+          "audio_stalled": "Sunetul de la microfon nu mai sosește. Încercați din nou.",
+          "audio_failed": "Sunetul de la microfon a eșuat.",
+          "no_audio": "Nu s-a primit niciun sunet de la microfon.",
+          "no_speech": "Nu a fost detectată vorbire.",
+          "held_mode_unsupported": "Conversația alternativă necesită o telecomandă cu apăsare pentru vorbit.",
+          "held_failed": "Conversația cu butonul ținut apăsat a eșuat.",
+          "held_turn_failed": "O tură a conversației a eșuat.",
+          "remote_stopped": "Telecomanda a oprit microfonul în mod neașteptat.",
+          "disconnected": "Telecomanda s-a deconectat.",
+          "cancelled": "Cererea a fost anulată.",
+          "pipeline_finished_early": "Pipeline-ul Assist s-a încheiat înainte ca tot sunetul să fie citit.",
+          "pipeline_timeout": "Pipeline-ul Assist a durat prea mult să răspundă.",
+          "pipeline_failed": "Pipeline-ul Assist a eșuat.",
+          "pipeline_removed": "Pipeline-ul Assist selectat nu mai există.",
+          "playback_stop_unverified": "Nu s-a putut verifica dacă răspunsul anterior s-a oprit. Așteptați până când difuzorul este inactiv.",
+          "playback_stop_failed": "Răspunsul anterior nu a putut fi oprit.",
+          "playback_start_timeout": "Difuzorul nu a început să redea răspunsul.",
+          "playback_finish_timeout": "Difuzorul nu a terminat redarea răspunsului la timp.",
+          "playback_interrupted": "Răspunsul a fost întrerupt pe difuzor.",
+          "speaker_unavailable": "Difuzorul pentru răspuns nu este disponibil.",
+          "speaker_busy": "Difuzorul pentru răspuns este ocupat.",
+          "speaker_cannot_play": "Difuzorul pentru răspuns nu poate reda sunet de la Home Assistant.",
+          "missing_tts_audio": "Răspunsul nu avea sunet de redat.",
+          "generation_retirement_failed": "Cererea anterioară nu s-a oprit încă. Așteptați.",
+          "replacement_retirement_failed": "Cererea curentă nu a putut fi oprită pentru a porni cea nouă.",
+          "microphone_open_failed": "Microfonul telecomenzii nu a putut fi deschis.",
+          "microphone_open_rejected": "Telecomanda a refuzat să deschidă microfonul.",
+          "microphone_start_timeout": "Telecomanda nu și-a pornit microfonul la timp.",
+          "microphone_close_failed": "Microfonul telecomenzii nu a putut fi închis.",
+          "microphone_keepalive_failed": "Conexiunea cu microfonul telecomenzii a fost pierdută.",
+          "active_generation_cancelled": "Răspunsul în curs de pregătire a fost anulat, iar contextul conversației a fost resetat.",
+          "wake_remote": "Activați telecomanda cu un buton săgeată, apoi încercați din nou.",
+          "bluetooth_unavailable": "Bluetooth-ul local nu este disponibil.",
+          "bluetooth_operation_failed": "O operațiune Bluetooth a eșuat.",
+          "not_paired": "Telecomanda nu este asociată cu această gazdă.",
+          "multiple_adapters": "Telecomanda este asociată pe mai mult de un adaptor.",
+          "voice_service_unavailable": "Telecomanda nu oferă un serviciu vocal.",
+          "unsupported_write": "Comanda vocală a telecomenzii nu poate fi scrisă.",
+          "unsupported_capabilities": "Telecomanda a raportat capabilități vocale pe care această integrare nu le acceptă.",
+          "unsupported_codec": "Telecomanda folosește un format audio pe care această integrare nu îl acceptă.",
+          "invalid_frame_size": "Telecomanda a raportat o dimensiune nevalidă a cadrului audio.",
+          "hidraw_unavailable": "Dispozitivul de intrare al telecomenzii nu este disponibil pentru Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant nu are permisiunea de a citi dispozitivul de intrare al telecomenzii.",
+          "opus_decoder_unavailable": "Home Assistant nu dispune de un decodor audio Opus.",
+          "invalid_opus_packet": "Telecomanda a trimis sunet care nu a putut fi decodat.",
+          "other": "A apărut o altă eroare. Codul erorii oferă detaliile."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Cod"
+          },
+          "stage": {
+            "name": "Etapă"
+          },
+          "since": {
+            "name": "Din"
+          },
+          "session": {
+            "name": "Cerere"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Pipeline Assist lipsă pentru {remote}",
+      "description": "Telecomanda **{remote}** este setată să folosească pipeline-ul Assist `{pipeline}`, care nu mai există. Cererile vocale de la această telecomandă eșuează până când alegeți alt pipeline.\n\nAccesați **Setări → Dispozitive și servicii → Bluetooth Remote Voice**, deschideți meniul pentru **{remote}**, alegeți **Configurează** și selectați un pipeline existent."
+    },
+    "speaker_missing": {
+      "title": "Difuzor de răspuns lipsă pentru {remote}",
+      "description": "Telecomanda **{remote}** este setată să redea răspunsurile pe `{speaker}`, care nu mai există. Comenzile sunt în continuare executate, dar răspunsul vocal nu va fi redat.\n\nAccesați **Setări → Dispozitive și servicii → Bluetooth Remote Voice**, deschideți meniul pentru **{remote}**, alegeți **Configurează** și selectați alt difuzor sau fără."
+    }
+  }
+}

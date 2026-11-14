@@ -26,7 +26,7 @@ FORM_ORDER = (
     "max_conversation_seconds",
 )
 
-# Allowed values per choice option. Labels live in strings.json under "selector"
+# Allowed values per choice option. Labels live in translations/en.json under "selector"
 # (translation_key == option name), never in code.
 CHOICES = {
     "output_mode": ("auto", "buffered"),
@@ -94,7 +94,7 @@ def capability_status():
 
 
 # Stable failure codes. Each has a translated state under entity.sensor.last_error.state;
-# keep this tuple and strings.json in step (a test enforces it).
+# keep this tuple and translations/en.json in step (a test enforces it).
 ERROR_CODES = (
     "busy",
     "queue_full",

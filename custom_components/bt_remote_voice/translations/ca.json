@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Selecciona el comandament vinculat",
+        "description": "Vincula primer el comandament fora de Home Assistant i desperta’l amb un botó de fletxa perquè es pugui verificar. Tria’l de la llista o introdueix-ne l’adreça Bluetooth.",
+        "data": {
+          "device": "Comandament vinculat"
+        },
+        "data_description": {
+          "device": "Comandaments ja vinculats en aquest amfitrió de Home Assistant. Tria l’opció manual si el teu no apareix a la llista."
+        }
+      },
+      "manual": {
+        "title": "Introdueix l’adreça del comandament vinculat",
+        "description": "Introdueix l’adreça Bluetooth d’un comandament que ja està vinculat en aquest amfitrió.",
+        "data": {
+          "address": "Adreça Bluetooth"
+        },
+        "data_description": {
+          "address": "Sis parells de dígits hexadecimals separats per dos punts, per exemple AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Selecciona el pipeline d’Assist",
+        "description": "Desperta el comandament amb un botó de fletxa abans d’enviar. La integració comença en mode de només transcripció; canvia-ho a les opcions quan funcioni.",
+        "data": {
+          "pipeline_id": "Pipeline d’Assist"
+        },
+        "data_description": {
+          "pipeline_id": "El pipeline d’Assist que processa la veu d’aquest comandament."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "El Bluetooth local no està disponible. Comprova que es pot accedir al D-Bus del sistema.",
+      "wake_remote": "Desperta el comandament vinculat amb un botó de fletxa i torna-ho a provar.",
+      "not_paired": "Vincula primer aquest comandament fora de Home Assistant.",
+      "multiple_adapters": "Aquest comandament està vinculat a diversos adaptadors. Mantén-ne el vincle en un sol adaptador.",
+      "invalid_address": "Introdueix una adreça Bluetooth amb el format AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Aquest comandament no ofereix un perfil de veu ATVV v0.4/v1.0 ADPCM compatible.",
+      "invalid_pipeline": "Tria un pipeline d’Assist existent.",
+      "hidraw_unavailable": "El dispositiu d’entrada del comandament no està disponible per a Home Assistant. Desperta el comandament i comprova que Home Assistant pot veure els dispositius /dev/hidraw.",
+      "hidraw_permission_denied": "Home Assistant no té permís per llegir el dispositiu d’entrada del comandament. Consulta el README per saber quin accés al dispositiu necessita aquest comandament.",
+      "opus_decoder_unavailable": "Home Assistant no disposa de cap descodificador d’àudio Opus, que aquest comandament necessita."
+    },
+    "abort": {
+      "already_configured": "Aquest comandament ja està configurat.",
+      "no_pipelines": "Crea un pipeline d’Assist abans d’afegir el comandament."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configuració de veu",
+        "description": "Aquesta configuració controla com es gestionen les pulsacions i com es diuen les respostes. Substituir una sol·licitud no pot desfer les accions que ja ha dut a terme. El dúplex complet simultani no està disponible. Aturar-se després de la transcripció no desactiva les eines integrades en un proveïdor de veu en directe; utilitza un proveïdor de només transcripció quan calgui desactivar les accions.\n\n**Condició de resposta:** s’han de complir totes les seves condicions perquè es digui una resposta. Es comproven una vegada a l’inici de cada sol·licitud; deixa-ho buit per respondre sempre en veu alta, i una condició que no es pot avaluar compta com a no complerta. Les condicions de plantilla poden utilitzar les variables `speaker`, `remote` i `held`.",
+        "data": {
+          "pipeline_id": "Pipeline d’Assist",
+          "mode": "Mode de veu",
+          "speaker": "Altaveu de resposta",
+          "output_mode": "Moment de la resposta",
+          "stream_head_start": "Avantatge del streaming",
+          "busy_processing": "Nova pulsació durant el processament",
+          "busy_playback": "Nova pulsació durant la resposta",
+          "context_mode": "Context de la conversa",
+          "input_mode": "Comportament del botó",
+          "min_press_seconds": "Ignora les pulsacions curtes",
+          "max_request_seconds": "Durada màxima de la sol·licitud",
+          "max_conversation_seconds": "Durada màxima de la conversa",
+          "reply_condition": "Condició de resposta"
+        },
+        "data_description": {
+          "pipeline_id": "El pipeline d’Assist que processa la veu: veu a text, agent de conversa i text a veu. Un pipeline eliminat falla amb un error en lloc de recórrer-ne un altre.",
+          "mode": "Només transcripció s’atura després del reconeixement de veu i no reprodueix cap resposta. Executa ordres executa tot el pipeline i diu la resposta a l’altaveu de resposta.",
+          "speaker": "El reproductor multimèdia que diu les respostes. Només s’utilitza en executar ordres. Tria «Sense resposta parlada» per aturar el pipeline abans de reproduir la resposta.",
+          "output_mode": "El streaming automàtic comença a parlar tan bon punt hi ha una resposta en streaming a punt. Esperar la resposta completa comença més tard, però reprodueix un fitxer d’àudio acabat, cosa que evita talls amb proveïdors que només produeixen veu a un ritme proper al temps real.",
+          "stream_head_start": "Endarrereix l’inici d’una resposta en streaming aquest nombre de segons perquè l’altaveu pugui emmagatzemar a la memòria intermèdia; les respostes que acaben abans es reprodueixen de seguida. Augmenta-ho si les respostes en streaming es tallen els primers segons. Sense efecte quan s’espera la resposta completa. 0 manté el comportament per defecte.",
+          "busy_processing": "Què fer quan es prem el botó abans que s’hagi respost la sol·licitud anterior: rebutjar la pulsació, mantenir una sol·licitud pendent o substituir la sol·licitud actual. Substituir no pot desfer les accions ja dutes a terme.",
+          "busy_playback": "Què fer quan es prem el botó mentre es reprodueix una resposta: rebutjar la pulsació, respondre després una sol·licitud pendent, o aturar la resposta i iniciar la nova sol·licitud.",
+          "context_mode": "Reutilitzar manté la conversa de Home Assistant perquè funcionin preguntes de seguiment com «i el doble?». Nova fa que cada pulsació sigui una conversa independent.",
+          "input_mode": "Una sol·licitud per pulsació mantinguda grava fins que s’amolla el botó. La conversa alternada continua escoltant mentre es manté el botó: parla, fes una pausa, escolta la resposta i torna a parlar. Necessita un comandament de prémer per parlar.",
+          "min_press_seconds": "Ignora les pulsacions del botó de veu més curtes que aquest valor, de manera que una pulsació espúria mai iniciï una sol·licitud; una pulsació mantinguda real comença aquest temps més tard. 0 ho desactiva. Útil per a un comandament Fire TV que falla amb «No s’ha rebut àudio del micròfon.» just després de despertar-se: reenvia la tecla que l’ha despertat com una pulsació instantània. 0,1 s és un bon punt de partida. Només per a comandaments Fire TV.",
+          "max_request_seconds": "La durada màxima d’una sola sol·licitud en qualsevol comandament: tota la pulsació mantinguda en el mode Una sol·licitud, i cada torn en Conversa alternada. En arribar-hi, la sol·licitud acaba amb un error de límit de captura. Redueix-ho per aturar la gravació d’un botó encallat; augmenta-ho per a dictats llargs. Els comandaments que no són de prémer per parlar també acaben al cap d’uns 15 segons de veu o en el silenci, el que passi primer.",
+          "max_conversation_seconds": "La durada màxima de tota una pulsació mantinguda en el mode Conversa alternada. S’ignora en el mode Una sol·licitud i no pot ser inferior a la durada màxima de la sol·licitud.",
+          "reply_condition": "Condicions que s’han de complir totes perquè es digui una resposta. Es comproven una vegada a l’inici de cada sol·licitud (i de cada torn en Conversa alternada). Deixa-ho buit per respondre sempre en veu alta. Una condició que dona error compta com a no complerta. Les condicions de plantilla poden utilitzar les variables speaker, remote i held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Tria un reproductor multimèdia que admeti la reproducció d’àudio, o cap resposta parlada.",
+      "invalid_preferences": "Tria una de les preferències de veu compatibles.",
+      "invalid_pipeline": "Tria un pipeline d’Assist existent.",
+      "invalid_reply_condition": "La condició de resposta no és vàlida. Revisa les condicions i torna-ho a provar.",
+      "pipeline_missing": "El pipeline d’Assist desat per a aquest comandament ja no existeix. Tria’n un altre.",
+      "speaker_missing": "L’altaveu de resposta desat no està disponible ara mateix, de manera que les respostes no es reproduiran fins que torni. Conserva’l o tria’n un altre."
+    },
+    "abort": {
+      "no_pipelines": "Crea primer un pipeline d’Assist."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Introdueix l’adreça Bluetooth"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Només transcripció",
+        "commands": "Executa ordres"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Sense resposta parlada"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Streaming automàtic",
+        "buffered": "Espera la resposta completa"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Rebutja la nova sol·licitud",
+        "queue": "Posa una sol·licitud en cua",
+        "replace": "Substitueix la sol·licitud actual"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Rebutja la nova sol·licitud",
+        "queue": "Posa una sol·licitud en cua",
+        "replace": "Substitueix la resposta actual"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Reutilitza la conversa",
+        "fresh": "Conversa nova per sol·licitud"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Una sol·licitud per pulsació mantinguda",
+        "conversation": "Conversa mentre es manté (alternada)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Veu",
+        "state_attributes": {
+          "ready": {
+            "name": "A punt"
+          },
+          "last_error": {
+            "name": "Codi de l’últim error"
+          },
+          "last_error_message": {
+            "name": "Missatge de l’últim error"
+          },
+          "mode": {
+            "name": "Mode de veu"
+          },
+          "sessions": {
+            "name": "Sessions"
+          },
+          "failures": {
+            "name": "Errors"
+          },
+          "rejected": {
+            "name": "Pulsacions rebutjades"
+          },
+          "queued": {
+            "name": "Sol·licituds en cua"
+          },
+          "last_outcome": {
+            "name": "Últim resultat"
+          },
+          "full_duplex": {
+            "name": "Dúplex complet"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Botó de veu",
+        "state_attributes": {
+          "event_type": {
+            "name": "Tipus d’esdeveniment",
+            "state": {
+              "pressed": "Premut",
+              "released": "Deixat anar",
+              "accepted": "Acceptat",
+              "rejected": "Rebutjat",
+              "queued": "En cua",
+              "failed": "Fallat",
+              "context_reset": "Conversa restablerta",
+              "reply_skipped": "Resposta omesa"
+            }
+          },
+          "outcome": {
+            "name": "Resultat"
+          },
+          "stage": {
+            "name": "Fase"
+          },
+          "code": {
+            "name": "Codi"
+          },
+          "message": {
+            "name": "Missatge"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Micròfon actiu"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Últim error",
+        "state": {
+          "none": "Cap error",
+          "busy": "Encara s’està responent a la sol·licitud anterior.",
+          "queue_full": "Ja hi ha una sol·licitud en espera. Torna-ho a provar després de la resposta.",
+          "queue_expired": "La sol·licitud en espera ha caducat. Prem i parla de nou.",
+          "queue_discarded": "La sol·licitud en espera s’ha descartat.",
+          "queue_failed": "No s’ha pogut iniciar la sol·licitud en espera.",
+          "capture_limit": "S’ha assolit el límit de captura del micròfon. Fes una sol·licitud més curta.",
+          "buffer_overflow": "L’àudio del micròfon s’ha acumulat abans que el servei de veu comencés a llegir-lo.",
+          "audio_sequence_gap": "Ha fallat la sincronització de l’àudio. Prem i torna-ho a provar.",
+          "invalid_audio_sync": "El comandament ha enviat un missatge de sincronització d’àudio no vàlid.",
+          "invalid_audio_frame": "El comandament ha enviat una trama d’àudio malmesa.",
+          "invalid_control": "El comandament ha enviat un missatge de control no vàlid.",
+          "unsupported_audio_start": "El comandament ha iniciat l’àudio d’una manera que aquesta integració no admet.",
+          "incomplete_utterance": "L’àudio ha acabat abans que la sol·licitud fos completa.",
+          "audio_stalled": "L’àudio del micròfon ha deixat d’arribar. Torna-ho a provar.",
+          "audio_failed": "Ha fallat l’àudio del micròfon.",
+          "no_audio": "No s’ha rebut àudio del micròfon.",
+          "no_speech": "No s’ha detectat veu.",
+          "held_mode_unsupported": "La conversa alternada necessita un comandament de prémer per parlar.",
+          "held_failed": "Ha fallat la conversa mentre es mantenia el botó.",
+          "held_turn_failed": "Ha fallat un torn de la conversa.",
+          "remote_stopped": "El comandament ha aturat el micròfon de manera inesperada.",
+          "disconnected": "El comandament s’ha desconnectat.",
+          "cancelled": "S’ha cancel·lat la sol·licitud.",
+          "pipeline_finished_early": "El pipeline d’Assist ha acabat abans que es llegís tot l’àudio.",
+          "pipeline_timeout": "El pipeline d’Assist ha trigat massa a respondre.",
+          "pipeline_failed": "Ha fallat el pipeline d’Assist.",
+          "pipeline_removed": "El pipeline d’Assist seleccionat ja no existeix.",
+          "playback_stop_unverified": "No s’ha pogut verificar que la resposta anterior s’hagi aturat. Espera que l’altaveu estigui inactiu.",
+          "playback_stop_failed": "No s’ha pogut aturar la resposta anterior.",
+          "playback_start_timeout": "L’altaveu no ha començat a reproduir la resposta.",
+          "playback_finish_timeout": "L’altaveu no ha acabat de reproduir la resposta a temps.",
+          "playback_interrupted": "La resposta s’ha interromput a l’altaveu.",
+          "speaker_unavailable": "L’altaveu de resposta no està disponible.",
+          "speaker_busy": "L’altaveu de resposta està ocupat.",
+          "speaker_cannot_play": "L’altaveu de resposta no pot reproduir àudio de Home Assistant.",
+          "missing_tts_audio": "La resposta no tenia àudio per reproduir.",
+          "generation_retirement_failed": "La sol·licitud anterior encara no s’ha aturat. Espera.",
+          "replacement_retirement_failed": "No s’ha pogut aturar la sol·licitud actual per iniciar la nova.",
+          "microphone_open_failed": "No s’ha pogut obrir el micròfon del comandament.",
+          "microphone_open_rejected": "El comandament ha rebutjat obrir el seu micròfon.",
+          "microphone_start_timeout": "El comandament no ha iniciat el seu micròfon a temps.",
+          "microphone_close_failed": "No s’ha pogut tancar el micròfon del comandament.",
+          "microphone_keepalive_failed": "S’ha perdut la connexió amb el micròfon del comandament.",
+          "active_generation_cancelled": "S’ha cancel·lat la resposta que s’estava preparant i s’ha restablert el context de la conversa.",
+          "wake_remote": "Desperta el comandament amb un botó de fletxa i torna-ho a provar.",
+          "bluetooth_unavailable": "El Bluetooth local no està disponible.",
+          "bluetooth_operation_failed": "Ha fallat una operació de Bluetooth.",
+          "not_paired": "El comandament no està vinculat en aquest amfitrió.",
+          "multiple_adapters": "El comandament està vinculat a més d’un adaptador.",
+          "voice_service_unavailable": "El comandament no ofereix cap servei de veu.",
+          "unsupported_write": "No es pot escriure al control de veu del comandament.",
+          "unsupported_capabilities": "El comandament ha informat de capacitats de veu que aquesta integració no admet.",
+          "unsupported_codec": "El comandament utilitza un format d’àudio que aquesta integració no admet.",
+          "invalid_frame_size": "El comandament ha informat d’una mida de trama d’àudio no vàlida.",
+          "hidraw_unavailable": "El dispositiu d’entrada del comandament no està disponible per a Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant no té permís per llegir el dispositiu d’entrada del comandament.",
+          "opus_decoder_unavailable": "Home Assistant no disposa de cap descodificador d’àudio Opus.",
+          "invalid_opus_packet": "El comandament ha enviat àudio que no s’ha pogut descodificar.",
+          "other": "S’ha produït un altre error. El codi d’error en dona els detalls."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Codi"
+          },
+          "stage": {
+            "name": "Fase"
+          },
+          "since": {
+            "name": "Des de"
+          },
+          "session": {
+            "name": "Sol·licitud"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Falta el pipeline d’Assist de {remote}",
+      "description": "El comandament **{remote}** està configurat per utilitzar el pipeline d’Assist `{pipeline}`, que ja no existeix. Les sol·licituds de veu d’aquest comandament fallen fins que triïs un altre pipeline.\n\nVés a **Configuració → Dispositius i serveis → Bluetooth Remote Voice**, obre el menú de **{remote}**, tria **Configura** i selecciona un pipeline existent."
+    },
+    "speaker_missing": {
+      "title": "Falta l’altaveu de resposta de {remote}",
+      "description": "El comandament **{remote}** està configurat per reproduir les respostes a `{speaker}`, que ja no existeix. Les ordres encara s’executen, però la seva resposta parlada no es reproduirà.\n\nVés a **Configuració → Dispositius i serveis → Bluetooth Remote Voice**, obre el menú de **{remote}**, tria **Configura** i selecciona un altre altaveu o cap."
+    }
+  }
+}

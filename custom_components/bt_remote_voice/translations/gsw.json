@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Gkoppleti Fernbedienig uswähle",
+        "description": "Koppled Sie Ihri Fernbedienig zersch usserhalb vo Home Assistant und wecked Sie si denn mit ere Pfiltaschte uf, damit si cha überprüeft wärde. Wähled Sie si us de Liste us oder gäbed Sie ihri Bluetooth-Adrässe ii.",
+        "data": {
+          "device": "Gkoppleti Fernbedienig"
+        },
+        "data_description": {
+          "device": "Fernbedienige, wo scho uf dem Home-Assistant-Host gkoppled sind. Wähled Sie d Option für d manuelli Igab, wenn Ihri nöd ufgfüehrt isch."
+        }
+      },
+      "manual": {
+        "title": "Adrässe vo de gkoppleten Fernbedienig iigää",
+        "description": "Gänd Sie d Bluetooth-Adrässe vore Fernbedienig ii, wo scho uf dem Host gkoppled isch.",
+        "data": {
+          "address": "Bluetooth-Adrässe"
+        },
+        "data_description": {
+          "address": "Sächs Paar hexadezimali Ziffere, mit Doppelpünkt trännt, zum Bispil AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Assist-Pipeline uswähle",
+        "description": "Wecked Sie d Fernbedienig vor em Abschicke mit ere Pfiltaschte uf. D Integration startet im Modus nur für d Transkription; ändered Sie das i de Optione, sobald alles funktioniert.",
+        "data": {
+          "pipeline_id": "Assist-Pipeline"
+        },
+        "data_description": {
+          "pipeline_id": "D Assist-Pipeline, wo d Sprach vo dere Fernbedienig verarbeitet."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Lokals Bluetooth isch nöd verfüegbar. Prüefed Sie, öb de System-D-Bus erreichbar isch.",
+      "wake_remote": "Wecked Sie die gkoppleti Fernbedienig mit ere Pfiltaschte uf und probiered Sie s nomal.",
+      "not_paired": "Koppled Sie die Fernbedienig zersch extern.",
+      "multiple_adapters": "Die Fernbedienig isch uf mehrere Adapter gkoppled. Bhaltet Sie d Koppelig nume uf eim Adapter.",
+      "invalid_address": "Gänd Sie e Bluetooth-Adrässe im Format AA:BB:CC:DD:EE:FF ii.",
+      "unsupported_remote": "Die Fernbedienig bietet käis unterstützts ATVV-v0.4/v1.0-ADPCM-Sprachprofil.",
+      "invalid_pipeline": "Wähled Sie e bestehendi Assist-Pipeline us.",
+      "hidraw_unavailable": "S Igabgrät vo de Fernbedienig isch für Home Assistant nöd verfüegbar. Wecked Sie d Fernbedienig uf und prüefed Sie, öb Home Assistant /dev/hidraw-Grät gseht.",
+      "hidraw_permission_denied": "Home Assistant darf s Igabgrät vo de Fernbedienig nöd läse. Wele Grätezuegriff die Fernbedienig bruucht, staat im README.",
+      "opus_decoder_unavailable": "Für Home Assistant isch kein Opus-Audiodecoder verfüegbar, wo die Fernbedienig bruucht."
+    },
+    "abort": {
+      "already_configured": "Die Fernbedienig isch scho konfiguriert.",
+      "no_pipelines": "Erstellled Sie e Assist-Pipeline, bevor Sie d Fernbedienig hinzuefüeged."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Spracheistellige",
+        "description": "Die Istellige legged fescht, wie Tastedrück behandlet und wie Antworte gsproche wärded. S Ersetze vore Aafrag cha scho usgfüehrti Aktione nöd rückgängig mache. Gliichziitige Vollduplex-Betrieb isch nöd verfüegbar. S Stoppe nach de Transkription deaktiviert kei Wärkzüüg, wo i en Live-Sprachaabieter iibaut sind; verwänded Sie en Aabieter nume für d Transkription, wenn Aktione müend deaktiviert sii.\n\n**Antwortbedingig:** Alli Bedingige müend erfüllt sii, damit e Antwort gsproche wird. Si wärded eimal am Afang vo jeder Aafrag prüeft; lönd Sie s Fäld läär, damit immer gsproche wird. E Bedingig, wo nöd cha uusgwärtet wärde, gilt als nöd erfüllt. Template-Bedingige chönd d Variable `speaker`, `remote` und `held` bruuche.",
+        "data": {
+          "pipeline_id": "Assist-Pipeline",
+          "mode": "Sprachmodus",
+          "speaker": "Antwort-Lautsprächer",
+          "output_mode": "Zitpunkt vo de Antwort",
+          "stream_head_start": "Streaming-Vorsprung",
+          "busy_processing": "Neue Tastedruck während de Verarbeitig",
+          "busy_playback": "Neue Tastedruck während de Antwort",
+          "context_mode": "Konversationskontext",
+          "input_mode": "Tastiverhalte",
+          "min_press_seconds": "Churzi Tastedrück ignoriere",
+          "max_request_seconds": "Maximali Aafraglängi",
+          "max_conversation_seconds": "Maximali Konversationslängi",
+          "reply_condition": "Antwortbedingig"
+        },
+        "data_description": {
+          "pipeline_id": "D Assist-Pipeline, wo Sprach verarbeitet: Spracherkennig, Konversationsagent und Sprachuusgab. E entfernti Pipeline füehrt zunere Fehlermäldig statt zunere Uswichlösig.",
+          "mode": "Nur Transkription stoppt nach de Spracherkennig und git kei Antwort wider. Befehl usfüehre füehrt di ganzi Pipeline us und spricht d Antwort über de Antwort-Lautsprächer.",
+          "speaker": "De Media-Player, wo Antworte spricht. Wird nume bim Usfüehre vo Befehl bruucht. Wähled Sie «Kei gsprochni Antwort», um d Pipeline vor de Widergab vo de Antwort z beände.",
+          "output_mode": "Automatischs Streaming fangt aa z spräche, sobald e gstreamti Antwort parat isch. S Warte uf di ganzi Antwort fangt spöter aa, spielt aber e fertigi Audiodatei ab. Das verhindered Ussetzer bi Aabieter, wo Sprach nume öppe i Ziitlupe erzüged.",
+          "stream_head_start": "Verzögered de Start vore gstreamte Antwort um die Aazahl Sekunde, damit de Lautsprächer cha puffere; Antworte, wo früener fertig sind, wärded sofort abgspielt. Erhöched Sie de Wert, wenn gstreamti Antworte i de erschte Sekunde ussetzed. Kei Würkig, wenn uf di ganzi Antwort gwartet wird. 0 bhaltet s Standardverhalte.",
+          "busy_processing": "Was passiert, wenn d Taschte drückt wird, bevor die vorig Aafrag beantwortet isch: de Tastedruck ablehne, e Aafrag vormerke oder die aktuell Aafrag ersetze. S Ersetze cha scho usgfüehrti Aktione nöd rückgängig mache.",
+          "busy_playback": "Was passiert, wenn d Taschte drückt wird, während e Antwort abgspielt wird: de Tastedruck ablehne, nachher e vorgmerkti Aafrag beantworte oder d Antwort stoppe und di neui Aafrag starte.",
+          "context_mode": "«Widerverwände» bhaltet d Home-Assistant-Konversation, so dass Folgfroge wie «und s Doppleti?» funktioniered. «Neu» macht jede Tastedruck zunere eigeständige Konversation.",
+          "input_mode": "«Ei Aafrag pro Halte» nimmt uf, bis d Taschte losglaa wird. «Wächslendi Konversation» lost wiiter, solang d Taschte gha wird: spräche, pausiere, d Antwort ghöre, denn wider spräche. Dafür bruucht s e Fernbedienig mit Push-to-Talk.",
+          "min_press_seconds": "Ignoriert churzi Aatippe vo de Sprachtaschte, wo churzer sind als dä Wert, damit es versehentlichs Aatippe kei Aafrag startet; es würklichs Halte fangt entsprächend spöter aa. 0 schaltet d Funktion uus. Nützlich für e Fire TV-Fernbedienig, wo grad nach em Ufwecke mit «No microphone audio» fehlschlaat: Si schickt d Taschte, wo si gweckt hät, nomal als churzes Aatippe. 0,1 s isch en gute Startwert. Nume für Fire TV-Fernbedienige.",
+          "max_request_seconds": "Di längsti Duur vo ere einzelne Aafrag bi jeder Fernbedienig: es ganzes Halte im Modus «Ei Aafrag» und jede Durchgang bi «Wächslendi Konversation». Wenn si erreicht wird, ändet d Aafrag mit emene Ufnahmegränze-Fehler. Verchlinered Sie si, um e hängendi Taschte am Ufnäh z hindere; erhöched Sie si für lang Diktat. Fernbedienige ohni Push-to-Talk ändet zudem nach öppe 15 Sekunde Sprach oder bi Stilli, je nachdem, was zersch iitrifft.",
+          "max_conversation_seconds": "Di längsti Duur vom ganze Tastehalte im Modus «Wächslendi Konversation». Im Modus «Ei Aafrag» wird si ignoriert und darf nöd churzer sii als d maximali Aafraglängi.",
+          "reply_condition": "Bedingige, wo alli müend erfüllt sii, damit e Antwort gsproche wird. Si wärded eimal am Afang vo jeder Aafrag prüeft (und bi jedem Durchgang i «Wächslendi Konversation»). Läär lah, damit immer gsproche wird. E Bedingig, wo en Fehler verursacht, gilt als nöd erfüllt. Template-Bedingige chönd d Variable speaker, remote und held bruuche."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Wähled Sie en Media-Player, wo s Abspile vo Audio unterstützt, oder kei gsprochni Antwort.",
+      "invalid_preferences": "Wähled Sie eini vo de unterstützte Spracheistellige.",
+      "invalid_pipeline": "Wähled Sie e bestehendi Assist-Pipeline us.",
+      "invalid_reply_condition": "D Antwortbedingig isch ungültig. Prüefed Sie d Bedingige und probiered Sie s nomal.",
+      "pipeline_missing": "D für die Fernbedienig gspeicheret Assist-Pipeline gits nüme. Wähled Sie en anderi us.",
+      "speaker_missing": "De gspeicheret Antwort-Lautsprächer isch im Momänt nöd verfüegbar, drum wärded Antworte erscht wider abgspielt, wenn är zrugg isch. Bhaltet Sie ihn oder wähled Sie en andere."
+    },
+    "abort": {
+      "no_pipelines": "Erstellled Sie zersch e Assist-Pipeline."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Bluetooth-Adrässe iigää"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Nur Transkription",
+        "commands": "Befehl usfüehre"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Kei gsprochni Antwort"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatischs Streaming",
+        "buffered": "Uf di ganzi Antwort warte"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Neui Aafrag ablehne",
+        "queue": "Ei Aafrag vormerke",
+        "replace": "Aktuell Aafrag ersetze"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Neui Aafrag ablehne",
+        "queue": "Ei Aafrag vormerke",
+        "replace": "Aktuelli Antwort ersetze"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Konversation widerverwände",
+        "fresh": "Neui Konversation pro Aafrag"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Ei Aafrag pro Halte",
+        "conversation": "Konversation bim Halte (wächslend)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Sprach",
+        "state_attributes": {
+          "ready": {
+            "name": "Parat"
+          },
+          "last_error": {
+            "name": "Letschte Fehlercode"
+          },
+          "last_error_message": {
+            "name": "Letschti Fehlermäldig"
+          },
+          "mode": {
+            "name": "Sprachmodus"
+          },
+          "sessions": {
+            "name": "Sitzige"
+          },
+          "failures": {
+            "name": "Fehlschläg"
+          },
+          "rejected": {
+            "name": "Abglehnti Tastedrück"
+          },
+          "queued": {
+            "name": "Vorgmerkti Aafrage"
+          },
+          "last_outcome": {
+            "name": "Letschts Ergäbnis"
+          },
+          "full_duplex": {
+            "name": "Vollduplex"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Sprachtaschte",
+        "state_attributes": {
+          "event_type": {
+            "name": "Ereignistyp",
+            "state": {
+              "pressed": "Drückt",
+              "released": "Losglaa",
+              "accepted": "Aagnoo",
+              "rejected": "Abglehnt",
+              "queued": "Vorgmerkt",
+              "failed": "Fehlgschlage",
+              "context_reset": "Konversation zrugggsetzt",
+              "reply_skipped": "Antwort überschprunge"
+            }
+          },
+          "outcome": {
+            "name": "Ergäbnis"
+          },
+          "stage": {
+            "name": "Phase"
+          },
+          "code": {
+            "name": "Code"
+          },
+          "message": {
+            "name": "Nachricht"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofon aktiv"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Letschte Fehler",
+        "state": {
+          "none": "Kein Fehler",
+          "busy": "Die vorig Aafrag wird immer no beantwortet.",
+          "queue_full": "E Aafrag wartet scho. Bitte probiered Sie s nach de Antwort.",
+          "queue_expired": "D wartend Aafrag isch abgloffe. Bitte drücked Sie d Taschte und spräched Sie nomal.",
+          "queue_discarded": "D wartend Aafrag isch verworfe worde.",
+          "queue_failed": "D wartend Aafrag het nöd chönne gstartet wärde.",
+          "capture_limit": "S Ufnahmelimit vom Mikrofon isch erreicht worde. Bitte verwänded Sie e churzeri Aafrag.",
+          "buffer_overflow": "S Mikrofon-Audio het sich gstaut, bevor de Sprachdienscht aagfange het, es z läse.",
+          "audio_sequence_gap": "D Audiosynchronisierig isch fehlgschlage. Bitte drücked Sie d Taschte und probiered Sie s nomal.",
+          "invalid_audio_sync": "D Fernbedienig het e ungültigi Audiosynchronisierigsnachricht gschickt.",
+          "invalid_audio_frame": "D Fernbedienig het en beschädigete Audio-Frame gschickt.",
+          "invalid_control": "D Fernbedienig het e ungültigi Steuernachricht gschickt.",
+          "unsupported_audio_start": "D Fernbedienig het Audio uf e Art gstartet, wo die Integration nöd unterstützt.",
+          "incomplete_utterance": "S Audio isch z Änd gsi, bevor d Aafrag vollständig gsi isch.",
+          "audio_stalled": "S chunnt kei Mikrofon-Audio meh a. Bitte probiered Sie s nomal.",
+          "audio_failed": "S Mikrofon-Audio isch fehlgschlage.",
+          "no_audio": "Es isch kei Mikrofon-Audio empfange worde.",
+          "no_speech": "Es isch kei Sprach erkannt worde.",
+          "held_mode_unsupported": "D Wächslendi Konversation bruucht e Fernbedienig mit Push-to-Talk.",
+          "held_failed": "D Konversation bim Halte vo de Taschte isch fehlgschlage.",
+          "held_turn_failed": "En Durchgang vo de Konversation isch fehlgschlage.",
+          "remote_stopped": "D Fernbedienig het s Mikrofon unerwartet gstoppt.",
+          "disconnected": "D Verbindig zur Fernbedienig isch trännt worde.",
+          "cancelled": "D Aafrag isch abbroche worde.",
+          "pipeline_finished_early": "D Assist-Pipeline isch beändet worde, bevor s ganz Audio gläse worde isch.",
+          "pipeline_timeout": "D Assist-Pipeline het z lang für d Antwort bruucht.",
+          "pipeline_failed": "D Assist-Pipeline isch fehlgschlage.",
+          "pipeline_removed": "D usgwählt Assist-Pipeline gits nüme.",
+          "playback_stop_unverified": "Es het nöd chönne überprüeft wärde, öb die vorig Antwort gstoppt worde isch. Wartet Sie, bis de Lautsprächer inaktiv isch.",
+          "playback_stop_failed": "D vorig Antwort het nöd chönne gstoppt wärde.",
+          "playback_start_timeout": "De Lautsprächer het d Widergab vo de Antwort nöd gstartet.",
+          "playback_finish_timeout": "De Lautsprächer het d Widergab vo de Antwort nöd rechtziitig beändet.",
+          "playback_interrupted": "D Antwort isch uf em Lautsprächer unterbroche worde.",
+          "speaker_unavailable": "De Antwort-Lautsprächer isch nöd verfüegbar.",
+          "speaker_busy": "De Antwort-Lautsprächer isch bsetzt.",
+          "speaker_cannot_play": "De Antwort-Lautsprächer cha kei Audio vo Home Assistant abspile.",
+          "missing_tts_audio": "D Antwort het kei Audio zum Abspile gha.",
+          "generation_retirement_failed": "D vorig Aafrag isch no nöd gstoppt worde. Bitte wartet Sie.",
+          "replacement_retirement_failed": "D aktuell Aafrag het nöd chönne gstoppt wärde, um di neui z starte.",
+          "microphone_open_failed": "S Mikrofon vo de Fernbedienig het nöd chönne göffnet wärde.",
+          "microphone_open_rejected": "D Fernbedienig het s Öffne vo ihrem Mikrofon abglehnt.",
+          "microphone_start_timeout": "D Fernbedienig het ihres Mikrofon nöd rechtziitig gstartet.",
+          "microphone_close_failed": "S Mikrofon vo de Fernbedienig het nöd chönne gschlosse wärde.",
+          "microphone_keepalive_failed": "D Mikrofonverbindig vo de Fernbedienig isch verlore gange.",
+          "active_generation_cancelled": "D Antwort, wo vorbereitet worde isch, isch abbroche und de Konversationskontext zrugggsetzt worde.",
+          "wake_remote": "Wecked Sie d Fernbedienig mit ere Pfiltaschte uf und probiered Sie s nomal.",
+          "bluetooth_unavailable": "Lokals Bluetooth isch nöd verfüegbar.",
+          "bluetooth_operation_failed": "E Bluetooth-Vorgang isch fehlgschlage.",
+          "not_paired": "D Fernbedienig isch uf dem Host nöd gkoppled.",
+          "multiple_adapters": "D Fernbedienig isch uf meh als eim Adapter gkoppled.",
+          "voice_service_unavailable": "D Fernbedienig bietet kei Sprachdienscht aa.",
+          "unsupported_write": "D Sprachsteuerig vo de Fernbedienig cha nöd beschriibe wärde.",
+          "unsupported_capabilities": "D Fernbedienig het Sprachfunktione gmäldet, wo die Integration nöd unterstützt.",
+          "unsupported_codec": "D Fernbedienig bruucht es Audioformat, wo die Integration nöd unterstützt.",
+          "invalid_frame_size": "D Fernbedienig het e ungültigi Audio-Frame-Grössi gmäldet.",
+          "hidraw_unavailable": "S Igabgrät vo de Fernbedienig isch für Home Assistant nöd verfüegbar.",
+          "hidraw_permission_denied": "Home Assistant darf s Igabgrät vo de Fernbedienig nöd läse.",
+          "opus_decoder_unavailable": "Für Home Assistant isch kein Opus-Audiodecoder verfüegbar.",
+          "invalid_opus_packet": "D Fernbedienig het Audio gschickt, wo nöd het chönne dekodiert wärde.",
+          "other": "Es isch en anderen Fehler ufträte. De Fehlercode git d Details."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Code"
+          },
+          "stage": {
+            "name": "Phase"
+          },
+          "since": {
+            "name": "Siit"
+          },
+          "session": {
+            "name": "Aafrag"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist-Pipeline fehlt für {remote}",
+      "description": "D Fernbedienig **{remote}** isch uf d Assist-Pipeline `{pipeline}` igstellt, wo s nüme git. Sprachaafrage vo dere Fernbedienig schlönd fehl, bis Sie e anderi Pipeline uswähled.\n\nGönd Sie zu **Istellige → Grät & Dienscht → Bluetooth Remote Voice**, öffned Sie s Menü vo **{remote}**, wähled Sie **Konfiguriere** und wähled Sie e bestehendi Pipeline us."
+    },
+    "speaker_missing": {
+      "title": "Antwort-Lautsprächer fehlt für {remote}",
+      "description": "D Fernbedienig **{remote}** isch so igstellt, dass Antworte uf `{speaker}` abgspielt wärded, wo s nüme git. Befehl wärded wiiterhin usgfüehrt, aber ihri gsprochni Antwort wird nöd abgspielt.\n\nGönd Sie zu **Istellige → Grät & Dienscht → Bluetooth Remote Voice**, öffned Sie s Menü vo **{remote}**, wähled Sie **Konfiguriere** und wähled Sie en anderen Lautsprächer oder keine us."
+    }
+  }
+}

@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Izaberite upareni daljinski",
+        "description": "Prvo uparite daljinski van Home Assistant-a, a zatim ga probudite pritiskom na dugme sa strelicom kako bi mogao da se proveri. Izaberite ga sa liste ili unesite njegovu Bluetooth adresu.",
+        "data": {
+          "device": "Upareni daljinski"
+        },
+        "data_description": {
+          "device": "Daljinski koji su već upareni sa ovim Home Assistant hostom. Izaberite ručni unos ako vašeg nema na listi."
+        }
+      },
+      "manual": {
+        "title": "Unesite adresu uparenog daljinskog",
+        "description": "Unesite Bluetooth adresu daljinskog koji je već uparen sa ovim hostom.",
+        "data": {
+          "address": "Bluetooth adresa"
+        },
+        "data_description": {
+          "address": "Šest parova heksadecimalnih cifara razdvojenih dvotačkama, na primer AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Izaberite Assist cevovod",
+        "description": "Pre slanja probudite daljinski pritiskom na dugme sa strelicom. Integracija počinje u režimu samo transkripcije; promenite to u opcijama kada proradi.",
+        "data": {
+          "pipeline_id": "Assist cevovod"
+        },
+        "data_description": {
+          "pipeline_id": "Assist cevovod koji obrađuje govor sa ovog daljinskog."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Lokalni Bluetooth nije dostupan. Proverite da li je sistemski D-Bus dostupan.",
+      "wake_remote": "Probudite upareni daljinski pritiskom na dugme sa strelicom, pa pokušajte ponovo.",
+      "not_paired": "Prvo uparite ovaj daljinski van Home Assistant-a.",
+      "multiple_adapters": "Ovaj daljinski je uparen na više adaptera. Zadržite uparivanje samo na jednom adapteru.",
+      "invalid_address": "Unesite Bluetooth adresu u formatu AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Ovaj daljinski ne pruža podržan ATVV v0.4/v1.0 ADPCM glasovni profil.",
+      "invalid_pipeline": "Izaberite postojeći Assist cevovod.",
+      "hidraw_unavailable": "Ulazni uređaj daljinskog nije dostupan Home Assistant-u. Probudite daljinski i proverite da li Home Assistant vidi /dev/hidraw uređaje.",
+      "hidraw_permission_denied": "Home Assistant nema dozvolu da čita ulazni uređaj daljinskog. Pogledajte README za pristup uređaju koji ovaj daljinski zahteva.",
+      "opus_decoder_unavailable": "Home Assistant-u nije dostupan Opus audio dekoder, koji ovaj daljinski zahteva."
+    },
+    "abort": {
+      "already_configured": "Ovaj daljinski je već konfigurisan.",
+      "no_pipelines": "Kreirajte Assist cevovod pre dodavanja daljinskog."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Glasovna podešavanja",
+        "description": "Ova podešavanja određuju kako se obrađuju pritisci i kako se izgovaraju odgovori. Zamena zahteva ne može da poništi radnje koje je već izvršio. Istovremeni pun dupleks nije dostupan. Zaustavljanje nakon transkripcije ne isključuje alate ugrađene u provajdera govora uživo; koristite provajdera samo za transkripciju kada radnje moraju biti isključene.\n\n**Uslov odgovora:** svi njegovi uslovi moraju biti ispunjeni da bi odgovor bio izgovoren. Proveravaju se jednom na početku svakog zahteva; ostavite prazno da se uvek govori, a uslov koji se ne može proceniti smatra se neispunjenim. Uslovi šablona mogu koristiti promenljive `speaker`, `remote` i `held`.",
+        "data": {
+          "pipeline_id": "Assist cevovod",
+          "mode": "Glasovni režim",
+          "speaker": "Zvučnik za odgovore",
+          "output_mode": "Vreme odgovora",
+          "stream_head_start": "Prednost strimovanja",
+          "busy_processing": "Novi pritisak tokom obrade",
+          "busy_playback": "Novi pritisak tokom odgovora",
+          "context_mode": "Kontekst razgovora",
+          "input_mode": "Ponašanje dugmeta",
+          "min_press_seconds": "Ignoriši kratke pritiske",
+          "max_request_seconds": "Maksimalna dužina zahteva",
+          "max_conversation_seconds": "Maksimalna dužina razgovora",
+          "reply_condition": "Uslov odgovora"
+        },
+        "data_description": {
+          "pipeline_id": "Assist cevovod koji obrađuje govor: pretvaranje govora u tekst, agent za razgovor i pretvaranje teksta u govor. Uklonjeni cevovod dovodi do greške umesto prelaska na drugi.",
+          "mode": "Samo transkripcija se zaustavlja nakon prepoznavanja govora i ne reprodukuje odgovor. Izvršavanje komandi pokreće ceo cevovod i izgovara odgovor na zvučniku za odgovore.",
+          "speaker": "Media player koji izgovara odgovore. Koristi se samo pri izvršavanju komandi. Izaberite „Bez izgovorenog odgovora“ da se cevovod zaustavi pre reprodukcije odgovora.",
+          "output_mode": "Automatsko strimovanje počinje govor čim je strimovani odgovor spreman. Čekanje na kompletan odgovor počinje kasnije, ali reprodukuje gotovu audio datoteku, što izbegava prekide kod provajdera koji govor proizvode samo približno u realnom vremenu.",
+          "stream_head_start": "Odlaže početak strimovanog odgovora za ovoliko sekundi kako bi zvučnik mogao da napuni bafer; odgovori koji se završe ranije reprodukuju se odmah. Povećajte ako se strimovani odgovori prekidaju u prvim sekundama. Nema efekta kada se čeka kompletan odgovor. 0 zadržava podrazumevano ponašanje.",
+          "busy_processing": "Šta raditi kada se dugme pritisne pre odgovora na prethodni zahtev: odbiti pritisak, zadržati jedan zahtev na čekanju ili zameniti trenutni zahtev. Zamena ne može da poništi već izvršene radnje.",
+          "busy_playback": "Šta raditi kada se dugme pritisne dok se odgovor reprodukuje: odbiti pritisak, nakon toga odgovoriti na jedan zahtev na čekanju ili zaustaviti odgovor i započeti novi zahtev.",
+          "context_mode": "Ponovna upotreba zadržava Home Assistant razgovor kako bi nastavci poput „a udvostruči to?“ radili. Novi razgovor čini svaki pritisak nezavisnim razgovorom.",
+          "input_mode": "Jedan zahtev po držanju snima dok se dugme ne otpusti. Razgovor dok se drži (naizmenično) nastavlja da sluša dok se dugme drži: govorite, pauzirajte, čujte odgovor, pa ponovo govorite. Potreban je daljinski sa govorom na držanje.",
+          "min_press_seconds": "Ignoriše dodire glasovnog dugmeta kraće od ove vrednosti, tako da lažni dodir nikada ne pokrene zahtev; pravo držanje počinje za toliko kasnije. 0 isključuje. Korisno za Fire TV daljinski koji ne uspeva sa „Nije primljen zvuk sa mikrofona“ odmah nakon buđenja: ponovo šalje taster koji ga je probudio kao trenutni dodir. 0,1 s je dobra polazna tačka. Samo za Fire TV daljinske.",
+          "max_request_seconds": "Najduže trajanje jednog zahteva na bilo kom daljinskom: celo držanje u režimu jednog zahteva i svaki obrt u naizmeničnom razgovoru. Kada se dostigne, zahtev se završava greškom o ograničenju snimanja. Smanjite da biste zaustavili snimanje zaglavljenog dugmeta; povećajte za dugo diktiranje. Daljinski bez govora na držanje takođe se završavaju nakon oko 15 sekundi govora ili tišine, šta god nastupi prvo.",
+          "max_conversation_seconds": "Najduže trajanje celog držanja dugmeta u režimu naizmeničnog razgovora. Ignoriše se u režimu jednog zahteva i ne sme biti kraće od maksimalne dužine zahteva.",
+          "reply_condition": "Uslovi koji svi moraju biti ispunjeni da bi odgovor bio izgovoren. Proveravaju se jednom na početku svakog zahteva (i svakog obrta u naizmeničnom razgovoru). Ostavite prazno da se uvek govori. Uslov sa greškom smatra se neispunjenim. Uslovi šablona mogu koristiti promenljive speaker, remote i held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Izaberite media player koji podržava reprodukciju zvuka ili bez izgovorenog odgovora.",
+      "invalid_preferences": "Izaberite jednu od podržanih glasovnih postavki.",
+      "invalid_pipeline": "Izaberite postojeći Assist cevovod.",
+      "invalid_reply_condition": "Uslov odgovora nije važeći. Proverite uslove i pokušajte ponovo.",
+      "pipeline_missing": "Assist cevovod sačuvan za ovaj daljinski više ne postoji. Izaberite drugi.",
+      "speaker_missing": "Sačuvani zvučnik za odgovore trenutno nije dostupan, pa se odgovori neće reprodukovati dok se ne vrati. Zadržite ga ili izaberite drugi."
+    },
+    "abort": {
+      "no_pipelines": "Prvo kreirajte Assist cevovod."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Unesi Bluetooth adresu"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Samo transkripcija",
+        "commands": "Izvrši komande"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Bez izgovorenog odgovora"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatsko strimovanje",
+        "buffered": "Čekaj kompletan odgovor"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Odbij novi zahtev",
+        "queue": "Stavi jedan zahtev u red",
+        "replace": "Zameni trenutni zahtev"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Odbij novi zahtev",
+        "queue": "Stavi jedan zahtev u red",
+        "replace": "Zameni trenutni odgovor"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Ponovo koristi razgovor",
+        "fresh": "Novi razgovor za svaki zahtev"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Jedan zahtev po držanju",
+        "conversation": "Razgovor dok se drži (naizmenično)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Glas",
+        "state_attributes": {
+          "ready": {
+            "name": "Spremno"
+          },
+          "last_error": {
+            "name": "Kod poslednje greške"
+          },
+          "last_error_message": {
+            "name": "Poruka poslednje greške"
+          },
+          "mode": {
+            "name": "Glasovni režim"
+          },
+          "sessions": {
+            "name": "Sesije"
+          },
+          "failures": {
+            "name": "Neuspesi"
+          },
+          "rejected": {
+            "name": "Odbijeni pritisci"
+          },
+          "queued": {
+            "name": "Zahtevi u redu"
+          },
+          "last_outcome": {
+            "name": "Poslednji ishod"
+          },
+          "full_duplex": {
+            "name": "Pun dupleks"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Glasovno dugme",
+        "state_attributes": {
+          "event_type": {
+            "name": "Tip događaja",
+            "state": {
+              "pressed": "Pritisnuto",
+              "released": "Otpušteno",
+              "accepted": "Prihvaćeno",
+              "rejected": "Odbijeno",
+              "queued": "U redu",
+              "failed": "Neuspešno",
+              "context_reset": "Razgovor resetovan",
+              "reply_skipped": "Odgovor preskočen"
+            }
+          },
+          "outcome": {
+            "name": "Ishod"
+          },
+          "stage": {
+            "name": "Faza"
+          },
+          "code": {
+            "name": "Kod"
+          },
+          "message": {
+            "name": "Poruka"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofon aktivan"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Poslednja greška",
+        "state": {
+          "none": "Nema greške",
+          "busy": "Još se odgovara na prethodni zahtev.",
+          "queue_full": "Zahtev već čeka. Pokušajte nakon odgovora.",
+          "queue_expired": "Zahtev na čekanju je istekao. Pritisnite i govorite ponovo.",
+          "queue_discarded": "Zahtev na čekanju je odbačen.",
+          "queue_failed": "Zahtev na čekanju nije mogao da se pokrene.",
+          "capture_limit": "Dostignuto je ograničenje snimanja mikrofona. Koristite kraći zahtev.",
+          "buffer_overflow": "Zvuk sa mikrofona se nakupio pre nego što je usluga za govor počela da ga čita.",
+          "audio_sequence_gap": "Sinhronizacija zvuka nije uspela. Pritisnite i pokušajte ponovo.",
+          "invalid_audio_sync": "Daljinski je poslao nevažeću poruku za sinhronizaciju zvuka.",
+          "invalid_audio_frame": "Daljinski je poslao oštećen audio okvir.",
+          "invalid_control": "Daljinski je poslao nevažeću kontrolnu poruku.",
+          "unsupported_audio_start": "Daljinski je pokrenuo zvuk na način koji ova integracija ne podržava.",
+          "incomplete_utterance": "Zvuk se završio pre nego što je zahtev bio kompletan.",
+          "audio_stalled": "Zvuk sa mikrofona je prestao da stiže. Pokušajte ponovo.",
+          "audio_failed": "Zvuk sa mikrofona nije uspeo.",
+          "no_audio": "Nije primljen zvuk sa mikrofona.",
+          "no_speech": "Govor nije otkriven.",
+          "held_mode_unsupported": "Naizmenični razgovor zahteva daljinski sa govorom na držanje.",
+          "held_failed": "Razgovor dok se drži dugme nije uspeo.",
+          "held_turn_failed": "Obrt razgovora nije uspeo.",
+          "remote_stopped": "Daljinski je neočekivano zaustavio mikrofon.",
+          "disconnected": "Daljinski je prekinuo vezu.",
+          "cancelled": "Zahtev je otkazan.",
+          "pipeline_finished_early": "Assist cevovod se završio pre nego što je sav zvuk pročitan.",
+          "pipeline_timeout": "Assist cevovod je predugo odgovarao.",
+          "pipeline_failed": "Assist cevovod nije uspeo.",
+          "pipeline_removed": "Izabrani Assist cevovod više ne postoji.",
+          "playback_stop_unverified": "Nije moguće potvrditi da se prethodni odgovor zaustavio. Sačekajte da zvučnik bude slobodan.",
+          "playback_stop_failed": "Prethodni odgovor nije mogao da se zaustavi.",
+          "playback_start_timeout": "Zvučnik nije počeo da reprodukuje odgovor.",
+          "playback_finish_timeout": "Zvučnik nije na vreme završio reprodukciju odgovora.",
+          "playback_interrupted": "Odgovor je prekinut na zvučniku.",
+          "speaker_unavailable": "Zvučnik za odgovore nije dostupan.",
+          "speaker_busy": "Zvučnik za odgovore je zauzet.",
+          "speaker_cannot_play": "Zvučnik za odgovore ne može da reprodukuje zvuk iz Home Assistant-a.",
+          "missing_tts_audio": "Odgovor nije imao zvuk za reprodukciju.",
+          "generation_retirement_failed": "Prethodni zahtev se još nije zaustavio. Sačekajte.",
+          "replacement_retirement_failed": "Trenutni zahtev nije mogao da se zaustavi radi pokretanja novog.",
+          "microphone_open_failed": "Mikrofon daljinskog nije mogao da se otvori.",
+          "microphone_open_rejected": "Daljinski je odbio da otvori svoj mikrofon.",
+          "microphone_start_timeout": "Daljinski nije na vreme pokrenuo svoj mikrofon.",
+          "microphone_close_failed": "Mikrofon daljinskog nije mogao da se zatvori.",
+          "microphone_keepalive_failed": "Veza sa mikrofonom daljinskog je izgubljena.",
+          "active_generation_cancelled": "Odgovor koji se pripremao je otkazan, a kontekst razgovora je resetovan.",
+          "wake_remote": "Probudite daljinski pritiskom na dugme sa strelicom, pa pokušajte ponovo.",
+          "bluetooth_unavailable": "Lokalni Bluetooth nije dostupan.",
+          "bluetooth_operation_failed": "Bluetooth operacija nije uspela.",
+          "not_paired": "Daljinski nije uparen sa ovim hostom.",
+          "multiple_adapters": "Daljinski je uparen na više od jednog adaptera.",
+          "voice_service_unavailable": "Daljinski ne nudi glasovnu uslugu.",
+          "unsupported_write": "U glasovnu kontrolu daljinskog nije moguće upisivati.",
+          "unsupported_capabilities": "Daljinski je prijavio glasovne mogućnosti koje ova integracija ne podržava.",
+          "unsupported_codec": "Daljinski koristi audio format koji ova integracija ne podržava.",
+          "invalid_frame_size": "Daljinski je prijavio nevažeću veličinu audio okvira.",
+          "hidraw_unavailable": "Ulazni uređaj daljinskog nije dostupan Home Assistant-u.",
+          "hidraw_permission_denied": "Home Assistant nema dozvolu da čita ulazni uređaj daljinskog.",
+          "opus_decoder_unavailable": "Home Assistant-u nije dostupan Opus audio dekoder.",
+          "invalid_opus_packet": "Daljinski je poslao zvuk koji nije mogao da se dekodira.",
+          "other": "Dogodila se druga greška. Detalje daje kod greške."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kod"
+          },
+          "stage": {
+            "name": "Faza"
+          },
+          "since": {
+            "name": "Od"
+          },
+          "session": {
+            "name": "Zahtev"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist cevovod nedostaje za {remote}",
+      "description": "Daljinski **{remote}** je podešen da koristi Assist cevovod `{pipeline}`, koji više ne postoji. Glasovni zahtevi sa ovog daljinskog ne uspevaju dok ne izaberete drugi cevovod.\n\nIdite na **Podešavanja → Uređaji i usluge → Bluetooth Remote Voice**, otvorite meni daljinskog **{remote}**, izaberite **Konfiguriši** i odaberite postojeći cevovod."
+    },
+    "speaker_missing": {
+      "title": "Zvučnik za odgovore nedostaje za {remote}",
+      "description": "Daljinski **{remote}** je podešen da reprodukuje odgovore na `{speaker}`, koji više ne postoji. Komande se i dalje izvršavaju, ali njihov izgovoreni odgovor se neće reprodukovati.\n\nIdite na **Podešavanja → Uređaji i usluge → Bluetooth Remote Voice**, otvorite meni daljinskog **{remote}**, izaberite **Konfiguriši** i odaberite drugi zvučnik ili izaberite nijedan."
+    }
+  }
+}

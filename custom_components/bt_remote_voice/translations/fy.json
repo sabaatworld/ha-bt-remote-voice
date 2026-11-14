@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Keppele ôfstânsbetsjinning selektearje",
+        "description": "Keppelje jo ôfstânsbetsjinning earst bûten Home Assistant en wekker him dan mei in pylkeknop, sadat er kontrolearre wurde kin. Kies him út de list of fier syn Bluetooth-adres yn.",
+        "data": {
+          "device": "Keppele ôfstânsbetsjinning"
+        },
+        "data_description": {
+          "device": "Ôfstânsbetsjinnings dy't al op dizze Home Assistant-host keppele binne. Kies de hânmjittige opsje as dy fan jo net yn de list stiet."
+        }
+      },
+      "manual": {
+        "title": "Adres fan keppele ôfstânsbetsjinning ynfiere",
+        "description": "Fier it Bluetooth-adres yn fan in ôfstânsbetsjinning dy't al op dizze host keppele is.",
+        "data": {
+          "address": "Bluetooth-adres"
+        },
+        "data_description": {
+          "address": "Seis pearen heksadesimale sifers skieden troch dûbele punten, bygelyks AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Assist-pipeline selektearje",
+        "description": "Wekker de ôfstânsbetsjinning mei in pylkeknop foardat jo ynstjoere. De yntegraasje start yn de modus allinnich transkripsje; wizigje dit yn de opsjes as it wurket.",
+        "data": {
+          "pipeline_id": "Assist-pipeline"
+        },
+        "data_description": {
+          "pipeline_id": "De Assist-pipeline dy't de spraak fan dizze ôfstânsbetsjinning ferwurket."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Lokale Bluetooth is net beskikber. Kontrolearje oft de systeem-D-Bus tagonklik is.",
+      "wake_remote": "Wekker de keppele ôfstânsbetsjinning mei in pylkeknop en besykje it opnij.",
+      "not_paired": "Keppelje dizze ôfstânsbetsjinning earst ekstern.",
+      "multiple_adapters": "Dizze ôfstânsbetsjinning is op meardere adapters keppele. Hâld de keppeling op ien adapter.",
+      "invalid_address": "Fier in Bluetooth-adres yn yn it formaat AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Dizze ôfstânsbetsjinning hat gjin stipe ATVV v0.4/v1.0 ADPCM-spraakprofyl.",
+      "invalid_pipeline": "Kies in besteande Assist-pipeline.",
+      "hidraw_unavailable": "It ynfierapparaat fan de ôfstânsbetsjinning is net beskikber foar Home Assistant. Wekker de ôfstânsbetsjinning en kontrolearje oft Home Assistant /dev/hidraw-apparaten sjen kin.",
+      "hidraw_permission_denied": "Home Assistant mei it ynfierapparaat fan de ôfstânsbetsjinning net lêze. Sjoch de README foar de apparaattagong dy't dizze ôfstânsbetsjinning nedich hat.",
+      "opus_decoder_unavailable": "Der is gjin Opus-audiodekoder beskikber foar Home Assistant, dy't dizze ôfstânsbetsjinning nedich hat."
+    },
+    "abort": {
+      "already_configured": "Dizze ôfstânsbetsjinning is al konfigurearre.",
+      "no_pipelines": "Meitsje in Assist-pipeline oan foardat jo de ôfstânsbetsjinning tafoegje."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Spraakynstellingen",
+        "description": "Dizze ynstellingen bepale hoe't toetsdrukken ôfhannele wurde en hoe't antwurden útsprutsen wurde. It ferfangen fan in fersyk kin al útfierde aksjes net ûngedien meitsje. Tagelyk folslein duplex is net beskikber. Stopje nei transkripsje skeakelet gjin ark út dat yn in live-spraakprovider ynboud is; brûk in provider foar allinnich transkripsje as aksjes útskeakele wurde moatte.\n\n**Antwurdbetingst:** alle betingsten moatte slagje om in antwurd út te sprekken. Se wurde ien kear oan it begjin fan elts fersyk kontrolearre; lit it leech om altyd te sprekken, en in betingst dy't net evaluearre wurde kin telt as net foldien. Sjabloanbetingsten kinne de fariabelen `speaker`, `remote` en `held` brûke.",
+        "data": {
+          "pipeline_id": "Assist-pipeline",
+          "mode": "Spraakmodus",
+          "speaker": "Antwurdluidspreker",
+          "output_mode": "Timing fan antwurd",
+          "stream_head_start": "Streamingfoarsprong",
+          "busy_processing": "Nije druk by ferwurking",
+          "busy_playback": "Nije druk by antwurd",
+          "context_mode": "Petearkontekst",
+          "input_mode": "Knopgedrach",
+          "min_press_seconds": "Koarte drukken negearje",
+          "max_request_seconds": "Maksimale fersykleangte",
+          "max_conversation_seconds": "Maksimale petearleangte",
+          "reply_condition": "Antwurdbetingst"
+        },
+        "data_description": {
+          "pipeline_id": "De Assist-pipeline dy't spraak ferwurket: spraak-nei-tekst, petearagint en tekst-nei-spraak. In fuortsmiten pipeline jout in flater yn plak fan werom te fallen op in oare.",
+          "mode": "Allinnich transkripsje stopt nei spraakherkenning en spilet gjin antwurd ôf. Kommando's útfiere docht de hiele pipeline en sprekt it antwurd út op de antwurdluidspreker.",
+          "speaker": "De mediaspiler dy't antwurden útsprekt. Wurdt allinnich brûkt by it útfieren fan kommando's. Kies gjin sprutsen antwurd om de pipeline te stopjen foardat it antwurd ôfspile wurdt.",
+          "output_mode": "Automatysk streamen begjint te praten sa gau as in streamd antwurd klear is. Wachtsje op it folsleine antwurd begjint letter, mar spilet in ôfmakke audiobestân ôf, wat haperjen foarkomt by providers dy't spraak mar likernôch yn realtime-tempo produsearje.",
+          "stream_head_start": "Stelt it begjin fan in streamd antwurd mei dit oantal sekonden út, sadat de luidspreker bufferje kin; antwurden dy't earder klear binne, wurde fuortendaliks ôfspile. Ferhooch it as streamde antwurden yn de earste sekonden haperje. Gjin effekt by wachtsjen op it folsleine antwurd. 0 hâldt it standertgedrach.",
+          "busy_processing": "Wat te dwaan as de knop yndrukt wurdt foardat it foarige fersyk beantwurde is: de druk wegerje, ien wachtsjend fersyk hâlde, of it hjoeddeistige fersyk ferfange. Ferfange kin al útfierde aksjes net ûngedien meitsje.",
+          "busy_playback": "Wat te dwaan as de knop yndrukt wurdt wylst in antwurd ôfspile wurdt: de druk wegerje, dernei ien wachtsjend fersyk beantwurdzje, of it antwurd stopje en it nije fersyk starte.",
+          "context_mode": "Hergebrûk hâldt it Home Assistant-petear fêst, sadat ferfolchfragen lykas 'en dat dûbel?' wurkje. Farsk makket fan elke druk in selsstannich petear.",
+          "input_mode": "Ien fersyk per yndrukke nimt op oant de knop loslitten wurdt. Wikseljend petear bliuwt harkje salang't de knop yndrukt wurdt: sprekke, pauzearje, it antwurd hearre en dan wer sprekke. Dit hat in ôfstânsbetsjinning mei push-to-talk nedich.",
+          "min_press_seconds": "Negearret tikken op de spraakknop dy't koarter binne as dit, sadat in ûnbedoelde tik nea in fersyk start; in echte druk begjint safolle letter. 0 skeakelet it út. Nuttich foar in Fire TV-ôfstânsbetsjinning dy't direkt nei it wekker wurden mislearret mei \"No microphone audio\": hy stjoert de toets dy't him wekker makke opnij as direkte tik. 0,1 s is in goed útgongspunt. Allinnich foar Fire TV-ôfstânsbetsjinnings.",
+          "max_request_seconds": "De langste tiid dat ien fersyk duorje kin op elke ôfstânsbetsjinning: in hiele druk yn de modus Ien fersyk, en elke beurt yn Wikseljend petear. As it berikt wurdt, einiget it fersyk mei in opnamelimytflater. Ferleegje it om in fêstsitten knop net einleas opnimme te litten; ferhooch it foar lang dikteren. Ôfstânsbetsjinnings sûnder push-to-talk einigje ek nei likernôch 15 sekonden spraak of by stilte, wat it earst komt.",
+          "max_conversation_seconds": "De langste tiid dat in hiele knopdruk duorje kin yn de modus Wikseljend petear. Wurdt negearre yn de modus Ien fersyk en mei net koarter wêze as de maksimale fersykleangte.",
+          "reply_condition": "Betingsten dy't allegear slagje moatte om in antwurd út te sprekken. Ien kear oan it begjin fan elts fersyk kontrolearre (en elke beurt yn Wikseljend petear). Lit leech om altyd te sprekken. In betingst dy't in flater jout, telt as net foldien. Sjabloanbetingsten kinne de fariabelen speaker, remote en held brûke."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Kies in mediaspiler dy't it ôfspyljen fan audio stipet, of gjin sprutsen antwurd.",
+      "invalid_preferences": "Kies ien fan de stipe spraakfoarkarren.",
+      "invalid_pipeline": "Kies in besteande Assist-pipeline.",
+      "invalid_reply_condition": "De antwurdbetingst is net jildich. Kontrolearje de betingsten en besykje it opnij.",
+      "pipeline_missing": "De foar dizze ôfstânsbetsjinning bewarre Assist-pipeline bestiet net mear. Kies in oare.",
+      "speaker_missing": "De bewarre antwurdluidspreker is op it stuit net beskikber, dus antwurden wurde pas wer ôfspile as er werom is. Hâld him of kies in oare."
+    },
+    "abort": {
+      "no_pipelines": "Meitsje earst in Assist-pipeline oan."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Bluetooth-adres ynfiere"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Allinnich transkripsje",
+        "commands": "Kommando's útfiere"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Gjin sprutsen antwurd"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatysk streamen",
+        "buffered": "Wachtsje op folslein antwurd"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Nij fersyk wegerje",
+        "queue": "Ien fersyk yn de wachtrige sette",
+        "replace": "Hjoeddeistich fersyk ferfange"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Nij fersyk wegerje",
+        "queue": "Ien fersyk yn de wachtrige sette",
+        "replace": "Hjoeddeistich antwurd ferfange"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Petear hergebrûke",
+        "fresh": "Farsk petear per fersyk"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Ien fersyk per yndrukke",
+        "conversation": "Petear wylst yndrukt (wikseljend)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Spraak",
+        "state_attributes": {
+          "ready": {
+            "name": "Klear"
+          },
+          "last_error": {
+            "name": "Lêste flaterkoade"
+          },
+          "last_error_message": {
+            "name": "Lêste flatermelding"
+          },
+          "mode": {
+            "name": "Spraakmodus"
+          },
+          "sessions": {
+            "name": "Sesjes"
+          },
+          "failures": {
+            "name": "Mislearrings"
+          },
+          "rejected": {
+            "name": "Wegere drukken"
+          },
+          "queued": {
+            "name": "Fersiken yn de wachtrige"
+          },
+          "last_outcome": {
+            "name": "Lêste útkomst"
+          },
+          "full_duplex": {
+            "name": "Folslein duplex"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Spraakknop",
+        "state_attributes": {
+          "event_type": {
+            "name": "Barrentype",
+            "state": {
+              "pressed": "Yndrukt",
+              "released": "Loslitten",
+              "accepted": "Akseptearre",
+              "rejected": "Wegere",
+              "queued": "Yn de wachtrige",
+              "failed": "Mislearre",
+              "context_reset": "Petear weromsetten",
+              "reply_skipped": "Antwurd oerslein"
+            }
+          },
+          "outcome": {
+            "name": "Útkomst"
+          },
+          "stage": {
+            "name": "Faze"
+          },
+          "code": {
+            "name": "Koade"
+          },
+          "message": {
+            "name": "Berjocht"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofoan aktyf"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Lêste flater",
+        "state": {
+          "none": "Gjin flater",
+          "busy": "Der wurdt noch op it foarige fersyk antwurde.",
+          "queue_full": "Der wachtet al in fersyk. Besykje it nei it antwurd.",
+          "queue_expired": "It wachtsjende fersyk is ferrûn. Druk opnij en sprek.",
+          "queue_discarded": "It wachtsjende fersyk is fuortsmiten.",
+          "queue_failed": "It wachtsjende fersyk koe net start wurde.",
+          "capture_limit": "De opnamelimyt fan de mikrofoan is berikt. Brûk in koarter fersyk.",
+          "buffer_overflow": "De mikrofoanaudio rekke opstapele foardat de spraaktsjinst it begûn te lêzen.",
+          "audio_sequence_gap": "Audiosynkronisaasje is mislearre. Druk en besykje it opnij.",
+          "invalid_audio_sync": "De ôfstânsbetsjinning stjoerde in ûnjildich audiosynkronisaasjeberjocht.",
+          "invalid_audio_frame": "De ôfstânsbetsjinning stjoerde in beskeadige audioframe.",
+          "invalid_control": "De ôfstânsbetsjinning stjoerde in ûnjildich bestjoeringsberjocht.",
+          "unsupported_audio_start": "De ôfstânsbetsjinning begûn audio op in wize dy't dizze yntegraasje net stipet.",
+          "incomplete_utterance": "De audio einige foardat it fersyk kompleet wie.",
+          "audio_stalled": "Der komt gjin mikrofoanaudio mear binnen. Besykje it opnij.",
+          "audio_failed": "De mikrofoanaudio is mislearre.",
+          "no_audio": "Der is gjin mikrofoanaudio ûntfongen.",
+          "no_speech": "Der is gjin spraak ûntdutsen.",
+          "held_mode_unsupported": "Wikseljend petear hat in ôfstânsbetsjinning mei push-to-talk nedich.",
+          "held_failed": "It petear wylst de knop yndrukt waard is mislearre.",
+          "held_turn_failed": "In beurt fan it petear is mislearre.",
+          "remote_stopped": "De ôfstânsbetsjinning stopte de mikrofoan ûnferwachts.",
+          "disconnected": "De ôfstânsbetsjinning is loskeppele.",
+          "cancelled": "It fersyk is annulearre.",
+          "pipeline_finished_early": "De Assist-pipeline einige foardat alle audio lêzen wie.",
+          "pipeline_timeout": "De Assist-pipeline die te lang oer it reagearjen.",
+          "pipeline_failed": "De Assist-pipeline is mislearre.",
+          "pipeline_removed": "De selektearre Assist-pipeline bestiet net mear.",
+          "playback_stop_unverified": "Koe net kontrolearje oft it foarige antwurd stoppe is. Wachtsje oant de luidspreker ynaktyf is.",
+          "playback_stop_failed": "It foarige antwurd koe net stoppe wurde.",
+          "playback_start_timeout": "De luidspreker begûn it antwurd net ôf te spyljen.",
+          "playback_finish_timeout": "De luidspreker wie net op tiid klear mei it ôfspyljen fan it antwurd.",
+          "playback_interrupted": "It antwurd is op de luidspreker ûnderbrutsen.",
+          "speaker_unavailable": "De antwurdluidspreker is net beskikber.",
+          "speaker_busy": "De antwurdluidspreker is dwaande.",
+          "speaker_cannot_play": "De antwurdluidspreker kin gjin audio fan Home Assistant ôfspylje.",
+          "missing_tts_audio": "It antwurd hie gjin audio om ôf te spyljen.",
+          "generation_retirement_failed": "It foarige fersyk is noch net stoppe. Wachtsje efkes.",
+          "replacement_retirement_failed": "It hjoeddeistige fersyk koe net stoppe wurde om it nije te starten.",
+          "microphone_open_failed": "De mikrofoan fan de ôfstânsbetsjinning koe net iepene wurde.",
+          "microphone_open_rejected": "De ôfstânsbetsjinning wegere syn mikrofoan te iepenjen.",
+          "microphone_start_timeout": "De ôfstânsbetsjinning starte syn mikrofoan net op tiid.",
+          "microphone_close_failed": "De mikrofoan fan de ôfstânsbetsjinning koe net sluten wurde.",
+          "microphone_keepalive_failed": "De mikrofoanferbining fan de ôfstânsbetsjinning is ferlern.",
+          "active_generation_cancelled": "It antwurd dat taret waard, is annulearre en de petearkontekst is weromset.",
+          "wake_remote": "Wekker de ôfstânsbetsjinning mei in pylkeknop en besykje it opnij.",
+          "bluetooth_unavailable": "Lokale Bluetooth is net beskikber.",
+          "bluetooth_operation_failed": "In Bluetooth-bewerking is mislearre.",
+          "not_paired": "De ôfstânsbetsjinning is net keppele op dizze host.",
+          "multiple_adapters": "De ôfstânsbetsjinning is op mear as ien adapter keppele.",
+          "voice_service_unavailable": "De ôfstânsbetsjinning biedt gjin spraaktsjinst oan.",
+          "unsupported_write": "De spraakbestjoering fan de ôfstânsbetsjinning kin net beskreaun wurde.",
+          "unsupported_capabilities": "De ôfstânsbetsjinning melde spraakmooglikheden dy't dizze yntegraasje net stipet.",
+          "unsupported_codec": "De ôfstânsbetsjinning brûkt in audioformaat dat dizze yntegraasje net stipet.",
+          "invalid_frame_size": "De ôfstânsbetsjinning melde in ûnjildige audioframegrutte.",
+          "hidraw_unavailable": "It ynfierapparaat fan de ôfstânsbetsjinning is net beskikber foar Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant mei it ynfierapparaat fan de ôfstânsbetsjinning net lêze.",
+          "opus_decoder_unavailable": "Der is gjin Opus-audiodekoder beskikber foar Home Assistant.",
+          "invalid_opus_packet": "De ôfstânsbetsjinning stjoerde audio dy't net dekodearre wurde koe.",
+          "other": "Der is in oare flater optreden. De flaterkoade jout de details."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Koade"
+          },
+          "stage": {
+            "name": "Faze"
+          },
+          "since": {
+            "name": "Sûnt"
+          },
+          "session": {
+            "name": "Fersyk"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist-pipeline ûntbrekt foar {remote}",
+      "description": "De ôfstânsbetsjinning **{remote}** is ynsteld op de Assist-pipeline `{pipeline}`, dy't net mear bestiet. Spraakfersiken fan dizze ôfstânsbetsjinning mislearje oant jo in oare pipeline kieze.\n\nGean nei **Ynstellingen → Apparaten en tsjinsten → Bluetooth Remote Voice**, iepenje it menu fan **{remote}**, kies **Konfigurearje** en selektearje in besteande pipeline."
+    },
+    "speaker_missing": {
+      "title": "Antwurdluidspreker ûntbrekt foar {remote}",
+      "description": "De ôfstânsbetsjinning **{remote}** is ynsteld om antwurden op `{speaker}` ôf te spyljen, dy't net mear bestiet. Kommando's wurde noch hieltyd útfierd, mar harren sprutsen antwurd wurdt net ôfspile.\n\nGean nei **Ynstellingen → Apparaten en tsjinsten → Bluetooth Remote Voice**, iepenje it menu fan **{remote}**, kies **Konfigurearje** en selektearje in oare luidspreker of kies gjin."
+    }
+  }
+}

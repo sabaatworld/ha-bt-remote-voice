@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Selecionar controle remoto pareado",
+        "description": "Pareie primeiro o controle remoto fora do Home Assistant e depois ative-o com um botão de seta para que possa ser verificado. Escolha-o na lista ou insira o respectivo endereço Bluetooth.",
+        "data": {
+          "device": "Controle remoto pareado"
+        },
+        "data_description": {
+          "device": "Controles remotos já pareados neste host do Home Assistant. Escolha a opção manual se o seu não estiver na lista."
+        }
+      },
+      "manual": {
+        "title": "Inserir o endereço do controle remoto pareado",
+        "description": "Insira o endereço Bluetooth de um controle remoto que já está pareado neste host.",
+        "data": {
+          "address": "Endereço Bluetooth"
+        },
+        "data_description": {
+          "address": "Seis pares de dígitos hexadecimais separados por dois pontos, por exemplo AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Selecionar pipeline do Assist",
+        "description": "Ative o controle remoto com um botão de seta antes de enviar. A integração começa no modo apenas de transcrição; altere-o nas opções quando estiver funcionando.",
+        "data": {
+          "pipeline_id": "Pipeline do Assist"
+        },
+        "data_description": {
+          "pipeline_id": "O pipeline do Assist que processa a voz deste controle remoto."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "O Bluetooth local não está disponível. Verifique se o D-Bus do sistema está acessível.",
+      "wake_remote": "Ative o controle remoto pareado com um botão de seta e tente novamente.",
+      "not_paired": "Pareie primeiro este controle remoto fora do Home Assistant.",
+      "multiple_adapters": "Este controle remoto está pareado em vários adaptadores. Mantenha o respectivo pareamento num único adaptador.",
+      "invalid_address": "Insira um endereço Bluetooth no formato AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Este controle remoto não disponibiliza um perfil de voz ATVV v0.4/v1.0 ADPCM compatível.",
+      "invalid_pipeline": "Escolha um pipeline do Assist existente.",
+      "hidraw_unavailable": "O dispositivo de entrada do controle remoto não está disponível para o Home Assistant. Ative o controle remoto e verifique se o Home Assistant consegue ver os dispositivos /dev/hidraw.",
+      "hidraw_permission_denied": "O Home Assistant não tem permissão para ler o dispositivo de entrada do controle remoto. Consulte o README para saber o acesso ao dispositivo de que este controle remoto necessita.",
+      "opus_decoder_unavailable": "Não está disponível nenhum decodificador de áudio Opus para o Home Assistant, que este controle remoto necessita."
+    },
+    "abort": {
+      "already_configured": "Este controle remoto já está configurado.",
+      "no_pipelines": "Crie um pipeline do Assist antes de adicionar o controle remoto."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Configurações de voz",
+        "description": "Estas configurações controlam como as pressões são tratadas e como as respostas são faladas. Substituir um pedido não pode anular as ações que já realizou. O duplex integral simultâneo não está disponível. Parar após a transcrição não desativa as ferramentas integradas num fornecedor de voz em vivo; use um fornecedor apenas de transcrição quando for necessário desativar as ações.\n\n**Condição de resposta:** todas as suas condições têm de ser cumpridas para que uma resposta seja falada. São verificadas uma vez no início de cada pedido; deixe-a vazia para falar sempre, e uma condição que não possa ser avaliada conta como não cumprida. As condições de modelo podem usar as variáveis `speaker`, `remote` e `held`.",
+        "data": {
+          "pipeline_id": "Pipeline do Assist",
+          "mode": "Modo de voz",
+          "speaker": "Alto-falante de resposta",
+          "output_mode": "Momento da resposta",
+          "stream_head_start": "Avanço do streaming",
+          "busy_processing": "Nova pressão durante o processamento",
+          "busy_playback": "Nova pressão durante a resposta",
+          "context_mode": "Contexto da conversa",
+          "input_mode": "Comportamento do botão",
+          "min_press_seconds": "Ignorar pressões curtas",
+          "max_request_seconds": "Duração máxima do pedido",
+          "max_conversation_seconds": "Duração máxima da conversa",
+          "reply_condition": "Condição de resposta"
+        },
+        "data_description": {
+          "pipeline_id": "O pipeline do Assist que processa a voz: voz para texto, agente de conversação e texto para voz. Um pipeline removido falha com um erro em vez de recorrer a outro.",
+          "mode": "Apenas transcrição para após o reconhecimento de voz e não reproduz resposta. Executar comandos executa todo o pipeline e fala a resposta no alto-falante de resposta.",
+          "speaker": "O leitor multimídia que fala as respostas. Usado apenas ao executar comandos. Escolha «Sem resposta falada» para parar o pipeline antes de a resposta ser reproduzida.",
+          "output_mode": "O streaming automático começa a falar assim que uma resposta em streaming está pronta. Aguardar a resposta completa começa mais tarde, mas reproduz um arquivo de áudio concluído, o que evita cortes com fornecedores que só produzem voz a um ritmo próximo do tempo real.",
+          "stream_head_start": "Atrasa o início de uma resposta em streaming por este número de segundos para que o alto-falante possa criar uma buffer; as respostas que terminam mais cedo são reproduzidas de imediato. Aumente-o se as respostas em streaming falharem nos primeiros segundos. Sem efeito ao aguardar a resposta completa. 0 mantém o comportamento predefinido.",
+          "busy_processing": "O que fazer quando o botão é pressionado antes de o pedido anterior ter resposta: rejeitar a pressão, manter um pedido pendente ou substituir o pedido atual. Substituir não pode anular as ações já realizadas.",
+          "busy_playback": "O que fazer quando o botão é pressionado enquanto uma resposta está sendo reproduzida: rejeitar a pressão, responder depois a um pedido pendente, ou parar a resposta e iniciar o novo pedido.",
+          "context_mode": "Reutilizar mantém a conversa do Home Assistant para que perguntas de seguimento como «e o dobro?» funcionem. Nova faz de cada pressão uma conversa independente.",
+          "input_mode": "Um pedido por pressão contínua grava até o botão ser liberado. A conversa alternada continua ouvindo enquanto o botão é mantido pressionado: fale, faça uma pausa, ouça a resposta e volte a falar. Requer um controle remoto de pressionar para falar.",
+          "min_press_seconds": "Ignora os toques no botão de voz mais curtos do que este valor, para que um toque espúrio nunca inicie um pedido; uma pressão contínua real começa essa duração mais tarde. 0 desativa. Útil para um controle remoto Fire TV que falha com «Não foi recebido áudio do microfone» logo após ser ativado: reenvia a tecla que o ativou como um toque instantâneo. 0,1 s é um bom ponto de partida. Apenas para controles remotos Fire TV.",
+          "max_request_seconds": "A duração máxima de um único pedido em qualquer controle remoto: toda a pressão contínua no modo Um pedido, e cada turno na Conversa alternada. Ao atingi-la, o pedido termina com um erro de limite de captura. Reduza-a para parar a gravação de um botão preso; aumente-a para ditados longos. Os controles remotos que não são de pressionar para falar também terminam após cerca de 15 segundos de fala ou no silêncio, o que ocorrer primeiro.",
+          "max_conversation_seconds": "A duração máxima de toda uma pressão contínua no modo de conversa alternada. É ignorada no modo Um pedido e não pode ser inferior à duração máxima do pedido.",
+          "reply_condition": "Condições que têm de ser todas cumpridas para que uma resposta seja falada. Verificadas uma vez no início de cada pedido (e de cada turno na Conversa alternada). Deixe vazio para falar sempre. Uma condição com erro conta como não cumprida. As condições de modelo podem usar as variáveis speaker, remote e held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Escolha um leitor multimídia que suporte a reprodução de áudio, ou nenhuma resposta falada.",
+      "invalid_preferences": "Escolha uma das preferências de voz suportadas.",
+      "invalid_pipeline": "Escolha um pipeline do Assist existente.",
+      "invalid_reply_condition": "A condição de resposta não é válida. Verifique as condições e tente novamente.",
+      "pipeline_missing": "O pipeline do Assist salvo para este controle remoto não existe mais. Escolha outro.",
+      "speaker_missing": "O alto-falante de resposta salvo não está disponível no momento, então as respostas não serão reproduzidas até que volte. Mantenha-o ou escolha outro."
+    },
+    "abort": {
+      "no_pipelines": "Crie primeiro um pipeline do Assist."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Inserir endereço Bluetooth"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Apenas transcrição",
+        "commands": "Executar comandos"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Sem resposta falada"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Streaming automático",
+        "buffered": "Aguardar a resposta completa"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Rejeitar novo pedido",
+        "queue": "Colocar um pedido em fila",
+        "replace": "Substituir o pedido atual"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Rejeitar novo pedido",
+        "queue": "Colocar um pedido em fila",
+        "replace": "Substituir a resposta atual"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Reutilizar conversa",
+        "fresh": "Nova conversa por pedido"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Um pedido por pressão contínua",
+        "conversation": "Conversa enquanto mantido pressionado (alternada)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Voz",
+        "state_attributes": {
+          "ready": {
+            "name": "Pronto"
+          },
+          "last_error": {
+            "name": "Código do último erro"
+          },
+          "last_error_message": {
+            "name": "Mensagem do último erro"
+          },
+          "mode": {
+            "name": "Modo de voz"
+          },
+          "sessions": {
+            "name": "Sessões"
+          },
+          "failures": {
+            "name": "Falhas"
+          },
+          "rejected": {
+            "name": "Pressões rejeitadas"
+          },
+          "queued": {
+            "name": "Pedidos em fila"
+          },
+          "last_outcome": {
+            "name": "Último resultado"
+          },
+          "full_duplex": {
+            "name": "Duplex integral"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Botão de voz",
+        "state_attributes": {
+          "event_type": {
+            "name": "Tipo de evento",
+            "state": {
+              "pressed": "Pressionado",
+              "released": "Liberado",
+              "accepted": "Aceito",
+              "rejected": "Rejeitado",
+              "queued": "Em fila",
+              "failed": "Falhou",
+              "context_reset": "Conversa redefinida",
+              "reply_skipped": "Resposta ignorada"
+            }
+          },
+          "outcome": {
+            "name": "Resultado"
+          },
+          "stage": {
+            "name": "Fase"
+          },
+          "code": {
+            "name": "Código"
+          },
+          "message": {
+            "name": "Mensagem"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Microfone ativo"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Último erro",
+        "state": {
+          "none": "Sem erro",
+          "busy": "Ainda respondendo ao pedido anterior.",
+          "queue_full": "Já existe um pedido em espera. Tente após da resposta.",
+          "queue_expired": "O pedido em espera expirou. Pressione e fale novamente.",
+          "queue_discarded": "O pedido em espera foi descartado.",
+          "queue_failed": "Não foi possível iniciar o pedido em espera.",
+          "capture_limit": "Foi atingido o limite de captura do microfone. Use um pedido mais curto.",
+          "buffer_overflow": "O áudio do microfone acumulou-se antes de o serviço de voz começar a lê-lo.",
+          "audio_sequence_gap": "A sincronização do áudio falhou. Pressione e tente novamente.",
+          "invalid_audio_sync": "O controle remoto enviou uma mensagem de sincronização de áudio inválida.",
+          "invalid_audio_frame": "O controle remoto enviou um quadro de áudio danificado.",
+          "invalid_control": "O controle remoto enviou uma mensagem de controle inválida.",
+          "unsupported_audio_start": "O controle remoto iniciou o áudio de uma forma que esta integração não suporta.",
+          "incomplete_utterance": "O áudio terminou antes de o pedido estar completo.",
+          "audio_stalled": "O áudio do microfone deixou de chegar. Tente novamente.",
+          "audio_failed": "O áudio do microfone falhou.",
+          "no_audio": "Não foi recebido áudio do microfone.",
+          "no_speech": "Não foi detectada fala.",
+          "held_mode_unsupported": "A conversa alternada requer um controle remoto de pressionar para falar.",
+          "held_failed": "A conversa enquanto o botão é mantido pressionado falhou.",
+          "held_turn_failed": "Um turno da conversa falhou.",
+          "remote_stopped": "O controle remoto parou o microfone inesperadamente.",
+          "disconnected": "O controle remoto desconectou.",
+          "cancelled": "O pedido foi cancelado.",
+          "pipeline_finished_early": "O pipeline do Assist terminou antes de todo o áudio ser lido.",
+          "pipeline_timeout": "O pipeline do Assist demorou demais para responder.",
+          "pipeline_failed": "O pipeline do Assist falhou.",
+          "pipeline_removed": "O pipeline do Assist selecionado não existe mais.",
+          "playback_stop_unverified": "Não foi possível verificar se a resposta anterior parou. Aguarde até que o alto-falante estar inativo.",
+          "playback_stop_failed": "Não foi possível parar a resposta anterior.",
+          "playback_start_timeout": "O alto-falante não começou a reproduzir a resposta.",
+          "playback_finish_timeout": "O alto-falante não terminou a reprodução da resposta a tempo.",
+          "playback_interrupted": "A resposta foi interrompida no alto-falante.",
+          "speaker_unavailable": "O alto-falante de resposta não está disponível.",
+          "speaker_busy": "O alto-falante de resposta está ocupado.",
+          "speaker_cannot_play": "O alto-falante de resposta não consegue reproduzir áudio do Home Assistant.",
+          "missing_tts_audio": "A resposta não tinha áudio para reproduzir.",
+          "generation_retirement_failed": "O pedido anterior ainda não parou. Aguarde.",
+          "replacement_retirement_failed": "Não foi possível parar o pedido atual para iniciar o novo.",
+          "microphone_open_failed": "Não foi possível abrir o microfone do controle remoto.",
+          "microphone_open_rejected": "O controle remoto recusou abrir o respectivo microfone.",
+          "microphone_start_timeout": "O controle remoto não iniciou o respectivo microfone a tempo.",
+          "microphone_close_failed": "Não foi possível fechar o microfone do controle remoto.",
+          "microphone_keepalive_failed": "A conexão ao microfone do controle remoto foi perdida.",
+          "active_generation_cancelled": "A resposta que estava sendo preparada foi cancelada e o contexto da conversa foi redefinido.",
+          "wake_remote": "Ative o controle remoto com um botão de seta e tente novamente.",
+          "bluetooth_unavailable": "O Bluetooth local não está disponível.",
+          "bluetooth_operation_failed": "Uma operação Bluetooth falhou.",
+          "not_paired": "O controle remoto não está pareado neste host.",
+          "multiple_adapters": "O controle remoto está pareado em mais do que um adaptador.",
+          "voice_service_unavailable": "O controle remoto não oferece um serviço de voz.",
+          "unsupported_write": "Não é possível escrever no controle de voz do controle remoto.",
+          "unsupported_capabilities": "O controle remoto comunicou capacidades de voz que esta integração não suporta.",
+          "unsupported_codec": "O controle remoto usa um formato de áudio que esta integração não suporta.",
+          "invalid_frame_size": "O controle remoto comunicou um tamanho de quadro de áudio inválido.",
+          "hidraw_unavailable": "O dispositivo de entrada do controle remoto não está disponível para o Home Assistant.",
+          "hidraw_permission_denied": "O Home Assistant não tem permissão para ler o dispositivo de entrada do controle remoto.",
+          "opus_decoder_unavailable": "Não está disponível nenhum decodificador de áudio Opus para o Home Assistant.",
+          "invalid_opus_packet": "O controle remoto enviou áudio que não pôde ser decodificado.",
+          "other": "Ocorreu outro erro. O código de erro indica os detalhes."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Código"
+          },
+          "stage": {
+            "name": "Fase"
+          },
+          "since": {
+            "name": "Desde"
+          },
+          "session": {
+            "name": "Pedido"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Falta o pipeline do Assist para {remote}",
+      "description": "O controle remoto **{remote}** está configurado para usar o pipeline do Assist `{pipeline}`, que não existe mais. Os pedidos de voz deste controle remoto falham até escolher outro pipeline.\n\nVá para **Configurações → Dispositivos e serviços → Bluetooth Remote Voice**, abra o menu de **{remote}**, escolha **Configurar** e selecione um pipeline existente."
+    },
+    "speaker_missing": {
+      "title": "Falta o alto-falante de resposta para {remote}",
+      "description": "O controle remoto **{remote}** está configurado para reproduzir respostas em `{speaker}`, que não existe mais. Os comandos continuam sendo executados, mas a respectiva resposta falada não será reproduzida.\n\nVá para **Configurações → Dispositivos e serviços → Bluetooth Remote Voice**, abra o menu de **{remote}**, escolha **Configurar** e selecione outro alto-falante ou nenhum."
+    }
+  }
+}

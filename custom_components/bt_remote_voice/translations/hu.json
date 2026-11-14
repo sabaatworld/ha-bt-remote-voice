@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Válassza ki a párosított távirányítót",
+        "description": "Először párosítsa a távirányítót a Home Assistanton kívül, majd ébressze fel egy nyílgombbal, hogy ellenőrizhető legyen. Válassza ki a listából, vagy adja meg a Bluetooth-címét.",
+        "data": {
+          "device": "Párosított távirányító"
+        },
+        "data_description": {
+          "device": "A Home Assistant ezen gazdagépén már párosított távirányítók. Válassza a kézi lehetőséget, ha az Öné nem szerepel a listán."
+        }
+      },
+      "manual": {
+        "title": "Adja meg a párosított távirányító címét",
+        "description": "Adja meg egy már párosított távirányító Bluetooth-címét ezen a gazdagépen.",
+        "data": {
+          "address": "Bluetooth-cím"
+        },
+        "data_description": {
+          "address": "Hat darab kétjegyű hexadecimális szám kettősponttal elválasztva, például AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Válasszon Assist folyamatot",
+        "description": "Beküldés előtt ébressze fel a távirányítót egy nyílgombbal. Az integráció csak átirat módban indul; ha működik, módosítsa ezt a beállításokban.",
+        "data": {
+          "pipeline_id": "Assist folyamat"
+        },
+        "data_description": {
+          "pipeline_id": "Az Assist folyamat, amely feldolgozza a távirányító beszédét."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "A helyi Bluetooth nem érhető el. Ellenőrizze, hogy a rendszer D-Bus elérhető-e.",
+      "wake_remote": "Ébressze fel a párosított távirányítót egy nyílgombbal, majd próbálja újra.",
+      "not_paired": "Először párosítsa ezt a távirányítót külsőleg.",
+      "multiple_adapters": "Ez a távirányító több adapteren is párosítva van. Tartsa meg a párosítást egyetlen adapteren.",
+      "invalid_address": "Adjon meg egy Bluetooth-címet AA:BB:CC:DD:EE:FF formátumban.",
+      "unsupported_remote": "Ez a távirányító nem biztosít támogatott ATVV v0.4/v1.0 ADPCM hangprofilt.",
+      "invalid_pipeline": "Válasszon egy meglévő Assist folyamatot.",
+      "hidraw_unavailable": "A távirányító beviteli eszköze nem érhető el a Home Assistant számára. Ébressze fel a távirányítót, és ellenőrizze, hogy a Home Assistant látja-e a /dev/hidraw eszközöket.",
+      "hidraw_permission_denied": "A Home Assistant nem olvashatja a távirányító beviteli eszközét. A távirányítóhoz szükséges eszközhozzáférésről lásd a README fájlt.",
+      "opus_decoder_unavailable": "A Home Assistant számára nem érhető el Opus hangdekóder, amelyre ennek a távirányítónak szüksége van."
+    },
+    "abort": {
+      "already_configured": "Ez a távirányító már be van állítva.",
+      "no_pipelines": "A távirányító hozzáadása előtt hozzon létre egy Assist folyamatot."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Hangbeállítások",
+        "description": "Ezek a beállítások határozzák meg, hogyan kezeli a rendszer a megnyomásokat, és hogyan szólalnak meg a válaszok. A kérés lecserélése nem vonhatja vissza a már végrehajtott műveleteket. Az egyidejű full duplex nem érhető el. Az átirat utáni leállás nem tiltja le az élő beszédszolgáltatóba beépített eszközöket; ha a műveleteket le kell tiltani, használjon csak átiratot készítő szolgáltatót.\n\n**Válaszfeltétel:** a válasz felolvasásához minden feltételének teljesülnie kell. Ellenőrzésük minden kérés elején egyszer történik; hagyja üresen, hogy mindig felolvassa, a nem kiértékelhető feltétel pedig nem teljesültnek számít. A sablonfeltételek használhatják a `speaker`, `remote` és `held` változókat.",
+        "data": {
+          "pipeline_id": "Assist folyamat",
+          "mode": "Hangmód",
+          "speaker": "Válaszhangszóró",
+          "output_mode": "Válasz időzítése",
+          "stream_head_start": "Streamelés előnye",
+          "busy_processing": "Új megnyomás feldolgozás közben",
+          "busy_playback": "Új megnyomás válasz közben",
+          "context_mode": "Beszélgetés kontextusa",
+          "input_mode": "Gomb viselkedése",
+          "min_press_seconds": "Rövid megnyomások figyelmen kívül hagyása",
+          "max_request_seconds": "Kérés maximális hossza",
+          "max_conversation_seconds": "Beszélgetés maximális hossza",
+          "reply_condition": "Válaszfeltétel"
+        },
+        "data_description": {
+          "pipeline_id": "Az Assist folyamat, amely feldolgozza a beszédet: beszédfelismerés, beszélgetési ügynök és szövegfelolvasás. Egy eltávolított folyamat hibával jár ahelyett, hogy másikra váltana.",
+          "mode": "Csak átirat a beszédfelismerés után leáll, és nem játszik le választ. Parancsok végrehajtása a teljes folyamatot lefuttatja, és a választ a válaszhangszórón mondja fel.",
+          "speaker": "A médialejátszó, amely felolvassa a válaszokat. Csak parancsok végrehajtásakor használatos. Válassza a „Nincs felolvasott válasz” lehetőséget, hogy a folyamat a válasz lejátszása előtt megálljon.",
+          "output_mode": "Az automatikus streamelés azonnal elkezd beszélni, amint a streamelt válasz készen áll. A teljes válaszra várás később kezdődik, de kész hangfájlt játszik le, ami elkerüli a megszakadozást azoknál a szolgáltatóknál, amelyek a beszédet csak nagyjából valós időben állítják elő.",
+          "stream_head_start": "A streamelt válasz kezdetét ennyi másodperccel késlelteti, hogy a hangszóró pufferelhessen; a korábban befejeződő válaszok azonnal lejátszódnak. Növelje, ha a streamelt válaszok az első másodpercekben megszakadoznak. A teljes válaszra várakozás esetén nincs hatása. A 0 az alapértelmezett viselkedést tartja meg.",
+          "busy_processing": "Mi történjen, ha a gombot az előző kérés megválaszolása előtt nyomják meg: a megnyomás elutasítása, egy függőben lévő kérés megtartása vagy az aktuális kérés lecserélése. A lecserélés nem vonhatja vissza a már végrehajtott műveleteket.",
+          "busy_playback": "Mi történjen, ha a gombot válasz lejátszása közben nyomják meg: a megnyomás elutasítása, egy függőben lévő kérés megválaszolása utólag, vagy a válasz leállítása és az új kérés elindítása.",
+          "context_mode": "Az újrahasználat megtartja a Home Assistant beszélgetést, így a követő kérdések, például „és ennek a duplája?”, működnek. Az új beszélgetés minden megnyomást önálló beszélgetéssé tesz.",
+          "input_mode": "Egy kérés tartásonként addig rögzít, amíg a gombot el nem engedik. A váltakozó beszélgetés a gomb tartása közben is hallgat: beszéljen, tartson szünetet, hallgassa meg a választ, majd beszéljen újra. Tartva beszélős távirányítót igényel.",
+          "min_press_seconds": "Figyelmen kívül hagyja az ennél rövidebb hanggomb-érintéseket, így egy téves érintés soha nem indít kérést; a valódi tartás ennyivel később indul. A 0 kikapcsolja. Hasznos Fire TV távirányítóhoz, amely közvetlenül az ébresztés után „Nincs mikrofonhang” hibával meghiúsul: az ébresztő billentyűt azonnali érintésként újraküldi. A 0,1 s jó kiindulópont. Csak Fire TV távirányítókhoz.",
+          "max_request_seconds": "A leghosszabb idő, ameddig egyetlen kérés tarthat bármely távirányítón: a teljes tartás Egy kérés módban, és minden forduló Váltakozó beszélgetésben. Elérése a kérést rögzítési korlát hibával fejezi be. Csökkentse egy beragadt gomb rögzítésének megállítására; növelje hosszú diktáláshoz. A nem tartva beszélős távirányítók körülbelül 15 másodpercnyi beszédnél vagy csendnél is véget érnek, amelyik előbb bekövetkezik.",
+          "max_conversation_seconds": "A leghosszabb idő, ameddig egy teljes gombtartás tarthat Váltakozó beszélgetés módban. Egy kérés módban figyelmen kívül marad, és nem lehet rövidebb a kérés maximális hosszánál.",
+          "reply_condition": "Feltételek, amelyeknek mindegyikének teljesülnie kell a válasz felolvasásához. Minden kérés elején egyszer ellenőrzi (és Váltakozó beszélgetésben minden fordulónál). Hagyja üresen, hogy mindig felolvassa. Hibát okozó feltétel nem teljesültnek számít. A sablonfeltételek használhatják a speaker, remote és held változókat."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Válasszon hanglejátszást támogató médialejátszót, vagy ne legyen felolvasott válasz.",
+      "invalid_preferences": "Válassza a támogatott hangbeállítások egyikét.",
+      "invalid_pipeline": "Válasszon egy meglévő Assist folyamatot.",
+      "invalid_reply_condition": "A válaszfeltétel érvénytelen. Ellenőrizze a feltételeket, és próbálja újra.",
+      "pipeline_missing": "A távirányítóhoz mentett Assist folyamat már nem létezik. Válasszon másikat.",
+      "speaker_missing": "A mentett válaszhangszóró jelenleg nem érhető el, ezért a válaszok nem szólalnak meg, amíg vissza nem tér. Tartsa meg, vagy válasszon másikat."
+    },
+    "abort": {
+      "no_pipelines": "Először hozzon létre egy Assist folyamatot."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Bluetooth-cím megadása"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Csak átirat",
+        "commands": "Parancsok végrehajtása"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Nincs felolvasott válasz"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatikus streamelés",
+        "buffered": "Várakozás a teljes válaszra"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Új kérés elutasítása",
+        "queue": "Egy kérés sorba állítása",
+        "replace": "Aktuális kérés lecserélése"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Új kérés elutasítása",
+        "queue": "Egy kérés sorba állítása",
+        "replace": "Aktuális válasz lecserélése"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Beszélgetés újrahasználata",
+        "fresh": "Új beszélgetés minden kéréshez"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Egy kérés tartásonként",
+        "conversation": "Beszélgetés tartás közben (váltakozó)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Hang",
+        "state_attributes": {
+          "ready": {
+            "name": "Kész"
+          },
+          "last_error": {
+            "name": "Utolsó hibakód"
+          },
+          "last_error_message": {
+            "name": "Utolsó hibaüzenet"
+          },
+          "mode": {
+            "name": "Hangmód"
+          },
+          "sessions": {
+            "name": "Munkamenetek"
+          },
+          "failures": {
+            "name": "Hibák"
+          },
+          "rejected": {
+            "name": "Elutasított megnyomások"
+          },
+          "queued": {
+            "name": "Sorban álló kérések"
+          },
+          "last_outcome": {
+            "name": "Utolsó kimenetel"
+          },
+          "full_duplex": {
+            "name": "Teljes duplex"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Hanggomb",
+        "state_attributes": {
+          "event_type": {
+            "name": "Esemény típusa",
+            "state": {
+              "pressed": "Megnyomva",
+              "released": "Elengedve",
+              "accepted": "Elfogadva",
+              "rejected": "Elutasítva",
+              "queued": "Sorba állítva",
+              "failed": "Sikertelen",
+              "context_reset": "Beszélgetés visszaállítva",
+              "reply_skipped": "Válasz kihagyva"
+            }
+          },
+          "outcome": {
+            "name": "Kimenetel"
+          },
+          "stage": {
+            "name": "Szakasz"
+          },
+          "code": {
+            "name": "Kód"
+          },
+          "message": {
+            "name": "Üzenet"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofon aktív"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Utolsó hiba",
+        "state": {
+          "none": "Nincs hiba",
+          "busy": "Még az előző kérésre válaszol.",
+          "queue_full": "Egy kérés már várakozik. Kérjük, próbálja a válasz után.",
+          "queue_expired": "A várakozó kérés lejárt. Kérjük, nyomja meg újra, és beszéljen.",
+          "queue_discarded": "A várakozó kérés el lett vetve.",
+          "queue_failed": "A várakozó kérést nem sikerült elindítani.",
+          "capture_limit": "Elérte a mikrofonrögzítési korlátot. Kérjük, használjon rövidebb kérést.",
+          "buffer_overflow": "A mikrofon hangja felgyülemlett, mielőtt a beszédszolgáltatás elkezdte olvasni.",
+          "audio_sequence_gap": "A hangszinkronizálás sikertelen. Kérjük, nyomja meg, és próbálja újra.",
+          "invalid_audio_sync": "A távirányító érvénytelen hangszinkronizálási üzenetet küldött.",
+          "invalid_audio_frame": "A távirányító sérült hangkeretet küldött.",
+          "invalid_control": "A távirányító érvénytelen vezérlőüzenetet küldött.",
+          "unsupported_audio_start": "A távirányító olyan módon indította el a hangot, amelyet ez az integráció nem támogat.",
+          "incomplete_utterance": "A hang a kérés befejezése előtt véget ért.",
+          "audio_stalled": "A mikrofon hangja nem érkezik tovább. Kérjük, próbálja újra.",
+          "audio_failed": "A mikrofon hangja sikertelen volt.",
+          "no_audio": "Nem érkezett mikrofonhang.",
+          "no_speech": "Nem észleltünk beszédet.",
+          "held_mode_unsupported": "A váltakozó beszélgetéshez tartva beszélős távirányító szükséges.",
+          "held_failed": "A gomb tartása közbeni beszélgetés sikertelen volt.",
+          "held_turn_failed": "A beszélgetés egy fordulója sikertelen volt.",
+          "remote_stopped": "A távirányító váratlanul leállította a mikrofont.",
+          "disconnected": "A távirányító leválasztódott.",
+          "cancelled": "A kérés megszakadt.",
+          "pipeline_finished_early": "Az Assist folyamat befejeződött, mielőtt minden hang beolvasásra került volna.",
+          "pipeline_timeout": "Az Assist folyamat túl sokáig válaszolt.",
+          "pipeline_failed": "Az Assist folyamat sikertelen volt.",
+          "pipeline_removed": "A kiválasztott Assist folyamat már nem létezik.",
+          "playback_stop_unverified": "Nem sikerült ellenőrizni, hogy az előző válasz leállt-e. Várjon, amíg a hangszóró tétlen lesz.",
+          "playback_stop_failed": "Az előző választ nem sikerült leállítani.",
+          "playback_start_timeout": "A hangszóró nem kezdte el lejátszani a választ.",
+          "playback_finish_timeout": "A hangszóró nem fejezte be időben a válasz lejátszását.",
+          "playback_interrupted": "A választ megszakították a hangszórón.",
+          "speaker_unavailable": "A válaszhangszóró nem érhető el.",
+          "speaker_busy": "A válaszhangszóró foglalt.",
+          "speaker_cannot_play": "A válaszhangszóró nem tud hangot lejátszani a Home Assistantból.",
+          "missing_tts_audio": "A válaszhoz nem volt lejátszható hang.",
+          "generation_retirement_failed": "Az előző kérés még nem állt le. Kérjük, várjon.",
+          "replacement_retirement_failed": "Az aktuális kérést nem sikerült leállítani az új indításához.",
+          "microphone_open_failed": "A távirányító mikrofonját nem sikerült megnyitni.",
+          "microphone_open_rejected": "A távirányító megtagadta a mikrofonja megnyitását.",
+          "microphone_start_timeout": "A távirányító nem indította el időben a mikrofonját.",
+          "microphone_close_failed": "A távirányító mikrofonját nem sikerült bezárni.",
+          "microphone_keepalive_failed": "A távirányító mikrofonkapcsolata megszakadt.",
+          "active_generation_cancelled": "Az előkészítés alatt álló válasz megszakadt, és a beszélgetés kontextusa visszaállt.",
+          "wake_remote": "Ébressze fel a távirányítót egy nyílgombbal, majd próbálja újra.",
+          "bluetooth_unavailable": "A helyi Bluetooth nem érhető el.",
+          "bluetooth_operation_failed": "Egy Bluetooth-művelet sikertelen volt.",
+          "not_paired": "A távirányító nincs párosítva ezen a gazdagépen.",
+          "multiple_adapters": "A távirányító egynél több adapteren párosítva van.",
+          "voice_service_unavailable": "A távirányító nem kínál hangszolgáltatást.",
+          "unsupported_write": "A távirányító hangvezérlésébe nem lehet írni.",
+          "unsupported_capabilities": "A távirányító olyan hangképességeket jelzett, amelyeket ez az integráció nem támogat.",
+          "unsupported_codec": "A távirányító olyan hangformátumot használ, amelyet ez az integráció nem támogat.",
+          "invalid_frame_size": "A távirányító érvénytelen hangkeretméretet jelzett.",
+          "hidraw_unavailable": "A távirányító beviteli eszköze nem érhető el a Home Assistant számára.",
+          "hidraw_permission_denied": "A Home Assistant nem olvashatja a távirányító beviteli eszközét.",
+          "opus_decoder_unavailable": "A Home Assistant számára nem érhető el Opus hangdekóder.",
+          "invalid_opus_packet": "A távirányító olyan hangot küldött, amelyet nem sikerült dekódolni.",
+          "other": "Másik hiba történt. A hibakód ad részleteket."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kód"
+          },
+          "stage": {
+            "name": "Szakasz"
+          },
+          "since": {
+            "name": "Mióta"
+          },
+          "session": {
+            "name": "Kérés"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Hiányzik az Assist folyamat ehhez: {remote}",
+      "description": "A(z) **{remote}** távirányító a(z) `{pipeline}` Assist folyamatot használja, amely már nem létezik. A távirányító hangkérései addig hiúsulnak meg, amíg másik folyamatot nem választ.\n\nLépjen a **Beállítások → Eszközök és szolgáltatások → Bluetooth Remote Voice** oldalra, nyissa meg a(z) **{remote}** menüjét, válassza a **Konfigurálás** lehetőséget, és válasszon egy meglévő folyamatot."
+    },
+    "speaker_missing": {
+      "title": "Hiányzik a válaszhangszóró ehhez: {remote}",
+      "description": "A(z) **{remote}** távirányító a válaszokat a(z) `{speaker}` eszközön játssza le, amely már nem létezik. A parancsok továbbra is végrehajtódnak, de a felolvasott válaszuk nem szólal meg.\n\nLépjen a **Beállítások → Eszközök és szolgáltatások → Bluetooth Remote Voice** oldalra, nyissa meg a(z) **{remote}** menüjét, válassza a **Konfigurálás** lehetőséget, és válasszon másik hangszórót, vagy ne válasszon egyet sem."
+    }
+  }
+}

@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Veldu pöruðu fjarstýringuna",
+        "description": "Paraðu fjarstýringuna fyrst utan Home Assistant og vektu hana síðan með örvartakka svo hægt sé að sannreyna hana. Veldu hana af listanum eða sláðu inn Bluetooth-vistfang hennar.",
+        "data": {
+          "device": "Pöruð fjarstýring"
+        },
+        "data_description": {
+          "device": "Fjarstýringar sem þegar eru paraðar við þennan Home Assistant hýsil. Veldu handvirka valkostinn ef þín er ekki á listanum."
+        }
+      },
+      "manual": {
+        "title": "Sláðu inn vistfang pöruðu fjarstýringarinnar",
+        "description": "Sláðu inn Bluetooth-vistfang fjarstýringar sem þegar er pöruð við þennan hýsil.",
+        "data": {
+          "address": "Bluetooth-vistfang"
+        },
+        "data_description": {
+          "address": "Sex pör af sextándakerfistölustöfum aðskilin með tvípunktum, til dæmis AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Veldu Assist-ferli",
+        "description": "Vektu fjarstýringuna með örvartakka áður en þú sendir. Samþættingin byrjar í hamnum aðeins umritun; breyttu því í valkostunum þegar það virkar.",
+        "data": {
+          "pipeline_id": "Assist-ferli"
+        },
+        "data_description": {
+          "pipeline_id": "Assist-ferlið sem vinnur úr tali frá þessari fjarstýringu."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Staðbundið Bluetooth er ekki tiltækt. Athugaðu hvort D-Bus kerfisins sé aðgengilegt.",
+      "wake_remote": "Vektu pöruðu fjarstýringuna með örvartakka og reyndu aftur.",
+      "not_paired": "Paraðu þessa fjarstýringu fyrst utanaðkomandi.",
+      "multiple_adapters": "Þessi fjarstýring er pöruð á mörgum millistykkjum. Haltu pöruninni á einu millistykki.",
+      "invalid_address": "Sláðu inn Bluetooth-vistfang á sniðinu AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Þessi fjarstýring býður ekki upp á studda ATVV v0.4/v1.0 ADPCM raddsnið.",
+      "invalid_pipeline": "Veldu Assist-ferli sem er til.",
+      "hidraw_unavailable": "Inntakstæki fjarstýringarinnar er ekki tiltækt fyrir Home Assistant. Vektu fjarstýringuna og athugaðu hvort Home Assistant sjái /dev/hidraw tæki.",
+      "hidraw_permission_denied": "Home Assistant hefur ekki leyfi til að lesa inntakstæki fjarstýringarinnar. Sjáðu README fyrir þann tækjaaðgang sem þessi fjarstýring þarfnast.",
+      "opus_decoder_unavailable": "Enginn Opus hljóðafkóðari er tiltækur fyrir Home Assistant, sem þessi fjarstýring þarfnast."
+    },
+    "abort": {
+      "already_configured": "Þessi fjarstýring hefur þegar verið stillt.",
+      "no_pipelines": "Búðu til Assist-ferli áður en þú bætir fjarstýringunni við."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Raddstillingar",
+        "description": "Þessar stillingar stýra því hvernig ýtt er á takka og hvernig svör eru töluð. Að skipta út beiðni getur ekki afturkallað aðgerðir sem þegar hafa verið framkvæmdar. Samtímis fulltvíhliða samskipti eru ekki tiltæk. Að stöðva eftir umritun gerir ekki óvirk verkfæri sem eru innbyggð í lifandi talþjónustu; notaðu þjónustu sem aðeins umritar þegar slökkva þarf á aðgerðum.\n\n**Svarskilyrði:** öll skilyrði þess verða að standast til að svar sé talað. Þau eru athuguð einu sinni í upphafi hverrar beiðni; hafðu það tómt til að tala alltaf, og skilyrði sem ekki er hægt að meta telst ekki uppfyllt. Sniðmátsskilyrði geta notað breyturnar `speaker`, `remote` og `held`.",
+        "data": {
+          "pipeline_id": "Assist-ferli",
+          "mode": "Raddhamur",
+          "speaker": "Svarhátalari",
+          "output_mode": "Tímasetning svars",
+          "stream_head_start": "Forskot streymis",
+          "busy_processing": "Ný ýting meðan unnið er",
+          "busy_playback": "Ný ýting meðan svar er spilað",
+          "context_mode": "Samhengi samtals",
+          "input_mode": "Hegðun takka",
+          "min_press_seconds": "Hunsa stuttar ýtingar",
+          "max_request_seconds": "Hámarkslengd beiðni",
+          "max_conversation_seconds": "Hámarkslengd samtals",
+          "reply_condition": "Svarskilyrði"
+        },
+        "data_description": {
+          "pipeline_id": "Assist-ferlið sem vinnur úr tali: tal í texta, samtalsfulltrúi og texti í tal. Fjarlægt ferli veldur villu í stað þess að falla aftur á annað.",
+          "mode": "Aðeins umritun stöðvast eftir talgreiningu og spilar ekkert svar. Framkvæma skipanir keyrir allt ferlið og talar svarið á svarhátalaranum.",
+          "speaker": "Margmiðlunarspilarinn sem talar svör. Aðeins notaður þegar skipanir eru framkvæmdar. Veldu ekkert talað svar til að stöðva ferlið áður en svarið er spilað.",
+          "output_mode": "Sjálfvirkt streymi byrjar að tala um leið og streymt svar er tilbúið. Að bíða eftir fullu svari byrjar síðar en spilar fullunna hljóðskrá, sem forðast hökt hjá þjónustuveitum sem framleiða tal aðeins á um það bil rauntímahraða.",
+          "stream_head_start": "Seinkar upphafi streymds svars um þennan fjölda sekúndna svo hátalarinn geti biðminnað; svör sem klárast fyrr eru spiluð strax. Hækkaðu gildið ef streymd svör hökta fyrstu sekúndurnar. Engin áhrif þegar beðið er eftir fullu svari. 0 heldur sjálfgefinni hegðun.",
+          "busy_processing": "Hvað á að gera þegar ýtt er á takkann áður en fyrri beiðni hefur verið svarað: hafna ýtingunni, halda einni biðbeiðni eða skipta núverandi beiðni út. Útskipti geta ekki afturkallað aðgerðir sem þegar hafa verið framkvæmdar.",
+          "busy_playback": "Hvað á að gera þegar ýtt er á takkann meðan svar er spilað: hafna ýtingunni, svara einni biðbeiðni á eftir eða stöðva svarið og hefja nýju beiðnina.",
+          "context_mode": "Endurnýta heldur Home Assistant samtalinu svo framhaldsspurningar eins og „og tvöfalt það?“ virki. Nýtt gerir hverja ýtingu að sjálfstæðu samtali.",
+          "input_mode": "Ein beiðni á hverja haldningu tekur upp þar til takkinn er sleppt. Víxlsamtal heldur áfram að hlusta meðan takkanum er haldið niðri: talaðu, gerðu hlé, heyrðu svarið og talaðu aftur. Krefst fjarstýringar með halda-til-að-tala.",
+          "min_press_seconds": "Hunsar snertingar á raddtakkanum sem eru styttri en þetta, svo óviljandi snerting hefji aldrei beiðni; raunveruleg haldning byrjar svo miklu síðar. 0 slekkur á þessu. Gagnlegt fyrir Fire TV fjarstýringu sem bilar með „Ekkert hljóð frá hljóðnema“ strax eftir að hún er vakin: hún sendir aftur takkann sem vakti hana sem augnabliks snertingu. 0,1 s er góður upphafspunktur. Aðeins fyrir Fire TV fjarstýringar.",
+          "max_request_seconds": "Lengsti tími sem ein beiðni getur varað á hvaða fjarstýringu sem er: heil haldning í hamnum Ein beiðni og hver umferð í víxlsamtali. Þegar því er náð lýkur beiðninni með villu um upptökumörk. Lækkaðu það til að stöðva upptöku þegar takki festist; hækkaðu það fyrir langa upptöku. Fjarstýringar án halda-til-að-tala ljúka einnig eftir um 15 sekúndna tal eða við þögn, hvort sem gerist fyrr.",
+          "max_conversation_seconds": "Lengsti tími sem heil takkahaldning getur varað í víxlsamtalshamnum. Er hunsað í hamnum Ein beiðni og má ekki vera styttra en hámarkslengd beiðni.",
+          "reply_condition": "Skilyrði sem öll verða að standast til að svar sé talað. Athuguð einu sinni í upphafi hverrar beiðni (og hverrar umferðar í víxlsamtali). Hafðu tómt til að tala alltaf. Skilyrði sem veldur villu telst ekki uppfyllt. Sniðmátsskilyrði geta notað breyturnar speaker, remote og held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Veldu margmiðlunarspilara sem styður hljóðspilun, eða ekkert talað svar.",
+      "invalid_preferences": "Veldu einhverja af þeim raddstillingum sem eru studdar.",
+      "invalid_pipeline": "Veldu Assist-ferli sem er til.",
+      "invalid_reply_condition": "Svarskilyrðið er ekki gilt. Athugaðu skilyrðin og reyndu aftur.",
+      "pipeline_missing": "Assist-ferlið sem vistað var fyrir þessa fjarstýringu er ekki lengur til. Veldu annað.",
+      "speaker_missing": "Vistaði svarhátalarinn er ekki tiltækur núna, svo svör verða ekki spiluð fyrr en hann kemur aftur. Haltu honum eða veldu annan."
+    },
+    "abort": {
+      "no_pipelines": "Búðu fyrst til Assist-ferli."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Sláðu inn Bluetooth-vistfang"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Aðeins umritun",
+        "commands": "Framkvæma skipanir"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Ekkert talað svar"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Sjálfvirkt streymi",
+        "buffered": "Bíða eftir fullu svari"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Hafna nýrri beiðni",
+        "queue": "Setja eina beiðni í biðröð",
+        "replace": "Skipta núverandi beiðni út"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Hafna nýrri beiðni",
+        "queue": "Setja eina beiðni í biðröð",
+        "replace": "Skipta núverandi svari út"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Endurnýta samtal",
+        "fresh": "Nýtt samtal fyrir hverja beiðni"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Ein beiðni á hverja haldningu",
+        "conversation": "Samtal meðan haldið er (víxl)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Rödd",
+        "state_attributes": {
+          "ready": {
+            "name": "Tilbúið"
+          },
+          "last_error": {
+            "name": "Síðasti villukóði"
+          },
+          "last_error_message": {
+            "name": "Síðustu villuboð"
+          },
+          "mode": {
+            "name": "Raddhamur"
+          },
+          "sessions": {
+            "name": "Lotur"
+          },
+          "failures": {
+            "name": "Bilanir"
+          },
+          "rejected": {
+            "name": "Hafnaðar ýtingar"
+          },
+          "queued": {
+            "name": "Beiðnir í biðröð"
+          },
+          "last_outcome": {
+            "name": "Síðasta niðurstaða"
+          },
+          "full_duplex": {
+            "name": "Fulltvíhliða samskipti"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Raddtakki",
+        "state_attributes": {
+          "event_type": {
+            "name": "Gerð atburðar",
+            "state": {
+              "pressed": "Ýtt",
+              "released": "Sleppt",
+              "accepted": "Samþykkt",
+              "rejected": "Hafnað",
+              "queued": "Í biðröð",
+              "failed": "Mistókst",
+              "context_reset": "Samtal endurstillt",
+              "reply_skipped": "Svari sleppt"
+            }
+          },
+          "outcome": {
+            "name": "Niðurstaða"
+          },
+          "stage": {
+            "name": "Stig"
+          },
+          "code": {
+            "name": "Kóði"
+          },
+          "message": {
+            "name": "Skilaboð"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Hljóðnemi virkur"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Síðasta villa",
+        "state": {
+          "none": "Engin villa",
+          "busy": "Er enn að svara fyrri beiðni.",
+          "queue_full": "Beiðni bíður þegar. Reyndu aftur eftir svarið.",
+          "queue_expired": "Biðbeiðnin rann út. Ýttu og talaðu aftur.",
+          "queue_discarded": "Biðbeiðninni var hent.",
+          "queue_failed": "Ekki tókst að hefja biðbeiðnina.",
+          "capture_limit": "Upptökumörkum hljóðnemans var náð. Notaðu styttri beiðni.",
+          "buffer_overflow": "Hljóð frá hljóðnemanum safnaðist upp áður en talþjónustan byrjaði að lesa það.",
+          "audio_sequence_gap": "Samstilling hljóðs mistókst. Ýttu og reyndu aftur.",
+          "invalid_audio_sync": "Fjarstýringin sendi ógild skilaboð um hljóðsamstillingu.",
+          "invalid_audio_frame": "Fjarstýringin sendi skemmdan hljóðramma.",
+          "invalid_control": "Fjarstýringin sendi ógild stjórnskilaboð.",
+          "unsupported_audio_start": "Fjarstýringin hóf hljóð á hátt sem þessi samþætting styður ekki.",
+          "incomplete_utterance": "Hljóðið endaði áður en beiðninni var lokið.",
+          "audio_stalled": "Hljóð frá hljóðnemanum hætti að berast. Reyndu aftur.",
+          "audio_failed": "Hljóð frá hljóðnemanum mistókst.",
+          "no_audio": "Ekkert hljóð barst frá hljóðnema.",
+          "no_speech": "Ekkert tal greindist.",
+          "held_mode_unsupported": "Víxlsamtal krefst fjarstýringar með halda-til-að-tala.",
+          "held_failed": "Samtalið meðan takkanum var haldið mistókst.",
+          "held_turn_failed": "Umferð í samtalinu mistókst.",
+          "remote_stopped": "Fjarstýringin stöðvaði hljóðnemann óvænt.",
+          "disconnected": "Fjarstýringin aftengdist.",
+          "cancelled": "Beiðnin var afturkölluð.",
+          "pipeline_finished_early": "Assist-ferlinu lauk áður en allt hljóðið var lesið.",
+          "pipeline_timeout": "Assist-ferlið var of lengi að svara.",
+          "pipeline_failed": "Assist-ferlið mistókst.",
+          "pipeline_removed": "Valda Assist-ferlið er ekki lengur til.",
+          "playback_stop_unverified": "Ekki tókst að staðfesta að fyrra svar hefði stöðvast. Bíddu þar til hátalarinn er aðgerðalaus.",
+          "playback_stop_failed": "Ekki tókst að stöðva fyrra svar.",
+          "playback_start_timeout": "Hátalarinn byrjaði ekki að spila svarið.",
+          "playback_finish_timeout": "Hátalarinn kláraði ekki að spila svarið á réttum tíma.",
+          "playback_interrupted": "Svarið var truflað á hátalaranum.",
+          "speaker_unavailable": "Svarhátalarinn er ekki tiltækur.",
+          "speaker_busy": "Svarhátalarinn er upptekinn.",
+          "speaker_cannot_play": "Svarhátalarinn getur ekki spilað hljóð frá Home Assistant.",
+          "missing_tts_audio": "Svarið hafði ekkert hljóð til að spila.",
+          "generation_retirement_failed": "Fyrri beiðni hefur ekki stöðvast enn. Bíddu.",
+          "replacement_retirement_failed": "Ekki tókst að stöðva núverandi beiðni til að hefja nýju beiðnina.",
+          "microphone_open_failed": "Ekki tókst að opna hljóðnema fjarstýringarinnar.",
+          "microphone_open_rejected": "Fjarstýringin neitaði að opna hljóðnemann sinn.",
+          "microphone_start_timeout": "Fjarstýringin ræsti ekki hljóðnemann sinn á réttum tíma.",
+          "microphone_close_failed": "Ekki tókst að loka hljóðnema fjarstýringarinnar.",
+          "microphone_keepalive_failed": "Tengingin við hljóðnema fjarstýringarinnar rofnaði.",
+          "active_generation_cancelled": "Svarið sem var verið að undirbúa var afturkallað og samhengi samtalsins endurstillt.",
+          "wake_remote": "Vektu fjarstýringuna með örvartakka og reyndu aftur.",
+          "bluetooth_unavailable": "Staðbundið Bluetooth er ekki tiltækt.",
+          "bluetooth_operation_failed": "Bluetooth-aðgerð mistókst.",
+          "not_paired": "Fjarstýringin er ekki pöruð við þennan hýsil.",
+          "multiple_adapters": "Fjarstýringin er pöruð á fleiri en einu millistykki.",
+          "voice_service_unavailable": "Fjarstýringin býður ekki upp á raddþjónustu.",
+          "unsupported_write": "Ekki er hægt að skrifa í raddstýringu fjarstýringarinnar.",
+          "unsupported_capabilities": "Fjarstýringin tilkynnti raddeiginleika sem þessi samþætting styður ekki.",
+          "unsupported_codec": "Fjarstýringin notar hljóðsnið sem þessi samþætting styður ekki.",
+          "invalid_frame_size": "Fjarstýringin tilkynnti ógilda stærð hljóðramma.",
+          "hidraw_unavailable": "Inntakstæki fjarstýringarinnar er ekki tiltækt fyrir Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant hefur ekki leyfi til að lesa inntakstæki fjarstýringarinnar.",
+          "opus_decoder_unavailable": "Enginn Opus hljóðafkóðari er tiltækur fyrir Home Assistant.",
+          "invalid_opus_packet": "Fjarstýringin sendi hljóð sem ekki var hægt að afkóða.",
+          "other": "Önnur villa kom upp. Villukóðinn gefur nánari upplýsingar."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kóði"
+          },
+          "stage": {
+            "name": "Stig"
+          },
+          "since": {
+            "name": "Síðan"
+          },
+          "session": {
+            "name": "Beiðni"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist-ferli vantar fyrir {remote}",
+      "description": "Fjarstýringin **{remote}** er stillt á að nota Assist-ferlið `{pipeline}`, sem er ekki lengur til. Raddbeiðnir frá þessari fjarstýringu mistakast þar til þú velur annað ferli.\n\nFarðu í **Stillingar → Tæki og þjónustur → Bluetooth Remote Voice**, opnaðu valmynd **{remote}**, veldu **Stilla** og veldu ferli sem er til."
+    },
+    "speaker_missing": {
+      "title": "Svarhátalara vantar fyrir {remote}",
+      "description": "Fjarstýringin **{remote}** er stillt á að spila svör á `{speaker}`, sem er ekki lengur til. Skipanir eru enn framkvæmdar en talaða svarið verður ekki spilað.\n\nFarðu í **Stillingar → Tæki og þjónustur → Bluetooth Remote Voice**, opnaðu valmynd **{remote}**, veldu **Stilla** og veldu annan hátalara eða engan."
+    }
+  }
+}

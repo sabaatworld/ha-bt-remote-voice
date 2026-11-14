@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Vel para fjernkontroll",
+        "description": "Par fjernkontrollen utanfor Home Assistant først, og vekk han deretter med ein piltast slik at han kan verifiserast. Vel han frå lista, eller skriv inn Bluetooth-adressa.",
+        "data": {
+          "device": "Para fjernkontroll"
+        },
+        "data_description": {
+          "device": "Fjernkontrollar som allereie er para med denne Home Assistant-verten. Vel det manuelle alternativet viss din ikkje står i lista."
+        }
+      },
+      "manual": {
+        "title": "Skriv inn adressa til den para fjernkontrollen",
+        "description": "Skriv inn Bluetooth-adressa til ein fjernkontroll som allereie er para med denne verten.",
+        "data": {
+          "address": "Bluetooth-adresse"
+        },
+        "data_description": {
+          "address": "Seks par med heksadesimale siffer skilde med kolon, til dømes AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Vel Assist-pipeline",
+        "description": "Vekk fjernkontrollen med ein piltast før du sender inn. Integrasjonen startar i modusen berre transkribering; endre dette i alternativa når det fungerer.",
+        "data": {
+          "pipeline_id": "Assist-pipeline"
+        },
+        "data_description": {
+          "pipeline_id": "Assist-pipelinen som behandlar tale frå denne fjernkontrollen."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Lokal Bluetooth er ikkje tilgjengeleg. Kontroller at systemets D-Bus er tilgjengeleg.",
+      "wake_remote": "Vekk den para fjernkontrollen med ein piltast, og prøv igjen.",
+      "not_paired": "Par denne fjernkontrollen eksternt først.",
+      "multiple_adapters": "Denne fjernkontrollen er para på fleire adaptarar. Behald paringa på éin adapter.",
+      "invalid_address": "Skriv inn ei Bluetooth-adresse i formatet AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Denne fjernkontrollen har ingen støtta ATVV v0.4/v1.0 ADPCM-stemmeprofil.",
+      "invalid_pipeline": "Vel ein eksisterande Assist-pipeline.",
+      "hidraw_unavailable": "Inndataeininga til fjernkontrollen er ikkje tilgjengeleg for Home Assistant. Vekk fjernkontrollen og kontroller at Home Assistant kan sjå /dev/hidraw-einingar.",
+      "hidraw_permission_denied": "Home Assistant har ikkje løyve til å lese inndataeininga til fjernkontrollen. Sjå README for einingstilgangen denne fjernkontrollen treng.",
+      "opus_decoder_unavailable": "Ingen Opus-lyddekodar er tilgjengeleg for Home Assistant, noko denne fjernkontrollen krev."
+    },
+    "abort": {
+      "already_configured": "Denne fjernkontrollen er allereie konfigurert.",
+      "no_pipelines": "Opprett ein Assist-pipeline før du legg til fjernkontrollen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Stemmeinnstillingar",
+        "description": "Desse innstillingane styrer korleis trykk blir handterte og korleis svar blir lesne opp. Å erstatte ein førespurnad kan ikkje angre handlingar som allereie er utførte. Samtidig full dupleks er ikkje tilgjengeleg. Å stoppe etter transkribering deaktiverer ikkje verktøy som er innebygde i ein live-taleleverandør; bruk ein leverandør som berre transkriberer når handlingar må vere deaktiverte.\n\n**Svarvilkår:** alle vilkåra må vere oppfylte for at eit svar skal bli lese opp. Dei blir kontrollerte éin gong ved starten av kvar førespurnad; la det stå tomt for alltid å tale, og eit vilkår som ikkje kan evaluerast, blir rekna som ikkje oppfylt. Malvilkår kan bruke variablane `speaker`, `remote` og `held`.",
+        "data": {
+          "pipeline_id": "Assist-pipeline",
+          "mode": "Stemmemodus",
+          "speaker": "Svarhøgtalar",
+          "output_mode": "Svartidspunkt",
+          "stream_head_start": "Forsprang for straumføring",
+          "busy_processing": "Nytt trykk under behandling",
+          "busy_playback": "Nytt trykk under svar",
+          "context_mode": "Samtalekontekst",
+          "input_mode": "Knappeåtferd",
+          "min_press_seconds": "Ignorer korte trykk",
+          "max_request_seconds": "Maksimal førespurnadslengd",
+          "max_conversation_seconds": "Maksimal samtalelengd",
+          "reply_condition": "Svarvilkår"
+        },
+        "data_description": {
+          "pipeline_id": "Assist-pipelinen som behandlar tale: tale til tekst, samtaleagent og tekst til tale. Ein fjerna pipeline gir ein feil i staden for å falle tilbake til ein annan.",
+          "mode": "Berre transkribering stoppar etter talegjenkjenninga og speler ikkje av noko svar. Utfør kommandoar køyrer heile pipelinen og les opp svaret på svarhøgtalaren.",
+          "speaker": "Mediespelaren som les opp svar. Blir berre brukt når kommandoar blir utførte. Vel inkje opplese svar for å stoppe pipelinen før svaret blir spelt av.",
+          "output_mode": "Automatisk straumføring begynner å tale så snart eit straumført svar er klart. Å vente på heile svaret startar seinare, men speler av ei ferdig lydfil, noko som unngår hakking hos leverandørar som berre produserer tale omtrent i sanntid.",
+          "stream_head_start": "Utset starten på eit straumført svar med dette talet sekund slik at høgtalaren kan bufre; svar som blir ferdige tidlegare, blir spelte av med éin gong. Auk verdien viss straumførte svar hakkar dei første sekunda. Ingen effekt når du ventar på heile svaret. 0 beheld standardåtferda.",
+          "busy_processing": "Kva som skal skje når knappen blir trykt før førre førespurnad er svara: avvise trykket, behalde éin ventande førespurnad eller erstatte den gjeldande førespurnaden. Å erstatte kan ikkje angre handlingar som allereie er utførte.",
+          "busy_playback": "Kva som skal skje når knappen blir trykt medan eit svar blir spelt av: avvise trykket, svare på ein ventande førespurnad etterpå eller stoppe svaret og starte den nye førespurnaden.",
+          "context_mode": "Attbruk beheld Home Assistant-samtalen slik at oppfølgingsspørsmål som «og det doble?» fungerer. Ny gjer kvart trykk til ein uavhengig samtale.",
+          "input_mode": "Éin førespurnad per hald tek opp til knappen blir sleppt. Vekslande samtale held fram med å lytte medan knappen blir halden inne: snakk, ta ein pause, høyr svaret og snakk igjen. Krev ein fjernkontroll med hald-for-å-snakke.",
+          "min_press_seconds": "Ignorerer trykk på stemmeknappen som er kortare enn dette, slik at eit utilsikta trykk aldri startar ein førespurnad; eit ekte hald startar så mykje seinare. 0 slår det av. Nyttig for ein Fire TV-fjernkontroll som feilar med «Inga mikrofonlyd» rett etter oppvakning: han sender tasten som vekte han på nytt som eit augneblinkleg trykk. 0,1 s er eit godt utgangspunkt. Berre for Fire TV-fjernkontrollar.",
+          "max_request_seconds": "Den lengste tida éin enkelt førespurnad kan vare på ein fjernkontroll: eit heilt hald i modusen Éin førespurnad og kvar tur i vekslande samtale. Når grensa blir nådd, blir førespurnaden avslutta med ein feil om opptaksgrense. Senk han for å stoppe opptak med hengande knapp; auk han for lang diktering. Fjernkontrollar utan hald-for-å-snakke blir òg avslutta etter omtrent 15 sekund tale eller ved stille, avhengig av kva som kjem først.",
+          "max_conversation_seconds": "Den lengste tida eit heilt knapphald kan vare i modusen vekslande samtale. Blir ignorert i modusen Éin førespurnad og må ikkje vere kortare enn maksimal førespurnadslengd.",
+          "reply_condition": "Vilkår som alle må vere oppfylte for at eit svar skal bli lese opp. Blir kontrollerte éin gong ved starten av kvar førespurnad (og kvar tur i vekslande samtale). La det stå tomt for alltid å tale. Eit vilkår som gir feil, blir rekna som ikkje oppfylt. Malvilkår kan bruke variablane speaker, remote og held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Vel ein mediespelar som støttar avspeling av lyd, eller inkje opplese svar.",
+      "invalid_preferences": "Vel ei av dei støtta stemmepreferansane.",
+      "invalid_pipeline": "Vel ein eksisterande Assist-pipeline.",
+      "invalid_reply_condition": "Svarvilkåret er ikkje gyldig. Kontroller vilkåra og prøv igjen.",
+      "pipeline_missing": "Assist-pipelinen som er lagra for denne fjernkontrollen, finst ikkje lenger. Vel ein annan.",
+      "speaker_missing": "Den lagra svarhøgtalaren er ikkje tilgjengeleg akkurat no, så svar blir ikkje spelte av før han er tilbake. Behald han, eller vel ein annan."
+    },
+    "abort": {
+      "no_pipelines": "Opprett ein Assist-pipeline først."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Skriv inn Bluetooth-adresse"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Berre transkribering",
+        "commands": "Utfør kommandoar"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Inkje opplese svar"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatisk straumføring",
+        "buffered": "Vent på fullstendig svar"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Avvis ny førespurnad",
+        "queue": "Set éin førespurnad i kø",
+        "replace": "Erstatt gjeldande førespurnad"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Avvis ny førespurnad",
+        "queue": "Set éin førespurnad i kø",
+        "replace": "Erstatt gjeldande svar"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Attbruk samtale",
+        "fresh": "Ny samtale per førespurnad"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Éin førespurnad per hald",
+        "conversation": "Samtale medan knappen blir halden (vekslande)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Stemme",
+        "state_attributes": {
+          "ready": {
+            "name": "Klar"
+          },
+          "last_error": {
+            "name": "Siste feilkode"
+          },
+          "last_error_message": {
+            "name": "Siste feilmelding"
+          },
+          "mode": {
+            "name": "Stemmemodus"
+          },
+          "sessions": {
+            "name": "Økter"
+          },
+          "failures": {
+            "name": "Feil"
+          },
+          "rejected": {
+            "name": "Avviste trykk"
+          },
+          "queued": {
+            "name": "Førespurnader i kø"
+          },
+          "last_outcome": {
+            "name": "Siste utfall"
+          },
+          "full_duplex": {
+            "name": "Full dupleks"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Stemmeknapp",
+        "state_attributes": {
+          "event_type": {
+            "name": "Hendingstype",
+            "state": {
+              "pressed": "Trykt",
+              "released": "Sleppt",
+              "accepted": "Akseptert",
+              "rejected": "Avvist",
+              "queued": "I kø",
+              "failed": "Mislukkast",
+              "context_reset": "Samtale tilbakestilt",
+              "reply_skipped": "Svar hoppa over"
+            }
+          },
+          "outcome": {
+            "name": "Utfall"
+          },
+          "stage": {
+            "name": "Steg"
+          },
+          "code": {
+            "name": "Kode"
+          },
+          "message": {
+            "name": "Melding"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofon aktiv"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Siste feil",
+        "state": {
+          "none": "Ingen feil",
+          "busy": "Svarer framleis på førre førespurnad.",
+          "queue_full": "Ein førespurnad ventar allereie. Prøv igjen etter svaret.",
+          "queue_expired": "Den ventande førespurnaden gjekk ut på tid. Trykk og snakk på nytt.",
+          "queue_discarded": "Den ventande førespurnaden blei forkasta.",
+          "queue_failed": "Den ventande førespurnaden kunne ikkje startast.",
+          "capture_limit": "Opptaksgrensa til mikrofonen blei nådd. Bruk ein kortare førespurnad.",
+          "buffer_overflow": "Mikrofonlyden hopa seg opp før talteneste begynte å lese han.",
+          "audio_sequence_gap": "Lydsynkroniseringa mislukkast. Trykk og prøv igjen.",
+          "invalid_audio_sync": "Fjernkontrollen sende ei ugyldig melding om lydsynkronisering.",
+          "invalid_audio_frame": "Fjernkontrollen sende ei skadd lydramme.",
+          "invalid_control": "Fjernkontrollen sende ei ugyldig kontrollmelding.",
+          "unsupported_audio_start": "Fjernkontrollen starta lyd på ein måte som denne integrasjonen ikkje støttar.",
+          "incomplete_utterance": "Lyden tok slutt før førespurnaden var fullført.",
+          "audio_stalled": "Mikrofonlyden slutta å kome. Prøv igjen.",
+          "audio_failed": "Mikrofonlyden mislukkast.",
+          "no_audio": "Inga mikrofonlyd blei motteken.",
+          "no_speech": "Ingen tale blei oppdaga.",
+          "held_mode_unsupported": "Vekslande samtale krev ein fjernkontroll med hald-for-å-snakke.",
+          "held_failed": "Samtalen medan knappen blei halden inne, mislukkast.",
+          "held_turn_failed": "Ein tur i samtalen mislukkast.",
+          "remote_stopped": "Fjernkontrollen stoppa mikrofonen uventa.",
+          "disconnected": "Fjernkontrollen kopla frå.",
+          "cancelled": "Førespurnaden blei avbroten.",
+          "pipeline_finished_early": "Assist-pipelinen blei avslutta før all lyden var lesen.",
+          "pipeline_timeout": "Assist-pipelinen brukte for lang tid på å svare.",
+          "pipeline_failed": "Assist-pipelinen mislukkast.",
+          "pipeline_removed": "Den valde Assist-pipelinen finst ikkje lenger.",
+          "playback_stop_unverified": "Kunne ikkje stadfeste at førre svar blei stoppa. Vent til høgtalaren er inaktiv.",
+          "playback_stop_failed": "Førre svar kunne ikkje stoppast.",
+          "playback_start_timeout": "Høgtalaren begynte ikkje å spele av svaret.",
+          "playback_finish_timeout": "Høgtalaren blei ikkje ferdig med å spele av svaret i tide.",
+          "playback_interrupted": "Svaret blei avbrote på høgtalaren.",
+          "speaker_unavailable": "Svarhøgtalaren er utilgjengeleg.",
+          "speaker_busy": "Svarhøgtalaren er oppteken.",
+          "speaker_cannot_play": "Svarhøgtalaren kan ikkje spele av lyd frå Home Assistant.",
+          "missing_tts_audio": "Svaret hadde inga lyd å spele av.",
+          "generation_retirement_failed": "Førre førespurnad har ikkje stoppa enno. Vent.",
+          "replacement_retirement_failed": "Den gjeldande førespurnaden kunne ikkje stoppast for å starte den nye.",
+          "microphone_open_failed": "Mikrofonen til fjernkontrollen kunne ikkje opnast.",
+          "microphone_open_rejected": "Fjernkontrollen nekta å opne mikrofonen sin.",
+          "microphone_start_timeout": "Fjernkontrollen starta ikkje mikrofonen sin i tide.",
+          "microphone_close_failed": "Mikrofonen til fjernkontrollen kunne ikkje lukkast.",
+          "microphone_keepalive_failed": "Tilkoplinga til mikrofonen til fjernkontrollen blei broten.",
+          "active_generation_cancelled": "Svaret som blei førebudd, blei avbrote, og samtalekonteksten blei tilbakestilt.",
+          "wake_remote": "Vekk fjernkontrollen med ein piltast, og prøv igjen.",
+          "bluetooth_unavailable": "Lokal Bluetooth er ikkje tilgjengeleg.",
+          "bluetooth_operation_failed": "Ei Bluetooth-operasjon mislukkast.",
+          "not_paired": "Fjernkontrollen er ikkje para med denne verten.",
+          "multiple_adapters": "Fjernkontrollen er para på meir enn éin adapter.",
+          "voice_service_unavailable": "Fjernkontrollen tilbyr inga stemmeteneste.",
+          "unsupported_write": "Stemmekontrollen til fjernkontrollen kan ikkje skrivast.",
+          "unsupported_capabilities": "Fjernkontrollen rapporterte stemmefunksjonar som denne integrasjonen ikkje støttar.",
+          "unsupported_codec": "Fjernkontrollen bruker eit lydformat som denne integrasjonen ikkje støttar.",
+          "invalid_frame_size": "Fjernkontrollen rapporterte ei ugyldig lydrammestorleik.",
+          "hidraw_unavailable": "Inndataeininga til fjernkontrollen er ikkje tilgjengeleg for Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant har ikkje løyve til å lese inndataeininga til fjernkontrollen.",
+          "opus_decoder_unavailable": "Ingen Opus-lyddekodar er tilgjengeleg for Home Assistant.",
+          "invalid_opus_packet": "Fjernkontrollen sende lyd som ikkje kunne dekodast.",
+          "other": "Ein annan feil oppstod. Feilkoden gir detaljane."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kode"
+          },
+          "stage": {
+            "name": "Steg"
+          },
+          "since": {
+            "name": "Sidan"
+          },
+          "session": {
+            "name": "Førespurnad"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist-pipeline manglar for {remote}",
+      "description": "Fjernkontrollen **{remote}** er sett til å bruke Assist-pipelinen `{pipeline}`, som ikkje finst lenger. Stemmeførespurnader frå denne fjernkontrollen mislukkast til du vel ein annan pipeline.\n\nGå til **Innstillingar → Einingar og tenester → Bluetooth Remote Voice**, opne menyen for **{remote}**, vel **Konfigurer**, og vel ein eksisterande pipeline."
+    },
+    "speaker_missing": {
+      "title": "Svarhøgtalar manglar for {remote}",
+      "description": "Fjernkontrollen **{remote}** er sett til å spele av svar på `{speaker}`, som ikkje finst lenger. Kommandoar blir framleis køyrde, men det opplesne svaret blir ikkje spelt av.\n\nGå til **Innstillingar → Einingar og tenester → Bluetooth Remote Voice**, opne menyen for **{remote}**, vel **Konfigurer**, og vel ein annan høgtalar eller ingen."
+    }
+  }
+}

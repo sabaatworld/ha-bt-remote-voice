@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Kies gekoppelde afstandsbeheer",
+        "description": "Koppel jou afstandsbeheer eers buite Home Assistant en maak dit dan wakker met 'n pyltjieknoppie sodat dit geverifieer kan word. Kies dit uit die lys, of voer sy Bluetooth-adres in.",
+        "data": {
+          "device": "Gekoppelde afstandsbeheer"
+        },
+        "data_description": {
+          "device": "Afstandsbeheerders wat reeds op hierdie Home Assistant-gasheer gekoppel is. Kies die handmatige opsie as joune nie gelys word nie."
+        }
+      },
+      "manual": {
+        "title": "Voer adres van gekoppelde afstandsbeheer in",
+        "description": "Voer die Bluetooth-adres in van 'n afstandsbeheer wat reeds op hierdie gasheer gekoppel is.",
+        "data": {
+          "address": "Bluetooth-adres"
+        },
+        "data_description": {
+          "address": "Ses pare heksadesimale syfers geskei deur dubbelpunte, byvoorbeeld AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Kies Assist-pyplyn",
+        "description": "Maak die afstandsbeheer wakker met 'n pyltjieknoppie voordat jy dit indien. Die integrasie begin in net-transkripsiemodus; verander dit in die opsies sodra dit werk.",
+        "data": {
+          "pipeline_id": "Assist-pyplyn"
+        },
+        "data_description": {
+          "pipeline_id": "Die Assist-pyplyn wat spraak van hierdie afstandsbeheer verwerk."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Plaaslike Bluetooth is nie beskikbaar nie. Kontroleer dat die stelsel-D-Bus toeganklik is.",
+      "wake_remote": "Maak die gekoppelde afstandsbeheer wakker met 'n pyltjieknoppie en probeer weer.",
+      "not_paired": "Koppel hierdie afstandsbeheer eers ekstern.",
+      "multiple_adapters": "Hierdie afstandsbeheer is op verskeie adapters gekoppel. Hou sy koppeling op een adapter.",
+      "invalid_address": "Voer 'n Bluetooth-adres in die formaat AA:BB:CC:DD:EE:FF in.",
+      "unsupported_remote": "Hierdie afstandsbeheer bied nie 'n ondersteunde ATVV v0.4/v1.0 ADPCM-stemprofiel nie.",
+      "invalid_pipeline": "Kies 'n bestaande Assist-pyplyn.",
+      "hidraw_unavailable": "Die afstandsbeheer se invoertoestel is nie vir Home Assistant beskikbaar nie. Maak die afstandsbeheer wakker en kontroleer dat Home Assistant /dev/hidraw-toestelle kan sien.",
+      "hidraw_permission_denied": "Home Assistant mag nie die afstandsbeheer se invoertoestel lees nie. Sien die README vir die toesteltoegang wat hierdie afstandsbeheer benodig.",
+      "opus_decoder_unavailable": "Geen Opus-oudiodekodeerder is vir Home Assistant beskikbaar nie, wat hierdie afstandsbeheer benodig."
+    },
+    "abort": {
+      "already_configured": "Hierdie afstandsbeheer is reeds gekonfigureer.",
+      "no_pipelines": "Skep 'n Assist-pyplyn voordat jy die afstandsbeheer byvoeg."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Stemverstellings",
+        "description": "Hierdie verstellings bepaal hoe drukke hanteer word en hoe antwoorde gesê word. Om 'n versoek te vervang, kan nie aksies ongedaan maak wat reeds uitgevoer is nie. Gelyktydige volle dupleks is nie beskikbaar nie. Om ná transkripsie te stop, skakel nie nutsgoed af wat in 'n regstreekse spraakverskaffer ingebou is nie; gebruik 'n net-transkripsie-verskaffer wanneer aksies afgeskakel moet word.\n\n**Antwoordvoorwaarde:** al sy voorwaardes moet slaag vir 'n antwoord om gesê te word. Hulle word een keer aan die begin van elke versoek nagegaan; laat dit leeg om altyd te praat, en 'n voorwaarde wat nie geëvalueer kan word nie, tel as nie nagekom nie. Sjabloonvoorwaardes kan die veranderlikes `speaker`, `remote` en `held` gebruik.",
+        "data": {
+          "pipeline_id": "Assist-pyplyn",
+          "mode": "Stemmodus",
+          "speaker": "Antwoordluidspreker",
+          "output_mode": "Antwoordtydsberekening",
+          "stream_head_start": "Stroom-voorsprong",
+          "busy_processing": "Nuwe druk tydens verwerking",
+          "busy_playback": "Nuwe druk tydens antwoord",
+          "context_mode": "Gesprekskonteks",
+          "input_mode": "Knoppie-gedrag",
+          "min_press_seconds": "Ignoreer kort drukke",
+          "max_request_seconds": "Maksimum versoeklengte",
+          "max_conversation_seconds": "Maksimum gesprekslengte",
+          "reply_condition": "Antwoordvoorwaarde"
+        },
+        "data_description": {
+          "pipeline_id": "Die Assist-pyplyn wat spraak verwerk: spraak-na-teks, gespreksagent en teks-na-spraak. 'n Verwyderde pyplyn misluk met 'n fout in plaas daarvan om na 'n ander terug te val.",
+          "mode": "Net transkripsie stop ná spraakherkenning en speel geen antwoord nie. Voer opdragte uit laat die hele pyplyn loop en sê die antwoord op die antwoordluidspreker.",
+          "speaker": "Die mediaspeler wat antwoorde sê. Word slegs gebruik wanneer opdragte uitgevoer word. Kies geen gesproke antwoord om die pyplyn te stop voordat die antwoord gespeel word.",
+          "output_mode": "Outomatiese stroming begin praat sodra 'n gestroomde antwoord gereed is. Wag vir die volledige antwoord begin later, maar speel 'n voltooide oudiolêer, wat haperings vermy by verskaffers wat spraak slegs teen ongeveer intydse pas lewer.",
+          "stream_head_start": "Vertraag die begin van 'n gestroomde antwoord met soveel sekondes sodat die luidspreker kan buffer; antwoorde wat vroeër klaar is, speel dadelik. Verhoog dit as gestroomde antwoorde in die eerste sekondes haper. Geen effek wanneer daar vir die volledige antwoord gewag word nie. 0 behou die verstekgedrag.",
+          "busy_processing": "Wat om te doen wanneer die knoppie gedruk word voordat die vorige versoek beantwoord is: die druk verwerp, een hangende versoek hou, of die huidige versoek vervang. Vervanging kan nie aksies ongedaan maak wat reeds uitgevoer is nie.",
+          "busy_playback": "Wat om te doen wanneer die knoppie gedruk word terwyl 'n antwoord speel: die druk verwerp, daarna een hangende versoek beantwoord, of die antwoord stop en die nuwe versoek begin.",
+          "context_mode": "Hergebruik behou die Home Assistant-gesprek sodat opvolgvrae soos 'en dubbel dit?' werk. Vars maak van elke druk 'n onafhanklike gesprek.",
+          "input_mode": "Een versoek per hou neem op totdat die knoppie losgelaat word. Wisselende gesprek bly luister terwyl die knoppie gehou word: praat, wag, hoor die antwoord, en praat dan weer. Dit benodig 'n hou-om-te-praat-afstandsbeheer.",
+          "min_press_seconds": "Ignoreer tikke op die stemknoppie wat korter as dit is, sodat 'n valse tik nooit 'n versoek begin nie; 'n ware hou begin soveel later. 0 skakel dit af. Nuttig vir 'n Fire TV-afstandsbeheer wat net ná wakker word misluk met \"No microphone audio\": dit stuur die sleutel wat dit wakker gemaak het weer as 'n kitstik. 0,1 s is 'n goeie beginpunt. Slegs vir Fire TV-afstandsbeheerders.",
+          "max_request_seconds": "Die langste wat 'n enkele versoek op enige afstandsbeheer kan duur: 'n hele hou in Een-versoek-modus, en elke beurt in Wisselende gesprek. As dit bereik word, eindig die versoek met 'n opnamelimiet-fout. Verlaag dit om 'n vasgeklemde knoppie se opname te stop; verhoog dit vir lang dikteer. Afstandsbeheerders wat nie hou-om-te-praat is nie, eindig ook ná ongeveer 15 sekondes spraak of by stilte, wat ook al eerste kom.",
+          "max_conversation_seconds": "Die langste wat 'n hele knoppie-hou kan duur in Wisselende gesprek-modus. Dit word geïgnoreer in Een-versoek-modus en mag nie korter as die maksimum versoeklengte wees nie.",
+          "reply_condition": "Voorwaardes wat almal moet slaag vir 'n antwoord om gesê te word. Een keer aan die begin van elke versoek nagegaan (en elke beurt in Wisselende gesprek). Laat leeg om altyd te praat. 'n Voorwaarde wat 'n fout gee, tel as nie nagekom nie. Sjabloonvoorwaardes kan die veranderlikes speaker, remote en held gebruik."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Kies 'n mediaspeler wat oudiospeel ondersteun, of geen gesproke antwoord.",
+      "invalid_preferences": "Kies een van die ondersteunde stemvoorkeure.",
+      "invalid_pipeline": "Kies 'n bestaande Assist-pyplyn.",
+      "invalid_reply_condition": "Die antwoordvoorwaarde is nie geldig nie. Kontroleer die voorwaardes en probeer weer.",
+      "pipeline_missing": "Die Assist-pyplyn wat vir hierdie afstandsbeheer gestoor is, bestaan nie meer nie. Kies 'n ander een.",
+      "speaker_missing": "Die gestoorde antwoordluidspreker is nou nie beskikbaar nie, so antwoorde sal nie speel totdat dit terugkeer nie. Hou dit, of kies 'n ander."
+    },
+    "abort": {
+      "no_pipelines": "Skep eers 'n Assist-pyplyn."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Voer Bluetooth-adres in"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Net transkripsie",
+        "commands": "Voer opdragte uit"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Geen gesproke antwoord"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Outomatiese stroming",
+        "buffered": "Wag vir volledige antwoord"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Verwerp nuwe versoek",
+        "queue": "Plaas een versoek in tou",
+        "replace": "Vervang huidige versoek"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Verwerp nuwe versoek",
+        "queue": "Plaas een versoek in tou",
+        "replace": "Vervang huidige antwoord"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Hergebruik gesprek",
+        "fresh": "Vars gesprek per versoek"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Een versoek per hou",
+        "conversation": "Gesprek terwyl gehou (wisselend)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Stem",
+        "state_attributes": {
+          "ready": {
+            "name": "Gereed"
+          },
+          "last_error": {
+            "name": "Laaste foutkode"
+          },
+          "last_error_message": {
+            "name": "Laaste foutboodskap"
+          },
+          "mode": {
+            "name": "Stemmodus"
+          },
+          "sessions": {
+            "name": "Sessies"
+          },
+          "failures": {
+            "name": "Mislukkings"
+          },
+          "rejected": {
+            "name": "Verwerpte drukke"
+          },
+          "queued": {
+            "name": "Versoeke in tou"
+          },
+          "last_outcome": {
+            "name": "Laaste uitkoms"
+          },
+          "full_duplex": {
+            "name": "Volle dupleks"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Stemknoppie",
+        "state_attributes": {
+          "event_type": {
+            "name": "Gebeurtenistipe",
+            "state": {
+              "pressed": "Gedruk",
+              "released": "Losgelaat",
+              "accepted": "Aanvaar",
+              "rejected": "Verwerp",
+              "queued": "In tou geplaas",
+              "failed": "Misluk",
+              "context_reset": "Gesprek teruggestel",
+              "reply_skipped": "Antwoord oorgeslaan"
+            }
+          },
+          "outcome": {
+            "name": "Uitkoms"
+          },
+          "stage": {
+            "name": "Fase"
+          },
+          "code": {
+            "name": "Kode"
+          },
+          "message": {
+            "name": "Boodskap"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofoon aktief"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Laaste fout",
+        "state": {
+          "none": "Geen fout",
+          "busy": "Antwoord nog op die vorige versoek.",
+          "queue_full": "'n Versoek wag reeds. Probeer asseblief ná die antwoord.",
+          "queue_expired": "Die wagende versoek het verval. Druk asseblief en praat weer.",
+          "queue_discarded": "Die wagende versoek is weggegooi.",
+          "queue_failed": "Die wagende versoek kon nie begin word nie.",
+          "capture_limit": "Die mikrofoon se opnamelimiet is bereik. Gebruik asseblief 'n korter versoek.",
+          "buffer_overflow": "Die mikrofoonoudio het opgehoop voordat die spraakdiens dit begin lees het.",
+          "audio_sequence_gap": "Oudiosinchronisasie het misluk. Druk asseblief en probeer weer.",
+          "invalid_audio_sync": "Die afstandsbeheer het 'n ongeldige oudiosinchronisasieboodskap gestuur.",
+          "invalid_audio_frame": "Die afstandsbeheer het 'n beskadigde oudioraam gestuur.",
+          "invalid_control": "Die afstandsbeheer het 'n ongeldige beheerboodskap gestuur.",
+          "unsupported_audio_start": "Die afstandsbeheer het oudio op 'n manier begin wat hierdie integrasie nie ondersteun nie.",
+          "incomplete_utterance": "Oudio het geëindig voordat die versoek volledig was.",
+          "audio_stalled": "Mikrofoonoudio het opgehou aankom. Probeer asseblief weer.",
+          "audio_failed": "Die mikrofoonoudio het misluk.",
+          "no_audio": "Geen mikrofoonoudio is ontvang nie.",
+          "no_speech": "Geen spraak is bespeur nie.",
+          "held_mode_unsupported": "Wisselende gesprek benodig 'n hou-om-te-praat-afstandsbeheer.",
+          "held_failed": "Die gesprek terwyl die knoppie gehou word, het misluk.",
+          "held_turn_failed": "'n Beurt van die gesprek het misluk.",
+          "remote_stopped": "Die afstandsbeheer het die mikrofoon onverwags gestop.",
+          "disconnected": "Die afstandsbeheer is ontkoppel.",
+          "cancelled": "Die versoek is gekanselleer.",
+          "pipeline_finished_early": "Die Assist-pyplyn het klaar gemaak voordat alle oudio gelees is.",
+          "pipeline_timeout": "Die Assist-pyplyn het te lank geneem om te reageer.",
+          "pipeline_failed": "Die Assist-pyplyn het misluk.",
+          "pipeline_removed": "Die gekose Assist-pyplyn bestaan nie meer nie.",
+          "playback_stop_unverified": "Kon nie verifieer dat die vorige antwoord gestop het nie. Wag totdat die luidspreker onaktief is.",
+          "playback_stop_failed": "Die vorige antwoord kon nie gestop word nie.",
+          "playback_start_timeout": "Die luidspreker het nie die antwoord begin speel nie.",
+          "playback_finish_timeout": "Die luidspreker het nie betyds klaar gespeel met die antwoord nie.",
+          "playback_interrupted": "Die antwoord is op die luidspreker onderbreek.",
+          "speaker_unavailable": "Die antwoordluidspreker is nie beskikbaar nie.",
+          "speaker_busy": "Die antwoordluidspreker is besig.",
+          "speaker_cannot_play": "Die antwoordluidspreker kan nie oudio van Home Assistant speel nie.",
+          "missing_tts_audio": "Die antwoord het geen oudio gehad om te speel nie.",
+          "generation_retirement_failed": "Die vorige versoek het nog nie gestop nie. Wag asseblief.",
+          "replacement_retirement_failed": "Die huidige versoek kon nie gestop word om die nuwe een te begin nie.",
+          "microphone_open_failed": "Die afstandsbeheer se mikrofoon kon nie oopgemaak word nie.",
+          "microphone_open_rejected": "Die afstandsbeheer het geweier om sy mikrofoon oop te maak.",
+          "microphone_start_timeout": "Die afstandsbeheer het nie sy mikrofoon betyds begin nie.",
+          "microphone_close_failed": "Die afstandsbeheer se mikrofoon kon nie toegemaak word nie.",
+          "microphone_keepalive_failed": "Die afstandsbeheer se mikrofoonverbinding is verloor.",
+          "active_generation_cancelled": "Die antwoord wat voorberei is, is gekanselleer en die gesprekskonteks is teruggestel.",
+          "wake_remote": "Maak die afstandsbeheer wakker met 'n pyltjieknoppie en probeer weer.",
+          "bluetooth_unavailable": "Plaaslike Bluetooth is nie beskikbaar nie.",
+          "bluetooth_operation_failed": "'n Bluetooth-bewerking het misluk.",
+          "not_paired": "Die afstandsbeheer is nie op hierdie gasheer gekoppel nie.",
+          "multiple_adapters": "Die afstandsbeheer is op meer as een adapter gekoppel.",
+          "voice_service_unavailable": "Die afstandsbeheer bied nie 'n stemdiens nie.",
+          "unsupported_write": "Die afstandsbeheer se stembeheer kan nie geskryf word nie.",
+          "unsupported_capabilities": "Die afstandsbeheer het stemvermoëns gerapporteer wat hierdie integrasie nie ondersteun nie.",
+          "unsupported_codec": "Die afstandsbeheer gebruik 'n oudioformaat wat hierdie integrasie nie ondersteun nie.",
+          "invalid_frame_size": "Die afstandsbeheer het 'n ongeldige oudioraamgrootte gerapporteer.",
+          "hidraw_unavailable": "Die afstandsbeheer se invoertoestel is nie vir Home Assistant beskikbaar nie.",
+          "hidraw_permission_denied": "Home Assistant mag nie die afstandsbeheer se invoertoestel lees nie.",
+          "opus_decoder_unavailable": "Geen Opus-oudiodekodeerder is vir Home Assistant beskikbaar nie.",
+          "invalid_opus_packet": "Die afstandsbeheer het oudio gestuur wat nie gedekodeer kon word nie.",
+          "other": "'n Ander fout het voorgekom. Die foutkode gee die besonderhede."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kode"
+          },
+          "stage": {
+            "name": "Fase"
+          },
+          "since": {
+            "name": "Sedert"
+          },
+          "session": {
+            "name": "Versoek"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist-pyplyn ontbreek vir {remote}",
+      "description": "Die afstandsbeheer **{remote}** is gestel om die Assist-pyplyn `{pipeline}` te gebruik, wat nie meer bestaan nie. Stemversoeke van hierdie afstandsbeheer misluk totdat jy 'n ander pyplyn kies.\n\nGaan na **Instellings → Toestelle en dienste → Bluetooth Remote Voice**, maak die kieslys van **{remote}** oop, kies **Konfigureer**, en kies 'n bestaande pyplyn."
+    },
+    "speaker_missing": {
+      "title": "Antwoordluidspreker ontbreek vir {remote}",
+      "description": "Die afstandsbeheer **{remote}** is gestel om antwoorde op `{speaker}` te speel, wat nie meer bestaan nie. Opdragte loop steeds, maar hul gesproke antwoord sal nie speel nie.\n\nGaan na **Instellings → Toestelle en dienste → Bluetooth Remote Voice**, maak die kieslys van **{remote}** oop, kies **Konfigureer**, en kies 'n ander luidspreker of kies geen."
+    }
+  }
+}

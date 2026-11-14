@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Elektu parigitan teleregilon",
+        "description": "Unue parigu vian teleregilon ekster Home Assistant, poste vekigu ĝin per sagoklavo por ke ĝi estu kontrolebla. Elektu ĝin el la listo, aŭ enigu ĝian Bluetooth-adreson.",
+        "data": {
+          "device": "Parigita teleregilo"
+        },
+        "data_description": {
+          "device": "Teleregiloj jam parigitaj kun ĉi tiu Home Assistant-gastiganto. Elektu la manan opcion se via ne aperas en la listo."
+        }
+      },
+      "manual": {
+        "title": "Enigu adreson de parigita teleregilo",
+        "description": "Enigu la Bluetooth-adreson de teleregilo jam parigita kun ĉi tiu gastiganto.",
+        "data": {
+          "address": "Bluetooth-adreso"
+        },
+        "data_description": {
+          "address": "Ses paroj de deksesumaj ciferoj apartigitaj per dupunktoj, ekzemple AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Elektu Assist-duktubon",
+        "description": "Vekigu la teleregilon per sagoklavo antaŭ ol sendi. La integriĝo komencas en reĝimo nur por transskribo; ŝanĝu tion en la opcioj kiam ĝi funkcias.",
+        "data": {
+          "pipeline_id": "Assist-duktubo"
+        },
+        "data_description": {
+          "pipeline_id": "La Assist-duktubo, kiu prilaboras paroladon de ĉi tiu teleregilo."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Loka Bluetooth ne disponeblas. Kontrolu, ke la sistema D-Bus estas alirebla.",
+      "wake_remote": "Vekigu la parigitan teleregilon per sagoklavo, poste reprovu.",
+      "not_paired": "Unue parigu ĉi tiun teleregilon ekstere.",
+      "multiple_adapters": "Ĉi tiu teleregilo estas parigita kun pluraj adaptiloj. Konservu ĝian ligon kun nur unu adaptilo.",
+      "invalid_address": "Enigu Bluetooth-adreson en la formo AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Ĉi tiu teleregilo ne provizas subtenatan voĉan profilon ATVV v0.4/v1.0 ADPCM.",
+      "invalid_pipeline": "Elektu ekzistantan Assist-duktubon.",
+      "hidraw_unavailable": "La enigaparato de la teleregilo ne disponeblas por Home Assistant. Vekigu la teleregilon kaj kontrolu, ke Home Assistant povas vidi aparatojn /dev/hidraw.",
+      "hidraw_permission_denied": "Home Assistant ne rajtas legi la enigaparaton de la teleregilo. Vidu la README pri la aparata aliro, kiun ĉi tiu teleregilo bezonas.",
+      "opus_decoder_unavailable": "Neniu Opus-sondekodilo disponeblas por Home Assistant, kiun ĉi tiu teleregilo bezonas."
+    },
+    "abort": {
+      "already_configured": "Ĉi tiu teleregilo jam estas agordita.",
+      "no_pipelines": "Kreu Assist-duktubon antaŭ ol aldoni la teleregilon."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Voĉaj agordoj",
+        "description": "Ĉi tiuj agordoj regas kiel premoj estas traktataj kaj kiel respondoj estas parolataj. Anstataŭigo de peto ne povas malfari agojn jam faritajn. Samtempa plena duplekso ne disponeblas. Halto post transskribo ne malŝaltas ilojn enkonstruitajn en viva voĉa provizanto; uzu provizanton nur por transskribo kiam agoj devas esti malŝaltitaj.\n\n**Respondkondiĉo:** ĉiuj ĝiaj kondiĉoj devas plenumiĝi por ke respondo estu parolata. Ili estas kontrolataj unufoje je la komenco de ĉiu peto; lasu ĝin malplena por ĉiam paroli, kaj kondiĉo, kiu ne povas esti taksata, validas kiel neplenumita. Ŝablonaj kondiĉoj povas uzi la variablojn `speaker`, `remote` kaj `held`.",
+        "data": {
+          "pipeline_id": "Assist-duktubo",
+          "mode": "Voĉa reĝimo",
+          "speaker": "Parolilo de respondoj",
+          "output_mode": "Tempo de respondo",
+          "stream_head_start": "Antaŭeco de fluado",
+          "busy_processing": "Nova premo dum prilaborado",
+          "busy_playback": "Nova premo dum respondo",
+          "context_mode": "Konversacia kunteksto",
+          "input_mode": "Konduto de butono",
+          "min_press_seconds": "Ignori mallongajn premojn",
+          "max_request_seconds": "Maksimuma daŭro de peto",
+          "max_conversation_seconds": "Maksimuma daŭro de konversacio",
+          "reply_condition": "Respondkondiĉo"
+        },
+        "data_description": {
+          "pipeline_id": "La Assist-duktubo, kiu prilaboras paroladon: parolo-al-teksto, konversacia agento kaj teksto-al-parolo. Forigita duktubo kaŭzas eraron anstataŭ rezervi alian.",
+          "mode": "Nur transskribo haltas post parola rekono kaj ne ludas respondon. Ruli komandojn rulas la tutan duktubon kaj parolas la respondon per la parolilo de respondoj.",
+          "speaker": "La aŭdvidaĵa ludilo, kiu parolas respondojn. Uzata nur dum rulado de komandoj. Elektu neniu parola respondo por halti la duktubon antaŭ ol la respondo estas ludata.",
+          "output_mode": "Aŭtomata fluado komencas paroli tuj kiam fluata respondo estas preta. Atendi la kompletan respondon komencas pli malfrue, sed ludas finitan sondosieron, kio evitas paŭzetojn ĉe provizantoj, kiuj produktas paroladon nur kun rapideco proksima al reala tempo.",
+          "stream_head_start": "Prokrastas la komencon de fluata respondo laŭ ĉi tiu nombro da sekundoj por ke la parolilo povu bufri; respondoj, kiuj finiĝas pli frue, ludiĝas tuj. Pliigu ĝin se fluataj respondoj paŭzetas en la unuaj sekundoj. Neniu efiko dum atendo de la kompleta respondo. 0 konservas la defaŭltan konduton.",
+          "busy_processing": "Kion fari kiam la butono estas premata antaŭ ol la antaŭa peto estas respondita: malakcepti la premon, konservi unu pritraktatan peton, aŭ anstataŭigi la nunan peton. Anstataŭigo ne povas malfari agojn jam faritajn.",
+          "busy_playback": "Kion fari kiam la butono estas premata dum respondo estas ludata: malakcepti la premon, poste respondi unu pritraktatan peton, aŭ halti la respondon kaj komenci la novan peton.",
+          "context_mode": "Reuzi konservas la konversacion de Home Assistant, tiel ke postaj demandoj kiel «kaj duoble?» funkcias. Nova faras ĉiun premon sendependa konversacio.",
+          "input_mode": "Unu peto per tenado registras ĝis la butono estas lasita. Alterna konversacio daŭre aŭskultas dum la butono estas tenata: paroli, paŭzi, aŭdi la respondon, poste paroli denove. Ĝi bezonas teleregilon por tenado-por-paroli.",
+          "min_press_seconds": "Ignoras tuŝetojn de la voĉa butono pli mallongajn ol ĉi tio, por ke falsa tuŝeto neniam komencu peton; vera tenado komenciĝas tiom pli malfrue. 0 malŝaltas ĝin. Utila por Fire TV-teleregilo, kiu malsukcesas kun «Neniu mikrofona sono» tuj post vekiĝo: ĝi resendas la klavon, kiu vekis ĝin, kiel tuj-tuŝeton. 0.1 s estas bona komenca valoro. Nur por Fire TV-teleregiloj.",
+          "max_request_seconds": "La plej longa daŭro de unuopa peto ĉe iu ajn teleregilo: tuta tenado en reĝimo de Unu peto, kaj ĉiu vico en Alterna konversacio. Atingo de ĝi finas la peton per eraro de kaptolimo. Malpliigu ĝin por haltigi blokitan butonon, kiu daŭre registras; pliigu ĝin por longa dikto. Teleregiloj, kiuj ne estas tenado-por-paroli, ankaŭ finiĝas post ĉirkaŭ 15 sekundoj da parolo aŭ ĉe silento, kiu ajn venas unue.",
+          "max_conversation_seconds": "La plej longa daŭro de tuta butontenado en reĝimo de Alterna konversacio. Ĝi estas ignorata en reĝimo de Unu peto kaj ne devas esti pli mallonga ol la maksimuma daŭro de peto.",
+          "reply_condition": "Kondiĉoj, kiuj ĉiuj devas plenumiĝi por ke respondo estu parolata. Kontrolataj unufoje je la komenco de ĉiu peto (kaj de ĉiu vico en Alterna konversacio). Lasu malplena por ĉiam paroli. Kondiĉo, kiu eraras, validas kiel neplenumita. Ŝablonaj kondiĉoj povas uzi la variablojn speaker, remote kaj held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Elektu aŭdvidaĵan ludilon, kiu subtenas ludi sonon, aŭ neniun parolan respondon.",
+      "invalid_preferences": "Elektu unu el la subtenataj voĉaj preferoj.",
+      "invalid_pipeline": "Elektu ekzistantan Assist-duktubon.",
+      "invalid_reply_condition": "La respondkondiĉo ne validas. Kontrolu la kondiĉojn kaj reprovu.",
+      "pipeline_missing": "La Assist-duktubo konservita por ĉi tiu teleregilo ne plu ekzistas. Elektu alian.",
+      "speaker_missing": "La konservita parolilo de respondoj nun ne disponeblas, do respondoj ne ludiĝos ĝis ĝi revenos. Konservu ĝin, aŭ elektu alian."
+    },
+    "abort": {
+      "no_pipelines": "Unue kreu Assist-duktubon."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Enigi Bluetooth-adreson"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Nur transskribo",
+        "commands": "Ruli komandojn"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Neniu parola respondo"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Aŭtomata fluado",
+        "buffered": "Atendi kompletan respondon"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Malakcepti novan peton",
+        "queue": "Envicigi unu peton",
+        "replace": "Anstataŭigi la nunan peton"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Malakcepti novan peton",
+        "queue": "Envicigi unu peton",
+        "replace": "Anstataŭigi la nunan respondon"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Reuzi konversacion",
+        "fresh": "Nova konversacio por ĉiu peto"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Unu peto per tenado",
+        "conversation": "Konversacio dum tenado (alterna)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Voĉo",
+        "state_attributes": {
+          "ready": {
+            "name": "Preta"
+          },
+          "last_error": {
+            "name": "Kodo de lasta eraro"
+          },
+          "last_error_message": {
+            "name": "Mesaĝo de lasta eraro"
+          },
+          "mode": {
+            "name": "Voĉa reĝimo"
+          },
+          "sessions": {
+            "name": "Seancoj"
+          },
+          "failures": {
+            "name": "Malsukcesoj"
+          },
+          "rejected": {
+            "name": "Malakceptitaj premoj"
+          },
+          "queued": {
+            "name": "Envicigitaj petoj"
+          },
+          "last_outcome": {
+            "name": "Lasta rezulto"
+          },
+          "full_duplex": {
+            "name": "Plena duplekso"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Voĉa butono",
+        "state_attributes": {
+          "event_type": {
+            "name": "Speco de evento",
+            "state": {
+              "pressed": "Premita",
+              "released": "Lasita",
+              "accepted": "Akceptita",
+              "rejected": "Malakceptita",
+              "queued": "Envicigita",
+              "failed": "Malsukcesis",
+              "context_reset": "Konversacio restarigita",
+              "reply_skipped": "Respondo preterlasita"
+            }
+          },
+          "outcome": {
+            "name": "Rezulto"
+          },
+          "stage": {
+            "name": "Etapo"
+          },
+          "code": {
+            "name": "Kodo"
+          },
+          "message": {
+            "name": "Mesaĝo"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofono aktiva"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Lasta eraro",
+        "state": {
+          "none": "Neniu eraro",
+          "busy": "Ankoraŭ respondas la antaŭan peton.",
+          "queue_full": "Peto jam atendas. Reprovu post la respondo.",
+          "queue_expired": "La atendanta peto eksvalidiĝis. Premu kaj parolu denove.",
+          "queue_discarded": "La atendanta peto estis forĵetita.",
+          "queue_failed": "La atendanta peto ne povis esti komencita.",
+          "capture_limit": "La limo de mikrofona kaptado estis atingita. Uzu pli mallongan peton.",
+          "buffer_overflow": "La mikrofona sono amasiĝis antaŭ ol la parola servo komencis legi ĝin.",
+          "audio_sequence_gap": "Sinkronigo de sono malsukcesis. Premu kaj reprovu.",
+          "invalid_audio_sync": "La teleregilo sendis nevalidan mesaĝon pri sonsinkronigo.",
+          "invalid_audio_frame": "La teleregilo sendis difektitan sonkadron.",
+          "invalid_control": "La teleregilo sendis nevalidan reguligan mesaĝon.",
+          "unsupported_audio_start": "La teleregilo komencis sonon laŭ maniero, kiun ĉi tiu integriĝo ne subtenas.",
+          "incomplete_utterance": "La sono finiĝis antaŭ ol la peto estis kompleta.",
+          "audio_stalled": "Mikrofona sono ĉesis alveni. Reprovu.",
+          "audio_failed": "La mikrofona sono malsukcesis.",
+          "no_audio": "Neniu mikrofona sono estis ricevita.",
+          "no_speech": "Neniu parolo estis detektita.",
+          "held_mode_unsupported": "Alterna konversacio bezonas teleregilon por tenado-por-paroli.",
+          "held_failed": "La konversacio dum tenado de la butono malsukcesis.",
+          "held_turn_failed": "Vico de la konversacio malsukcesis.",
+          "remote_stopped": "La teleregilo neatendite haltigis la mikrofonon.",
+          "disconnected": "La teleregilo malkonektiĝis.",
+          "cancelled": "La peto estis nuligita.",
+          "pipeline_finished_early": "La Assist-duktubo finiĝis antaŭ ol la tuta sono estis legita.",
+          "pipeline_timeout": "La Assist-duktubo tro longe respondis.",
+          "pipeline_failed": "La Assist-duktubo malsukcesis.",
+          "pipeline_removed": "La elektita Assist-duktubo ne plu ekzistas.",
+          "playback_stop_unverified": "Ne eblis kontroli, ke la antaŭa respondo haltis. Atendu ĝis la parolilo estos senlabora.",
+          "playback_stop_failed": "La antaŭa respondo ne povis esti haltigita.",
+          "playback_start_timeout": "La parolilo ne komencis ludi la respondon.",
+          "playback_finish_timeout": "La parolilo ne finis ludi la respondon ĝustatempe.",
+          "playback_interrupted": "La respondo estis interrompita ĉe la parolilo.",
+          "speaker_unavailable": "La parolilo de respondoj ne disponeblas.",
+          "speaker_busy": "La parolilo de respondoj estas okupata.",
+          "speaker_cannot_play": "La parolilo de respondoj ne povas ludi sonon el Home Assistant.",
+          "missing_tts_audio": "La respondo ne havis sonon por ludi.",
+          "generation_retirement_failed": "La antaŭa peto ankoraŭ ne haltis. Bonvolu atendi.",
+          "replacement_retirement_failed": "La nuna peto ne povis esti haltigita por komenci la novan.",
+          "microphone_open_failed": "La mikrofono de la teleregilo ne povis esti malfermita.",
+          "microphone_open_rejected": "La teleregilo rifuzis malfermi sian mikrofonon.",
+          "microphone_start_timeout": "La teleregilo ne startis sian mikrofonon ĝustatempe.",
+          "microphone_close_failed": "La mikrofono de la teleregilo ne povis esti fermita.",
+          "microphone_keepalive_failed": "La konekto al la mikrofono de la teleregilo estis perdita.",
+          "active_generation_cancelled": "La respondo preparata estis nuligita kaj la konversacia kunteksto estis restarigita.",
+          "wake_remote": "Vekigu la teleregilon per sagoklavo, poste reprovu.",
+          "bluetooth_unavailable": "Loka Bluetooth ne disponeblas.",
+          "bluetooth_operation_failed": "Bluetooth-operacio malsukcesis.",
+          "not_paired": "La teleregilo ne estas parigita kun ĉi tiu gastiganto.",
+          "multiple_adapters": "La teleregilo estas parigita kun pli ol unu adaptilo.",
+          "voice_service_unavailable": "La teleregilo ne ofertas voĉan servon.",
+          "unsupported_write": "La voĉa regilo de la teleregilo ne povas esti skribata.",
+          "unsupported_capabilities": "La teleregilo raportis voĉajn kapablojn, kiujn ĉi tiu integriĝo ne subtenas.",
+          "unsupported_codec": "La teleregilo uzas sonformaton, kiun ĉi tiu integriĝo ne subtenas.",
+          "invalid_frame_size": "La teleregilo raportis nevalidan grandon de sonkadro.",
+          "hidraw_unavailable": "La enigaparato de la teleregilo ne disponeblas por Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant ne rajtas legi la enigaparaton de la teleregilo.",
+          "opus_decoder_unavailable": "Neniu Opus-sondekodilo disponeblas por Home Assistant.",
+          "invalid_opus_packet": "La teleregilo sendis sonon, kiu ne povis esti malkodita.",
+          "other": "Okazis alia eraro. La erarkodo donas la detalojn."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kodo"
+          },
+          "stage": {
+            "name": "Etapo"
+          },
+          "since": {
+            "name": "Ekde"
+          },
+          "session": {
+            "name": "Peto"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist-duktubo mankas por {remote}",
+      "description": "La teleregilo **{remote}** estas agordita uzi la Assist-duktubon `{pipeline}`, kiu ne plu ekzistas. Voĉaj petoj de ĉi tiu teleregilo malsukcesas ĝis vi elektos alian duktubon.\n\nIru al **Agordoj → Aparatoj kaj servoj → Bluetooth Remote Voice**, malfermu la menuon de **{remote}**, elektu **Agordi**, kaj elektu ekzistantan duktubon."
+    },
+    "speaker_missing": {
+      "title": "Parolilo de respondoj mankas por {remote}",
+      "description": "La teleregilo **{remote}** estas agordita ludi respondojn per `{speaker}`, kiu ne plu ekzistas. Komandoj ankoraŭ rulas, sed ilia parola respondo ne ludiĝos.\n\nIru al **Agordoj → Aparatoj kaj servoj → Bluetooth Remote Voice**, malfermu la menuon de **{remote}**, elektu **Agordi**, kaj elektu alian parolilon aŭ elektu neniun."
+    }
+  }
+}

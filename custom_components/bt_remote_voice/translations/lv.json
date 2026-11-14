@@ -1,0 +1,319 @@
+{
+  "title": "Bluetooth Remote Voice",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Izvēlieties sapārotu tālvadības pulti",
+        "description": "Vispirms sapārojiet tālvadības pulti ārpus Home Assistant, pēc tam pamodiniet to ar bultiņu pogu, lai to varētu pārbaudīt. Izvēlieties to no saraksta vai ievadiet tās Bluetooth adresi.",
+        "data": {
+          "device": "Sapārota tālvadības pults"
+        },
+        "data_description": {
+          "device": "Tālvadības pultis, kas jau ir sapārotas ar šo Home Assistant resursdatoru. Izvēlieties manuālo opciju, ja jūsu pults nav sarakstā."
+        }
+      },
+      "manual": {
+        "title": "Ievadiet sapārotās tālvadības pults adresi",
+        "description": "Ievadiet tālvadības pults Bluetooth adresi, kas jau ir sapārota ar šo resursdatoru.",
+        "data": {
+          "address": "Bluetooth adrese"
+        },
+        "data_description": {
+          "address": "Seši heksadecimālo ciparu pāri, atdalīti ar kolu, piemēram, AA:BB:CC:DD:EE:FF."
+        }
+      },
+      "configure": {
+        "title": "Izvēlieties Assist konveijeru",
+        "description": "Pirms iesniegšanas pamodiniet tālvadības pulti ar bultiņu pogu. Integrācija sāk darbu tikai transkripcijas režīmā; kad tā darbojas, mainiet to opcijās.",
+        "data": {
+          "pipeline_id": "Assist konveijers"
+        },
+        "data_description": {
+          "pipeline_id": "Assist konveijers, kas apstrādā runu no šīs tālvadības pults."
+        }
+      }
+    },
+    "error": {
+      "bluetooth_unavailable": "Lokālais Bluetooth nav pieejams. Pārbaudiet, vai sistēmas D-Bus ir pieejams.",
+      "wake_remote": "Pamodiniet sapāroto tālvadības pulti ar bultiņu pogu un mēģiniet vēlreiz.",
+      "not_paired": "Vispirms sapārojiet šo tālvadības pulti ārēji.",
+      "multiple_adapters": "Šī tālvadības pults ir sapārota ar vairākiem adapteriem. Atstājiet savienojumu tikai ar vienu adapteri.",
+      "invalid_address": "Ievadiet Bluetooth adresi formātā AA:BB:CC:DD:EE:FF.",
+      "unsupported_remote": "Šī tālvadības pults nenodrošina atbalstītu ATVV v0.4/v1.0 ADPCM balss profilu.",
+      "invalid_pipeline": "Izvēlieties esošu Assist konveijeru.",
+      "hidraw_unavailable": "Tālvadības pults ievades ierīce nav pieejama Home Assistant. Pamodiniet tālvadības pulti un pārbaudiet, vai Home Assistant redz /dev/hidraw ierīces.",
+      "hidraw_permission_denied": "Home Assistant nav atļauts lasīt tālvadības pults ievades ierīci. Skatiet README, lai uzzinātu, kāda ierīces piekļuve šai pultij nepieciešama.",
+      "opus_decoder_unavailable": "Home Assistant nav pieejams Opus audio dekodētājs, kas šai tālvadības pultij ir nepieciešams."
+    },
+    "abort": {
+      "already_configured": "Šī tālvadības pults jau ir konfigurēta.",
+      "no_pipelines": "Pirms tālvadības pults pievienošanas izveidojiet Assist konveijeru."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Balss iestatījumi",
+        "description": "Šie iestatījumi nosaka, kā tiek apstrādāti nospiešanas gadījumi un kā tiek izrunātas atbildes. Pieprasījuma aizstāšana nevar atcelt darbības, ko tas jau veicis. Vienlaicīgs pilns dupleks nav pieejams. Apturēšana pēc transkripcijas neatspējo rīkus, kas iebūvēti tiešraides runas pakalpojuma sniedzējā; ja darbības jāatspējo, izmantojiet tikai transkripcijas pakalpojuma sniedzēju.\n\n**Atbildes nosacījums:** lai atbilde tiktu izrunāta, jāizpildās visiem tā nosacījumiem. Tie tiek pārbaudīti vienreiz katra pieprasījuma sākumā; atstājiet tukšu, lai vienmēr runātu, un nosacījums, ko nevar novērtēt, tiek uzskatīts par neizpildītu. Veidņu nosacījumos var izmantot mainīgos `speaker`, `remote` un `held`.",
+        "data": {
+          "pipeline_id": "Assist konveijers",
+          "mode": "Balss režīms",
+          "speaker": "Atbildes skaļrunis",
+          "output_mode": "Atbildes laiks",
+          "stream_head_start": "Straumēšanas sākuma pārsvars",
+          "busy_processing": "Jauna nospiešana apstrādes laikā",
+          "busy_playback": "Jauna nospiešana atbildes laikā",
+          "context_mode": "Sarunas konteksts",
+          "input_mode": "Pogas darbība",
+          "min_press_seconds": "Ignorēt īsas nospiešanas",
+          "max_request_seconds": "Maksimālais pieprasījuma ilgums",
+          "max_conversation_seconds": "Maksimālais sarunas ilgums",
+          "reply_condition": "Atbildes nosacījums"
+        },
+        "data_description": {
+          "pipeline_id": "Assist konveijers, kas apstrādā runu: runas pārvēršana tekstā, sarunu aģents un teksta pārvēršana runā. Noņemts konveijers izraisa kļūdu, nevis atgriešanos pie cita.",
+          "mode": "Tikai transkripcija apstājas pēc runas atpazīšanas un neatskaņo atbildi. Izpildīt komandas palaiž visu konveijeru un izrunā atbildi atbildes skaļrunī.",
+          "speaker": "Multivides atskaņotājs, kas izrunā atbildes. Izmanto tikai komandu izpildes laikā. Izvēlieties “Bez izrunātas atbildes”, lai apturētu konveijeru pirms atbildes atskaņošanas.",
+          "output_mode": "Automātiskā straumēšana sāk runāt, līdzko straumētā atbilde ir gatava. Gaidīšana uz pilnu atbildi sākas vēlāk, bet atskaņo gatavu audio failu, kas novērš pārtraukumus ar pakalpojumu sniedzējiem, kuri runu veido tikai aptuveni reāllaika tempā.",
+          "stream_head_start": "Aizkavē straumētas atbildes sākumu par šādu sekunžu skaitu, lai skaļrunis varētu uzkrāt buferi; atbildes, kas beidzas ātrāk, tiek atskaņotas uzreiz. Palieliniet, ja straumētas atbildes pirmajās sekundēs pārtraukumi. Nav ietekmes, ja tiek gaidīta pilna atbilde. 0 saglabā noklusējuma darbību.",
+          "busy_processing": "Ko darīt, ja poga tiek nospiesta, pirms uz iepriekšējo pieprasījumu ir atbildēts: noraidīt nospiešanu, paturēt vienu gaidošu pieprasījumu vai aizstāt pašreizējo pieprasījumu. Aizstāšana nevar atcelt jau veiktās darbības.",
+          "busy_playback": "Ko darīt, ja poga tiek nospiesta, kamēr tiek atskaņota atbilde: noraidīt nospiešanu, pēc tam atbildēt uz vienu gaidošu pieprasījumu vai apturēt atbildi un sākt jauno pieprasījumu.",
+          "context_mode": "Atkārtota izmantošana saglabā Home Assistant sarunu, lai darbotos papildjautājumi, piemēram, “un divreiz vairāk?”. Jauna saruna padara katru nospiešanu par neatkarīgu sarunu.",
+          "input_mode": "Viens pieprasījums uz turēšanu ieraksta, līdz poga tiek atlaista. Mijiedarbīga saruna turpina klausīties, kamēr poga tiek turēta: runājiet, pauzējiet, uzklausiet atbildi, tad runājiet atkal. Tai nepieciešama tālvadības pults ar turēšanu runāšanai.",
+          "min_press_seconds": "Ignorē balss pogas pieskārienus, kas ir īsāki par šo vērtību, lai nejaušs pieskāriens nekad nesāktu pieprasījumu; īsta turēšana sākas par tik vēlāk. 0 to izslēdz. Noderīgi Fire TV tālvadības pultij, kas tūlīt pēc pamodināšanas beidzas ar kļūdu “Nav mikrofona audio”: tā atkārtoti nosūta taustiņu, kas to pamodināja, kā tūlītēju pieskārienu. 0,1 s ir labs sākumpunkts. Tikai Fire TV tālvadības pultīm.",
+          "max_request_seconds": "Ilgākais laiks, cik var ilgt viens pieprasījums jebkurai tālvadības pultij: visa turēšana režīmā “Viens pieprasījums”, un katra kārta mijiedarbīgajā sarunā. Sasniedzot to, pieprasījums beidzas ar ierakstīšanas ierobežojuma kļūdu. Samaziniet, lai apturētu iestrēgušas pogas ierakstīšanu; palieliniet garai diktēšanai. Tālvadības pultis, kas nav paredzētas turēšanai runāšanai, beidzas arī pēc aptuveni 15 sekunžu runas vai pie klusuma, atkarībā no tā, kas notiek pirmais.",
+          "max_conversation_seconds": "Ilgākais laiks, cik var ilgt visa pogas turēšana mijiedarbīgās sarunas režīmā. Režīmā “Viens pieprasījums” tas tiek ignorēts, un tas nedrīkst būt īsāks par maksimālo pieprasījuma ilgumu.",
+          "reply_condition": "Nosacījumi, kuriem visiem jāizpildās, lai atbilde tiktu izrunāta. Pārbauda vienreiz katra pieprasījuma sākumā (un katrā kārtā mijiedarbīgajā sarunā). Atstājiet tukšu, lai vienmēr runātu. Nosacījums, kas rada kļūdu, tiek uzskatīts par neizpildītu. Veidņu nosacījumos var izmantot mainīgos speaker, remote un held."
+        }
+      }
+    },
+    "error": {
+      "invalid_speaker": "Izvēlieties multivides atskaņotāju, kas atbalsta audio atskaņošanu, vai bez izrunātas atbildes.",
+      "invalid_preferences": "Izvēlieties vienu no atbalstītajām balss preferencēm.",
+      "invalid_pipeline": "Izvēlieties esošu Assist konveijeru.",
+      "invalid_reply_condition": "Atbildes nosacījums nav derīgs. Pārbaudiet nosacījumus un mēģiniet vēlreiz.",
+      "pipeline_missing": "Šai tālvadības pultij saglabātais Assist konveijers vairs neeksistē. Izvēlieties citu.",
+      "speaker_missing": "Saglabātais atbildes skaļrunis pašlaik nav pieejams, tāpēc atbildes netiks atskaņotas, līdz tas atgriezīsies. Paturiet to vai izvēlieties citu."
+    },
+    "abort": {
+      "no_pipelines": "Vispirms izveidojiet Assist konveijeru."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Ievadiet Bluetooth adresi"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Tikai transkripcija",
+        "commands": "Izpildīt komandas"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "Bez izrunātas atbildes"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automātiskā straumēšana",
+        "buffered": "Gaidīt pilnu atbildi"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Noraidīt jaunu pieprasījumu",
+        "queue": "Ievietot rindā vienu pieprasījumu",
+        "replace": "Aizstāt pašreizējo pieprasījumu"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Noraidīt jaunu pieprasījumu",
+        "queue": "Ievietot rindā vienu pieprasījumu",
+        "replace": "Aizstāt pašreizējo atbildi"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Izmantot sarunu atkārtoti",
+        "fresh": "Jauna saruna katram pieprasījumam"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "Viens pieprasījums uz turēšanu",
+        "conversation": "Saruna turēšanas laikā (mijiedarbīga)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Balss",
+        "state_attributes": {
+          "ready": {
+            "name": "Gatavs"
+          },
+          "last_error": {
+            "name": "Pēdējās kļūdas kods"
+          },
+          "last_error_message": {
+            "name": "Pēdējais kļūdas ziņojums"
+          },
+          "mode": {
+            "name": "Balss režīms"
+          },
+          "sessions": {
+            "name": "Sesijas"
+          },
+          "failures": {
+            "name": "Kļūmes"
+          },
+          "rejected": {
+            "name": "Noraidītās nospiešanas"
+          },
+          "queued": {
+            "name": "Rindā esošie pieprasījumi"
+          },
+          "last_outcome": {
+            "name": "Pēdējais iznākums"
+          },
+          "full_duplex": {
+            "name": "Pilns dupleks"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Balss poga",
+        "state_attributes": {
+          "event_type": {
+            "name": "Notikuma veids",
+            "state": {
+              "pressed": "Nospiesta",
+              "released": "Atlaista",
+              "accepted": "Pieņemts",
+              "rejected": "Noraidīts",
+              "queued": "Rindā",
+              "failed": "Neizdevās",
+              "context_reset": "Saruna atiestatīta",
+              "reply_skipped": "Atbilde izlaista"
+            }
+          },
+          "outcome": {
+            "name": "Iznākums"
+          },
+          "stage": {
+            "name": "Posms"
+          },
+          "code": {
+            "name": "Kods"
+          },
+          "message": {
+            "name": "Ziņojums"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Mikrofons aktīvs"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Pēdējā kļūda",
+        "state": {
+          "none": "Nav kļūdu",
+          "busy": "Joprojām tiek atbildēts uz iepriekšējo pieprasījumu.",
+          "queue_full": "Pieprasījums jau gaida. Lūdzu, mēģiniet pēc atbildes.",
+          "queue_expired": "Gaidošais pieprasījums beidzās. Lūdzu, nospiediet un runājiet vēlreiz.",
+          "queue_discarded": "Gaidošais pieprasījums tika atmests.",
+          "queue_failed": "Gaidošo pieprasījumu nevarēja sākt.",
+          "capture_limit": "Sasniegts mikrofona ierakstīšanas ierobežojums. Lūdzu, izmantojiet īsāku pieprasījumu.",
+          "buffer_overflow": "Mikrofona audio sakrājās, pirms runas pakalpojums sāka to lasīt.",
+          "audio_sequence_gap": "Audio sinhronizācija neizdevās. Lūdzu, nospiediet un mēģiniet vēlreiz.",
+          "invalid_audio_sync": "Tālvadības pults nosūtīja nederīgu audio sinhronizācijas ziņojumu.",
+          "invalid_audio_frame": "Tālvadības pults nosūtīja bojātu audio kadru.",
+          "invalid_control": "Tālvadības pults nosūtīja nederīgu vadības ziņojumu.",
+          "unsupported_audio_start": "Tālvadības pults sāka audio veidā, ko šī integrācija neatbalsta.",
+          "incomplete_utterance": "Audio beidzās, pirms pieprasījums bija pabeigts.",
+          "audio_stalled": "Mikrofona audio pārstāja ienākt. Lūdzu, mēģiniet vēlreiz.",
+          "audio_failed": "Mikrofona audio neizdevās.",
+          "no_audio": "Mikrofona audio netika saņemts.",
+          "no_speech": "Runa netika noteikta.",
+          "held_mode_unsupported": "Mijiedarbīgai sarunai nepieciešama tālvadības pults ar turēšanu runāšanai.",
+          "held_failed": "Saruna pogas turēšanas laikā neizdevās.",
+          "held_turn_failed": "Sarunas kārta neizdevās.",
+          "remote_stopped": "Tālvadības pults negaidīti apturēja mikrofonu.",
+          "disconnected": "Tālvadības pults atvienojās.",
+          "cancelled": "Pieprasījums tika atcelts.",
+          "pipeline_finished_early": "Assist konveijers beidzās, pirms viss audio bija nolasīts.",
+          "pipeline_timeout": "Assist konveijers atbildēja pārāk ilgi.",
+          "pipeline_failed": "Assist konveijers neizdevās.",
+          "pipeline_removed": "Izvēlētais Assist konveijers vairs neeksistē.",
+          "playback_stop_unverified": "Nevarēja pārbaudīt, vai iepriekšējā atbilde apstājās. Pagaidiet, līdz skaļrunis ir dīkstāvē.",
+          "playback_stop_failed": "Iepriekšējo atbildi nevarēja apturēt.",
+          "playback_start_timeout": "Skaļrunis nesāka atskaņot atbildi.",
+          "playback_finish_timeout": "Skaļrunis laikus nepabeidza atbildes atskaņošanu.",
+          "playback_interrupted": "Atbilde skaļrunī tika pārtraukta.",
+          "speaker_unavailable": "Atbildes skaļrunis nav pieejams.",
+          "speaker_busy": "Atbildes skaļrunis ir aizņemts.",
+          "speaker_cannot_play": "Atbildes skaļrunis nevar atskaņot audio no Home Assistant.",
+          "missing_tts_audio": "Atbildei nebija audio, ko atskaņot.",
+          "generation_retirement_failed": "Iepriekšējais pieprasījums vēl nav apstājies. Lūdzu, uzgaidiet.",
+          "replacement_retirement_failed": "Pašreizējo pieprasījumu nevarēja apturēt, lai sāktu jauno.",
+          "microphone_open_failed": "Tālvadības pults mikrofonu nevarēja atvērt.",
+          "microphone_open_rejected": "Tālvadības pults atteicās atvērt savu mikrofonu.",
+          "microphone_start_timeout": "Tālvadības pults laikus nesāka savu mikrofonu.",
+          "microphone_close_failed": "Tālvadības pults mikrofonu nevarēja aizvērt.",
+          "microphone_keepalive_failed": "Tālvadības pults mikrofona savienojums tika zaudēts.",
+          "active_generation_cancelled": "Sagatavojamā atbilde tika atcelta, un sarunas konteksts tika atiestatīts.",
+          "wake_remote": "Pamodiniet tālvadības pulti ar bultiņu pogu un mēģiniet vēlreiz.",
+          "bluetooth_unavailable": "Lokālais Bluetooth nav pieejams.",
+          "bluetooth_operation_failed": "Bluetooth darbība neizdevās.",
+          "not_paired": "Tālvadības pults nav sapārota ar šo resursdatoru.",
+          "multiple_adapters": "Tālvadības pults ir sapārota ar vairāk nekā vienu adapteri.",
+          "voice_service_unavailable": "Tālvadības pults nepiedāvā balss pakalpojumu.",
+          "unsupported_write": "Tālvadības pults balss vadībā nevar rakstīt.",
+          "unsupported_capabilities": "Tālvadības pults ziņoja par balss iespējām, ko šī integrācija neatbalsta.",
+          "unsupported_codec": "Tālvadības pults izmanto audio formātu, ko šī integrācija neatbalsta.",
+          "invalid_frame_size": "Tālvadības pults ziņoja par nederīgu audio kadra izmēru.",
+          "hidraw_unavailable": "Tālvadības pults ievades ierīce nav pieejama Home Assistant.",
+          "hidraw_permission_denied": "Home Assistant nav atļauts lasīt tālvadības pults ievades ierīci.",
+          "opus_decoder_unavailable": "Home Assistant nav pieejams Opus audio dekodētājs.",
+          "invalid_opus_packet": "Tālvadības pults nosūtīja audio, ko nevarēja atkodēt.",
+          "other": "Radās cita kļūda. Sīkāku informāciju sniedz kļūdas kods."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Kods"
+          },
+          "stage": {
+            "name": "Posms"
+          },
+          "since": {
+            "name": "Kopš"
+          },
+          "session": {
+            "name": "Pieprasījums"
+          }
+        }
+      }
+    }
+  },
+  "issues": {
+    "pipeline_missing": {
+      "title": "Assist konveijers nav atrasts tālvadības pultij {remote}",
+      "description": "Tālvadības pults **{remote}** ir iestatīta izmantot Assist konveijeru `{pipeline}`, kas vairs neeksistē. Balss pieprasījumi no šīs tālvadības pults neizdosies, līdz izvēlēsieties citu konveijeru.\n\nPārejiet uz **Iestatījumi → Ierīces un pakalpojumi → Bluetooth Remote Voice**, atveriet **{remote}** izvēlni, izvēlieties **Konfigurēt** un izvēlieties esošu konveijeru."
+    },
+    "speaker_missing": {
+      "title": "Atbildes skaļrunis nav atrasts tālvadības pultij {remote}",
+      "description": "Tālvadības pults **{remote}** ir iestatīta atskaņot atbildes uz `{speaker}`, kas vairs neeksistē. Komandas joprojām tiek izpildītas, bet to izrunātā atbilde netiks atskaņota.\n\nPārejiet uz **Iestatījumi → Ierīces un pakalpojumi → Bluetooth Remote Voice**, atveriet **{remote}** izvēlni, izvēlieties **Konfigurēt** un izvēlieties citu skaļruni vai neizvēlieties nevienu."
+    }
+  }
+}

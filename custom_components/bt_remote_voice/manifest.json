@@ -1,6 +1,10 @@
 {
   "domain": "bt_remote_voice",
   "name": "Bluetooth Remote Voice",
+  "categories": [
+    "ai_voice.voice_assistants",
+    "buttons_remotes"
+  ],
   "codeowners": [
     "@sabaatworld"
   ],
@@ -17,5 +21,5 @@
   "requirements": [
     "dbus-fast>=5.0.22,<6"
   ],
-  "version": "0.4.0"
+  "version": "0.5.0"
 }
