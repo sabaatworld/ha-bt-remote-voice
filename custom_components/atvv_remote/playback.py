@@ -13,13 +13,11 @@ from .session import AudioFailure
 
 
 def speaker_choices(hass):
+    """Media players that can play audio (names are user data, not translated)."""
     return {
-        "": "No spoken reply",
-        **{
-            s.entity_id: s.name
-            for s in hass.states.async_all("media_player")
-            if s.attributes.get("supported_features", 0) & MediaPlayerEntityFeature.PLAY_MEDIA
-        },
+        s.entity_id: s.name
+        for s in hass.states.async_all("media_player")
+        if s.attributes.get("supported_features", 0) & MediaPlayerEntityFeature.PLAY_MEDIA
     }
 
 

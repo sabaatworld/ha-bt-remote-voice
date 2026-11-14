@@ -39,7 +39,7 @@ def paired_devices(objects: dict) -> list[Remote]:
         result.append(
             Remote(
                 address,
-                get("Name", "Bluetooth remote"),
+                get("Name", address),  # the address is data; no English fallback text
                 path,
                 get("Connected", False),
                 True if SERVICE in uuids else None,

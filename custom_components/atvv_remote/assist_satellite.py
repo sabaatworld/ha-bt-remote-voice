@@ -26,7 +26,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
-    _attr_name = "Voice"
+    _attr_translation_key = "voice"
+    generation_wait = 5  # seconds to wait for a cancelled generation before blocking recovery
     _attr_icon = "mdi:microphone-message"
 
     def __init__(self, coordinator):
@@ -42,7 +43,7 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
         return {
             "ready": c.ready,
             "last_error": c.last_error,
-            "last_error_message": error_message(c.last_error),
+            "last_error_message": error_message(c.hass, c.last_error),
             "mode": c.entry.options.get("mode", c.entry.data.get("mode", "transcription")),
             "sessions": c.sessions,
             "failures": c.failures,
@@ -94,7 +95,9 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
         self.start_playback(output)
 
     def start_playback(self, output):
-        if self.playback_task is not None or not self.speaker:
+        # Only the run that owns the pipeline may play; a generation that outlived
+        # its run (current_session is None) must never start untracked playback.
+        if self.current_session is None or self.playback_task is not None or not self.speaker:
             return
         self.coordinator.phase = "playback"
         self._run_has_tts = True
@@ -171,7 +174,7 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
                 await readiness
             if not generation.done():
                 generation.cancel()
-                done, _ = await asyncio.wait({generation}, timeout=5)
+                done, _ = await asyncio.wait({generation}, timeout=self.generation_wait)
                 if not done:
                     self.coordinator.retiring_generation = generation
                     self.coordinator.recovery_blocked = True
@@ -205,6 +208,8 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
             task.result()
 
     def on_pipeline_event(self, event):
+        if self.current_session is None:
+            return  # late event from a generation that outlived its run
         # A provider can stop early independently of host VAD. Do not execute
         # the normal HA intent handoff before validated EOF. Native-live providers
         # may already have executed tools during STT; never promise rollback.

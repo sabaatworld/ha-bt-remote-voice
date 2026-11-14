@@ -6,13 +6,33 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.components.assist_pipeline import async_get_pipelines
 from homeassistant.core import callback
-from homeassistant.helpers.selector import NumberSelector, NumberSelectorConfig, NumberSelectorMode
+from homeassistant.helpers.selector import (
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
+    SelectOptionDict,
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+)
 
 from .bluez import BlueZTransport
 from .playback import speaker_choices
 from .preferences import CHOICES, DEFAULTS, MAX_HEAD_START, preferences
 
 DOMAIN = "atvv_remote"
+
+
+NONE = "none"  # sentinel for "no spoken reply"; stored as an empty speaker
+
+
+def dropdown(options, translation_key):
+    """A dropdown whose option labels are translated from strings.json."""
+    return SelectSelector(
+        SelectSelectorConfig(
+            options=options, mode=SelectSelectorMode.DROPDOWN, translation_key=translation_key
+        )
+    )
 
 
 def pipeline_choices(items):
@@ -51,14 +71,14 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self.remotes = {r.address: r for r in remotes}
         except Exception:
             errors["base"] = "bluetooth_unavailable"
-        choices = {
-            r.address: f"{r.name} ({r.address}) — {'ATVV' if r.compatible else 'wake to check'}"
+        choices = [
+            SelectOptionDict(value=r.address, label=f"{r.name} ({r.address})")
             for r in self.remotes.values()
-        }
-        choices["manual"] = "Enter Bluetooth address"
+        ]
+        choices.append(SelectOptionDict(value="manual", label="manual"))
         return self.async_show_form(
             step_id="user",
-            data_schema=vol.Schema({vol.Required("device"): vol.In(choices)}),
+            data_schema=vol.Schema({vol.Required("device"): dropdown(choices, "remote_device")}),
             errors=errors,
         )
 
@@ -141,7 +161,7 @@ class OptionsFlow(config_entries.OptionsFlow):
                 errors["base"] = "invalid_preferences"
             if errors:
                 pass
-            elif user_input.get("speaker", "") not in speakers:
+            elif user_input.get("speaker", NONE) not in (NONE, *speakers):
                 errors["base"] = "invalid_speaker"
             elif user_input["pipeline_id"] not in choices or user_input["mode"] not in (
                 "transcription",
@@ -155,7 +175,9 @@ class OptionsFlow(config_entries.OptionsFlow):
                         **DEFAULTS,
                         **self.entry.options,
                         **user_input,
-                        "speaker": user_input.get("speaker", ""),
+                        "speaker": ""
+                        if user_input.get("speaker", NONE) == NONE
+                        else user_input["speaker"],
                     },
                 )
         selected = self.entry.options.get("pipeline_id", self.entry.data["pipeline_id"])
@@ -166,7 +188,7 @@ class OptionsFlow(config_entries.OptionsFlow):
                     **{
                         vol.Optional(
                             key, default=self.entry.options.get(key, DEFAULTS[key])
-                        ): vol.In(values)
+                        ): dropdown(list(values), key)
                         for key, values in CHOICES.items()
                     },
                     vol.Optional(
@@ -187,17 +209,21 @@ class OptionsFlow(config_entries.OptionsFlow):
                         "pipeline_id",
                         default=selected if selected in choices else next(iter(choices)),
                     ): vol.In(choices),
-                    vol.Optional("speaker", default=self.entry.options.get("speaker", "")): vol.In(
-                        speakers
+                    vol.Optional(
+                        "speaker", default=self.entry.options.get("speaker") or NONE
+                    ): dropdown(
+                        [
+                            SelectOptionDict(value=NONE, label=NONE),
+                            *(SelectOptionDict(value=k, label=v) for k, v in speakers.items()),
+                        ],
+                        "reply_speaker",
                     ),
                     vol.Required(
                         "mode",
                         default=self.entry.options.get(
                             "mode", self.entry.data.get("mode", "transcription")
                         ),
-                    ): vol.In(
-                        {"transcription": "Transcription only", "commands": "Execute commands"}
-                    ),
+                    ): dropdown(["transcription", "commands"], "voice_mode"),
                 }
             ),
             errors=errors,

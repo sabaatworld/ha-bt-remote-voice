@@ -1,9 +1,10 @@
 """Latched root cause of the most recent failed request."""
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.const import EntityCategory
 
 from .entity import RemoteEntity
+from .preferences import ERROR_CODES, error_state
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -11,15 +12,18 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class LastError(RemoteEntity, SensorEntity):
-    """State is the failure code or "none"; cleared when a later request succeeds.
+    """State is a translated failure code, ``none`` or ``other``.
 
-    Free-form provider codes are possible, so this is deliberately not an enum.
-    Busy rejections are not faults and never latch here (see the event entity).
+    Cleared when a later request succeeds. Provider-defined codes report
+    ``other`` with the raw value in the ``code`` attribute. Busy rejections are
+    not faults and never latch here (see the event entity).
     """
 
-    _attr_name = "Last error"
+    _attr_translation_key = "last_error"
     _attr_icon = "mdi:alert-circle-outline"
     _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_device_class = SensorDeviceClass.ENUM
+    _attr_options = ["none", *ERROR_CODES, "other"]
 
     def __init__(self, coordinator):
         super().__init__(coordinator, "last_error")
@@ -32,9 +36,9 @@ class LastError(RemoteEntity, SensorEntity):
     @property
     def native_value(self):
         failure = self.coordinator.last_failure
-        return failure["code"] if failure else "none"
+        return error_state(failure["code"]) if failure else "none"
 
     @property
     def extra_state_attributes(self):
         failure = self.coordinator.last_failure or {}
-        return {key: failure.get(key) for key in ("message", "stage", "since", "session")}
+        return {key: failure.get(key) for key in ("code", "stage", "since", "session")}

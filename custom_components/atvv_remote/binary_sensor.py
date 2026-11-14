@@ -10,7 +10,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class MicrophoneActive(RemoteEntity, BinarySensorEntity):
-    _attr_name = "Microphone active"
+    _attr_translation_key = "microphone_active"
     _attr_icon = "mdi:microphone"
 
     def __init__(self, coordinator):

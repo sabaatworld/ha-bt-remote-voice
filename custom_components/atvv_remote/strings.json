@@ -4,22 +4,32 @@
     "step": {
       "user": {
         "title": "Select paired remote",
-        "description": "Pair your remote outside this integration first. ATVV indicates a cached voice service; wake to check means capabilities have not been verified.",
+        "description": "Pair your remote outside Home Assistant first, then wake it with an arrow button so it can be verified. Pick it from the list, or enter its Bluetooth address.",
         "data": {
           "device": "Paired remote"
+        },
+        "data_description": {
+          "device": "Remotes already paired on this Home Assistant host. Choose the manual option if yours is not listed."
         }
       },
       "manual": {
         "title": "Enter paired remote address",
+        "description": "Enter the Bluetooth address of a remote that is already paired on this host.",
         "data": {
           "address": "Bluetooth address"
+        },
+        "data_description": {
+          "address": "Six pairs of hexadecimal digits separated by colons, for example AA:BB:CC:DD:EE:FF."
         }
       },
       "configure": {
         "title": "Select Assist pipeline",
-        "description": "Wake the remote with an arrow button before submitting. Starts in transcription-only mode.",
+        "description": "Wake the remote with an arrow button before submitting. The integration starts in transcription-only mode; change this in the options once it works.",
         "data": {
           "pipeline_id": "Assist pipeline"
+        },
+        "data_description": {
+          "pipeline_id": "The Assist pipeline that processes speech from this remote."
         }
       }
     },
@@ -41,33 +51,240 @@
     "step": {
       "init": {
         "title": "Voice settings",
-        "description": "Select any Assist pipeline. Automatic output streams when supported. Replacing a request cannot undo actions already performed. Conversation while held alternates listening and replies; simultaneous full duplex is unavailable. Stopping after transcription does not disable tools embedded in a live speech provider. Use a transcription-only provider when actions must be disabled.",
+        "description": "These settings control how presses are handled and how replies are spoken. Replacing a request cannot undo actions it already performed. Simultaneous full duplex is unavailable. Stopping after transcription does not disable tools built into a live speech provider; use a transcription-only provider when actions must be disabled.",
         "data": {
           "pipeline_id": "Assist pipeline",
           "mode": "Voice mode",
           "speaker": "Reply speaker",
           "output_mode": "Reply timing",
+          "stream_head_start": "Streaming head start",
           "busy_processing": "New press while processing",
           "busy_playback": "New press during reply",
           "context_mode": "Conversation context",
-          "input_mode": "Button behavior",
-          "stream_head_start": "Streaming head start (seconds)"
+          "input_mode": "Button behavior"
+        },
+        "data_description": {
+          "pipeline_id": "The Assist pipeline that processes speech: speech-to-text, conversation agent and text-to-speech. A removed pipeline fails with an error instead of falling back.",
+          "mode": "Transcription only stops after speech recognition and plays no reply. Execute commands runs the whole pipeline and speaks the reply on the reply speaker.",
+          "speaker": "The media player that speaks replies. Used only when executing commands. Choose no spoken reply to stop the pipeline before the reply is played.",
+          "output_mode": "Automatic streaming starts speaking as soon as a streamed reply is ready. Waiting for the complete reply starts later but plays a finished audio file, which avoids breakup with providers that only produce speech at about real-time pace.",
+          "stream_head_start": "Seconds to wait before playing a streamed reply, so the speaker has a lead to avoid breakup at the start. Replies that finish sooner play at once. Has no effect when waiting for the complete reply. 0 keeps the default behavior.",
+          "busy_processing": "What to do when the button is pressed before the previous request is answered: reject the press, keep one pending request, or replace the current request. Replacing cannot undo actions already performed.",
+          "busy_playback": "What to do when the button is pressed while a reply is playing: reject the press, answer one pending request afterward, or stop the reply and start the new request.",
+          "context_mode": "Reuse keeps the Home Assistant conversation so follow-ups such as 'and double that?' work. Fresh makes every press an independent conversation.",
+          "input_mode": "One request per hold records until the button is released. Alternating conversation keeps listening while the button is held: speak, pause, hear the reply, then speak again. It needs a hold-to-talk remote."
         }
       }
     },
     "error": {
-      "bluetooth_unavailable": "Local Bluetooth is unavailable. Check that system D-Bus is accessible.",
-      "wake_remote": "Wake the paired remote with an arrow button, then try again.",
-      "not_paired": "Pair this remote externally first.",
-      "multiple_adapters": "This remote is paired on multiple adapters. Keep its bond on one adapter.",
-      "invalid_address": "Enter a Bluetooth address in AA:BB:CC:DD:EE:FF format.",
-      "unsupported_remote": "This remote does not provide a supported ATVV v0.4/v1.0 ADPCM voice profile.",
-      "invalid_pipeline": "Choose an existing Assist pipeline.",
       "invalid_speaker": "Choose a media player that supports playing audio, or no spoken reply.",
-      "invalid_preferences": "Choose one of the supported voice preferences."
+      "invalid_preferences": "Choose one of the supported voice preferences.",
+      "invalid_pipeline": "Choose an existing Assist pipeline."
     },
     "abort": {
       "no_pipelines": "Create an Assist pipeline first."
+    }
+  },
+  "selector": {
+    "remote_device": {
+      "options": {
+        "manual": "Enter Bluetooth address"
+      }
+    },
+    "voice_mode": {
+      "options": {
+        "transcription": "Transcription only",
+        "commands": "Execute commands"
+      }
+    },
+    "reply_speaker": {
+      "options": {
+        "none": "No spoken reply"
+      }
+    },
+    "output_mode": {
+      "options": {
+        "auto": "Automatic streaming",
+        "buffered": "Wait for complete reply"
+      }
+    },
+    "busy_processing": {
+      "options": {
+        "reject": "Reject new request",
+        "queue": "Queue one request",
+        "replace": "Replace current request"
+      }
+    },
+    "busy_playback": {
+      "options": {
+        "reject": "Reject new request",
+        "queue": "Queue one request",
+        "replace": "Replace current reply"
+      }
+    },
+    "context_mode": {
+      "options": {
+        "reuse": "Reuse conversation",
+        "fresh": "Fresh conversation per request"
+      }
+    },
+    "input_mode": {
+      "options": {
+        "single": "One request per hold",
+        "conversation": "Conversation while held (alternating)"
+      }
+    }
+  },
+  "entity": {
+    "assist_satellite": {
+      "voice": {
+        "name": "Voice",
+        "state_attributes": {
+          "ready": {
+            "name": "Ready"
+          },
+          "last_error": {
+            "name": "Last error code"
+          },
+          "last_error_message": {
+            "name": "Last error message"
+          },
+          "mode": {
+            "name": "Voice mode"
+          },
+          "sessions": {
+            "name": "Sessions"
+          },
+          "failures": {
+            "name": "Failures"
+          },
+          "rejected": {
+            "name": "Rejected presses"
+          },
+          "queued": {
+            "name": "Queued requests"
+          },
+          "last_outcome": {
+            "name": "Last outcome"
+          },
+          "full_duplex": {
+            "name": "Full duplex"
+          }
+        }
+      }
+    },
+    "event": {
+      "voice_button": {
+        "name": "Voice button",
+        "state_attributes": {
+          "event_type": {
+            "name": "Event type",
+            "state": {
+              "pressed": "Pressed",
+              "released": "Released",
+              "accepted": "Accepted",
+              "rejected": "Rejected",
+              "queued": "Queued",
+              "failed": "Failed",
+              "context_reset": "Conversation reset"
+            }
+          },
+          "outcome": {
+            "name": "Outcome"
+          },
+          "stage": {
+            "name": "Stage"
+          },
+          "code": {
+            "name": "Code"
+          },
+          "message": {
+            "name": "Message"
+          }
+        }
+      }
+    },
+    "binary_sensor": {
+      "microphone_active": {
+        "name": "Microphone active"
+      }
+    },
+    "sensor": {
+      "last_error": {
+        "name": "Last error",
+        "state": {
+          "none": "No error",
+          "busy": "Still answering the previous request.",
+          "queue_full": "A request is already waiting. Please try after the reply.",
+          "queue_expired": "The waiting request expired. Please press and speak again.",
+          "queue_discarded": "The waiting request was discarded.",
+          "queue_failed": "The waiting request could not be started.",
+          "capture_limit": "The microphone capture limit was reached. Please use a shorter request.",
+          "buffer_overflow": "The microphone audio backed up before the speech service started reading it.",
+          "audio_sequence_gap": "Audio synchronization failed. Please press and try again.",
+          "invalid_audio_sync": "The remote sent an invalid audio synchronization message.",
+          "invalid_audio_frame": "The remote sent a damaged audio frame.",
+          "invalid_control": "The remote sent an invalid control message.",
+          "unsupported_audio_start": "The remote started audio in a way this integration does not support.",
+          "incomplete_utterance": "Audio ended before the request was complete.",
+          "audio_stalled": "Microphone audio stopped arriving. Please try again.",
+          "audio_failed": "The microphone audio failed.",
+          "no_audio": "No microphone audio was received.",
+          "no_speech": "No speech was detected.",
+          "held_mode_unsupported": "Alternating conversation needs a hold-to-talk remote.",
+          "held_failed": "The conversation while holding the button failed.",
+          "held_turn_failed": "A turn of the conversation failed.",
+          "remote_stopped": "The remote stopped the microphone unexpectedly.",
+          "disconnected": "The remote disconnected.",
+          "cancelled": "The request was cancelled.",
+          "pipeline_finished_early": "The Assist pipeline finished before all audio was read.",
+          "pipeline_timeout": "The Assist pipeline took too long to respond.",
+          "pipeline_failed": "The Assist pipeline failed.",
+          "pipeline_removed": "The selected Assist pipeline no longer exists.",
+          "playback_stop_unverified": "Could not verify that the previous reply stopped. Wait until the speaker is idle.",
+          "playback_stop_failed": "The previous reply could not be stopped.",
+          "playback_start_timeout": "The speaker did not start playing the reply.",
+          "playback_finish_timeout": "The speaker did not finish playing the reply in time.",
+          "playback_interrupted": "The reply was interrupted on the speaker.",
+          "speaker_unavailable": "The reply speaker is unavailable.",
+          "speaker_busy": "The reply speaker is busy.",
+          "speaker_cannot_play": "The reply speaker cannot play audio from Home Assistant.",
+          "missing_tts_audio": "The reply had no audio to play.",
+          "generation_retirement_failed": "The previous request has not stopped yet. Please wait.",
+          "replacement_retirement_failed": "The current request could not be stopped to start the new one.",
+          "microphone_open_failed": "The remote's microphone could not be opened.",
+          "microphone_open_rejected": "The remote refused to open its microphone.",
+          "microphone_start_timeout": "The remote did not start its microphone in time.",
+          "microphone_close_failed": "The remote's microphone could not be closed.",
+          "microphone_keepalive_failed": "The remote's microphone connection was lost.",
+          "active_generation_cancelled": "The reply being prepared was cancelled and the conversation context was reset.",
+          "wake_remote": "Wake the remote with an arrow button, then try again.",
+          "bluetooth_unavailable": "Local Bluetooth is unavailable.",
+          "bluetooth_operation_failed": "A Bluetooth operation failed.",
+          "not_paired": "The remote is not paired on this host.",
+          "multiple_adapters": "The remote is paired on more than one adapter.",
+          "voice_service_unavailable": "The remote does not offer a voice service.",
+          "unsupported_write": "The remote's voice control cannot be written.",
+          "unsupported_capabilities": "The remote reported voice capabilities this integration does not support.",
+          "unsupported_codec": "The remote uses an audio format this integration does not support.",
+          "invalid_frame_size": "The remote reported an invalid audio frame size.",
+          "other": "Another error occurred. The error code gives the details."
+        },
+        "state_attributes": {
+          "code": {
+            "name": "Code"
+          },
+          "stage": {
+            "name": "Stage"
+          },
+          "since": {
+            "name": "Since"
+          },
+          "session": {
+            "name": "Request"
+          }
+        }
+      }
     }
   }
 }

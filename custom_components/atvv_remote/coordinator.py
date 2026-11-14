@@ -35,7 +35,9 @@ class VoiceCoordinator:
         self.sessions = 0
         self.failures = 0
         self.pipeline_timeout = 150
-        self.retirement_timeout = 5
+        # Must exceed retirement_wait: the satellite's own cleanup (bounded generation
+        # wait plus verified speaker stop) runs inside it.
+        self.retirement_timeout = 30
         self.retirement_wait = 20
         self.last_timings = {}
         self.keepalive_interval = 2
@@ -85,19 +87,27 @@ class VoiceCoordinator:
             "outcome": kind,
             "stage": self.phase,
             "code": reason,
-            "message": error_message(reason),
+            # Only error-like outcomes carry error text ("queued"/"replacement" is not one).
+            "message": error_message(self.hass, reason)
+            if kind in ("rejected", "failed", "context_reset")
+            else None,
         }
         if kind == "failed":
             # Latched for the diagnostic sensor until a later request succeeds.
             self.last_failure = {
                 "code": reason or "unknown",
-                "message": error_message(reason) or "Unknown failure",
                 "stage": self.phase,
                 "since": dt_util.utcnow().isoformat(),
                 "session": self.sessions,
             }
         self.event(kind)
         self.changed()
+
+    @staticmethod
+    def cancel_release_timer(owner):
+        if owner is not None and owner.release_timer:
+            owner.release_timer.cancel()
+            owner.release_timer = None
 
     async def close_microphone(self, owner=None):
         owner = owner or self.capture
@@ -181,7 +191,10 @@ class VoiceCoordinator:
                 raise AudioFailure("playback_stop_unverified")
             if owner.session.error:
                 raise AudioFailure(owner.session.error)
-            if owner.released_at and owner.session.loop.time() - owner.released_at >= 30:
+            if (
+                owner.released_at
+                and owner.session.loop.time() - owner.released_at >= self.queue_ttl
+            ):
                 raise AudioFailure("queue_expired")
             self.pending = None
             if owner.expiry:
@@ -190,11 +203,13 @@ class VoiceCoordinator:
                 self.process(owner.session, owner), "ATVV promoted"
             )
         except asyncio.CancelledError:
+            self.cancel_release_timer(owner)
             if not owner.session.finished:
                 owner.session.abort("queue_discarded")
             await self.close_microphone(owner)
             raise
         except Exception as err:
+            self.cancel_release_timer(owner)
             reason = str(err) if isinstance(err, AudioFailure) else "queue_failed"
             owner.session.abort(reason)
             self.failures += 1
@@ -427,6 +442,7 @@ class VoiceCoordinator:
                 self.history.record(self.capture.record, "stop", count=self.capture.session.frames)
                 if self.capture.held and event.reason in (0, 2):
                     delay = self.capture.session.finish_delay
+                    self.cancel_release_timer(self.capture)
                     if delay:
                         self.capture.release_timer = asyncio.get_running_loop().call_later(
                             delay, self.capture.held.release
@@ -550,7 +566,17 @@ class VoiceCoordinator:
             if self.active_input is session:
                 self.active_input = None
             self.phase = "idle"
-            if succeeded and not failure_code and not self.recovery_blocked:
+            # A request clears only failures that are not newer than itself.
+            if (
+                succeeded
+                and not failure_code
+                and not self.recovery_blocked
+                and (
+                    not self.last_failure
+                    or not owner
+                    or self.last_failure["session"] <= owner.generation
+                )
+            ):
                 self.last_failure = None
             self.changed()
 
@@ -587,8 +613,7 @@ class VoiceCoordinator:
             self.last_error = str(err) if isinstance(err, AudioFailure) else "held_failed"
             self.outcome("failed", self.last_error)
         finally:
-            if owner.release_timer:
-                owner.release_timer.cancel()
+            self.cancel_release_timer(owner)
             microphone.cancel()
             with suppress(asyncio.CancelledError):
                 await microphone
@@ -697,5 +722,6 @@ class VoiceCoordinator:
         self.mic_active = self.ready = False
         if self.capture and self.capture.expiry:
             self.capture.expiry.cancel()
+        self.cancel_release_timer(self.capture)
         self.history.clear()
         self.changed()

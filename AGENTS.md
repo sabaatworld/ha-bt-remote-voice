@@ -50,6 +50,12 @@ the HA audio dependencies; mount the repo read-only and set
 - **Keep private material out of this repo.** Packet captures, recordings,
   credentials, deployment notes, household research and test logs belong in the
   maintainer's private workspace, not here.
+- **Translations, always.** No user-visible text in code: entity names via
+  `translation_key`, choice labels via `SelectSelector(translation_key=...)` with
+  `selector` entries, every form field needs `data` and `data_description`,
+  every error/abort key exists, and failure codes are `ERROR_CODES` with a state
+  translation each. Edit `strings.json` and keep `translations/en.json` identical
+  (`tests/test_translations.py` enforces this, including field coverage).
 - **Behavior-preserving defaults.** A new option must default to existing behavior,
   be validated in `preferences.py`, appear in `config_flow.py`, `strings.json`
   and `translations/en.json`, and be documented in the README's Configuration

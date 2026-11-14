@@ -10,7 +10,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
 
 class VoiceButton(RemoteEntity, EventEntity):
-    _attr_name = "Voice button"
+    _attr_translation_key = "voice_button"
     _attr_icon = "mdi:gesture-tap-hold"
     _attr_event_types = [
         "pressed",

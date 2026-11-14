@@ -77,7 +77,17 @@ async def test_complete_entry_setup_creates_entities_and_unloads(hass):
             assert await async_setup_entry(hass, entry)
         await hass.async_block_till_done()
         states = hass.states.async_all()
-        assert {s.domain for s in states} >= {"assist_satellite", "binary_sensor", "event"}
+        assert {s.domain for s in states} >= {
+            "assist_satellite",
+            "binary_sensor",
+            "event",
+            "sensor",
+        }
+        # Names come from the real translation loader, not from code.
+        names = {s.name for s in states if s.entity_id.split(".")[0] in {"event", "sensor"}}
+        assert {"Test Remote Voice button", "Test Remote Last error"} <= names, names
+        error = next(s for s in states if s.entity_id.startswith("sensor."))
+        assert error.state == "none"
         assert await async_unload_entry(hass, entry)
 
 

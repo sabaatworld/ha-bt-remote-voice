@@ -1106,7 +1106,7 @@ async def test_error_sensor_reports_root_cause_and_clears_on_success():
     assert sensor.native_value == "none" and sensor.available
     assert sensor.entity_category == "diagnostic"
     assert sensor.extra_state_attributes == {
-        "message": None,
+        "code": None,
         "stage": None,
         "since": None,
         "session": None,
@@ -1122,7 +1122,8 @@ async def test_error_sensor_reports_root_cause_and_clears_on_success():
     await c.pipeline_task
     assert sensor.native_value == "audio_stalled"
     attrs = sensor.extra_state_attributes
-    assert attrs["message"] and attrs["stage"] and attrs["session"] == 1 and attrs["since"]
+    assert attrs["code"] == "audio_stalled"
+    assert attrs["stage"] and attrs["session"] == 1 and attrs["since"]
 
     async def ok(s):
         async for _ in s.stream():
@@ -1134,7 +1135,7 @@ async def test_error_sensor_reports_root_cause_and_clears_on_success():
     c.control(bytes.fromhex("0002"))
     await c.pipeline_task
     assert sensor.native_value == "none"
-    assert sensor.extra_state_attributes["message"] is None
+    assert sensor.extra_state_attributes["code"] is None
     await c.stop()
 
 
@@ -1172,7 +1173,7 @@ async def test_error_sensor_survives_disconnect_and_keeps_failure_details():
     sensor = LastError(c)
     assert sensor.available
     assert sensor.native_value == "capture_limit"
-    assert "shorter" in sensor.extra_state_attributes["message"]
+    assert sensor.extra_state_attributes["code"] == "capture_limit"
 
 
 def test_audible_feedback_is_removed():
@@ -1340,3 +1341,116 @@ async def test_late_starting_consumer_does_not_overflow_a_single_hold():
     await c.pipeline_task
     assert c.failures == 0 and len(received) == 150
     await c.stop()
+
+
+async def test_events_from_a_retired_generation_cannot_start_playback():
+    """A generation that outlives its run (it resisted cancellation) owns nothing."""
+    from homeassistant.components.assist_pipeline import PipelineEvent, PipelineEventType
+
+    c, sat = _streaming_satellite(None)
+    sat.generation_wait = 0.1
+    u = VoiceSession(128, finish_delay=0)
+    u.audio(bytes(128))
+    u.release()
+    _ = [x async for x in u.stream()]
+    played = []
+
+    async def playback(*args, **kwargs):
+        played.append(True)
+
+    async def accept(*args, **kwargs):
+        try:
+            await asyncio.Event().wait()
+        except asyncio.CancelledError:
+            await asyncio.sleep(0.4)  # outlives the satellite's bounded wait
+            sat.on_pipeline_event(
+                PipelineEvent(
+                    PipelineEventType.RUN_START,
+                    {"tts_output": {"url": "/x", "stream_response": True}},
+                )
+            )
+            sat.on_pipeline_event(
+                PipelineEvent(PipelineEventType.INTENT_PROGRESS, {"tts_start_streaming": True})
+            )
+
+    with (
+        patch.object(sat, "_resolve_pipeline", return_value="p"),
+        patch.object(sat, "async_accept_pipeline_from_satellite", side_effect=accept),
+        patch("custom_components.atvv_remote.assist_satellite.play_reply", side_effect=playback),
+        patch.object(sat, "_set_state"),
+    ):
+        task = asyncio.create_task(sat.run(u))
+        await asyncio.sleep(0.05)
+        task.cancel()
+        with pytest.raises((asyncio.CancelledError, AudioFailure)):
+            await task
+        assert c.recovery_blocked
+        await asyncio.sleep(0.6)
+    assert played == [] and sat.playback_task is None
+    assert c.phase != "playback"
+
+
+def test_replacement_waits_at_least_as_long_as_the_satellite_cleanup():
+    c = _coordinator()
+    assert c.retirement_timeout > c.retirement_wait
+
+
+async def test_earlier_success_does_not_clear_a_later_requests_failure():
+    from custom_components.atvv_remote.sensor import LastError
+
+    c = _coordinator({"busy_processing": "queue"})
+    c.caps = Capabilities(128)
+    c.transport = SimpleNamespace(write=AsyncMock(), close=AsyncMock())
+    c.queue_ttl = 0.1
+    gate = asyncio.Event()
+
+    async def run(s):
+        _ = [x async for x in s.stream()]
+        await gate.wait()
+
+    c.run_pipeline = run
+    c.control(bytes.fromhex("04030201"))
+    c.audio(bytes(128))
+    c.control(bytes.fromhex("0002"))
+    await asyncio.sleep(0.15)
+    c.control(bytes.fromhex("04030202"))
+    c.audio(bytes(128))
+    c.control(bytes.fromhex("0002"))
+    await asyncio.sleep(0.3)  # the queued request expires
+    sensor = LastError(c)
+    assert sensor.native_value == "queue_expired"
+    gate.set()  # request 1, which started before the failed one, now succeeds
+    await asyncio.sleep(0.1)
+    assert sensor.native_value == "queue_expired"
+    await c.stop()
+
+
+async def test_queued_replacement_press_is_not_reported_with_an_error_message():
+    c = _coordinator()
+    c.hass.config = SimpleNamespace(language="en")
+    with patch(
+        "custom_components.atvv_remote.preferences.async_get_cached_translations",
+        return_value={
+            "component.atvv_remote.entity.sensor.last_error.state.other": "An error occurred."
+        },
+    ):
+        c.outcome("queued", "replacement")
+        assert c.last_outcome["code"] == "replacement" and c.last_outcome["message"] is None
+        c.outcome("failed", "something_provider_specific")
+        assert c.last_outcome["message"] == "An error occurred."
+
+
+async def test_held_release_timer_is_cancelled_on_stop():
+    c = _coordinator({"input_mode": "conversation"})
+    c.caps = Capabilities(128)
+
+    async def run(s):
+        _ = [x async for x in s.stream()]
+
+    c.run_pipeline = run
+    c.control(bytes.fromhex("04030201"))
+    c.control(bytes.fromhex("0002"))
+    timer = c.capture.release_timer
+    assert timer is not None
+    await c.stop()
+    assert timer.cancelled()

@@ -21,7 +21,10 @@ Use a dedicated transcription-only STT provider when actions must be disabled.
 ## Configuration reference
 
 Select **Configure** on the integration to change these settings; changes reload
-the integration. Everything except the pipeline, voice mode and speaker defaults
+the integration. Every setting has a short description in the form itself; this
+section adds when to use each one. All text, including entity names, option
+labels and error messages, comes from Home Assistant's translation files
+(English is provided). Everything except the pipeline, voice mode and speaker defaults
 to the behavior described in the Default column, so an existing setup does not
 change unless you choose otherwise.
 
@@ -82,7 +85,7 @@ echo-reference contract is verified.
 | Voice (assist satellite) | Runs requests. Attributes show readiness, session, failure, rejection and queue counts, the last outcome and error, and that full duplex is unavailable. |
 | Voice button (event) | Announces `pressed`, `released`, `accepted`, `rejected`, `queued`, `failed` and `context_reset`; outcomes carry a stage, code and readable message. |
 | Microphone active (binary sensor) | On while the remote is capturing audio. |
-| Last error (diagnostic sensor) | The failure code of the most recent failed request, or `none`. See [Reporting errors](#reporting-errors). |
+| Last error (diagnostic sensor) | The most recent failed request, or `none`. See [Reporting errors](#reporting-errors). |
 
 ## Compatibility and microphone controls
 
@@ -136,10 +139,13 @@ conversation ID does not guarantee provider memory survived a cancelled session.
 
 ## Reporting errors
 
-The diagnostic **Last error** sensor shows the root-cause code of the most recent
-failed request, or `none`. Its attributes give a readable `message`, the `stage`,
-the `since` time and the request number. It clears when a later request succeeds
-or the integration reloads, and stays available while the remote is disconnected.
+The diagnostic **Last error** sensor is an enum sensor whose state is the
+root-cause code of the most recent failed request (shown as readable text in the
+Home Assistant language), `none`, or `other` for provider-defined codes. The raw
+`code`, the `stage`, the `since` time and the request number (`session`) are attributes; use
+the `state_translated()` template function for the readable text in automations.
+It clears when a later request succeeds or the integration reloads, and stays
+available while the remote is disconnected.
 Busy rejections are not faults: they appear only in the voice button event and the
 satellite attributes. The voice button event still announces every occurrence.
 
