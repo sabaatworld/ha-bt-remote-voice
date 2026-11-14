@@ -4,7 +4,7 @@ from homeassistant.const import Platform
 
 from .coordinator import VoiceCoordinator
 
-PLATFORMS = [Platform.ASSIST_SATELLITE, Platform.BINARY_SENSOR, Platform.EVENT]
+PLATFORMS = [Platform.ASSIST_SATELLITE, Platform.BINARY_SENSOR, Platform.EVENT, Platform.SENSOR]
 
 
 async def async_setup_entry(hass, entry):

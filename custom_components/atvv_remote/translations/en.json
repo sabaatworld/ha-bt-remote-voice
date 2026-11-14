@@ -41,11 +41,17 @@
     "step": {
       "init": {
         "title": "Voice settings",
-        "description": "Transcription only does not execute commands. Command mode uses the selected pipeline. Choose an optional speaker for spoken replies; busy players are left alone.",
+        "description": "Select any Assist pipeline. Automatic output streams when supported. Replacing a request cannot undo actions already performed. Conversation while held alternates listening and replies; simultaneous full duplex is unavailable. Stopping after transcription does not disable tools embedded in a live speech provider. Use a transcription-only provider when actions must be disabled.",
         "data": {
           "pipeline_id": "Assist pipeline",
           "mode": "Voice mode",
-          "speaker": "Reply speaker"
+          "speaker": "Reply speaker",
+          "output_mode": "Reply timing",
+          "busy_processing": "New press while processing",
+          "busy_playback": "New press during reply",
+          "context_mode": "Conversation context",
+          "input_mode": "Button behavior",
+          "stream_head_start": "Streaming head start (seconds)"
         }
       }
     },
@@ -57,7 +63,8 @@
       "invalid_address": "Enter a Bluetooth address in AA:BB:CC:DD:EE:FF format.",
       "unsupported_remote": "This remote does not provide a supported ATVV v0.4/v1.0 ADPCM voice profile.",
       "invalid_pipeline": "Choose an existing Assist pipeline.",
-      "invalid_speaker": "Choose a media player that supports playing audio, or no spoken reply."
+      "invalid_speaker": "Choose a media player that supports playing audio, or no spoken reply.",
+      "invalid_preferences": "Choose one of the supported voice preferences."
     },
     "abort": {
       "no_pipelines": "Create an Assist pipeline first."

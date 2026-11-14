@@ -113,7 +113,14 @@ async def test_playback_finish_timeout_and_unavailability_are_errors(hass):
         )
 
         async def call(*args, target_state=target_state, **kwargs):
-            hass.states.async_set("media_player.test_speaker", "playing")
+            if args[1] == "media_stop":
+                hass.states.async_set("media_player.test_speaker", "idle")
+                return
+            hass.states.async_set(
+                "media_player.test_speaker",
+                "playing",
+                {"media_content_id": "media-source://tts/test"},
+            )
             if target_state:
                 hass.states.async_set("media_player.test_speaker", target_state)
 
@@ -125,3 +132,36 @@ async def test_playback_finish_timeout_and_unavailability_are_errors(hass):
                     {"media_id": "media-source://tts/test"},
                     finish_timeout=0.01,
                 )
+
+
+async def test_state_listener_runs_on_event_loop_not_executor(hass):
+    """An undecorated listener is run in a thread; it writes entity state on completion."""
+    from homeassistant.core import is_callback
+
+    from custom_components.atvv_remote.playback import play_reply
+
+    hass.states.async_set(
+        "media_player.test_speaker",
+        "idle",
+        {"supported_features": int(MediaPlayerEntityFeature.PLAY_MEDIA)},
+    )
+    captured = []
+
+    def track(_hass, _entities, listener):
+        captured.append(listener)
+        return lambda: None
+
+    with (
+        patch("custom_components.atvv_remote.playback.async_track_state_change_event", track),
+        patch.object(type(hass.services), "async_call", return_value=None),
+    ):
+        task = asyncio.create_task(
+            play_reply(
+                hass, "media_player.test_speaker", {"media_id": "media-source://tts/synthetic"}
+            )
+        )
+        await asyncio.sleep(0.01)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+    assert captured and is_callback(captured[0])

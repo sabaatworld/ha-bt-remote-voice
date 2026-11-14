@@ -1,5 +1,8 @@
 """ATVV microphone satellite using HA's native pipeline lifecycle."""
 
+import asyncio
+from contextlib import suppress
+
 from homeassistant.components.assist_pipeline import (
     PipelineEventType,
     PipelineStage,
@@ -12,7 +15,9 @@ from homeassistant.components.assist_satellite import (
 from homeassistant.components.assist_satellite.entity import AssistSatelliteState
 
 from .entity import RemoteEntity
+from .pipeline import run_audio_pipeline
 from .playback import play_reply
+from .preferences import error_message
 from .session import AudioFailure
 
 
@@ -29,6 +34,7 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
         self.current_session = None
         self.tts_output = None
         coordinator.run_pipeline = self.run
+        coordinator.satellite = self
 
     @property
     def extra_state_attributes(self):
@@ -36,9 +42,14 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
         return {
             "ready": c.ready,
             "last_error": c.last_error,
+            "last_error_message": error_message(c.last_error),
             "mode": c.entry.options.get("mode", c.entry.data.get("mode", "transcription")),
             "sessions": c.sessions,
             "failures": c.failures,
+            "rejected": c.rejected,
+            "queued": c.queued,
+            "last_outcome": c.last_outcome,
+            "full_duplex": "unavailable",
         }
 
     def async_get_configuration(self):
@@ -57,52 +68,176 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
             raise AudioFailure("pipeline_removed")
         return selected
 
-    def _resolve_vad_sensitivity(self):
-        # Physical release defines EOF. Keep HA's silence detector from ending a
-        # valid <=30 s hold early. EOF still reaches STT immediately on release.
-        return 31.0
+    async def async_accept_pipeline_from_satellite(self, audio_stream, start_stage, end_stage):
+        # audio_stream is session.stream(); keep this method patchable for HA tests.
+        await run_audio_pipeline(
+            self,
+            self.current_session,
+            start_stage,
+            end_stage,
+            fresh=self.coordinator.entry.options.get("context_mode", "reuse") == "fresh",
+        )
+
+    def timing(self, stage, session=None):
+        session = session or self.current_session
+        if session is not self.current_session or session is None:
+            return
+        self.coordinator.last_timings[stage + "_ms"] = round(
+            (session.loop.time() - session.started_at) * 1000, 1
+        )
+        self.coordinator.changed()
+
+    async def _start_after(self, output, seconds):
+        # Gives a live provider time to build a lead before the speaker starts
+        # pulling the stream. Generation completing sooner starts playback anyway.
+        await asyncio.sleep(seconds)
+        self.start_playback(output)
+
+    def start_playback(self, output):
+        if self.playback_task is not None or not self.speaker:
+            return
+        self.coordinator.phase = "playback"
+        self._run_has_tts = True
+        self.playback_task = asyncio.create_task(
+            play_reply(
+                self.hass,
+                self.speaker,
+                output,
+                on_stage=lambda stage, session=self.current_session: self.timing(stage, session),
+            ),
+            name="ATVV reply",
+        )
+        self.playback_ready.set()
+        if self.entity_id:
+            self._set_state(AssistSatelliteState.RESPONDING)
+        self.coordinator.changed()
 
     async def run(self, session):
         self._resolve_pipeline()
         self.current_session = session
-        mode = self.coordinator.entry.options.get(
-            "mode", self.coordinator.entry.data.get("mode", "transcription")
-        )
-        speaker = self.coordinator.entry.options.get("speaker", "")
-        self.tts_output = None
+        opts = self.coordinator.entry.options
+        mode = opts.get("mode", self.coordinator.entry.data.get("mode", "transcription"))
+        self.speaker = opts.get("speaker", "") if mode == "commands" else ""
+        self.tts_output = self.streaming_output = None
+        self.playback_task = None
+        self.head_start_task = None
         self.pipeline_error = None
-        try:
-            await self.async_accept_pipeline_from_satellite(
+        self.playback_ready = asyncio.Event()
+        self.generation_complete = False
+        self.coordinator.phase = "processing"
+        self.coordinator.last_timings = {}
+        generation = asyncio.create_task(
+            self.async_accept_pipeline_from_satellite(
                 session.stream(),
                 start_stage=PipelineStage.STT,
-                end_stage=(PipelineStage.TTS if speaker else PipelineStage.INTENT)
+                end_stage=(PipelineStage.TTS if self.speaker else PipelineStage.INTENT)
                 if mode == "commands"
                 else PipelineStage.STT,
-            )
+            ),
+            name="ATVV generation",
+        )
+        readiness = asyncio.create_task(self.playback_ready.wait())
+        try:
+            while not generation.done():
+                watch = {generation}
+                if self.playback_task is None:
+                    watch.add(readiness)
+                elif not self.playback_task.done():
+                    watch.add(self.playback_task)
+                else:
+                    self.playback_task.result()
+                await asyncio.wait(watch, return_when=asyncio.FIRST_COMPLETED)
+                if self.playback_task and self.playback_task.done():
+                    self.playback_task.result()
+            await generation
+            self.generation_complete = True
+            self.timing("generation_complete")
             if self.pipeline_error:
                 raise AudioFailure(self.pipeline_error)
-            if mode == "commands" and speaker:
-                if self.tts_output:
-                    await play_reply(self.hass, speaker, self.tts_output)
+            if self.speaker:
+                if self.playback_task is None and self.tts_output:
+                    self.start_playback(self.tts_output)
+                if self.playback_task:
+                    await asyncio.shield(self.playback_task)
                     self.tts_response_finished()
-                elif self.coordinator.last_error:
-                    raise AudioFailure("tts_pipeline_failed")
         finally:
-            # Failure/cancellation resets state without claiming playback finished.
-            if self.state == AssistSatelliteState.RESPONDING:
+            stop_error = None
+            if self.head_start_task:
+                self.head_start_task.cancel()
+                with suppress(asyncio.CancelledError):
+                    await self.head_start_task
+            readiness.cancel()
+            with suppress(asyncio.CancelledError):
+                await readiness
+            if not generation.done():
+                generation.cancel()
+                done, _ = await asyncio.wait({generation}, timeout=5)
+                if not done:
+                    self.coordinator.retiring_generation = generation
+                    self.coordinator.recovery_blocked = True
+                    generation.add_done_callback(self.retired_generation)
+                    stop_error = AudioFailure("generation_retirement_failed")
+                else:
+                    with suppress(asyncio.CancelledError, Exception):
+                        generation.result()
+            if self.playback_task and not self.playback_task.done():
+                self.playback_task.cancel()
+                try:
+                    await self.playback_task
+                except asyncio.CancelledError:
+                    pass
+                except Exception as err:
+                    stop_error = err
+            elif self.playback_task:
+                # Retrieve failures even if generation failed before awaiting playback.
+                with suppress(asyncio.CancelledError, Exception):
+                    self.playback_task.result()
+            if self.state != AssistSatelliteState.IDLE:
                 self._set_state(AssistSatelliteState.IDLE)
             self.current_session = None
-            self.tts_output = None
+            self.tts_output = self.streaming_output = None
+            if stop_error:
+                raise stop_error
+
+    @staticmethod
+    def retired_generation(task):
+        with suppress(asyncio.CancelledError, Exception):
+            task.result()
 
     def on_pipeline_event(self, event):
         # A provider can stop early independently of host VAD. Do not execute
-        # any intent if the user has not released or input was corrupted.
+        # the normal HA intent handoff before validated EOF. Native-live providers
+        # may already have executed tools during STT; never promise rollback.
         if event.type == PipelineEventType.STT_END:
             s = self.current_session
+            if s and hasattr(s, "released_at"):
+                self.coordinator.last_timings["input_released_ms"] = round(
+                    (s.released_at - s.started_at) * 1000, 1
+                )
+            self.timing("stt_end")
             if s is None or not s.finished or not s.input_complete or s.error:
                 raise AudioFailure("incomplete_utterance")
+        elif event.type == PipelineEventType.RUN_START:
+            self.streaming_output = (event.data or {}).get("tts_output")
+        elif event.type == PipelineEventType.INTENT_PROGRESS:
+            output = self.streaming_output or {}
+            if (
+                (event.data or {}).get("tts_start_streaming")
+                and output.get("stream_response")
+                and self.coordinator.entry.options.get("output_mode", "auto") == "auto"
+            ):
+                self.timing("output_ready")
+                head_start = self.coordinator.entry.options.get("stream_head_start", 0)
+                if head_start > 0:
+                    self.coordinator.last_timings["head_start_ms"] = round(head_start * 1000)
+                    self.head_start_task = asyncio.create_task(
+                        self._start_after(output, head_start), name="ATVV head start"
+                    )
+                else:
+                    self.start_playback(output)
         elif event.type == PipelineEventType.TTS_END:
             self.tts_output = (event.data or {}).get("tts_output")
+            self.timing("tts_end")
         elif event.type == PipelineEventType.ERROR:
             self.pipeline_error = (event.data or {}).get("code", "pipeline_failed")
             self.coordinator.last_error = self.pipeline_error

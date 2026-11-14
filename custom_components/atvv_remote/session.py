@@ -23,7 +23,9 @@ class VoiceSession:
         stall_timeout=2,
         max_duration=30,
         finish_delay=0.1,
+        on_pcm=None,
     ):
+        self.on_pcm = on_pcm
         self.caps = caps or Capabilities(frame_size)
         self.frame_size = frame_size
         self.sequence_mismatch = None
@@ -56,7 +58,7 @@ class VoiceSession:
         self.changed = asyncio.Event()
         self.loop = asyncio.get_running_loop()
         self.watchdog = self.loop.call_later(first_timeout, self.abort, "no_audio")
-        self.limit = self.loop.call_later(max_duration, self.abort, "utterance_too_long")
+        self.limit = self.loop.call_later(max_duration, self.abort, "capture_limit")
         self.tail = None
 
     def audio(self, data: bytes):
@@ -95,15 +97,18 @@ class VoiceSession:
         except ValueError:
             self.abort("invalid_audio_frame")
             return
-        if self.queued_bytes + len(pcm) > self.max_bytes:
+        if self.on_pcm is None and self.queued_bytes + len(pcm) > self.max_bytes:
             self.abort("buffer_overflow")
             return
         self.sequence = (self.sequence + 1) & 65535
         self.frames += 1
         if self.first_audio_ms is None:
             self.first_audio_ms = round((self.loop.time() - self.started_at) * 1000, 1)
-        self.queue.append(pcm)
-        self.queued_bytes += len(pcm)
+        if self.on_pcm is None:
+            self.queue.append(pcm)
+            self.queued_bytes += len(pcm)
+        else:
+            self.on_pcm(pcm)
         self.watchdog.cancel()
         self.watchdog = self.loop.call_later(self.stall_timeout, self.abort, "audio_stalled")
         self.changed.set()
@@ -138,6 +143,7 @@ class VoiceSession:
         if self.finished or self.released:
             return
         self.released = True
+        self.released_at = self.loop.time()
         if self.finish_delay:
             self.tail = self.loop.call_later(self.finish_delay, self.finish)
         else:

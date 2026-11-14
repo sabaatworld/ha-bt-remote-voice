@@ -6,9 +6,11 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.components.assist_pipeline import async_get_pipelines
 from homeassistant.core import callback
+from homeassistant.helpers.selector import NumberSelector, NumberSelectorConfig, NumberSelectorMode
 
 from .bluez import BlueZTransport
 from .playback import speaker_choices
+from .preferences import CHOICES, DEFAULTS, MAX_HEAD_START, preferences
 
 DOMAIN = "atvv_remote"
 
@@ -133,7 +135,13 @@ class OptionsFlow(config_entries.OptionsFlow):
             return self.async_abort(reason="no_pipelines")
         errors = {}
         if user_input:
-            if user_input.get("speaker", "") not in speakers:
+            try:
+                preferences(user_input)
+            except ValueError:
+                errors["base"] = "invalid_preferences"
+            if errors:
+                pass
+            elif user_input.get("speaker", "") not in speakers:
                 errors["base"] = "invalid_speaker"
             elif user_input["pipeline_id"] not in choices or user_input["mode"] not in (
                 "transcription",
@@ -144,6 +152,7 @@ class OptionsFlow(config_entries.OptionsFlow):
                 return self.async_create_entry(
                     title="",
                     data={
+                        **DEFAULTS,
                         **self.entry.options,
                         **user_input,
                         "speaker": user_input.get("speaker", ""),
@@ -154,6 +163,26 @@ class OptionsFlow(config_entries.OptionsFlow):
             step_id="init",
             data_schema=vol.Schema(
                 {
+                    **{
+                        vol.Optional(
+                            key, default=self.entry.options.get(key, DEFAULTS[key])
+                        ): vol.In(values)
+                        for key, values in CHOICES.items()
+                    },
+                    vol.Optional(
+                        "stream_head_start",
+                        default=self.entry.options.get(
+                            "stream_head_start", DEFAULTS["stream_head_start"]
+                        ),
+                    ): NumberSelector(
+                        NumberSelectorConfig(
+                            min=0,
+                            max=MAX_HEAD_START,
+                            step=0.5,
+                            unit_of_measurement="s",
+                            mode=NumberSelectorMode.SLIDER,
+                        )
+                    ),
                     vol.Required(
                         "pipeline_id",
                         default=selected if selected in choices else next(iter(choices)),

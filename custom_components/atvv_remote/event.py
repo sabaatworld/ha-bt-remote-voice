@@ -12,7 +12,15 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class VoiceButton(RemoteEntity, EventEntity):
     _attr_name = "Voice button"
     _attr_icon = "mdi:gesture-tap-hold"
-    _attr_event_types = ["pressed", "released"]
+    _attr_event_types = [
+        "pressed",
+        "released",
+        "accepted",
+        "rejected",
+        "queued",
+        "failed",
+        "context_reset",
+    ]
 
     def __init__(self, coordinator):
         super().__init__(coordinator, "voice_button")
@@ -23,5 +31,7 @@ class VoiceButton(RemoteEntity, EventEntity):
         self.async_on_remove(lambda: self.coordinator.event_listeners.discard(self.emit))
 
     def emit(self, kind):
-        self._trigger_event(kind)
+        self._trigger_event(
+            kind, self.coordinator.last_outcome if kind not in ("pressed", "released") else None
+        )
         self.async_write_ha_state()

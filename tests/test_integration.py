@@ -101,7 +101,7 @@ async def test_configured_reply_runs_tts_and_acknowledges_only_after_playback():
 
     order = []
 
-    async def playback(*args):
+    async def playback(*args, **kwargs):
         order.append("played")
 
     with (
