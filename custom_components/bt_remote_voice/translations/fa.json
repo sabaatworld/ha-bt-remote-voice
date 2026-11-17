@@ -105,6 +105,11 @@
         "manual": "وارد کردن نشانی Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "خط لوله ترجیحی"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "فقط رونویسی",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "پاسخ خط لوله Assist بیش از حد طول کشید.",
           "pipeline_failed": "خط لوله Assist ناموفق بود.",
           "pipeline_removed": "خط لوله Assist انتخاب‌شده دیگر وجود ندارد.",
+          "no_preferred_pipeline": "Home Assistant هیچ خط لوله Assist ترجیحی ندارد.",
           "playback_stop_unverified": "تأیید توقف پاسخ قبلی ممکن نشد. صبر کنید تا بلندگو بیکار شود.",
           "playback_stop_failed": "پاسخ قبلی نتوانست متوقف شود.",
           "playback_start_timeout": "بلندگو پخش پاسخ را شروع نکرد.",

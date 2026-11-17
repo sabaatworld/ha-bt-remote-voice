@@ -105,6 +105,11 @@
         "manual": "Въвеждане на Bluetooth адрес"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Предпочитан конвейер"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Само транскрипция",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Конвейерът на Assist отговори твърде бавно.",
           "pipeline_failed": "Конвейерът на Assist се провали.",
           "pipeline_removed": "Избраният конвейер на Assist вече не съществува.",
+          "no_preferred_pipeline": "Home Assistant няма предпочитан конвейер на Assist.",
           "playback_stop_unverified": "Не можа да се потвърди, че предишният отговор е спрян. Изчакайте високоговорителят да е свободен.",
           "playback_stop_failed": "Предишният отговор не можа да бъде спрян.",
           "playback_start_timeout": "Високоговорителят не започна да възпроизвежда отговора.",

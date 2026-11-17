@@ -105,6 +105,11 @@
         "manual": "إدخال عنوان Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "المسار المفضل"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "النسخ فقط",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "استغرق مسار Assist وقتاً طويلاً للرد.",
           "pipeline_failed": "فشل مسار Assist.",
           "pipeline_removed": "مسار Assist المحدد لم يعد موجوداً.",
+          "no_preferred_pipeline": "لا يحتوي Home Assistant على مسار Assist مفضل.",
           "playback_stop_unverified": "تعذر التحقق من توقف الرد السابق. انتظر حتى يصبح مكبر الصوت خاملاً.",
           "playback_stop_failed": "تعذر إيقاف الرد السابق.",
           "playback_start_timeout": "لم يبدأ مكبر الصوت تشغيل الرد.",

@@ -105,6 +105,11 @@
         "manual": "Ingresar dirección Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Pipeline preferido"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Solo transcripción",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "El pipeline de Assist tardó demasiado en responder.",
           "pipeline_failed": "Ha fallado el pipeline de Assist.",
           "pipeline_removed": "El pipeline de Assist seleccionado ya no existe.",
+          "no_preferred_pipeline": "Home Assistant no tiene ningún pipeline de Assist preferido.",
           "playback_stop_unverified": "No se pudo verificar que la respuesta anterior se detuviera. Espera a que el bocina esté inactivo.",
           "playback_stop_failed": "No se pudo detener la respuesta anterior.",
           "playback_start_timeout": "El bocina no empezó a reproducir la respuesta.",

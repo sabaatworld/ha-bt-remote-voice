@@ -105,6 +105,11 @@
         "manual": "Bluetooth-Adrässe iigää"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Bevorzugti Pipeline"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Nur Transkription",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "D Assist-Pipeline het z lang für d Antwort bruucht.",
           "pipeline_failed": "D Assist-Pipeline isch fehlgschlage.",
           "pipeline_removed": "D usgwählt Assist-Pipeline gits nüme.",
+          "no_preferred_pipeline": "Home Assistant het kei bevorzugti Assist-Pipeline.",
           "playback_stop_unverified": "Es het nöd chönne überprüeft wärde, öb die vorig Antwort gstoppt worde isch. Wartet Sie, bis de Lautsprächer inaktiv isch.",
           "playback_stop_failed": "D vorig Antwort het nöd chönne gstoppt wärde.",
           "playback_start_timeout": "De Lautsprächer het d Widergab vo de Antwort nöd gstartet.",

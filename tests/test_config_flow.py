@@ -260,9 +260,11 @@ async def test_pipeline_field_is_a_dropdown_listing_the_real_pipelines(hass):
     key, selector = _field(result, "pipeline_id")
     assert isinstance(selector, SelectSelector)
     assert [(o["value"], o["label"]) for o in selector.config["options"]] == [
+        ("preferred", "preferred"),  # labelled by selector.pipeline in translations
         ("p1", "Home Assistant"),
         ("p2", "Gemini Live"),
     ]
+    assert selector.config["translation_key"] == "pipeline"
     assert key.default() == "p1"
     assert not result["errors"]
 
@@ -329,3 +331,34 @@ async def test_options_accept_a_short_press_minimum_and_reject_one_out_of_range(
         bad = await flow.async_step_init({**base, "min_press_seconds": 0.55})
     assert ok["type"] == "create_entry" and ok["data"]["min_press_seconds"] == 0.1
     assert bad["type"] == "form" and bad["errors"]["base"] == "invalid_preferences"
+
+
+async def test_preferred_is_the_default_for_new_remotes_and_is_accepted(hass):
+    from types import SimpleNamespace
+
+    flow = ConfigFlow()
+    flow.hass = hass
+    flow.selected = SimpleNamespace(address="02:00:00:00:00:01", name="Remote", family="atvv")
+    with patch("custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "P"}):
+        form = await flow.async_step_configure()
+        (key,) = [k for k in form["data_schema"].schema if k == "pipeline_id"]
+        assert key.default() == "preferred"
+        assert not form["errors"]
+        with patch("custom_components.bt_remote_voice.config_flow.BlueZTransport") as transport:
+            transport.return_value.open = AsyncMock(return_value=object())
+            transport.return_value.close = AsyncMock()
+            done = await flow.async_step_configure({"pipeline_id": "preferred"})
+    assert done["type"] == "create_entry" and done["data"]["pipeline_id"] == "preferred"
+
+
+async def test_saved_preferred_is_not_flagged_and_stays_selected(hass):
+    flow = _options_flow(hass, options={"pipeline_id": "preferred"})
+    with patch(
+        "custom_components.bt_remote_voice.config_flow.pipelines",
+        return_value={"p1": "Home Assistant"},
+    ):
+        result = await flow.async_step_init()
+        key, _ = _field(result, "pipeline_id")
+        assert not result["errors"] and key.default() == "preferred"
+        saved = await flow.async_step_init({"pipeline_id": "preferred", "mode": "transcription"})
+    assert saved["type"] == "create_entry" and saved["data"]["pipeline_id"] == "preferred"

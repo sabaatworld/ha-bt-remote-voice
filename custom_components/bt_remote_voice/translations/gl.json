@@ -105,6 +105,11 @@
         "manual": "Introducir enderezo Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Pipeline preferido"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Só transcrición",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "O pipeline de Assist tardou demasiado en responder.",
           "pipeline_failed": "Fallou o pipeline de Assist.",
           "pipeline_removed": "O pipeline de Assist seleccionado xa non existe.",
+          "no_preferred_pipeline": "Home Assistant non ten ningún pipeline de Assist preferido.",
           "playback_stop_unverified": "Non se puido verificar que a resposta anterior se detivese. Agarda ata que o altofalante estea inactivo.",
           "playback_stop_failed": "Non se puido deter a resposta anterior.",
           "playback_start_timeout": "O altofalante non comezou a reproducir a resposta.",

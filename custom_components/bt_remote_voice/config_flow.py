@@ -27,6 +27,7 @@ from .preferences import (
     DOMAIN,
     FORM_ORDER,
     MAX_HEAD_START,
+    PIPELINE_PREFERRED,
     PRESS_RANGE,
     REQUEST_RANGE,
     preferences,
@@ -46,11 +47,15 @@ def dropdown(options, translation_key):
 
 
 def pipeline_dropdown(choices):
-    """Dropdown of the live Assist pipelines (names are user data, not translated)."""
+    """Preferred (translated) first, then the live Assist pipelines (user data, not translated)."""
     return SelectSelector(
         SelectSelectorConfig(
-            options=[SelectOptionDict(value=k, label=v) for k, v in choices.items()],
+            options=[
+                SelectOptionDict(value=PIPELINE_PREFERRED, label=PIPELINE_PREFERRED),
+                *(SelectOptionDict(value=k, label=v) for k, v in choices.items()),
+            ],
             mode=SelectSelectorMode.DROPDOWN,
+            translation_key="pipeline",
         )
     )
 
@@ -133,7 +138,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason="no_pipelines")
         errors = {}
         if user_input:
-            if user_input["pipeline_id"] not in choices:
+            if user_input["pipeline_id"] not in (PIPELINE_PREFERRED, *choices):
                 errors["base"] = "invalid_pipeline"
             else:
                 fire = self.selected.family == "fire"
@@ -171,7 +176,13 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     )
         return self.async_show_form(
             step_id="configure",
-            data_schema=vol.Schema({vol.Required("pipeline_id"): pipeline_dropdown(choices)}),
+            data_schema=vol.Schema(
+                {
+                    vol.Required("pipeline_id", default=PIPELINE_PREFERRED): pipeline_dropdown(
+                        choices
+                    )
+                }
+            ),
             errors=errors,
         )
 
@@ -210,7 +221,9 @@ class OptionsFlow(config_entries.OptionsFlow):
                 *([self.entry.options["speaker"]] if self.entry.options.get("speaker") else []),
             ):
                 errors["base"] = "invalid_speaker"
-            elif user_input["pipeline_id"] not in choices or user_input["mode"] not in (
+            elif user_input["pipeline_id"] not in (PIPELINE_PREFERRED, *choices) or user_input[
+                "mode"
+            ] not in (
                 "transcription",
                 "commands",
             ):
@@ -232,7 +245,7 @@ class OptionsFlow(config_entries.OptionsFlow):
         saved_speaker = options.get("speaker") or ""
         # Saved choices that no longer exist are flagged, never silently replaced.
         if not user_input:
-            if selected not in choices:
+            if selected != PIPELINE_PREFERRED and selected not in choices:
                 errors["pipeline_id"] = "pipeline_missing"
             if saved_speaker and saved_speaker not in speakers:
                 errors["speaker"] = "speaker_missing"
@@ -254,7 +267,7 @@ class OptionsFlow(config_entries.OptionsFlow):
         fields = {
             "pipeline_id": (
                 vol.Required("pipeline_id", default=selected)
-                if selected in choices
+                if selected == PIPELINE_PREFERRED or selected in choices
                 else vol.Required("pipeline_id"),
                 pipeline_dropdown(choices),
             ),

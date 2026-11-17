@@ -105,6 +105,11 @@
         "manual": "Zadať adresu Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Preferovaná pipeline"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Iba prepis",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Pipeline Assist odpovedala príliš dlho.",
           "pipeline_failed": "Pipeline Assist zlyhala.",
           "pipeline_removed": "Vybraná pipeline Assist už neexistuje.",
+          "no_preferred_pipeline": "Home Assistant nemá žiadnu preferovanú pipeline Assist.",
           "playback_stop_unverified": "Nepodarilo sa overiť, že sa predchádzajúca odpoveď zastavila. Počkajte, kým bude reproduktor nečinný.",
           "playback_stop_failed": "Predchádzajúcu odpoveď sa nepodarilo zastaviť.",
           "playback_start_timeout": "Reproduktor nezačal odpoveď prehrávať.",

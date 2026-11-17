@@ -105,6 +105,11 @@
         "manual": "Enter Bluetooth address"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Preferred pipeline"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Transcription only",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "The Assist pipeline took too long to respond.",
           "pipeline_failed": "The Assist pipeline failed.",
           "pipeline_removed": "The selected Assist pipeline no longer exists.",
+          "no_preferred_pipeline": "Home Assistant has no preferred Assist pipeline.",
           "playback_stop_unverified": "Could not verify that the previous reply stopped. Wait until the speaker is idle.",
           "playback_stop_failed": "The previous reply could not be stopped.",
           "playback_start_timeout": "The speaker did not start playing the reply.",

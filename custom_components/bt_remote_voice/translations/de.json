@@ -105,6 +105,11 @@
         "manual": "Bluetooth-Adresse eingeben"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Bevorzugte Pipeline"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Nur Transkription",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Die Assist-Pipeline hat zu lange für die Antwort gebraucht.",
           "pipeline_failed": "Die Assist-Pipeline ist fehlgeschlagen.",
           "pipeline_removed": "Die ausgewählte Assist-Pipeline existiert nicht mehr.",
+          "no_preferred_pipeline": "Home Assistant hat keine bevorzugte Assist-Pipeline.",
           "playback_stop_unverified": "Es konnte nicht überprüft werden, ob die vorherige Antwort gestoppt wurde. Warten Sie, bis der Lautsprecher inaktiv ist.",
           "playback_stop_failed": "Die vorherige Antwort konnte nicht gestoppt werden.",
           "playback_start_timeout": "Der Lautsprecher hat die Wiedergabe der Antwort nicht gestartet.",

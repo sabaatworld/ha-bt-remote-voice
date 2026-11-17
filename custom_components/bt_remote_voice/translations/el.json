@@ -105,6 +105,11 @@
         "manual": "Εισαγωγή διεύθυνσης Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Προτιμώμενος αγωγός"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Μόνο μεταγραφή",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Ο αγωγός Assist άργησε πολύ να απαντήσει.",
           "pipeline_failed": "Ο αγωγός Assist απέτυχε.",
           "pipeline_removed": "Ο επιλεγμένος αγωγός Assist δεν υπάρχει πλέον.",
+          "no_preferred_pipeline": "Το Home Assistant δεν έχει προτιμώμενο αγωγό Assist.",
           "playback_stop_unverified": "Δεν ήταν δυνατή η επαλήθευση ότι σταμάτησε η προηγούμενη απάντηση. Περιμένετε μέχρι το ηχείο να είναι αδρανές.",
           "playback_stop_failed": "Η προηγούμενη απάντηση δεν μπόρεσε να διακοπεί.",
           "playback_start_timeout": "Το ηχείο δεν ξεκίνησε την αναπαραγωγή της απάντησης.",

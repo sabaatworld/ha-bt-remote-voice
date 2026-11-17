@@ -105,6 +105,11 @@
         "manual": "Bluetooth ایڈریس درج کریں"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "ترجیحی پائپ لائن"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "صرف ٹرانسکرپشن",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist پائپ لائن نے جواب دینے میں بہت وقت لیا۔",
           "pipeline_failed": "Assist پائپ لائن ناکام ہو گئی۔",
           "pipeline_removed": "منتخب کردہ Assist پائپ لائن اب موجود نہیں ہے۔",
+          "no_preferred_pipeline": "Home Assistant میں کوئی ترجیحی Assist پائپ لائن نہیں ہے۔",
           "playback_stop_unverified": "تصدیق نہیں ہو سکی کہ پچھلا جواب رک گیا ہے۔ اسپیکر کے بیکار ہونے تک انتظار کریں۔",
           "playback_stop_failed": "پچھلا جواب روکا نہیں جا سکا۔",
           "playback_start_timeout": "اسپیکر نے جواب چلانا شروع نہیں کیا۔",

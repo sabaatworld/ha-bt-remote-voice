@@ -105,6 +105,11 @@
         "manual": "Unesi Bluetooth adresu"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Preferirani cjevovod"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Samo transkripcija",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist cjevovodu je trebalo predugo za odgovor.",
           "pipeline_failed": "Assist cjevovod nije uspio.",
           "pipeline_removed": "Odabrani Assist cjevovod više ne postoji.",
+          "no_preferred_pipeline": "Home Assistant nema preferirani Assist cjevovod.",
           "playback_stop_unverified": "Nije bilo moguće provjeriti je li se prethodni odgovor zaustavio. Pričekajte da zvučnik bude neaktivan.",
           "playback_stop_failed": "Prethodni odgovor nije bilo moguće zaustaviti.",
           "playback_start_timeout": "Zvučnik nije počeo reproducirati odgovor.",

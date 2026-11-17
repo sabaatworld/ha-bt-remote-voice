@@ -105,6 +105,11 @@
         "manual": "Introdueix l’adreça Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Pipeline preferit"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Només transcripció",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "El pipeline d’Assist ha trigat massa a respondre.",
           "pipeline_failed": "Ha fallat el pipeline d’Assist.",
           "pipeline_removed": "El pipeline d’Assist seleccionat ja no existeix.",
+          "no_preferred_pipeline": "Home Assistant no té cap pipeline d'Assist preferit.",
           "playback_stop_unverified": "No s’ha pogut verificar que la resposta anterior s’hagi aturat. Espera que l’altaveu estigui inactiu.",
           "playback_stop_failed": "No s’ha pogut aturar la resposta anterior.",
           "playback_start_timeout": "L’altaveu no ha començat a reproduir la resposta.",

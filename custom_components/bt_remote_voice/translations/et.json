@@ -105,6 +105,11 @@
         "manual": "Sisesta Bluetooth-aadress"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Eelistatud torujuhe"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Ainult transkriptsioon",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assisti torujuhe vastas liiga kaua.",
           "pipeline_failed": "Assisti torujuhe ebaõnnestus.",
           "pipeline_removed": "Valitud Assisti torujuhet enam ei ole.",
+          "no_preferred_pipeline": "Home Assistantil pole eelistatud Assisti torujuhet.",
           "playback_stop_unverified": "Ei õnnestunud kontrollida, kas eelmine vastus peatus. Oodake, kuni kõlar on jõudeolekus.",
           "playback_stop_failed": "Eelmist vastust ei saanud peatada.",
           "playback_start_timeout": "Kõlar ei hakanud vastust esitama.",

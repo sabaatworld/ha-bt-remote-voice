@@ -58,9 +58,9 @@ See [Pairing a remote](#pairing-a-remote).
 [![Open your Home Assistant instance and start setting up Bluetooth Remote Voice.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=bt_remote_voice)
 
 Or go to **Settings → Devices & Services → Add integration → Bluetooth Remote Voice**. Wake the
-remote with an arrow button, select it, then choose an existing Assist pipeline. Later, select a
-speaker and **Execute commands** in **Configure** when you are ready to process requests and hear
-replies.
+remote with an arrow button, select it, then keep **Preferred pipeline** or choose an existing
+Assist pipeline. Later, select a speaker and **Execute commands** in **Configure** when you are
+ready to process requests and hear replies.
 
 The initial mode stops after speech recognition. This does not disable tools embedded inside a live
 STT provider: such a provider may act during speech processing. Use a dedicated transcription-only
@@ -162,13 +162,13 @@ until you choose otherwise.
 | Setting | What it does |
 | --- | --- |
 | Paired remote | A device already paired and bonded on the HA host. This integration never creates Bluetooth bonds. |
-| Assist pipeline | The pipeline that processes speech: STT, conversation agent and TTS. Any pipeline works, including live speech providers. Changing it later does not need re-pairing. |
+| Assist pipeline | The pipeline that processes speech: STT, conversation agent and TTS. Any pipeline works, including live speech providers. **Preferred pipeline** (the default) uses whichever pipeline Home Assistant currently marks as preferred, so changing the preferred pipeline applies to the next request. Changing it later does not need re-pairing. |
 
 ### Options
 
 | Option | What it does | Choices (default in bold) | When to use it |
 | --- | --- | --- | --- |
-| Assist pipeline | The pipeline that processes speech: speech-to-text, conversation agent and text-to-speech. | Any existing pipeline (**the one chosen at setup**) | You want a different agent or speech provider. A removed pipeline fails with a clear error instead of silently falling back. |
+| Assist pipeline | The pipeline that processes speech: speech-to-text, conversation agent and text-to-speech. | **Preferred pipeline** (follows Home Assistant's preferred pipeline) or any existing pipeline; the default for a new remote is Preferred | You want a different agent or speech provider than Home Assistant's preferred one. A removed explicit pipeline, or no preferred pipeline at all, fails with a clear error instead of silently falling back. |
 | Voice mode | Decides how far a request goes. **Transcription** stops after speech recognition: nothing is run and no reply plays. **Commands** runs the whole pipeline and, with a speaker, speaks the reply. | **Transcription**; Commands | Start in Transcription to check the microphone path and the speech provider; switch to Commands when you want actions and replies. |
 | Reply speaker | The media player that speaks replies. With none, the pipeline stops at the intent stage and nothing is played. It must report when playback starts and finishes. | Any media player that can play media, or **none** | You want spoken replies. Used only in Commands mode. |
 | Reply condition | Conditions, built with Home Assistant's condition editor, that must pass for a reply to be spoken. Checked once at the start of each request. See [Reply condition](#reply-condition). | Any Home Assistant conditions (state, numeric state, zone, time, template, and, or, not); **empty (always speak)** | You want a reply spoken only sometimes, for example only when you are in the room the reply speaker is in. |
@@ -337,7 +337,8 @@ conversation ID does not guarantee provider memory survived a cancelled session.
 
 ### Missing pipeline or speaker
 
-If the Assist pipeline or the reply speaker you chose is later deleted or renamed,
+If the Assist pipeline you chose explicitly (not **Preferred pipeline**, which follows Home
+Assistant) or the reply speaker is later deleted or renamed,
 Home Assistant shows a notice under **Settings → System → Repairs** (an error for a
 missing pipeline, a warning for a missing speaker). The pipeline is checked when
 Home Assistant starts and whenever you save the remote's settings, so a pipeline

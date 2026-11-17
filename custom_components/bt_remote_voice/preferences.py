@@ -1,8 +1,13 @@
 """Provider-neutral preferences; missing options retain existing behavior."""
 
+from homeassistant.components.assist_pipeline import OPTION_PREFERRED
 from homeassistant.helpers.translation import async_get_cached_translations
 
 DOMAIN = "bt_remote_voice"
+
+# Stored as pipeline_id to follow whichever Assist pipeline Home Assistant prefers (its own
+# select option value); resolved at request time, so later changes apply to the next request.
+PIPELINE_PREFERRED = OPTION_PREFERRED
 
 MAX_HEAD_START = 10  # seconds
 REQUEST_RANGE = (5, 120, 5)  # seconds: (min, max, step)
@@ -123,6 +128,7 @@ ERROR_CODES = (
     "pipeline_timeout",
     "pipeline_failed",
     "pipeline_removed",
+    "no_preferred_pipeline",
     "playback_stop_unverified",
     "playback_stop_failed",
     "playback_start_timeout",

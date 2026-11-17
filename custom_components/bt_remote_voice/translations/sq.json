@@ -105,6 +105,11 @@
         "manual": "Fut adresën Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Pipeline i preferuar"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Vetëm transkriptim",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Pipeline-i i Assist e zgjati shumë përgjigjen.",
           "pipeline_failed": "Pipeline-i i Assist dështoi.",
           "pipeline_removed": "Pipeline-i i zgjedhur i Assist nuk ekziston më.",
+          "no_preferred_pipeline": "Home Assistant nuk ka asnjë pipeline Assist të preferuar.",
           "playback_stop_unverified": "Nuk u verifikua që përgjigjja e mëparshme u ndal. Prisni derisa altoparlanti të jetë i lirë.",
           "playback_stop_failed": "Përgjigjja e mëparshme nuk mund të ndalej.",
           "playback_start_timeout": "Altoparlanti nuk e nisi luajtjen e përgjigjes.",

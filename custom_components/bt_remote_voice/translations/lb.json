@@ -105,6 +105,11 @@
         "manual": "Bluetooth-Adress aginn"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Bevorzugte Pipeline"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Nëmme Transkriptioun",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "D'Assist-Pipeline huet ze laang gebraucht, fir ze äntweren.",
           "pipeline_failed": "D'Assist-Pipeline ass feelgeschloen.",
           "pipeline_removed": "Déi ausgewielten Assist-Pipeline gëtt et net méi.",
+          "no_preferred_pipeline": "Home Assistant huet keng bevorzugte Assist-Pipeline.",
           "playback_stop_unverified": "Et konnt net verifizéiert ginn, ob déi viregt Äntwert gestoppt gouf. Waart, bis de Lautsprecher inaktiv ass.",
           "playback_stop_failed": "Déi viregt Äntwert konnt net gestoppt ginn.",
           "playback_start_timeout": "De Lautsprecher huet d'Äntwert net ugefaang ofzespillen.",

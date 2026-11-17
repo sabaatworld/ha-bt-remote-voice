@@ -105,6 +105,11 @@
         "manual": "Cuir isteach seoladh Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "An phíblíne roghnaithe"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Trascríbhinn amháin",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Thóg an phíblíne Assist an iomarca ama ar fhreagairt.",
           "pipeline_failed": "Theip ar an bpíblíne Assist.",
           "pipeline_removed": "Níl an phíblíne Assist roghnaithe ann a thuilleadh.",
+          "no_preferred_pipeline": "Níl aon phíblíne Assist roghnaithe ag Home Assistant.",
           "playback_stop_unverified": "Níorbh fhéidir a fhíorú gur stop an freagra roimhe. Fan go mbeidh an callaire díomhaoin.",
           "playback_stop_failed": "Níorbh fhéidir an freagra roimhe a stopadh.",
           "playback_start_timeout": "Níor thosaigh an callaire ag seinm an fhreagra.",

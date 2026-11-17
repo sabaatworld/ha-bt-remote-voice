@@ -128,3 +128,17 @@ async def test_watcher_does_not_evaluate_before_home_assistant_has_started(hass)
         await hass.async_block_till_done()
         stop()
     assert _ids(hass) == {}
+
+
+async def test_preferred_pipeline_is_never_reported_missing(hass):
+    with _pipelines({}):
+        sync_issues(hass, _entry(options={"pipeline_id": "preferred"}))
+    assert _ids(hass) == {}
+
+
+async def test_switching_to_preferred_clears_an_existing_missing_pipeline_issue(hass):
+    with _pipelines({}):
+        sync_issues(hass, _entry())
+        assert "pipeline_missing_e1" in _ids(hass)
+        sync_issues(hass, _entry(options={"pipeline_id": "preferred"}))
+    assert _ids(hass) == {}

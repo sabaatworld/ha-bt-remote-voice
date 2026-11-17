@@ -105,6 +105,11 @@
         "manual": "Voer Bluetooth-adres in"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Voorkeurpyplyn"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Net transkripsie",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Die Assist-pyplyn het te lank geneem om te reageer.",
           "pipeline_failed": "Die Assist-pyplyn het misluk.",
           "pipeline_removed": "Die gekose Assist-pyplyn bestaan nie meer nie.",
+          "no_preferred_pipeline": "Home Assistant het geen voorkeur-Assist-pyplyn nie.",
           "playback_stop_unverified": "Kon nie verifieer dat die vorige antwoord gestop het nie. Wag totdat die luidspreker onaktief is.",
           "playback_stop_failed": "Die vorige antwoord kon nie gestop word nie.",
           "playback_start_timeout": "Die luidspreker het nie die antwoord begin speel nie.",

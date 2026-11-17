@@ -105,6 +105,11 @@
         "manual": "Bluetooth വിലാസം നൽകുക"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "മുൻഗണനയുള്ള പൈപ്പ്‌ലൈൻ"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "ട്രാൻസ്ക്രിപ്ഷൻ മാത്രം",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist പൈപ്പ്‌ലൈൻ പ്രതികരിക്കാൻ വളരെയധികം സമയമെടുത്തു.",
           "pipeline_failed": "Assist പൈപ്പ്‌ലൈൻ പരാജയപ്പെട്ടു.",
           "pipeline_removed": "തിരഞ്ഞെടുത്ത Assist പൈപ്പ്‌ലൈൻ ഇപ്പോൾ നിലവിലില്ല.",
+          "no_preferred_pipeline": "Home Assistant-ൽ മുൻഗണനയുള്ള Assist പൈപ്പ്‌ലൈൻ ഇല്ല.",
           "playback_stop_unverified": "മുമ്പത്തെ മറുപടി നിന്നുവെന്ന് സ്ഥിരീകരിക്കാനായില്ല. സ്പീക്കർ നിഷ്‌ക്രിയമാകുന്നതുവരെ കാത്തിരിക്കുക.",
           "playback_stop_failed": "മുമ്പത്തെ മറുപടി നിർത്താനായില്ല.",
           "playback_start_timeout": "സ്പീക്കർ മറുപടി പ്ലേ ചെയ്യാൻ തുടങ്ങിയില്ല.",

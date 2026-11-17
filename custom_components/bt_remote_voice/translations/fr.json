@@ -105,6 +105,11 @@
         "manual": "Saisir une adresse Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Pipeline préféré"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Transcription seule",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Le pipeline Assist a mis trop de temps à répondre.",
           "pipeline_failed": "Le pipeline Assist a échoué.",
           "pipeline_removed": "Le pipeline Assist sélectionné n’existe plus.",
+          "no_preferred_pipeline": "Home Assistant n'a aucun pipeline Assist préféré.",
           "playback_stop_unverified": "Impossible de vérifier que la réponse précédente s’est arrêtée. Attendez que le haut-parleur soit inactif.",
           "playback_stop_failed": "La réponse précédente n’a pas pu être arrêtée.",
           "playback_start_timeout": "Le haut-parleur n’a pas commencé à lire la réponse.",

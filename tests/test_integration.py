@@ -134,3 +134,26 @@ async def test_pipeline_error_is_propagated_to_coordinator_without_a_speaker():
     ):
         with pytest.raises(AudioFailure, match="stt-failed"):
             await satellite.run(s)
+
+
+async def test_preferred_pipeline_follows_home_assistant_and_fails_clearly_without_one():
+    from homeassistant.components.assist_pipeline import PipelineNotFound
+
+    class PreferredEntry(Entry):
+        data = {**Entry.data, "pipeline_id": "preferred"}
+
+    satellite = RemoteSatellite(VoiceCoordinator(SimpleNamespace(), PreferredEntry()))
+    satellite.hass = SimpleNamespace()
+    with patch(
+        "custom_components.bt_remote_voice.assist_satellite.async_get_pipeline",
+        return_value=SimpleNamespace(id="whatever-ha-prefers"),
+    ) as get:
+        # None makes HA resolve its preferred pipeline when the request actually runs.
+        assert satellite._resolve_pipeline() is None
+    get.assert_called_once_with(satellite.hass)
+    with patch(
+        "custom_components.bt_remote_voice.assist_satellite.async_get_pipeline",
+        side_effect=PipelineNotFound("pipeline_not_found", "none"),
+    ):
+        with pytest.raises(AudioFailure, match="no_preferred_pipeline"):
+            satellite._resolve_pipeline()

@@ -105,6 +105,11 @@
         "manual": "Anna Bluetooth-osoite"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Ensisijainen putki"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Vain litterointi",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist-putken vastaus kesti liian kauan.",
           "pipeline_failed": "Assist-putki epäonnistui.",
           "pipeline_removed": "Valittua Assist-putkea ei enää ole.",
+          "no_preferred_pipeline": "Home Assistantilla ei ole ensisijaista Assist-putkea.",
           "playback_stop_unverified": "Ei voitu varmistaa, että edellinen vastaus pysähtyi. Odota, kunnes kaiutin on joutilaana.",
           "playback_stop_failed": "Edellistä vastausta ei voitu pysäyttää.",
           "playback_start_timeout": "Kaiutin ei aloittanut vastauksen toistoa.",

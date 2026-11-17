@@ -105,6 +105,11 @@
         "manual": "Bluetooth-cím megadása"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Előnyben részesített folyamat"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Csak átirat",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Az Assist folyamat túl sokáig válaszolt.",
           "pipeline_failed": "Az Assist folyamat sikertelen volt.",
           "pipeline_removed": "A kiválasztott Assist folyamat már nem létezik.",
+          "no_preferred_pipeline": "A Home Assistantnak nincs előnyben részesített Assist-folyamata.",
           "playback_stop_unverified": "Nem sikerült ellenőrizni, hogy az előző válasz leállt-e. Várjon, amíg a hangszóró tétlen lesz.",
           "playback_stop_failed": "Az előző választ nem sikerült leállítani.",
           "playback_start_timeout": "A hangszóró nem kezdte el lejátszani a választ.",

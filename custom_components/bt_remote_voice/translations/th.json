@@ -105,6 +105,11 @@
         "manual": "ป้อนที่อยู่ Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "ไปป์ไลน์ที่ต้องการ"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "ถอดเสียงอย่างเดียว",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "ไปป์ไลน์ Assist ใช้เวลาตอบสนองนานเกินไป",
           "pipeline_failed": "ไปป์ไลน์ Assist ล้มเหลว",
           "pipeline_removed": "ไปป์ไลน์ Assist ที่เลือกไม่มีอยู่แล้ว",
+          "no_preferred_pipeline": "Home Assistant ไม่มีไปป์ไลน์ Assist ที่ต้องการ",
           "playback_stop_unverified": "ยืนยันไม่ได้ว่าคำตอบก่อนหน้าหยุดแล้ว รอจนกว่าลำโพงจะว่าง",
           "playback_stop_failed": "ไม่สามารถหยุดคำตอบก่อนหน้าได้",
           "playback_start_timeout": "ลำโพงไม่เริ่มเล่นคำตอบ",

@@ -105,6 +105,11 @@
         "manual": "输入 Bluetooth 地址"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "首选管道"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "仅转录",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist 管道响应时间过长。",
           "pipeline_failed": "Assist 管道失败。",
           "pipeline_removed": "所选的 Assist 管道已不存在。",
+          "no_preferred_pipeline": "Home Assistant 没有首选的 Assist 管道。",
           "playback_stop_unverified": "无法确认上一条回复已停止。请等待扬声器空闲。",
           "playback_stop_failed": "无法停止上一条回复。",
           "playback_start_timeout": "扬声器未开始播放回复。",

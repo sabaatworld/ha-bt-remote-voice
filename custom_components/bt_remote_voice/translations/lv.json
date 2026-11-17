@@ -105,6 +105,11 @@
         "manual": "Ievadiet Bluetooth adresi"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Vēlamais konveijers"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Tikai transkripcija",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist konveijers atbildēja pārāk ilgi.",
           "pipeline_failed": "Assist konveijers neizdevās.",
           "pipeline_removed": "Izvēlētais Assist konveijers vairs neeksistē.",
+          "no_preferred_pipeline": "Home Assistant nav vēlamā Assist konveijera.",
           "playback_stop_unverified": "Nevarēja pārbaudīt, vai iepriekšējā atbilde apstājās. Pagaidiet, līdz skaļrunis ir dīkstāvē.",
           "playback_stop_failed": "Iepriekšējo atbildi nevarēja apturēt.",
           "playback_start_timeout": "Skaļrunis nesāka atskaņot atbildi.",

@@ -105,6 +105,11 @@
         "manual": "Sláðu inn Bluetooth-vistfang"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Æskilegt ferli"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Aðeins umritun",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist-ferlið var of lengi að svara.",
           "pipeline_failed": "Assist-ferlið mistókst.",
           "pipeline_removed": "Valda Assist-ferlið er ekki lengur til.",
+          "no_preferred_pipeline": "Home Assistant er ekki með æskilegt Assist-ferli.",
           "playback_stop_unverified": "Ekki tókst að staðfesta að fyrra svar hefði stöðvast. Bíddu þar til hátalarinn er aðgerðalaus.",
           "playback_stop_failed": "Ekki tókst að stöðva fyrra svar.",
           "playback_start_timeout": "Hátalarinn byrjaði ekki að spila svarið.",

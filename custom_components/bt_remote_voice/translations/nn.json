@@ -105,6 +105,11 @@
         "manual": "Skriv inn Bluetooth-adresse"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Føretrekt pipeline"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Berre transkribering",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist-pipelinen brukte for lang tid på å svare.",
           "pipeline_failed": "Assist-pipelinen mislukkast.",
           "pipeline_removed": "Den valde Assist-pipelinen finst ikkje lenger.",
+          "no_preferred_pipeline": "Home Assistant har inga føretrekt Assist-pipeline.",
           "playback_stop_unverified": "Kunne ikkje stadfeste at førre svar blei stoppa. Vent til høgtalaren er inaktiv.",
           "playback_stop_failed": "Førre svar kunne ikkje stoppast.",
           "playback_start_timeout": "Høgtalaren begynte ikkje å spele av svaret.",

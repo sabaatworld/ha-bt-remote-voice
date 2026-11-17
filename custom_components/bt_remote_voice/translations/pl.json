@@ -105,6 +105,11 @@
         "manual": "Wpisz adres Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Preferowany potok"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Tylko transkrypcja",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Potok Assist odpowiadał zbyt długo.",
           "pipeline_failed": "Potok Assist zakończył się niepowodzeniem.",
           "pipeline_removed": "Wybrany potok Assist już nie istnieje.",
+          "no_preferred_pipeline": "Home Assistant nie ma preferowanego potoku Assist.",
           "playback_stop_unverified": "Nie udało się sprawdzić, czy poprzednia odpowiedź została zatrzymana. Poczekaj, aż głośnik będzie bezczynny.",
           "playback_stop_failed": "Nie udało się zatrzymać poprzedniej odpowiedzi.",
           "playback_start_timeout": "Głośnik nie rozpoczął odtwarzania odpowiedzi.",

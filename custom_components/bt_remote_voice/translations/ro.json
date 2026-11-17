@@ -105,6 +105,11 @@
         "manual": "Introduceți adresa Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Pipeline preferat"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Doar transcriere",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Pipeline-ul Assist a durat prea mult să răspundă.",
           "pipeline_failed": "Pipeline-ul Assist a eșuat.",
           "pipeline_removed": "Pipeline-ul Assist selectat nu mai există.",
+          "no_preferred_pipeline": "Home Assistant nu are niciun pipeline Assist preferat.",
           "playback_stop_unverified": "Nu s-a putut verifica dacă răspunsul anterior s-a oprit. Așteptați până când difuzorul este inactiv.",
           "playback_stop_failed": "Răspunsul anterior nu a putut fi oprit.",
           "playback_start_timeout": "Difuzorul nu a început să redea răspunsul.",

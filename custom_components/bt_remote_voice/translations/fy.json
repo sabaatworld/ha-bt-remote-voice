@@ -105,6 +105,11 @@
         "manual": "Bluetooth-adres ynfiere"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Foarkarspipeline"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Allinnich transkripsje",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "De Assist-pipeline die te lang oer it reagearjen.",
           "pipeline_failed": "De Assist-pipeline is mislearre.",
           "pipeline_removed": "De selektearre Assist-pipeline bestiet net mear.",
+          "no_preferred_pipeline": "Home Assistant hat gjin foarkarsde Assist-pipeline.",
           "playback_stop_unverified": "Koe net kontrolearje oft it foarige antwurd stoppe is. Wachtsje oant de luidspreker ynaktyf is.",
           "playback_stop_failed": "It foarige antwurd koe net stoppe wurde.",
           "playback_start_timeout": "De luidspreker begûn it antwurd net ôf te spyljen.",

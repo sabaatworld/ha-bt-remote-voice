@@ -105,6 +105,11 @@
         "manual": "Bluetooth アドレスを入力"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "優先パイプライン"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "文字起こしのみ",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist パイプラインの応答に時間がかかりすぎました。",
           "pipeline_failed": "Assist パイプラインが失敗しました。",
           "pipeline_removed": "選択された Assist パイプラインは存在しません。",
+          "no_preferred_pipeline": "Home Assistant に優先の Assist パイプラインがありません。",
           "playback_stop_unverified": "前の返答が停止したことを確認できませんでした。スピーカーがアイドル状態になるまでお待ちください。",
           "playback_stop_failed": "前の返答を停止できませんでした。",
           "playback_start_timeout": "スピーカーが返答の再生を開始しませんでした。",

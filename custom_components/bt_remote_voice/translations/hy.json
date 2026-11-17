@@ -105,6 +105,11 @@
         "manual": "Մուտքագրել Bluetooth հասցե"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Նախընտրելի խողովակաշար"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Միայն տառադարձում",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist խողովակաշարը պատասխանելու համար չափազանց երկար ժամանակ պահանջեց։",
           "pipeline_failed": "Assist խողովակաշարը ձախողվեց։",
           "pipeline_removed": "Ընտրված Assist խողովակաշարն այլևս գոյություն չունի։",
+          "no_preferred_pipeline": "Home Assistant-ը նախընտրելի Assist խողովակաշար չունի։",
           "playback_stop_unverified": "Հնարավոր չեղավ ստուգել, որ նախորդ պատասխանը կանգնել է։ Սպասեք, մինչև բարձրախոսը պարապ լինի։",
           "playback_stop_failed": "Նախորդ պատասխանը չհաջողվեց կանգնեցնել։",
           "playback_start_timeout": "Բարձրախոսը չսկսեց նվագարկել պատասխանը։",

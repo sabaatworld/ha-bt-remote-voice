@@ -5,7 +5,9 @@ from contextlib import suppress
 
 from homeassistant.components.assist_pipeline import (
     PipelineEventType,
+    PipelineNotFound,
     PipelineStage,
+    async_get_pipeline,
     async_get_pipelines,
 )
 from homeassistant.components.assist_satellite import (
@@ -17,7 +19,7 @@ from homeassistant.components.assist_satellite.entity import AssistSatelliteStat
 from .entity import RemoteEntity
 from .pipeline import run_audio_pipeline
 from .playback import play_reply
-from .preferences import error_message
+from .preferences import PIPELINE_PREFERRED, error_message
 from .session import AudioFailure
 
 
@@ -66,6 +68,14 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
         # Retain the explicitly selected stable ID and reject missing pipelines.
         entry = self.coordinator.entry
         selected = entry.options.get("pipeline_id", entry.data["pipeline_id"])
+        if selected == PIPELINE_PREFERRED:
+            # None makes HA use its preferred pipeline when the request runs; fail clearly if
+            # it has none rather than starting a request that cannot work.
+            try:
+                async_get_pipeline(self.hass)
+            except PipelineNotFound as err:
+                raise AudioFailure("no_preferred_pipeline") from err
+            return None
         if selected not in {p.id for p in async_get_pipelines(self.hass)}:
             raise AudioFailure("pipeline_removed")
         return selected

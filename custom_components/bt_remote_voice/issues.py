@@ -10,7 +10,7 @@ from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.event import async_track_state_change_event
 
 from .config_flow import pipelines
-from .preferences import DOMAIN
+from .preferences import DOMAIN, PIPELINE_PREFERRED
 
 
 def _set(hass, entry, key, severity, missing, placeholders):
@@ -38,7 +38,7 @@ def sync_issues(hass, entry):
         entry,
         "pipeline_missing",
         ir.IssueSeverity.ERROR,
-        bool(pipeline) and pipeline not in pipelines(hass),
+        bool(pipeline) and pipeline != PIPELINE_PREFERRED and pipeline not in pipelines(hass),
         {"pipeline": pipeline},
     )
     # Replies are only played in commands mode, so only then is the speaker relied on.

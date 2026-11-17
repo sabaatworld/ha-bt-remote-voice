@@ -105,6 +105,11 @@
         "manual": "Rhowch gyfeiriad Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Piblinell a ffefrir"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Trawsgrifio yn unig",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Cymerodd y biblinell Assist ormod o amser i ymateb.",
           "pipeline_failed": "Methodd y biblinell Assist.",
           "pipeline_removed": "Nid yw'r biblinell Assist a ddewiswyd yn bodoli mwyach.",
+          "no_preferred_pipeline": "Nid oes gan Home Assistant biblinell Assist a ffefrir.",
           "playback_stop_unverified": "Ni ellid gwirio bod yr ateb blaenorol wedi stopio. Arhoswch nes bod yr uchelseinydd yn segur.",
           "playback_stop_failed": "Ni ellid stopio'r ateb blaenorol.",
           "playback_start_timeout": "Ni ddechreuodd yr uchelseinydd chwarae'r ateb.",

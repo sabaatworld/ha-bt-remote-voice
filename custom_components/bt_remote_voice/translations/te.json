@@ -105,6 +105,11 @@
         "manual": "Bluetooth చిరునామాను నమోదు చేయండి"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "ప్రాధాన్య పైప్‌లైన్"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "ట్రాన్స్క్రిప్షన్ మాత్రమే",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist పైప్‌లైన్ స్పందించడానికి చాలా సమయం తీసుకుంది.",
           "pipeline_failed": "Assist పైప్‌లైన్ విఫలమైంది.",
           "pipeline_removed": "ఎంచుకున్న Assist పైప్‌లైన్ ఇప్పుడు లేదు.",
+          "no_preferred_pipeline": "Home Assistant లో ప్రాధాన్య Assist పైప్‌లైన్ లేదు.",
           "playback_stop_unverified": "మునుపటి సమాధానం ఆగిందో లేదో ధృవీకరించలేకపోయింది. స్పీకర్ ఖాళీ అయ్యే వరకు వేచి ఉండండి.",
           "playback_stop_failed": "మునుపటి సమాధానాన్ని ఆపలేకపోయింది.",
           "playback_start_timeout": "స్పీకర్ సమాధానాన్ని ప్లే చేయడం ప్రారంభించలేదు.",

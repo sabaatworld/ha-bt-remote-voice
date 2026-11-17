@@ -105,6 +105,11 @@
         "manual": "Enigi Bluetooth-adreson"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Preferata duktubo"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Nur transskribo",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "La Assist-duktubo tro longe respondis.",
           "pipeline_failed": "La Assist-duktubo malsukcesis.",
           "pipeline_removed": "La elektita Assist-duktubo ne plu ekzistas.",
+          "no_preferred_pipeline": "Home Assistant ne havas preferatan Assist-duktubon.",
           "playback_stop_unverified": "Ne eblis kontroli, ke la antaŭa respondo haltis. Atendu ĝis la parolilo estos senlabora.",
           "playback_stop_failed": "La antaŭa respondo ne povis esti haltigita.",
           "playback_start_timeout": "La parolilo ne komencis ludi la respondon.",

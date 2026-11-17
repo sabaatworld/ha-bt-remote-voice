@@ -105,6 +105,11 @@
         "manual": "Nhập địa chỉ Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Pipeline ưu tiên"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Chỉ chép lời",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Pipeline Assist mất quá nhiều thời gian để phản hồi.",
           "pipeline_failed": "Pipeline Assist đã thất bại.",
           "pipeline_removed": "Pipeline Assist đã chọn không còn tồn tại.",
+          "no_preferred_pipeline": "Home Assistant không có pipeline Assist ưu tiên.",
           "playback_stop_unverified": "Không thể xác minh phản hồi trước đã dừng. Hãy đợi đến khi loa rảnh.",
           "playback_stop_failed": "Không thể dừng phản hồi trước.",
           "playback_start_timeout": "Loa đã không bắt đầu phát phản hồi.",

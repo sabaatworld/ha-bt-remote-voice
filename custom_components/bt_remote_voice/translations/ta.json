@@ -105,6 +105,11 @@
         "manual": "Bluetooth முகவரியை உள்ளிடவும்"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "விருப்பமான பைப்லைன்"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "படியெடுத்தல் மட்டும்",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist பைப்லைன் பதிலளிக்க அதிக நேரம் எடுத்துக்கொண்டது.",
           "pipeline_failed": "Assist பைப்லைன் தோல்வியடைந்தது.",
           "pipeline_removed": "தேர்ந்தெடுக்கப்பட்ட Assist பைப்லைன் இப்போது இல்லை.",
+          "no_preferred_pipeline": "Home Assistant-இல் விருப்பமான Assist பைப்லைன் இல்லை.",
           "playback_stop_unverified": "முந்தைய பதில் நின்றதா என்பதைச் சரிபார்க்க முடியவில்லை. ஸ்பீக்கர் செயலற்ற நிலைக்கு வரும் வரை காத்திருக்கவும்.",
           "playback_stop_failed": "முந்தைய பதிலை நிறுத்த முடியவில்லை.",
           "playback_start_timeout": "ஸ்பீக்கர் பதிலை இயக்கத் தொடங்கவில்லை.",

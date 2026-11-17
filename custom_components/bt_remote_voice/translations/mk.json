@@ -105,6 +105,11 @@
         "manual": "Внеси Bluetooth адреса"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Претпочитан цевковод"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Само транскрипција",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Цевководот на Assist предолго одговараше.",
           "pipeline_failed": "Цевководот на Assist не успеа.",
           "pipeline_removed": "Избраниот цевковод на Assist повеќе не постои.",
+          "no_preferred_pipeline": "Home Assistant нема претпочитан Assist цевковод.",
           "playback_stop_unverified": "Не можеше да се потврди дека претходниот одговор запрел. Почекајте звучникот да биде слободен.",
           "playback_stop_failed": "Претходниот одговор не можеше да се запре.",
           "playback_start_timeout": "Звучникот не почна да го пушта одговорот.",

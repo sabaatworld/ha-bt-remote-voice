@@ -105,6 +105,11 @@
         "manual": "Indtast Bluetooth-adresse"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Foretrukken pipeline"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Kun transskribering",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist-pipelinen brugte for lang tid på at svare.",
           "pipeline_failed": "Assist-pipelinen mislykkedes.",
           "pipeline_removed": "Den valgte Assist-pipeline findes ikke længere.",
+          "no_preferred_pipeline": "Home Assistant har ingen foretrukken Assist-pipeline.",
           "playback_stop_unverified": "Kunne ikke bekræfte, at det forrige svar blev stoppet. Vent, til højttaleren er inaktiv.",
           "playback_stop_failed": "Det forrige svar kunne ikke stoppes.",
           "playback_start_timeout": "Højttaleren begyndte ikke at afspille svaret.",

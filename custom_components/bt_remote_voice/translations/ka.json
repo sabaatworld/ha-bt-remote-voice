@@ -105,6 +105,11 @@
         "manual": "შეიყვანეთ Bluetooth მისამართი"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "სასურველი კონვეიერი"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "მხოლოდ ტრანსკრიფცია",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist-ის კონვეიერმა პასუხზე ზედმეტად დიდხანს დაიგვიანა.",
           "pipeline_failed": "Assist-ის კონვეიერი ვერ შესრულდა.",
           "pipeline_removed": "არჩეული Assist-ის კონვეიერი აღარ არსებობს.",
+          "no_preferred_pipeline": "Home Assistant-ს არ აქვს სასურველი Assist-ის კონვეიერი.",
           "playback_stop_unverified": "ვერ დადასტურდა, რომ წინა პასუხი გაჩერდა. დაელოდეთ, სანამ დინამიკი უმოქმედო გახდება.",
           "playback_stop_failed": "წინა პასუხის გაჩერება ვერ მოხერხდა.",
           "playback_start_timeout": "დინამიკმა პასუხის დაკვრა არ დაიწყო.",

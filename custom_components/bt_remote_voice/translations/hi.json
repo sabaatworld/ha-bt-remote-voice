@@ -105,6 +105,11 @@
         "manual": "Bluetooth पता दर्ज करें"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "पसंदीदा पाइपलाइन"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "केवल ट्रांसक्रिप्शन",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist पाइपलाइन ने जवाब देने में बहुत समय लिया।",
           "pipeline_failed": "Assist पाइपलाइन विफल रही।",
           "pipeline_removed": "चुनी गई Assist पाइपलाइन अब मौजूद नहीं है।",
+          "no_preferred_pipeline": "Home Assistant में कोई पसंदीदा Assist पाइपलाइन नहीं है।",
           "playback_stop_unverified": "यह सत्यापित नहीं हो सका कि पिछला जवाब रुक गया। स्पीकर के निष्क्रिय होने तक प्रतीक्षा करें।",
           "playback_stop_failed": "पिछला जवाब रोका नहीं जा सका।",
           "playback_start_timeout": "स्पीकर ने जवाब बजाना शुरू नहीं किया।",

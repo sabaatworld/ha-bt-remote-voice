@@ -105,6 +105,11 @@
         "manual": "Masukkan alamat Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Pipeline pilihan"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Hanya transkripsi",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Pipeline Assist terlalu lama merespons.",
           "pipeline_failed": "Pipeline Assist gagal.",
           "pipeline_removed": "Pipeline Assist yang dipilih sudah tidak ada.",
+          "no_preferred_pipeline": "Home Assistant tidak memiliki pipeline Assist pilihan.",
           "playback_stop_unverified": "Tidak dapat memastikan balasan sebelumnya telah berhenti. Tunggu hingga speaker idle.",
           "playback_stop_failed": "Balasan sebelumnya tidak dapat dihentikan.",
           "playback_start_timeout": "Speaker tidak mulai memutar balasan.",

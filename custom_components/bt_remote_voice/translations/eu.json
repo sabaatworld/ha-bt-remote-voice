@@ -105,6 +105,11 @@
         "manual": "Sartu Bluetooth helbidea"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Hobetsitako kanalizazioa"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Transkripzio soila",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist kanalizazioak denbora gehiegi behar izan du erantzuteko.",
           "pipeline_failed": "Assist kanalizazioak huts egin du.",
           "pipeline_removed": "Hautatutako Assist kanalizazioa ez dago jada.",
+          "no_preferred_pipeline": "Home Assistant-ek ez du Assist kanalizazio hobetsirik.",
           "playback_stop_unverified": "Ezin izan da egiaztatu aurreko erantzuna gelditu dela. Itxaron bozgorailua inaktibo egon arte.",
           "playback_stop_failed": "Aurreko erantzuna ezin izan da gelditu.",
           "playback_start_timeout": "Bozgorailuak ez du erantzuna erreproduzitzen hasi.",

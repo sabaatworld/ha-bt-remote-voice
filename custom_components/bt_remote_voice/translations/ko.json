@@ -105,6 +105,11 @@
         "manual": "Bluetooth 주소 입력"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "선호 파이프라인"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "텍스트 변환 전용",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist 파이프라인의 응답이 너무 오래 걸렸습니다.",
           "pipeline_failed": "Assist 파이프라인에 실패했습니다.",
           "pipeline_removed": "선택한 Assist 파이프라인이 더 이상 존재하지 않습니다.",
+          "no_preferred_pipeline": "Home Assistant에 선호하는 Assist 파이프라인이 없습니다.",
           "playback_stop_unverified": "이전 응답이 중지되었는지 확인할 수 없었습니다. 스피커가 유휴 상태가 될 때까지 기다리세요.",
           "playback_stop_failed": "이전 응답을 중지할 수 없었습니다.",
           "playback_start_timeout": "스피커가 응답 재생을 시작하지 않았습니다.",

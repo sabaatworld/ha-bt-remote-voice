@@ -105,6 +105,11 @@
         "manual": "הזנת כתובת Bluetooth"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "צינור מועדף"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "תמלול בלבד",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "צינור Assist התעכב יותר מדי בתגובה.",
           "pipeline_failed": "צינור Assist נכשל.",
           "pipeline_removed": "צינור Assist שנבחר כבר אינו קיים.",
+          "no_preferred_pipeline": "ל-Home Assistant אין צינור Assist מועדף.",
           "playback_stop_unverified": "לא ניתן היה לוודא שהתשובה הקודמת נעצרה. המתינו עד שהרמקול יהיה במצב סרק.",
           "playback_stop_failed": "לא ניתן היה לעצור את התשובה הקודמת.",
           "playback_start_timeout": "הרמקול לא התחיל להשמיע את התשובה.",

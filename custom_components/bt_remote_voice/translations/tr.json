@@ -105,6 +105,11 @@
         "manual": "Bluetooth adresi gir"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Tercih edilen ardışık düzen"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Yalnızca yazıya dökme",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist ardışık düzeninin yanıt vermesi çok uzun sürdü.",
           "pipeline_failed": "Assist ardışık düzeni başarısız oldu.",
           "pipeline_removed": "Seçilen Assist ardışık düzeni artık mevcut değil.",
+          "no_preferred_pipeline": "Home Assistant'ın tercih edilen bir Assist ardışık düzeni yok.",
           "playback_stop_unverified": "Önceki yanıtın durduğu doğrulanamadı. Hoparlör boşa geçene kadar bekleyin.",
           "playback_stop_failed": "Önceki yanıt durdurulamadı.",
           "playback_start_timeout": "Hoparlör yanıtı oynatmaya başlamadı.",

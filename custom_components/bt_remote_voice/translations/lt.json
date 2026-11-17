@@ -105,6 +105,11 @@
         "manual": "Įvesti Bluetooth adresą"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Pageidaujamas srautas"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Tik transkripcija",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist srautas per ilgai atsakė.",
           "pipeline_failed": "Assist srauto gedimas.",
           "pipeline_removed": "Pasirinktas Assist srautas nebeegzistuoja.",
+          "no_preferred_pipeline": "Home Assistant neturi pageidaujamo Assist srauto.",
           "playback_stop_unverified": "Nepavyko patvirtinti, kad ankstesnis atsakymas sustojo. Palaukite, kol garsiakalbis bus laisvas.",
           "playback_stop_failed": "Nepavyko sustabdyti ankstesnio atsakymo.",
           "playback_start_timeout": "Garsiakalbis nepradėjo atkurti atsakymo.",

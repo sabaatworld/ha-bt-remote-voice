@@ -105,6 +105,11 @@
         "manual": "Bluetooth ঠিকানা লিখুন"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "পছন্দের পাইপলাইন"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "শুধুমাত্র ট্রান্সক্রিপশন",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist পাইপলাইন সাড়া দিতে অনেক বেশি সময় নিয়েছে।",
           "pipeline_failed": "Assist পাইপলাইন ব্যর্থ হয়েছে।",
           "pipeline_removed": "নির্বাচিত Assist পাইপলাইনটি আর নেই।",
+          "no_preferred_pipeline": "Home Assistant-এ কোনো পছন্দের Assist পাইপলাইন নেই।",
           "playback_stop_unverified": "আগের উত্তর থেমেছে কিনা যাচাই করা যায়নি। স্পিকার নিষ্ক্রিয় না হওয়া পর্যন্ত অপেক্ষা করুন।",
           "playback_stop_failed": "আগের উত্তরটি থামানো যায়নি।",
           "playback_start_timeout": "স্পিকার উত্তর বাজানো শুরু করেনি।",

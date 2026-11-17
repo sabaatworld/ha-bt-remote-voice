@@ -105,6 +105,11 @@
         "manual": "Ввести Bluetooth-адресу"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "Бажаний конвеєр"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "Лише транскрипція",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Конвеєр Assist занадто довго відповідав.",
           "pipeline_failed": "Збій конвеєра Assist.",
           "pipeline_removed": "Вибраний конвеєр Assist більше не існує.",
+          "no_preferred_pipeline": "У Home Assistant немає бажаного конвеєра Assist.",
           "playback_stop_unverified": "Не вдалося переконатися, що попередню відповідь зупинено. Зачекайте, доки динамік звільниться.",
           "playback_stop_failed": "Не вдалося зупинити попередню відповідь.",
           "playback_start_timeout": "Динамік не почав відтворювати відповідь.",

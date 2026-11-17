@@ -105,6 +105,11 @@
         "manual": "輸入 Bluetooth 位址"
       }
     },
+    "pipeline": {
+      "options": {
+        "preferred": "偏好的管線"
+      }
+    },
     "voice_mode": {
       "options": {
         "transcription": "僅轉錄",
@@ -256,6 +261,7 @@
           "pipeline_timeout": "Assist 管線回應時間過長。",
           "pipeline_failed": "Assist 管線失敗。",
           "pipeline_removed": "所選的 Assist 管線已不存在。",
+          "no_preferred_pipeline": "Home Assistant 沒有偏好的 Assist 管線。",
           "playback_stop_unverified": "無法確認上一則回覆已停止。請等待喇叭閒置。",
           "playback_stop_failed": "無法停止上一則回覆。",
           "playback_start_timeout": "喇叭未開始播放回覆。",
