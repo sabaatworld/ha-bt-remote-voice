@@ -265,7 +265,7 @@ key needs teaching. Ordinary buttons that do not activate the microphone are
 outside this integration. Press-to-talk is used only when advertised by the
 remote; this integration does not turn BT19K's hold control into tap-to-toggle.
 Unknown versions/codecs are rejected rather than guessed. See upstream
-attribution in [third-party notices](THIRD_PARTY_NOTICES.md).
+attribution in [third-party notices](custom_components/bt_remote_voice/THIRD_PARTY_NOTICES.md).
 
 ## Fire TV voice remote
 
@@ -416,7 +416,7 @@ integration:
 
 The ATVV protocol and IMA/DVI ADPCM implementation was adapted with reference to
 [ATVVoice](https://github.com/b0o/ATVVoice) (MIT; its copyright notice and licence text are in
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). From the other projects only
+[THIRD_PARTY_NOTICES.md](custom_components/bt_remote_voice/THIRD_PARTY_NOTICES.md)). From the other projects only
 ideas, protocol facts and design lessons were taken; no source code was copied.
 
 ### Useful references

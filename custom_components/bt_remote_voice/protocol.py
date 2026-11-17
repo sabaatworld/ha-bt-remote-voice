@@ -1,4 +1,4 @@
-"""ATVV v0.4/v1.0 controls and IMA/DVI ADPCM (see THIRD_PARTY_NOTICES.md)."""
+"""ATVV v0.4/v1.0 controls and IMA/DVI ADPCM (see THIRD_PARTY_NOTICES.md, shipped alongside)."""
 
 import sys
 from array import array

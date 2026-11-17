@@ -17,7 +17,7 @@ tag = os.environ.get("GITHUB_REF_NAME", "")
 if tag.startswith("v"):
     assert tag == f"v{manifest['version']}", f"tag {tag} != manifest version {manifest['version']}"
 assert (root / "LICENSE").is_file()
-assert (root / "THIRD_PARTY_NOTICES.md").is_file()
+assert (component / "THIRD_PARTY_NOTICES.md").is_file(), "notice must ship inside the component"
 hacs = json.loads((root / "hacs.json").read_text())
 assert hacs["filename"] == f"{component.name}.zip"
 assert not (component / "strings.json").exists(), "translations/en.json is the only source"
@@ -30,7 +30,11 @@ dist.mkdir(exist_ok=True)
 with ZipFile(dist / "bt_remote_voice.zip", "w", ZIP_DEFLATED) as archive:
     for path in sorted(component.rglob("*")):
         is_source = path.suffix in (".py", ".json")
+        is_notice = path == component / "THIRD_PARTY_NOTICES.md"
         is_brand = path.parent == component / "brand" and path.suffix == ".png"
-        if path.is_file() and (is_source or is_brand) and "__pycache__" not in path.parts:
+        is_shipped = is_source or is_brand or is_notice
+        if path.is_file() and is_shipped and "__pycache__" not in path.parts:
             archive.write(path, path.relative_to(component))
+with ZipFile(dist / "bt_remote_voice.zip") as archive:
+    assert "THIRD_PARTY_NOTICES.md" in archive.namelist(), "notice missing from release zip"
 print("Metadata validated; component-only release archive built")
