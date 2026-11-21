@@ -18,6 +18,7 @@ import logging
 import os
 import time
 
+from .hid_descriptor import find_voice_reports, parse_reports
 from .opus import opus_available
 from .protocol import Capabilities
 
@@ -49,6 +50,35 @@ def find_hidraw(address, sysfs="/sys/class/hidraw"):
     return None
 
 
+def find_all_hidraw(address, sysfs="/sys/class/hidraw"):
+    """Every /dev/hidrawN for the remote with this address (a remote can expose several)."""
+    wanted = address.lower()
+    nodes = []
+    for uevent in sorted(glob.glob(f"{sysfs}/hidraw*/device/uevent")):
+        try:
+            with open(uevent) as handle:
+                text = handle.read()
+        except OSError:
+            continue
+        for line in text.splitlines():
+            if line.lower().startswith("hid_uniq=") and line.split("=", 1)[1].lower() == wanted:
+                nodes.append("/dev/" + os.path.basename(os.path.dirname(os.path.dirname(uevent))))
+                break
+    return nodes
+
+
+def read_descriptor(node, sysfs="/sys/class/hidraw"):
+    """The node's HID report descriptor, or None when it cannot be read."""
+    try:
+        with open(f"{sysfs}/{os.path.basename(node)}/device/report_descriptor", "rb") as handle:
+            return handle.read()
+    except OSError:
+        return None
+
+
+_read_descriptor = read_descriptor  # the constructor parameter shadows the name
+
+
 def parse_report(data, voice_down):
     """Classify one input report: ("voice_down"|"voice_up"|"audio"|"other", payload).
 
@@ -72,8 +102,9 @@ def parse_report(data, voice_down):
 class HidrawDevice:
     """One persistent file descriptor on a hidraw node, read through the event loop."""
 
-    def __init__(self, path):
-        self._fd = os.open(path, os.O_RDWR | os.O_NONBLOCK)
+    def __init__(self, path, readonly=False):
+        # readonly: observation only needs to read, and cannot write by construction.
+        self._fd = os.open(path, (os.O_RDONLY if readonly else os.O_RDWR) | os.O_NONBLOCK)
         self._loop = asyncio.get_running_loop()
         self._queue = asyncio.Queue()
         self._error = None
@@ -118,7 +149,22 @@ class FireTransport:
         poll_seconds=0.2,
         rearm_seconds=0.5,
         min_press_seconds=0,
+        find_all=None,
+        read_descriptor=None,
+        refuse_after_seconds=2,
     ):
+        # Descriptor validation needs find_all/read_descriptor. They default on only with the
+        # real sysfs finder (production); a caller that injects its own ``find`` gets the
+        # original behavior (first node, fixed report IDs) unless it passes them explicitly.
+        if find_all is None and find is find_hidraw:
+            find_all, read_descriptor = find_all_hidraw, read_descriptor or _read_descriptor
+        self.find_all = find_all
+        self.read_descriptor = read_descriptor
+        self.refuse_after_seconds = refuse_after_seconds
+        self.unsupported_since = None  # first time readable descriptors lacked the voice pair
+        self.hidraw_nodes = None
+        self.descriptor_reports = None
+        self.descriptor_hex = None
         self.opener = opener
         self.find = find
         self.wait_seconds = wait_seconds
@@ -142,11 +188,18 @@ class FireTransport:
         # sysfs reads are blocking I/O: keep them off Home Assistant's event loop.
         loop = asyncio.get_running_loop()
         deadline = time.monotonic() + self.wait_seconds
-        path = await loop.run_in_executor(None, self.find, address)
+        path = await loop.run_in_executor(None, self._locate, address)
         while path is None and time.monotonic() < deadline:
+            if (
+                self.unsupported_since is not None
+                and time.monotonic() - self.unsupported_since >= self.refuse_after_seconds
+            ):
+                break  # nodes exist, none has the voice pair, and none appeared in time
             await asyncio.sleep(self.poll_seconds)
-            path = await loop.run_in_executor(None, self.find, address)
+            path = await loop.run_in_executor(None, self._locate, address)
         if path is None:
+            if self.unsupported_since is not None:
+                raise ValueError("fire_voice_unsupported")
             raise ConnectionError("wake_remote")
         try:
             self.device = self.opener(path)
@@ -158,9 +211,44 @@ class FireTransport:
         self.task = asyncio.create_task(self._reader(), name="BT voice Fire hidraw reader")
         return Capabilities(frame_size=80, version=5, codec=3, model=0, family="fire")
 
+    def _locate(self, address):
+        """The hidraw node to use, or None while there is none (blocking sysfs reads).
+
+        With a descriptor reader, the node whose descriptor has the verified voice pair wins.
+        Readable descriptors without it return None and start a short grace period (a remote's
+        nodes can appear one at a time); ``open`` refuses once it runs out. Unreadable
+        descriptors keep the original behavior (first node, fixed report IDs).
+        """
+        if self.find_all is None:
+            return self.find(address)
+        nodes = self.find_all(address)
+        self.hidraw_nodes = len(nodes)
+        if not nodes:
+            return None
+        readable = False
+        for node in nodes:
+            data = self.read_descriptor(node) if self.read_descriptor else None
+            if not data:  # None (unreadable) or empty: nothing to judge the node by
+                continue
+            readable = True
+            reports = parse_reports(data)
+            self.descriptor_reports, self.descriptor_hex = reports, data.hex()
+            if find_voice_reports(reports):
+                self.unsupported_since = None
+                return node
+        if readable:
+            if self.unsupported_since is None:
+                self.unsupported_since = time.monotonic()
+            return None
+        _LOGGER.debug("Fire remote descriptor unreadable; using the fixed voice report IDs")
+        return nodes[0]
+
+    def _write_mic(self, on):
+        self.device.write(bytes([REPORT_MIC, 1 if on else 0]))
+
     def _enable(self, on):
         try:
-            self.device.write(bytes([REPORT_MIC, 1 if on else 0]))
+            self._write_mic(on)
         except OSError:
             self.lost.set()
             return

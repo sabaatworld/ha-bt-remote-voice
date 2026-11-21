@@ -70,6 +70,7 @@ def test_form_order_names_every_known_option():
         "busy_playback",
         "context_mode",
         "input_mode",
+        "remote_type",
         "min_press_seconds",
         "max_request_seconds",
         "max_conversation_seconds",

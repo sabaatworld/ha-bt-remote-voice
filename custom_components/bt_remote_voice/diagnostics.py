@@ -1,4 +1,6 @@
 from .preferences import capability_status
+from .remote_types import transport_family
+from .report import ReportInput, build_report, config_summary, hid_summary, versions
 
 """Diagnostics intentionally contain no identifiers, transcripts or audio."""
 
@@ -28,4 +30,35 @@ async def async_get_config_entry_diagnostics(hass, entry):
         "limits": dict(
             zip(("max_request_seconds", "max_conversation_seconds"), c.limits(), strict=True)
         ),
+        "remote_report": remote_report(entry, c),
     }
+
+
+def remote_report(entry, coordinator):
+    """The shareable Remote Report from what the running entry already knows (masked)."""
+    data, options = entry.data or {}, entry.options or {}
+    detected = data.get("detected") or {}
+    reports = getattr(coordinator.transport, "descriptor_reports", None)
+    reports = reports if isinstance(reports, tuple) else None
+    return build_report(
+        ReportInput(
+            **versions(),
+            adapter={"name": detected.get("adapter")},
+            remote={
+                **detected,
+                "name": data.get("name"),
+                "address": data.get("address"),
+                "family": transport_family(options, data),
+                "remote_type": options.get("remote_type", "auto"),
+            },
+            hid=hid_summary(
+                reports,
+                getattr(coordinator.transport, "descriptor_hex", None),
+                getattr(coordinator.transport, "hidraw_nodes", None),
+            )
+            if reports is not None
+            else {},
+            config=config_summary(options, data),
+            outcome={"error": coordinator.last_error or "none", "stage": "running"},
+        )
+    )

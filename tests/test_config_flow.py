@@ -362,3 +362,61 @@ async def test_saved_preferred_is_not_flagged_and_stays_selected(hass):
         assert not result["errors"] and key.default() == "preferred"
         saved = await flow.async_step_init({"pipeline_id": "preferred", "mode": "transcription"})
     assert saved["type"] == "create_entry" and saved["data"]["pipeline_id"] == "preferred"
+
+
+# ---- Honest setup errors (issue #1): each failure names what is actually wrong ----
+async def _configure_failure(hass, family, failure):
+    from types import SimpleNamespace
+
+    flow = ConfigFlow()
+    flow.hass = hass
+    flow.selected = SimpleNamespace(address="02:00:00:00:00:01", name="R", family=family)
+
+    class Fake:
+        async def open(self, *args):
+            raise failure
+
+        async def close(self):
+            pass
+
+    target = "FireTransport" if family == "fire" else "BlueZTransport"
+    with (
+        patch("custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "P"}),
+        patch(f"custom_components.bt_remote_voice.config_flow.{target}", Fake),
+    ):
+        return (await flow.async_step_configure({"pipeline_id": "p"}))["errors"]
+
+
+@pytest.mark.parametrize(
+    ("failure", "expected"),
+    [
+        (ValueError("unsupported_capabilities"), "unsupported_remote"),
+        (ValueError("unsupported_codec"), "unsupported_remote"),
+        (ValueError("invalid_frame_size"), "unsupported_remote"),
+        (ValueError("unsupported_write"), "unsupported_remote"),
+        (ValueError("something_unforeseen"), "unsupported_remote"),
+        (ValueError("voice_service_unavailable"), "voice_service_unavailable"),
+        (ValueError("not_paired"), "not_paired"),
+        (ValueError("multiple_adapters"), "multiple_adapters"),
+        (ConnectionError("wake_remote"), "wake_remote"),
+        (RuntimeError("anything else"), "bluetooth_unavailable"),
+    ],
+)
+async def test_atvv_setup_errors_are_specific(hass, failure, expected):
+    assert await _configure_failure(hass, "atvv", failure) == {"base": expected}
+
+
+@pytest.mark.parametrize(
+    ("failure", "expected"),
+    [
+        (ValueError("fire_voice_unsupported"), "fire_voice_unsupported"),
+        (ValueError("something_unforeseen"), "fire_voice_unsupported"),
+        (ValueError("not_paired"), "not_paired"),
+        (ValueError("multiple_adapters"), "multiple_adapters"),
+        (RuntimeError("anything else"), "bluetooth_unavailable"),
+    ],
+)
+async def test_fire_setup_errors_never_use_the_atvv_wording(hass, failure, expected):
+    errors = await _configure_failure(hass, "fire", failure)
+    assert errors == {"base": expected}
+    assert errors["base"] != "unsupported_remote"

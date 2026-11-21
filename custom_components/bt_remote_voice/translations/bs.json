@@ -26,12 +26,51 @@
         "title": "Odaberite Assist cjevovod",
         "description": "Prije slanja probudite daljinski upravljač tipkom sa strelicom. Integracija se pokreće u načinu samo transkripcije; promijenite to u opcijama kada sve proradi.",
         "data": {
-          "pipeline_id": "Assist cjevovod"
+          "pipeline_id": "Assist cjevovod",
+          "remote_type": "Vrsta daljinskog",
+          "show_report": "Prikaži izvještaj o daljinskom",
+          "test_remote": "Testiraj moj daljinski"
         },
         "data_description": {
-          "pipeline_id": "Assist cjevovod koji obrađuje govor s ovog daljinskog upravljača."
+          "pipeline_id": "Assist cjevovod koji obrađuje govor s ovog daljinskog upravljača.",
+          "remote_type": "Ostavite na Automatski osim ako daljinski nije prepoznat ili postavljanje ne uspije.",
+          "show_report": "Označite i pošaljite da vidite izvještaj koji možete kopirati u GitHub prijavu.",
+          "test_remote": "Označite i pošaljite, zatim pritisnite i držite glasovno dugme daljinskog da vidite šta radi."
         }
+      },
+      "report": {
+        "title": "Izvještaj o daljinskom",
+        "description": "Kopirajte ovaj tekst u GitHub prijavu. Ne sadrži cijelu Bluetooth adresu, imena, web adrese ni zvuk. Izmjene ovdje se zanemaruju; Pošalji vraća na postavljanje.",
+        "data": {
+          "report": "Izvještaj o daljinskom"
+        },
+        "data_description": {
+          "report": "Odaberite sve i kopirajte."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Rezultat testa daljinskog",
+        "description": "Ovaj daljinski sam pokreće glas dok se njegovo dugme drži. Držite to dugme da govorite. Pošalji za nastavak postavljanja."
+      },
+      "test_result_atvv_tap": {
+        "title": "Rezultat testa daljinskog",
+        "description": "Ovaj daljinski pokreće glas kad se njegovo dugme dodirne i sluša dok ne prestanete govoriti. Dodirnite to dugme da govorite. Pošalji za nastavak postavljanja."
+      },
+      "test_result_fire_voice": {
+        "title": "Rezultat testa daljinskog",
+        "description": "Ovo je glasovni taster Fire TV daljinskog. Držite ga dok govorite. Pošalji za nastavak postavljanja."
+      },
+      "test_result_plain_key": {
+        "title": "Rezultat testa daljinskog",
+        "description": "Daljinski je poslao obične tastere ali ne i glasovni signal, pa njegovo glasovno dugme možda ne pokreće glas preko Bluetooth-a. Pošalji, zatim označite Prikaži izvještaj o daljinskom da podijelite šta je viđeno."
+      },
+      "test_result_nothing": {
+        "title": "Rezultat testa daljinskog",
+        "description": "Ništa nije primljeno od daljinskog. Probudite ga tasterom sa strelicom, provjerite je li povezan s ovom Home Assistant mašinom i testirajte ponovo. Pošalji za nastavak."
       }
+    },
+    "progress": {
+      "observing": "Slušanje 20 sekundi. Probudite daljinski tasterom sa strelicom, zatim pritisnite i držite njegovo glasovno dugme, kratko govorite i pustite."
     },
     "error": {
       "bluetooth_unavailable": "Lokalni Bluetooth nije dostupan. Provjerite je li sistemski D-Bus dostupan.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Odaberite postojeći Assist cjevovod.",
       "hidraw_unavailable": "Ulazni uređaj daljinskog upravljača nije dostupan za Home Assistant. Probudite daljinski upravljač i provjerite vidi li Home Assistant uređaje /dev/hidraw.",
       "hidraw_permission_denied": "Home Assistant nema dozvolu za čitanje ulaznog uređaja daljinskog upravljača. Potreban pristup uređaju opisan je u datoteci README.",
-      "opus_decoder_unavailable": "Home Assistant nema dostupan audio dekoder Opus, koji ovaj daljinski upravljač zahtijeva."
+      "opus_decoder_unavailable": "Home Assistant nema dostupan audio dekoder Opus, koji ovaj daljinski upravljač zahtijeva.",
+      "fire_voice_unsupported": "Ovaj Fire TV daljinski ne prijavljuje glasovne podatke koje ova integracija može koristiti. Označite Prikaži izvještaj o daljinskom i podijelite ga u GitHub prijavi.",
+      "voice_service_unavailable": "Daljinski ne nudi Android TV glasovnu uslugu. Za Fire TV daljinski postavite Vrstu daljinskog na Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Ovaj daljinski upravljač već je konfiguriran.",
@@ -65,6 +106,7 @@
           "busy_playback": "Novi pritisak tokom odgovora",
           "context_mode": "Kontekst razgovora",
           "input_mode": "Ponašanje tipke",
+          "remote_type": "Vrsta daljinskog",
           "min_press_seconds": "Zanemari kratke pritiske",
           "max_request_seconds": "Najveća duljina zahtjeva",
           "max_conversation_seconds": "Najveća duljina razgovora",
@@ -80,6 +122,7 @@
           "busy_playback": "Što učiniti kada se tipka pritisne dok se reproducira odgovor: odbiti pritisak, nakon toga odgovoriti na jedan zahtjev na čekanju ili zaustaviti odgovor i započeti novi zahtjev.",
           "context_mode": "Ponovna upotreba zadržava Home Assistant razgovor pa funkcioniraju potpitanja poput „a dvostruko toliko?“. Novi razgovor svaki pritisak pretvara u neovisan razgovor.",
           "input_mode": "Jedan zahtjev po držanju snima dok se tipka ne otpusti. Naizmjenični razgovor sluša dok se tipka drži: govorite, napravite stanku, poslušate odgovor i zatim ponovo govorite. Potreban je daljinski upravljač s funkcijom „drži za govor“.",
+          "remote_type": "Ostavite na Automatski osim ako je daljinski otkriven kao pogrešna vrsta. Promjena ponovo povezuje daljinski.",
           "min_press_seconds": "Zanemaruje dodire glasovne tipke kraće od ove vrijednosti kako lažan dodir nikada ne bi pokrenuo zahtjev; pravo držanje počinje toliko kasnije. 0 to isključuje. Korisno za Fire TV daljinski upravljač koji nakon buđenja ne uspijeva s greškom „Nema zvuka s mikrofona“: ponovo šalje tipku koja ga je probudila kao trenutni dodir. Dobra početna vrijednost je 0,1 s. Samo za Fire TV daljinske upravljače.",
           "max_request_seconds": "Najdulje trajanje jednog zahtjeva na bilo kojem daljinskom upravljaču: cijelo držanje u načinu jednog zahtjeva i svaki krug u naizmjeničnom razgovoru. Dosezanjem ograničenja zahtjev završava greškom ograničenja snimanja. Smanjite da zaustavite snimanje zaglavljene tipke; povećajte za dugo diktiranje. Daljinski upravljači bez funkcije „drži za govor“ također završavaju nakon otprilike 15 sekundi govora ili na tišini, što god nastupi prije.",
           "max_conversation_seconds": "Najdulje trajanje cijelog držanja tipke u načinu naizmjeničnog razgovora. U načinu jednog zahtjeva se zanemaruje i ne smije biti kraće od najveće duljine zahtjeva.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Jedan zahtjev po držanju",
         "conversation": "Razgovor tokom držanja (naizmjenično)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatski (preporučeno)",
+        "atvv": "Android TV / Google TV daljinski (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV / Alexa glasovni daljinski (držite za govor)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Ulazni uređaj daljinskog upravljača nije dostupan za Home Assistant.",
           "hidraw_permission_denied": "Home Assistant nema dozvolu za čitanje ulaznog uređaja daljinskog upravljača.",
           "opus_decoder_unavailable": "Home Assistant nema dostupan audio dekoder Opus.",
+          "fire_voice_unsupported": "Ovaj Fire TV daljinski ne prijavljuje upotrebljive glasovne podatke.",
           "invalid_opus_packet": "Daljinski upravljač poslao je zvuk koji nije bilo moguće dekodirati.",
           "other": "Došlo je do druge greške. Detalje navodi kod greške."
         },

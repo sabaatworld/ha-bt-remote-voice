@@ -627,3 +627,189 @@ async def test_a_failing_start_callback_is_logged_and_does_not_leave_a_half_star
     assert "Fire remote hold start failed" in caplog.text
     assert transport.voice_down is False and device.writes == []
     await transport.close()
+
+
+# --- descriptor validation (issue #1): opt-in, legacy-safe --------------------------------
+
+from pathlib import Path  # noqa: E402
+
+from custom_components.bt_remote_voice.fire import find_all_hidraw, read_descriptor  # noqa: E402
+
+GOOD_DESCRIPTOR = bytes.fromhex(
+    (Path(__file__).parent / "fixtures" / "fire_0413_report_descriptor.hex").read_text().strip()
+)
+# vendor audio report but only a 10-byte output report (no 1-byte 0xF2 enable)
+NO_PAIR_DESCRIPTOR = bytes.fromhex("0600ff 85f0 9550 7508 8100 85f3 950a 9102".replace(" ", ""))
+
+
+async def _open_validated(nodes, descriptors, device=None):
+    device = device or FakeHid()
+    opened = []
+
+    def opener(path):
+        opened.append(path)
+        return device
+
+    transport = FireTransport(
+        opener=opener,
+        find_all=lambda address: list(nodes),
+        read_descriptor=lambda node: descriptors.get(node),
+    )
+    sink = Sink()
+    caps = await transport.open(ADDRESS, sink.control.append, sink.audio.append)
+    return transport, device, sink, caps, opened
+
+
+def test_find_all_hidraw_returns_every_matching_node(tmp_path):
+    for name, uniq in (
+        ("hidraw0", "02:00:00:00:00:af"),
+        ("hidraw1", "02:00:00:00:00:be"),
+        ("hidraw2", "02:00:00:00:00:AF"),
+    ):
+        node = tmp_path / name / "device"
+        node.mkdir(parents=True)
+        (node / "uevent").write_text(f"HID_UNIQ={uniq}\n")
+    assert find_all_hidraw(ADDRESS, sysfs=str(tmp_path)) == ["/dev/hidraw0", "/dev/hidraw2"]
+    assert find_all_hidraw("AA:BB:CC:DD:EE:FF", sysfs=str(tmp_path)) == []
+
+
+def test_read_descriptor_maps_dev_node_to_sysfs_and_returns_none_on_error(tmp_path):
+    node = tmp_path / "hidraw3" / "device"
+    node.mkdir(parents=True)
+    (node / "report_descriptor").write_bytes(b"\x05\x01")
+    assert read_descriptor("/dev/hidraw3", sysfs=str(tmp_path)) == b"\x05\x01"
+    assert read_descriptor("/dev/hidraw9", sysfs=str(tmp_path)) is None
+
+
+async def test_descriptor_without_the_voice_pair_refuses_and_never_opens_or_writes():
+    device = FakeHid()
+    opened = []
+
+    def opener(path):
+        opened.append(path)
+        return device
+
+    transport = FireTransport(
+        opener=opener,
+        find_all=lambda a: ["/dev/hidraw4"],
+        read_descriptor=lambda node: NO_PAIR_DESCRIPTOR,
+        refuse_after_seconds=0.05,
+        poll_seconds=0.01,
+    )
+    with pytest.raises(ValueError, match="fire_voice_unsupported"):
+        await transport.open(ADDRESS, lambda d: None, lambda d: None)
+    assert opened == [] and device.writes == []
+    assert transport.descriptor_reports  # kept so the report can show what was found
+
+
+async def test_descriptor_with_the_pair_uses_the_exact_legacy_bytes():
+    transport, device, sink, _, opened = await _open_validated(
+        ["/dev/hidraw4"], {"/dev/hidraw4": GOOD_DESCRIPTOR}
+    )
+    device.feed(VOICE_DOWN)
+    device.feed(AUDIO)
+    device.feed(VOICE_UP)
+    await asyncio.sleep(0.05)
+    assert opened == ["/dev/hidraw4"]
+    assert device.writes == [b"\xf2\x01", b"\xf2\x00"]
+    assert sink.audio == [AUDIO[1:]]
+    await transport.close()
+
+
+async def test_unreadable_descriptor_keeps_legacy_behavior():
+    transport, device, _, _, opened = await _open_validated(["/dev/hidraw4", "/dev/hidraw5"], {})
+    assert opened == ["/dev/hidraw4"]  # first node, constants unchanged
+    assert transport.descriptor_reports is None
+    await transport.close()
+
+
+async def test_a_later_node_with_the_pair_is_chosen_over_an_earlier_one_without():
+    transport, _, _, _, opened = await _open_validated(
+        ["/dev/hidraw3", "/dev/hidraw4"],
+        {"/dev/hidraw3": NO_PAIR_DESCRIPTOR, "/dev/hidraw4": GOOD_DESCRIPTOR},
+    )
+    assert opened == ["/dev/hidraw4"]
+    await transport.close()
+
+
+async def test_node_appearing_later_is_waited_for_with_the_validating_finder():
+    calls = []
+
+    def find_all(address):
+        calls.append(1)
+        return [] if len(calls) < 3 else ["/dev/hidraw4"]
+
+    transport = FireTransport(
+        opener=lambda p: FakeHid(),
+        find_all=find_all,
+        read_descriptor=lambda n: GOOD_DESCRIPTOR,
+        wait_seconds=2,
+        poll_seconds=0.01,
+    )
+    await transport.open(ADDRESS, lambda d: None, lambda d: None)
+    assert len(calls) == 3
+    await transport.close()
+
+
+async def test_default_transport_without_a_reader_is_unchanged():
+    transport, device, _, _ = await _open()
+    assert transport.descriptor_reports is None
+    device.feed(VOICE_DOWN)
+    await asyncio.sleep(0.05)
+    assert device.writes == [b"\xf2\x01"]
+    await transport.close()
+
+
+def test_fire_module_has_no_gatt_imports():
+    # Fire remotes are HID-only: a vendor GATT characteristic can wipe or unpair the remote.
+    source = (
+        Path(__file__).parent.parent / "custom_components/bt_remote_voice/fire.py"
+    ).read_text()
+    assert "dbus_fast" not in source and "GattCharacteristic" not in source
+
+
+async def test_a_sibling_node_that_appears_later_with_the_pair_is_still_found():
+    polls = []
+
+    def find_all(address):
+        polls.append(1)
+        return ["/dev/hidraw3"] if len(polls) < 3 else ["/dev/hidraw3", "/dev/hidraw4"]
+
+    opened = []
+    transport = FireTransport(
+        opener=lambda path: opened.append(path) or FakeHid(),
+        find_all=find_all,
+        read_descriptor=lambda node: (
+            NO_PAIR_DESCRIPTOR if node == "/dev/hidraw3" else GOOD_DESCRIPTOR
+        ),
+        poll_seconds=0.01,
+        refuse_after_seconds=2,
+    )
+    await transport.open(ADDRESS, lambda d: None, lambda d: None)
+    assert opened == ["/dev/hidraw4"] and transport.hidraw_nodes == 2
+    await transport.close()
+
+
+async def test_nodes_that_never_gain_the_pair_are_refused_after_the_grace_period():
+    transport = FireTransport(
+        opener=lambda p: FakeHid(),
+        find_all=lambda a: ["/dev/hidraw3", "/dev/hidraw4"],
+        read_descriptor=lambda node: NO_PAIR_DESCRIPTOR,
+        poll_seconds=0.01,
+        refuse_after_seconds=0.05,
+    )
+    with pytest.raises(ValueError, match="fire_voice_unsupported"):
+        await transport.open(ADDRESS, lambda d: None, lambda d: None)
+    assert transport.hidraw_nodes == 2
+
+
+async def test_an_empty_descriptor_counts_as_unreadable_and_keeps_legacy_behavior():
+    opened = []
+    transport = FireTransport(
+        opener=lambda path: opened.append(path) or FakeHid(),
+        find_all=lambda a: ["/dev/hidraw4"],
+        read_descriptor=lambda node: b"",
+    )
+    await transport.open(ADDRESS, lambda d: None, lambda d: None)
+    assert opened == ["/dev/hidraw4"] and transport.descriptor_reports is None
+    await transport.close()

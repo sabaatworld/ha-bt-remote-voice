@@ -26,12 +26,51 @@
         "title": "Valitse Assist-putki",
         "description": "Herätä kaukosäädin nuolipainikkeella ennen lähettämistä. Integraatio aloittaa vain litterointitilassa; muuta tätä asetuksissa, kun se toimii.",
         "data": {
-          "pipeline_id": "Assist-putki"
+          "pipeline_id": "Assist-putki",
+          "remote_type": "Kaukosäätimen tyyppi",
+          "show_report": "Näytä kaukosäätimen raportti",
+          "test_remote": "Testaa kaukosäätimeni"
         },
         "data_description": {
-          "pipeline_id": "Assist-putki, joka käsittelee tämän kaukosäätimen puheen."
+          "pipeline_id": "Assist-putki, joka käsittelee tämän kaukosäätimen puheen.",
+          "remote_type": "Jätä asetukseksi Automaattinen, ellei kaukosäädintä tunnisteta tai asennus epäonnistu.",
+          "show_report": "Valitse ja lähetä nähdäksesi raportin, jonka voit kopioida GitHub-ongelmaan.",
+          "test_remote": "Valitse ja lähetä, paina sitten kaukosäätimen puhepainiketta pohjassa nähdäksesi, mitä kaukosäädin tekee."
         }
+      },
+      "report": {
+        "title": "Kaukosäätimen raportti",
+        "description": "Kopioi tämä teksti GitHub-ongelmaan. Se ei sisällä täyttä Bluetooth-osoitetta, nimiä, verkko-osoitteita tai ääntä. Tässä tehdyt muokkaukset ohitetaan; Lähetä palaa asennukseen.",
+        "data": {
+          "report": "Kaukosäätimen raportti"
+        },
+        "data_description": {
+          "report": "Valitse kaikki ja kopioi."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Kaukosäätimen testin tulos",
+        "description": "Tämä kaukosäädin aloittaa puheen itse, kun sen painiketta pidetään painettuna. Pidä painiketta painettuna puhuaksesi. Lähetä jatkaaksesi asennusta."
+      },
+      "test_result_atvv_tap": {
+        "title": "Kaukosäätimen testin tulos",
+        "description": "Tämä kaukosäädin aloittaa puheen, kun sen painiketta napautetaan, ja kuuntelee, kunnes lopetat puhumisen. Napauta painiketta puhuaksesi. Lähetä jatkaaksesi asennusta."
+      },
+      "test_result_fire_voice": {
+        "title": "Kaukosäätimen testin tulos",
+        "description": "Tämä on Fire TV -kaukosäätimen puhenäppäin. Pidä sitä painettuna puhuessasi. Lähetä jatkaaksesi asennusta."
+      },
+      "test_result_plain_key": {
+        "title": "Kaukosäätimen testin tulos",
+        "description": "Kaukosäädin lähetti tavallisia näppäimiä mutta ei puhesignaalia, joten sen puhepainike ei ehkä käynnistä puhetta Bluetoothin kautta. Lähetä ja valitse sitten Näytä kaukosäätimen raportti jakaaksesi havaitun."
+      },
+      "test_result_nothing": {
+        "title": "Kaukosäätimen testin tulos",
+        "description": "Kaukosäätimeltä ei vastaanotettu mitään. Herätä se nuolinäppäimellä, tarkista että se on yhdistetty tähän Home Assistant -koneeseen ja testaa uudelleen. Lähetä jatkaaksesi."
       }
+    },
+    "progress": {
+      "observing": "Kuunnellaan 20 sekuntia. Herätä kaukosäädin nuolinäppäimellä, paina sitten sen puhepainiketta pohjassa, puhu lyhyesti ja vapauta."
     },
     "error": {
       "bluetooth_unavailable": "Paikallinen Bluetooth ei ole käytettävissä. Tarkista, että järjestelmän D-Bus on käytettävissä.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Valitse olemassa oleva Assist-putki.",
       "hidraw_unavailable": "Kaukosäätimen syöttölaite ei ole Home Assistantin käytettävissä. Herätä kaukosäädin ja tarkista, että Home Assistant näkee /dev/hidraw-laitteet.",
       "hidraw_permission_denied": "Home Assistantilla ei ole lupaa lukea kaukosäätimen syöttölaitetta. Katso README, mitä laiteoikeuksia tämä kaukosäädin tarvitsee.",
-      "opus_decoder_unavailable": "Home Assistantin käytettävissä ei ole Opus-äänidekooderia, jota tämä kaukosäädin tarvitsee."
+      "opus_decoder_unavailable": "Home Assistantin käytettävissä ei ole Opus-äänidekooderia, jota tämä kaukosäädin tarvitsee.",
+      "fire_voice_unsupported": "Tämä Fire TV -kaukosäädin ei ilmoita ääniviestejä, joita tämä integraatio voisi käyttää. Valitse Näytä kaukosäätimen raportti ja jaa se GitHub-ongelmassa.",
+      "voice_service_unavailable": "Kaukosäädin ei tarjoa Android TV:n äänipalvelua. Aseta Fire TV -kaukosäätimelle Kaukosäätimen tyypiksi Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Tämä kaukosäädin on jo määritetty.",
@@ -65,6 +106,7 @@
           "busy_playback": "Uusi painallus vastauksen aikana",
           "context_mode": "Keskustelun konteksti",
           "input_mode": "Painikkeen toiminta",
+          "remote_type": "Kaukosäätimen tyyppi",
           "min_press_seconds": "Ohita lyhyet painallukset",
           "max_request_seconds": "Pyynnön enimmäispituus",
           "max_conversation_seconds": "Keskustelun enimmäispituus",
@@ -80,6 +122,7 @@
           "busy_playback": "Mitä tehdä, kun painiketta painetaan vastauksen toiston aikana: hylkää painallus, vastaa yhteen odottavaan pyyntöön sen jälkeen tai pysäytä vastaus ja aloita uusi pyyntö.",
           "context_mode": "Uudelleenkäyttö säilyttää Home Assistantin keskustelun, jotta jatkokysymykset kuten ”entä kaksinkertaisena?” toimivat. Uusi keskustelu tekee jokaisesta painalluksesta erillisen keskustelun.",
           "input_mode": "Yksi pyyntö per painallus tallentaa, kunnes painike vapautetaan. Vuorotteleva keskustelu kuuntelee, kun painiketta pidetään pohjassa: puhu, pidä tauko, kuuntele vastaus ja puhu uudelleen. Se vaatii pidä-puhuaksesi-kaukosäätimen.",
+          "remote_type": "Jätä asetukseksi Automaattinen, ellei kaukosäädintä havaittu väärän tyyppiseksi. Muutos yhdistää kaukosäätimen uudelleen.",
           "min_press_seconds": "Ohittaa tätä lyhyemmät äänipainikkeen napautukset, jotta virheellinen napautus ei koskaan aloita pyyntöä; todellinen pitkä painallus alkaa tämän verran myöhemmin. 0 poistaa toiminnon käytöstä. Hyödyllinen Fire TV -kaukosäätimelle, joka epäonnistuu virheeseen ”Ei mikrofonin ääntä” heti herättämisen jälkeen: se lähettää herättäneen näppäimen uudelleen välittömänä napautuksena. 0,1 s on hyvä lähtökohta. Vain Fire TV -kaukosäätimille.",
           "max_request_seconds": "Pisin aika, jonka yksittäinen pyyntö voi kestää millä tahansa kaukosäätimellä: koko painallus Yksi pyyntö -tilassa ja jokainen vuoro vuorottelevassa keskustelussa. Rajan saavuttaminen päättää pyynnön tallennusrajavirheeseen. Pienennä, jos haluat estää jumittuneen painikkeen tallennuksen; suurenna pitkää sanelua varten. Kaukosäätimet, jotka eivät ole pidä-puhuaksesi-tyyppisiä, päättyvät myös noin 15 sekunnin puheen tai hiljaisuuden jälkeen sen mukaan, kumpi tulee ensin.",
           "max_conversation_seconds": "Pisin aika, jonka koko painikkeen painallus voi kestää vuorottelevan keskustelun tilassa. Se ohitetaan Yksi pyyntö -tilassa, eikä sen saa olla lyhyempi kuin pyynnön enimmäispituus.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Yksi pyyntö per painallus",
         "conversation": "Keskustelu painettaessa (vuorotteleva)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automaattinen (suositus)",
+        "atvv": "Android TV / Google TV -kaukosäädin (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV / Alexa -äänikaukosäädin (puhu pitämällä painettuna)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Kaukosäätimen syöttölaite ei ole Home Assistantin käytettävissä.",
           "hidraw_permission_denied": "Home Assistantilla ei ole lupaa lukea kaukosäätimen syöttölaitetta.",
           "opus_decoder_unavailable": "Home Assistantin käytettävissä ei ole Opus-äänidekooderia.",
+          "fire_voice_unsupported": "Tämä Fire TV -kaukosäädin ei ilmoita käyttökelpoista ääniviestiä.",
           "invalid_opus_packet": "Kaukosäädin lähetti ääntä, jota ei voitu dekoodata.",
           "other": "Tapahtui toinen virhe. Virhekoodi kertoo lisätiedot."
         },

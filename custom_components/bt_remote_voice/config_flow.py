@@ -1,5 +1,6 @@
 """Configure an already-paired remote; this flow never creates Bluetooth bonds."""
 
+import asyncio
 import re
 
 import voluptuous as vol
@@ -15,10 +16,14 @@ from homeassistant.helpers.selector import (
     SelectSelector,
     SelectSelectorConfig,
     SelectSelectorMode,
+    TextSelector,
+    TextSelectorConfig,
 )
 
 from .bluez import BlueZTransport
 from .fire import FireTransport
+from .hid_descriptor import parse_reports
+from .observe import OBSERVE_SECONDS, Observation, observe
 from .playback import speaker_choices
 from .preferences import (
     CHOICES,
@@ -32,7 +37,36 @@ from .preferences import (
     REQUEST_RANGE,
     preferences,
 )
+from .remote_types import DEFAULT_REMOTE_TYPE, REMOTE_TYPES, transport_family
 from .reply_condition import ReplyConditionSelector, load_conditions
+from .report import ReportInput, build_report, config_summary, hid_summary, versions
+
+
+def remote_label(remote):
+    """Picker text: only data (the remote's name, address and product id), no UI wording."""
+    product = getattr(remote, "product_id", None)
+    return f"{remote.name} ({remote.address})" + (
+        f" [0x{product:04x}]" if product is not None else ""
+    )
+
+
+# What was learned about the remote at setup, kept so diagnostics can show it later. No address.
+DETECTED_KEYS = (
+    "reasons",
+    "vendor_id",
+    "product_id",
+    "modalias",
+    "uuids",
+    "manufacturer",
+    "appearance",
+    "adapter",
+)
+
+
+def detected_signals(remote):
+    signals = getattr(remote, "signals", None)
+    return {k: v for k, v in (signals() if signals else {}).items() if k in DETECTED_KEYS}
+
 
 NONE = "none"  # sentinel for "no spoken reply"; stored as an empty speaker
 
@@ -77,6 +111,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     def __init__(self):
         self.remotes = {}
         self.selected = None
+        self.attempt = None  # outcome of the last connection attempt, for the Remote Report
+        self.form = {}  # last submitted setup values, kept across the report/test steps
+        self.observation = None  # result of "Test my remote", shown in the report
+        self.observe_task = None
 
     @staticmethod
     @callback
@@ -97,8 +135,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         except Exception:
             errors["base"] = "bluetooth_unavailable"
         choices = [
-            SelectOptionDict(value=r.address, label=f"{r.name} ({r.address})")
-            for r in self.remotes.values()
+            SelectOptionDict(value=r.address, label=remote_label(r)) for r in self.remotes.values()
         ]
         choices.append(SelectOptionDict(value="manual", label="manual"))
         return self.async_show_form(
@@ -137,11 +174,22 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if not choices:
             return self.async_abort(reason="no_pipelines")
         errors = {}
+        if user_input and (user_input.get("show_report") or user_input.get("test_remote")):
+            self.form = {
+                k: v for k, v in user_input.items() if k not in ("show_report", "test_remote")
+            }
+            if user_input.get("test_remote"):
+                return await self.async_step_test()
+            return await self.async_step_report()
         if user_input:
             if user_input["pipeline_id"] not in (PIPELINE_PREFERRED, *choices):
                 errors["base"] = "invalid_pipeline"
             else:
-                fire = self.selected.family == "fire"
+                remote_type = user_input.get("remote_type", DEFAULT_REMOTE_TYPE)
+                fire = (
+                    transport_family({"remote_type": remote_type}, {"family": self.selected.family})
+                    == "fire"
+                )
                 transport = FireTransport() if fire else BlueZTransport()
                 try:
                     await transport.open(
@@ -153,16 +201,33 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     else:
                         errors["base"] = "wake_remote"
                 except ValueError as err:
+                    # Each literal below is a distinct, translated cause; the ATVV wording of
+                    # "unsupported_remote" is only ever shown for ATVV remotes.
                     if str(err) == "opus_decoder_unavailable":
                         errors["base"] = "opus_decoder_unavailable"
                     elif str(err) == "hidraw_permission_denied":
                         errors["base"] = "hidraw_permission_denied"
+                    elif str(err) == "voice_service_unavailable":
+                        errors["base"] = "voice_service_unavailable"
+                    elif str(err) == "not_paired":
+                        errors["base"] = "not_paired"
+                    elif str(err) == "multiple_adapters":
+                        errors["base"] = "multiple_adapters"
+                    elif fire:
+                        errors["base"] = "fire_voice_unsupported"
                     else:
                         errors["base"] = "unsupported_remote"
                 except Exception:
                     errors["base"] = "bluetooth_unavailable"
                 finally:
                     await transport.close()
+                self.attempt = {
+                    "error": errors.get("base"),
+                    "remote_type": remote_type,
+                    "reports": getattr(transport, "descriptor_reports", None),
+                    "descriptor_hex": getattr(transport, "descriptor_hex", None),
+                    "nodes": getattr(transport, "hidraw_nodes", None),
+                }
                 if not errors:
                     return self.async_create_entry(
                         title=self.selected.name,
@@ -172,18 +237,127 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             "pipeline_id": user_input["pipeline_id"],
                             "mode": "transcription",
                             "family": self.selected.family,
+                            "detected": detected_signals(self.selected),
                         },
+                        options={"remote_type": remote_type},
                     )
+        remembered_pipeline = self.form.get("pipeline_id", PIPELINE_PREFERRED)
+        if remembered_pipeline not in (PIPELINE_PREFERRED, *choices):
+            remembered_pipeline = PIPELINE_PREFERRED
+        remembered_type = self.form.get(
+            "remote_type", (self.attempt or {}).get("remote_type", DEFAULT_REMOTE_TYPE)
+        )
         return self.async_show_form(
             step_id="configure",
             data_schema=vol.Schema(
                 {
-                    vol.Required("pipeline_id", default=PIPELINE_PREFERRED): pipeline_dropdown(
+                    vol.Required("pipeline_id", default=remembered_pipeline): pipeline_dropdown(
                         choices
-                    )
+                    ),
+                    vol.Optional("remote_type", default=remembered_type): dropdown(
+                        list(REMOTE_TYPES), "remote_type"
+                    ),
+                    vol.Optional("test_remote", default=False): bool,
+                    vol.Optional("show_report", default=False): bool,
                 }
             ),
             errors=errors,
+        )
+
+    def remote_report(self):
+        """The shareable report for the remote being set up (works before any attempt)."""
+        attempt = self.attempt or {}
+        chosen = self.form.get("remote_type")
+        if attempt and chosen and chosen != attempt.get("remote_type"):
+            attempt = {}  # that attempt used another remote type: its outcome is stale
+        stage = "not_tried"
+        if attempt:
+            stage = "setup"
+        signals = getattr(self.selected, "signals", None)
+        remote_type = chosen or attempt.get("remote_type") or "unknown"
+        remote = {**(signals() if signals else {}), "remote_type": remote_type}
+        hid = {"nodes": attempt.get("nodes", "unknown")}
+        if attempt.get("reports") is not None:
+            hid = hid_summary(
+                attempt.get("reports"), attempt.get("descriptor_hex"), attempt.get("nodes")
+            )
+        elif self.observation and self.observation.descriptors:
+            hex_ = next(iter(self.observation.descriptors.values()))
+            hid = hid_summary(parse_reports(bytes.fromhex(hex_)), hex_, self.observation.nodes)
+        return build_report(
+            ReportInput(
+                **versions(),
+                adapter={"name": remote.get("adapter")},
+                remote=remote,
+                hid=hid,
+                config=config_summary({"remote_type": remote_type}, {}),
+                observation=self.observation.to_dict() if self.observation else {},
+                outcome={
+                    "error": attempt.get("error") or ("none" if attempt else None),
+                    "stage": stage,
+                },
+            )
+        )
+
+    async def _observe(self):
+        remote_type = self.form.get("remote_type", DEFAULT_REMOTE_TYPE)
+        family = transport_family({"remote_type": remote_type}, {"family": self.selected.family})
+        self.observation = await observe(self.selected.address, family, OBSERVE_SECONDS)
+        return self.observation
+
+    async def async_step_test(self, user_input=None):
+        """Listen to the remote while the user presses its voice button (read-only)."""
+        if self.observe_task is None:
+            self.observe_task = self.hass.async_create_task(self._observe())
+        if not self.observe_task.done():
+            return self.async_show_progress(
+                step_id="test", progress_action="observing", progress_task=self.observe_task
+            )
+        task, self.observe_task = self.observe_task, None
+        try:
+            observation = task.result()
+        except asyncio.CancelledError, Exception:  # noqa: BLE001 - a failed listen is a result
+            observation = Observation(errors=["bluetooth_unavailable"])
+        self.observation = observation
+        return self.async_show_progress_done(next_step_id=f"test_result_{observation.result}")
+
+    async def _result_form(self, kind, user_input):
+        if user_input is not None:
+            return await self.async_step_configure()
+        return self.async_show_form(step_id=f"test_result_{kind}", data_schema=vol.Schema({}))
+
+    async def async_step_test_result_atvv_hold(self, user_input=None):
+        return await self._result_form("atvv_hold", user_input)
+
+    async def async_step_test_result_atvv_tap(self, user_input=None):
+        return await self._result_form("atvv_tap", user_input)
+
+    async def async_step_test_result_fire_voice(self, user_input=None):
+        return await self._result_form("fire_voice", user_input)
+
+    async def async_step_test_result_plain_key(self, user_input=None):
+        return await self._result_form("plain_key", user_input)
+
+    async def async_step_test_result_nothing(self, user_input=None):
+        return await self._result_form("nothing", user_input)
+
+    @callback
+    def async_remove(self):
+        if self.observe_task and not self.observe_task.done():
+            self.observe_task.cancel()
+
+    async def async_step_report(self, user_input=None):
+        """Show the report to copy into an issue; edits are ignored; Submit goes back."""
+        if user_input is not None:
+            return await self.async_step_configure()
+        schema = vol.Schema(
+            {vol.Optional("report"): TextSelector(TextSelectorConfig(multiline=True))}
+        )
+        return self.async_show_form(
+            step_id="report",
+            data_schema=self.add_suggested_values_to_schema(
+                schema, {"report": self.remote_report()}
+            ),
         )
 
 

@@ -26,12 +26,51 @@
         "title": "Selecionar pipeline do Assist",
         "description": "Ative o telecomando com um botão de seta antes de submeter. A integração começa no modo apenas de transcrição; altere-o nas opções quando estiver a funcionar.",
         "data": {
-          "pipeline_id": "Pipeline do Assist"
+          "pipeline_id": "Pipeline do Assist",
+          "remote_type": "Tipo de telecomando",
+          "show_report": "Mostrar relatório do telecomando",
+          "test_remote": "Testar o meu telecomando"
         },
         "data_description": {
-          "pipeline_id": "O pipeline do Assist que processa a voz deste telecomando."
+          "pipeline_id": "O pipeline do Assist que processa a voz deste telecomando.",
+          "remote_type": "Deixe em Automático, a menos que o telecomando não seja reconhecido ou a configuração falhe.",
+          "show_report": "Selecione e envie para ver um relatório que pode copiar para um problema do GitHub.",
+          "test_remote": "Selecione e envie, depois mantenha premido o botão de voz do telecomando para ver o que ele faz."
         }
+      },
+      "report": {
+        "title": "Relatório do telecomando",
+        "description": "Copie este texto para um problema do GitHub. Não contém endereço Bluetooth completo, nomes, endereços Web nem áudio. As edições aqui são ignoradas; Enviar volta à configuração.",
+        "data": {
+          "report": "Relatório do telecomando"
+        },
+        "data_description": {
+          "report": "Selecione tudo e copie."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultado do teste do telecomando",
+        "description": "Este telecomando inicia a voz sozinho enquanto o botão é mantido premido. Mantenha esse botão premido para falar. Envie para continuar a configuração."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultado do teste do telecomando",
+        "description": "Este telecomando inicia a voz quando o botão é tocado e ouve até parar de falar. Toque nesse botão para falar. Envie para continuar a configuração."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultado do teste do telecomando",
+        "description": "Esta é a tecla de voz de um telecomando Fire TV. Mantenha-a premida enquanto fala. Envie para continuar a configuração."
+      },
+      "test_result_plain_key": {
+        "title": "Resultado do teste do telecomando",
+        "description": "O telecomando enviou teclas normais, mas nenhum sinal de voz, pelo que o botão de voz pode não iniciar a voz por Bluetooth. Envie e depois selecione Mostrar relatório do telecomando para partilhar o que foi visto."
+      },
+      "test_result_nothing": {
+        "title": "Resultado do teste do telecomando",
+        "description": "Não foi recebido nada do telecomando. Acorde-o com uma tecla de seta, verifique se está ligado a esta máquina com Home Assistant e teste novamente. Envie para continuar."
       }
+    },
+    "progress": {
+      "observing": "A ouvir durante 20 segundos. Acorde o telecomando com uma tecla de seta, depois mantenha premido o botão de voz, fale brevemente e solte."
     },
     "error": {
       "bluetooth_unavailable": "O Bluetooth local não está disponível. Verifique se o D-Bus do sistema está acessível.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Escolha um pipeline do Assist existente.",
       "hidraw_unavailable": "O dispositivo de entrada do telecomando não está disponível para o Home Assistant. Ative o telecomando e verifique se o Home Assistant consegue ver os dispositivos /dev/hidraw.",
       "hidraw_permission_denied": "O Home Assistant não tem permissão para ler o dispositivo de entrada do telecomando. Consulte o README para saber o acesso ao dispositivo de que este telecomando necessita.",
-      "opus_decoder_unavailable": "Não está disponível nenhum descodificador de áudio Opus para o Home Assistant, que este telecomando necessita."
+      "opus_decoder_unavailable": "Não está disponível nenhum descodificador de áudio Opus para o Home Assistant, que este telecomando necessita.",
+      "fire_voice_unsupported": "Este telecomando Fire TV não comunica dados de voz que esta integração possa usar. Selecione Mostrar relatório do telecomando e partilhe-o num problema do GitHub.",
+      "voice_service_unavailable": "O telecomando não oferece o serviço de voz do Android TV. Para um telecomando Fire TV, defina o Tipo de telecomando como Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Este telecomando já está configurado.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nova pressão durante a resposta",
           "context_mode": "Contexto da conversa",
           "input_mode": "Comportamento do botão",
+          "remote_type": "Tipo de telecomando",
           "min_press_seconds": "Ignorar pressões curtas",
           "max_request_seconds": "Duração máxima do pedido",
           "max_conversation_seconds": "Duração máxima da conversa",
@@ -80,6 +122,7 @@
           "busy_playback": "O que fazer quando o botão é premido enquanto uma resposta está a ser reproduzida: rejeitar a pressão, responder depois a um pedido pendente, ou parar a resposta e iniciar o novo pedido.",
           "context_mode": "Reutilizar mantém a conversa do Home Assistant para que perguntas de seguimento como «e o dobro?» funcionem. Nova faz de cada pressão uma conversa independente.",
           "input_mode": "Um pedido por pressão contínua grava até o botão ser libertado. A conversa alternada continua a ouvir enquanto o botão é mantido premido: fale, faça uma pausa, ouça a resposta e volte a falar. Requer um telecomando de premir para falar.",
+          "remote_type": "Deixe em Automático, a menos que o telecomando tenha sido detetado com o tipo errado. Alterar volta a ligar o telecomando.",
           "min_press_seconds": "Ignora os toques no botão de voz mais curtos do que este valor, para que um toque espúrio nunca inicie um pedido; uma pressão contínua real começa essa duração mais tarde. 0 desativa. Útil para um telecomando Fire TV que falha com «Não foi recebido áudio do microfone» logo após ser ativado: reenvia a tecla que o ativou como um toque instantâneo. 0,1 s é um bom ponto de partida. Apenas para telecomandos Fire TV.",
           "max_request_seconds": "A duração máxima de um único pedido em qualquer telecomando: toda a pressão contínua no modo Um pedido, e cada turno na Conversa alternada. Ao atingi-la, o pedido termina com um erro de limite de captura. Reduza-a para parar a gravação de um botão preso; aumente-a para ditados longos. Os telecomandos que não são de premir para falar também terminam após cerca de 15 segundos de fala ou no silêncio, o que ocorrer primeiro.",
           "max_conversation_seconds": "A duração máxima de toda uma pressão contínua no modo de conversa alternada. É ignorada no modo Um pedido e não pode ser inferior à duração máxima do pedido.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Um pedido por pressão contínua",
         "conversation": "Conversa enquanto mantido premido (alternada)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automático (recomendado)",
+        "atvv": "Telecomando Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Telecomando de voz Amazon Fire TV / Alexa (mantenha premido para falar)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "O dispositivo de entrada do telecomando não está disponível para o Home Assistant.",
           "hidraw_permission_denied": "O Home Assistant não tem permissão para ler o dispositivo de entrada do telecomando.",
           "opus_decoder_unavailable": "Não está disponível nenhum descodificador de áudio Opus para o Home Assistant.",
+          "fire_voice_unsupported": "Este telecomando Fire TV não comunica dados de voz utilizáveis.",
           "invalid_opus_packet": "O telecomando enviou áudio que não pôde ser descodificado.",
           "other": "Ocorreu outro erro. O código de erro indica os detalhes."
         },

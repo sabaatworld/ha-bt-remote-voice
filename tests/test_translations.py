@@ -68,12 +68,13 @@ async def _forms(hass):
         manual = await flow.async_step_manual()
         flow.selected = remote
         configure = await flow.async_step_configure()
+        report = await flow.async_step_report()
         entry = SimpleNamespace(data={"pipeline_id": "p"}, options={})
         options_flow = OptionsFlow(entry)
         options_flow.hass = hass
         options = await options_flow.async_step_init()
     return {
-        "config": {"user": user, "manual": manual, "configure": configure},
+        "config": {"user": user, "manual": manual, "configure": configure, "report": report},
         "options": {"init": options},
     }
 

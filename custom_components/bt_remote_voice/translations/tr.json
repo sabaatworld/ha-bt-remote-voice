@@ -26,12 +26,51 @@
         "title": "Assist ardışık düzenini seçin",
         "description": "Göndermeden önce uzaktan kumandayı bir ok tuşuyla uyandırın. Entegrasyon yalnızca yazıya dökme modunda başlar; çalıştıktan sonra bunu seçeneklerden değiştirin.",
         "data": {
-          "pipeline_id": "Assist ardışık düzeni"
+          "pipeline_id": "Assist ardışık düzeni",
+          "remote_type": "Kumanda türü",
+          "show_report": "Kumanda raporunu göster",
+          "test_remote": "Kumandamı test et"
         },
         "data_description": {
-          "pipeline_id": "Bu uzaktan kumandadan gelen konuşmayı işleyen Assist ardışık düzeni."
+          "pipeline_id": "Bu uzaktan kumandadan gelen konuşmayı işleyen Assist ardışık düzeni.",
+          "remote_type": "Kumanda tanınmıyorsa veya kurulum başarısız olursa dışında Otomatik olarak bırakın.",
+          "show_report": "İşaretleyip gönderin; bir GitHub sorununa kopyalayabileceğiniz bir rapor görünür.",
+          "test_remote": "İşaretleyip gönderin, ardından kumandanın ses düğmesini basılı tutarak kumandanın ne yaptığını görün."
         }
+      },
+      "report": {
+        "title": "Kumanda raporu",
+        "description": "Bu metni bir GitHub sorununa kopyalayın. Tam Bluetooth adresi, ad, web adresi veya ses içermez. Buradaki düzenlemeler yok sayılır; Gönder kurulum ekranına döner.",
+        "data": {
+          "report": "Kumanda raporu"
+        },
+        "data_description": {
+          "report": "Tümünü seçin ve kopyalayın."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Kumanda testi sonucu",
+        "description": "Bu kumanda, düğmesi basılı tutulduğu sürece sesi kendisi başlatır. Konuşmak için o düğmeyi basılı tutun. Kuruluma devam etmek için Gönder'e basın."
+      },
+      "test_result_atvv_tap": {
+        "title": "Kumanda testi sonucu",
+        "description": "Bu kumanda, düğmesine dokunulduğunda sesi başlatır ve konuşmayı bırakana kadar dinler. Konuşmak için o düğmeye dokunun. Kuruluma devam etmek için Gönder'e basın."
+      },
+      "test_result_fire_voice": {
+        "title": "Kumanda testi sonucu",
+        "description": "Bu, bir Fire TV kumandasının ses tuşudur. Konuşurken basılı tutun. Kuruluma devam etmek için Gönder'e basın."
+      },
+      "test_result_plain_key": {
+        "title": "Kumanda testi sonucu",
+        "description": "Kumanda normal tuşlar gönderdi ancak ses sinyali göndermedi; bu nedenle ses düğmesi Bluetooth üzerinden sesi başlatmayabilir. Gönderin, ardından görülenleri paylaşmak için Kumanda raporunu göster seçeneğini işaretleyin."
+      },
+      "test_result_nothing": {
+        "title": "Kumanda testi sonucu",
+        "description": "Kumandadan hiçbir şey alınmadı. Bir ok tuşuyla uyandırın, bu Home Assistant makinesine bağlı olduğunu kontrol edin ve yeniden test edin. Devam etmek için Gönder'e basın."
       }
+    },
+    "progress": {
+      "observing": "20 saniye dinleniyor. Kumandayı bir ok tuşuyla uyandırın, ardından ses düğmesini basılı tutun, kısaca konuşun ve bırakın."
     },
     "error": {
       "bluetooth_unavailable": "Yerel Bluetooth kullanılamıyor. Sistem D-Bus'ına erişilebildiğini kontrol edin.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Mevcut bir Assist ardışık düzeni seçin.",
       "hidraw_unavailable": "Uzaktan kumandanın giriş cihazı Home Assistant tarafından kullanılamıyor. Uzaktan kumandayı uyandırın ve Home Assistant'ın /dev/hidraw cihazlarını görebildiğini kontrol edin.",
       "hidraw_permission_denied": "Home Assistant'ın uzaktan kumandanın giriş cihazını okumasına izin verilmiyor. Bu uzaktan kumandanın ihtiyaç duyduğu cihaz erişimi için README dosyasına bakın.",
-      "opus_decoder_unavailable": "Home Assistant için, bu uzaktan kumandanın gerektirdiği bir Opus ses kod çözücüsü yok."
+      "opus_decoder_unavailable": "Home Assistant için, bu uzaktan kumandanın gerektirdiği bir Opus ses kod çözücüsü yok.",
+      "fire_voice_unsupported": "Bu Fire TV kumandası, bu entegrasyonun kullanabileceği ses verisi bildirmiyor. Kumanda raporunu göster seçeneğini işaretleyin ve bir GitHub sorununda paylaşın.",
+      "voice_service_unavailable": "Kumanda, Android TV ses hizmetini sunmuyor. Fire TV kumandası için Kumanda türü ayarını Amazon Fire TV olarak değiştirin."
     },
     "abort": {
       "already_configured": "Bu uzaktan kumanda zaten yapılandırılmış.",
@@ -65,6 +106,7 @@
           "busy_playback": "Yanıt sırasında yeni basış",
           "context_mode": "Konuşma bağlamı",
           "input_mode": "Düğme davranışı",
+          "remote_type": "Kumanda türü",
           "min_press_seconds": "Kısa basışları yoksay",
           "max_request_seconds": "Maksimum istek uzunluğu",
           "max_conversation_seconds": "Maksimum konuşma uzunluğu",
@@ -80,6 +122,7 @@
           "busy_playback": "Bir yanıt oynatılırken düğmeye basıldığında ne yapılacağı: basışı reddet, sonrasında bir bekleyen isteği yanıtla veya yanıtı durdurup yeni isteği başlat.",
           "context_mode": "Yeniden kullanma, “peki bunun iki katı?” gibi takip soruları çalışsın diye Home Assistant konuşmasını korur. Yeni konuşma, her basışı bağımsız bir konuşma yapar.",
           "input_mode": "Basılı tutma başına tek istek, düğme bırakılana kadar kaydeder. Dönüşümlü konuşma, düğme basılı tutulurken dinlemeye devam eder: konuşun, duraklayın, yanıtı dinleyin, sonra tekrar konuşun. Basılı tutarak konuşma özellikli bir uzaktan kumanda gerektirir.",
+          "remote_type": "Kumanda yanlış türde algılanmadıkça Otomatik olarak bırakın. Değiştirmek kumandayı yeniden bağlar.",
           "min_press_seconds": "Bundan kısa ses düğmesi dokunuşlarını yoksayar; böylece sahte bir dokunuş asla istek başlatmaz; gerçek bir basılı tutma bu kadar geç başlar. 0 bunu kapatır. Uyandıktan hemen sonra “Mikrofon sesi yok” hatasıyla başarısız olan Fire TV uzaktan kumandası için yararlıdır: onu uyandıran tuşu anlık bir dokunuş olarak yeniden gönderir. 0,1 s iyi bir başlangıç noktasıdır. Yalnızca Fire TV uzaktan kumandaları için.",
           "max_request_seconds": "Herhangi bir uzaktan kumandada tek bir isteğin sürebileceği en uzun süre: Tek istek modunda basılı tutmanın tamamı ve Dönüşümlü konuşmada her tur. Buna ulaşmak, isteği yakalama sınırı hatasıyla sonlandırır. Takılı kalmış bir düğmenin kaydını durdurmak için düşürün; uzun dikte için artırın. Basılı tutarak konuşma özelliği olmayan uzaktan kumandalar ayrıca yaklaşık 15 saniyelik konuşmada veya sessizlikte, hangisi önce gerçekleşirse, sonlanır.",
           "max_conversation_seconds": "Dönüşümlü konuşma modunda tüm bir düğme basılı tutmanın sürebileceği en uzun süre. Tek istek modunda yoksayılır ve maksimum istek uzunluğundan kısa olmamalıdır.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Basılı tutma başına tek istek",
         "conversation": "Basılıyken konuşma (dönüşümlü)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Otomatik (önerilir)",
+        "atvv": "Android TV / Google TV kumandası (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV / Alexa sesli kumanda (konuşmak için basılı tutun)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Uzaktan kumandanın giriş cihazı Home Assistant tarafından kullanılamıyor.",
           "hidraw_permission_denied": "Home Assistant'ın uzaktan kumandanın giriş cihazını okumasına izin verilmiyor.",
           "opus_decoder_unavailable": "Home Assistant için Opus ses kod çözücüsü yok.",
+          "fire_voice_unsupported": "Bu Fire TV kumandası kullanılabilir ses verisi bildirmiyor.",
           "invalid_opus_packet": "Uzaktan kumanda, kodu çözülemeyen bir ses gönderdi.",
           "other": "Başka bir hata oluştu. Ayrıntıları hata kodu verir."
         },

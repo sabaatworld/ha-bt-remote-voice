@@ -26,12 +26,51 @@
         "title": "Veldu Assist-ferli",
         "description": "Vektu fjarstýringuna með örvartakka áður en þú sendir. Samþættingin byrjar í hamnum aðeins umritun; breyttu því í valkostunum þegar það virkar.",
         "data": {
-          "pipeline_id": "Assist-ferli"
+          "pipeline_id": "Assist-ferli",
+          "remote_type": "Gerð fjarstýringar",
+          "show_report": "Sýna skýrslu fjarstýringar",
+          "test_remote": "Prófa fjarstýringuna mína"
         },
         "data_description": {
-          "pipeline_id": "Assist-ferlið sem vinnur úr tali frá þessari fjarstýringu."
+          "pipeline_id": "Assist-ferlið sem vinnur úr tali frá þessari fjarstýringu.",
+          "remote_type": "Hafðu á Sjálfvirkt nema fjarstýringin þekkist ekki eða uppsetning mistekst.",
+          "show_report": "Hakaðu við og sendu til að sjá skýrslu sem þú getur afritað í GitHub-vandamál.",
+          "test_remote": "Hakaðu við og sendu, haltu síðan raddhnappi fjarstýringarinnar inni til að sjá hvað hún gerir."
         }
+      },
+      "report": {
+        "title": "Skýrsla fjarstýringar",
+        "description": "Afritaðu þennan texta í GitHub-vandamál. Hann inniheldur ekki fullt Bluetooth-vistfang, nöfn, vefslóðir eða hljóð. Breytingar hér eru hunsaðar; Senda fer aftur í uppsetninguna.",
+        "data": {
+          "report": "Skýrsla fjarstýringar"
+        },
+        "data_description": {
+          "report": "Veldu allt og afritaðu."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Niðurstaða prófs á fjarstýringu",
+        "description": "Þessi fjarstýring ræsir rödd sjálf meðan hnappinum er haldið inni. Haltu hnappinum inni til að tala. Senda til að halda uppsetningu áfram."
+      },
+      "test_result_atvv_tap": {
+        "title": "Niðurstaða prófs á fjarstýringu",
+        "description": "Þessi fjarstýring ræsir rödd þegar ýtt er stutt á hnappinn og hlustar þar til þú hættir að tala. Ýttu stutt á hnappinn til að tala. Senda til að halda uppsetningu áfram."
+      },
+      "test_result_fire_voice": {
+        "title": "Niðurstaða prófs á fjarstýringu",
+        "description": "Þetta er raddtakki Fire TV fjarstýringar. Haltu honum inni meðan þú talar. Senda til að halda uppsetningu áfram."
+      },
+      "test_result_plain_key": {
+        "title": "Niðurstaða prófs á fjarstýringu",
+        "description": "Fjarstýringin sendi venjulega takka en ekkert raddmerki, svo raddhnappur hennar ræsir kannski ekki rödd yfir Bluetooth. Sendu og hakaðu síðan við Sýna skýrslu fjarstýringar til að deila því sem sást."
+      },
+      "test_result_nothing": {
+        "title": "Niðurstaða prófs á fjarstýringu",
+        "description": "Ekkert barst frá fjarstýringunni. Vektu hana með örvatakka, athugaðu að hún sé tengd þessari Home Assistant tölvu og prófaðu aftur. Senda til að halda áfram."
       }
+    },
+    "progress": {
+      "observing": "Hlustar í 20 sekúndur. Vektu fjarstýringuna með örvatakka, haltu síðan raddhnappi hennar inni, talaðu stuttlega og slepptu."
     },
     "error": {
       "bluetooth_unavailable": "Staðbundið Bluetooth er ekki tiltækt. Athugaðu hvort D-Bus kerfisins sé aðgengilegt.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Veldu Assist-ferli sem er til.",
       "hidraw_unavailable": "Inntakstæki fjarstýringarinnar er ekki tiltækt fyrir Home Assistant. Vektu fjarstýringuna og athugaðu hvort Home Assistant sjái /dev/hidraw tæki.",
       "hidraw_permission_denied": "Home Assistant hefur ekki leyfi til að lesa inntakstæki fjarstýringarinnar. Sjáðu README fyrir þann tækjaaðgang sem þessi fjarstýring þarfnast.",
-      "opus_decoder_unavailable": "Enginn Opus hljóðafkóðari er tiltækur fyrir Home Assistant, sem þessi fjarstýring þarfnast."
+      "opus_decoder_unavailable": "Enginn Opus hljóðafkóðari er tiltækur fyrir Home Assistant, sem þessi fjarstýring þarfnast.",
+      "fire_voice_unsupported": "Þessi Fire TV fjarstýring tilkynnir ekki raddgögn sem þessi samþætting getur notað. Hakaðu við Sýna skýrslu fjarstýringar og deildu henni í GitHub-vandamáli.",
+      "voice_service_unavailable": "Fjarstýringin býður ekki upp á raddþjónustu Android TV. Fyrir Fire TV fjarstýringu skaltu stilla Gerð fjarstýringar á Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Þessi fjarstýring hefur þegar verið stillt.",
@@ -65,6 +106,7 @@
           "busy_playback": "Ný ýting meðan svar er spilað",
           "context_mode": "Samhengi samtals",
           "input_mode": "Hegðun takka",
+          "remote_type": "Gerð fjarstýringar",
           "min_press_seconds": "Hunsa stuttar ýtingar",
           "max_request_seconds": "Hámarkslengd beiðni",
           "max_conversation_seconds": "Hámarkslengd samtals",
@@ -80,6 +122,7 @@
           "busy_playback": "Hvað á að gera þegar ýtt er á takkann meðan svar er spilað: hafna ýtingunni, svara einni biðbeiðni á eftir eða stöðva svarið og hefja nýju beiðnina.",
           "context_mode": "Endurnýta heldur Home Assistant samtalinu svo framhaldsspurningar eins og „og tvöfalt það?“ virki. Nýtt gerir hverja ýtingu að sjálfstæðu samtali.",
           "input_mode": "Ein beiðni á hverja haldningu tekur upp þar til takkinn er sleppt. Víxlsamtal heldur áfram að hlusta meðan takkanum er haldið niðri: talaðu, gerðu hlé, heyrðu svarið og talaðu aftur. Krefst fjarstýringar með halda-til-að-tala.",
+          "remote_type": "Hafðu á Sjálfvirkt nema fjarstýringin hafi greinst sem röng gerð. Breyting tengir fjarstýringuna aftur.",
           "min_press_seconds": "Hunsar snertingar á raddtakkanum sem eru styttri en þetta, svo óviljandi snerting hefji aldrei beiðni; raunveruleg haldning byrjar svo miklu síðar. 0 slekkur á þessu. Gagnlegt fyrir Fire TV fjarstýringu sem bilar með „Ekkert hljóð frá hljóðnema“ strax eftir að hún er vakin: hún sendir aftur takkann sem vakti hana sem augnabliks snertingu. 0,1 s er góður upphafspunktur. Aðeins fyrir Fire TV fjarstýringar.",
           "max_request_seconds": "Lengsti tími sem ein beiðni getur varað á hvaða fjarstýringu sem er: heil haldning í hamnum Ein beiðni og hver umferð í víxlsamtali. Þegar því er náð lýkur beiðninni með villu um upptökumörk. Lækkaðu það til að stöðva upptöku þegar takki festist; hækkaðu það fyrir langa upptöku. Fjarstýringar án halda-til-að-tala ljúka einnig eftir um 15 sekúndna tal eða við þögn, hvort sem gerist fyrr.",
           "max_conversation_seconds": "Lengsti tími sem heil takkahaldning getur varað í víxlsamtalshamnum. Er hunsað í hamnum Ein beiðni og má ekki vera styttra en hámarkslengd beiðni.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Ein beiðni á hverja haldningu",
         "conversation": "Samtal meðan haldið er (víxl)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Sjálfvirkt (mælt með)",
+        "atvv": "Android TV / Google TV fjarstýring (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV / Alexa raddfjarstýring (haltu inni til að tala)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Inntakstæki fjarstýringarinnar er ekki tiltækt fyrir Home Assistant.",
           "hidraw_permission_denied": "Home Assistant hefur ekki leyfi til að lesa inntakstæki fjarstýringarinnar.",
           "opus_decoder_unavailable": "Enginn Opus hljóðafkóðari er tiltækur fyrir Home Assistant.",
+          "fire_voice_unsupported": "Þessi Fire TV fjarstýring tilkynnir ekki nothæf raddgögn.",
           "invalid_opus_packet": "Fjarstýringin sendi hljóð sem ekki var hægt að afkóða.",
           "other": "Önnur villa kom upp. Villukóðinn gefur nánari upplýsingar."
         },

@@ -26,12 +26,51 @@
         "title": "Sélectionner le pipeline Assist",
         "description": "Réveillez la télécommande avec une touche fléchée avant de valider. L’intégration démarre en mode transcription seule ; modifiez-le dans les options une fois que tout fonctionne.",
         "data": {
-          "pipeline_id": "Pipeline Assist"
+          "pipeline_id": "Pipeline Assist",
+          "remote_type": "Type de télécommande",
+          "show_report": "Afficher le rapport de la télécommande",
+          "test_remote": "Tester ma télécommande"
         },
         "data_description": {
-          "pipeline_id": "Le pipeline Assist qui traite la voix de cette télécommande."
+          "pipeline_id": "Le pipeline Assist qui traite la voix de cette télécommande.",
+          "remote_type": "Laissez sur Automatique, sauf si la télécommande n’est pas reconnue ou si la configuration échoue.",
+          "show_report": "Cochez et validez pour afficher un rapport que vous pouvez copier dans un ticket GitHub.",
+          "test_remote": "Cochez et validez, puis maintenez le bouton vocal de la télécommande pour voir ce qu’elle fait."
         }
+      },
+      "report": {
+        "title": "Rapport de la télécommande",
+        "description": "Copiez ce texte dans un ticket GitHub. Il ne contient aucune adresse Bluetooth complète, aucun nom, aucune adresse web ni aucun son. Les modifications faites ici sont ignorées ; Valider revient à la configuration.",
+        "data": {
+          "report": "Rapport de la télécommande"
+        },
+        "data_description": {
+          "report": "Tout sélectionner et copier."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Résultat du test de la télécommande",
+        "description": "Cette télécommande démarre la voix d’elle-même tant que son bouton est maintenu. Maintenez ce bouton pour parler. Validez pour continuer la configuration."
+      },
+      "test_result_atvv_tap": {
+        "title": "Résultat du test de la télécommande",
+        "description": "Cette télécommande démarre la voix lorsqu’on appuie brièvement sur son bouton et écoute jusqu’à ce que vous cessiez de parler. Appuyez brièvement sur ce bouton pour parler. Validez pour continuer la configuration."
+      },
+      "test_result_fire_voice": {
+        "title": "Résultat du test de la télécommande",
+        "description": "Il s’agit de la touche vocale d’une télécommande Fire TV. Maintenez-la pendant que vous parlez. Validez pour continuer la configuration."
+      },
+      "test_result_plain_key": {
+        "title": "Résultat du test de la télécommande",
+        "description": "La télécommande a envoyé des touches ordinaires mais aucun signal vocal ; son bouton vocal ne démarre peut-être pas la voix par Bluetooth. Validez, puis cochez Afficher le rapport de la télécommande pour partager ce qui a été observé."
+      },
+      "test_result_nothing": {
+        "title": "Résultat du test de la télécommande",
+        "description": "Rien n’a été reçu de la télécommande. Réveillez-la avec une touche fléchée, vérifiez qu’elle est connectée à cette machine Home Assistant et testez à nouveau. Validez pour continuer."
       }
+    },
+    "progress": {
+      "observing": "Écoute pendant 20 secondes. Réveillez la télécommande avec une touche fléchée, puis maintenez son bouton vocal, parlez brièvement et relâchez."
     },
     "error": {
       "bluetooth_unavailable": "Le Bluetooth local n’est pas disponible. Vérifiez que le D-Bus du système est accessible.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Choisissez un pipeline Assist existant.",
       "hidraw_unavailable": "Le périphérique d’entrée de la télécommande n’est pas disponible pour Home Assistant. Réveillez la télécommande et vérifiez que Home Assistant peut voir les périphériques /dev/hidraw.",
       "hidraw_permission_denied": "Home Assistant n’est pas autorisé à lire le périphérique d’entrée de la télécommande. Consultez le README pour connaître l’accès au périphérique dont cette télécommande a besoin.",
-      "opus_decoder_unavailable": "Aucun décodeur audio Opus n’est disponible pour Home Assistant, alors que cette télécommande en a besoin."
+      "opus_decoder_unavailable": "Aucun décodeur audio Opus n’est disponible pour Home Assistant, alors que cette télécommande en a besoin.",
+      "fire_voice_unsupported": "Cette télécommande Fire TV ne signale pas de données vocales que cette intégration peut utiliser. Cochez Afficher le rapport de la télécommande et partagez-le dans un ticket GitHub.",
+      "voice_service_unavailable": "La télécommande n’offre pas le service vocal d’Android TV. Pour une télécommande Fire TV, réglez le Type de télécommande sur Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Cette télécommande est déjà configurée.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nouvel appui pendant la réponse",
           "context_mode": "Contexte de conversation",
           "input_mode": "Comportement du bouton",
+          "remote_type": "Type de télécommande",
           "min_press_seconds": "Ignorer les appuis courts",
           "max_request_seconds": "Durée maximale d’une requête",
           "max_conversation_seconds": "Durée maximale d’une conversation",
@@ -80,6 +122,7 @@
           "busy_playback": "Que faire lorsque le bouton est pressé pendant la lecture d’une réponse : rejeter l’appui, répondre ensuite à une requête en attente, ou arrêter la réponse et démarrer la nouvelle requête.",
           "context_mode": "Réutiliser conserve la conversation Home Assistant afin que les questions de suivi comme « et le double ? » fonctionnent. Nouvelle fait de chaque appui une conversation indépendante.",
           "input_mode": "Une requête par appui maintenu enregistre jusqu’au relâchement du bouton. La conversation alternée continue d’écouter tant que le bouton est maintenu : parlez, faites une pause, écoutez la réponse, puis parlez à nouveau. Elle nécessite une télécommande à maintien pour parler.",
+          "remote_type": "Laissez sur Automatique, sauf si la télécommande a été détectée avec un mauvais type. Le modifier reconnecte la télécommande.",
           "min_press_seconds": "Ignore les appuis brefs sur le bouton vocal plus courts que cette durée, afin qu’un appui parasite ne lance jamais de requête ; un vrai appui maintenu démarre d’autant plus tard. 0 désactive la fonction. Utile pour une télécommande Fire TV qui échoue avec « Aucun audio du microphone n’a été reçu. » juste après le réveil : elle renvoie la touche qui l’a réveillée comme un appui instantané. 0,1 s est un bon point de départ. Télécommandes Fire TV uniquement.",
           "max_request_seconds": "La durée maximale d’une requête sur n’importe quelle télécommande : un appui maintenu entier en mode Une requête, et chaque tour en conversation alternée. Une fois atteinte, la requête se termine par une erreur de limite de capture. Réduisez-la pour arrêter l’enregistrement d’un bouton bloqué ; augmentez-la pour une longue dictée. Les télécommandes sans maintien pour parler s’arrêtent aussi après environ 15 secondes de parole ou au silence, selon ce qui survient en premier.",
           "max_conversation_seconds": "La durée maximale d’un appui maintenu entier en mode de conversation alternée. Elle est ignorée en mode Une requête et ne doit pas être inférieure à la durée maximale d’une requête.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Une requête par appui maintenu",
         "conversation": "Conversation pendant l’appui maintenu (alternée)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatique (recommandé)",
+        "atvv": "Télécommande Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Télécommande vocale Amazon Fire TV / Alexa (maintenir pour parler)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Le périphérique d’entrée de la télécommande n’est pas disponible pour Home Assistant.",
           "hidraw_permission_denied": "Home Assistant n’est pas autorisé à lire le périphérique d’entrée de la télécommande.",
           "opus_decoder_unavailable": "Aucun décodeur audio Opus n’est disponible pour Home Assistant.",
+          "fire_voice_unsupported": "Cette télécommande Fire TV ne signale pas de données vocales exploitables.",
           "invalid_opus_packet": "La télécommande a envoyé un audio qui n’a pas pu être décodé.",
           "other": "Une autre erreur s’est produite. Le code d’erreur donne les détails."
         },

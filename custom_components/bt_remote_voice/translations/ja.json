@@ -26,12 +26,51 @@
         "title": "Assist パイプラインを選択",
         "description": "送信する前に、矢印ボタンを押してリモコンを起動してください。この統合は文字起こしのみのモードで開始します。動作を確認したら、オプションで変更してください。",
         "data": {
-          "pipeline_id": "Assist パイプライン"
+          "pipeline_id": "Assist パイプライン",
+          "remote_type": "リモコンの種類",
+          "show_report": "リモコンレポートを表示",
+          "test_remote": "リモコンをテスト"
         },
         "data_description": {
-          "pipeline_id": "このリモコンからの音声を処理する Assist パイプラインです。"
+          "pipeline_id": "このリモコンからの音声を処理する Assist パイプラインです。",
+          "remote_type": "リモコンが認識されない場合やセットアップに失敗する場合を除き、自動のままにしてください。",
+          "show_report": "チェックを入れて送信すると、GitHub の Issue にコピーできるレポートが表示されます。",
+          "test_remote": "チェックを入れて送信し、リモコンの音声ボタンを押し続けて、リモコンの動作を確認します。"
         }
+      },
+      "report": {
+        "title": "リモコンレポート",
+        "description": "このテキストを GitHub の Issue にコピーしてください。完全な Bluetooth アドレス、名前、Web アドレス、音声は含まれません。ここでの編集は無視されます。送信するとセットアップに戻ります。",
+        "data": {
+          "report": "リモコンレポート"
+        },
+        "data_description": {
+          "report": "すべて選択してコピーします。"
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "リモコンのテスト結果",
+        "description": "このリモコンは、ボタンを押している間、自動で音声を開始します。話すにはそのボタンを押し続けてください。送信してセットアップを続けます。"
+      },
+      "test_result_atvv_tap": {
+        "title": "リモコンのテスト結果",
+        "description": "このリモコンは、ボタンをタップすると音声を開始し、話し終えるまで聞き取ります。話すにはそのボタンをタップしてください。送信してセットアップを続けます。"
+      },
+      "test_result_fire_voice": {
+        "title": "リモコンのテスト結果",
+        "description": "これは Fire TV リモコンの音声キーです。話している間は押し続けてください。送信してセットアップを続けます。"
+      },
+      "test_result_plain_key": {
+        "title": "リモコンのテスト結果",
+        "description": "リモコンは通常のキーを送信しましたが、音声信号は送信しませんでした。音声ボタンは Bluetooth 経由で音声を開始しない可能性があります。送信してから、「リモコンレポートを表示」にチェックを入れて検出内容を共有してください。"
+      },
+      "test_result_nothing": {
+        "title": "リモコンのテスト結果",
+        "description": "リモコンから何も受信されませんでした。矢印キーで起こし、この Home Assistant マシンに接続されていることを確認して、もう一度テストしてください。送信して続けます。"
       }
+    },
+    "progress": {
+      "observing": "20 秒間待機します。矢印キーでリモコンを起こし、音声ボタンを押し続けて、短く話してから離してください。"
     },
     "error": {
       "bluetooth_unavailable": "ローカルの Bluetooth を利用できません。システムの D-Bus にアクセスできることを確認してください。",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "既存の Assist パイプラインを選択してください。",
       "hidraw_unavailable": "リモコンの入力デバイスを Home Assistant が利用できません。リモコンを起動し、Home Assistant から /dev/hidraw デバイスが見えることを確認してください。",
       "hidraw_permission_denied": "Home Assistant にリモコンの入力デバイスを読み取る権限がありません。このリモコンに必要なデバイスへのアクセスについては README を参照してください。",
-      "opus_decoder_unavailable": "このリモコンに必要な Opus オーディオデコーダーを Home Assistant が利用できません。"
+      "opus_decoder_unavailable": "このリモコンに必要な Opus オーディオデコーダーを Home Assistant が利用できません。",
+      "fire_voice_unsupported": "この Fire TV リモコンは、この統合が使用できる音声データを報告しません。「リモコンレポートを表示」にチェックを入れ、GitHub の Issue で共有してください。",
+      "voice_service_unavailable": "このリモコンは Android TV の音声サービスを提供していません。Fire TV リモコンの場合は、「リモコンの種類」を Amazon Fire TV に設定してください。"
     },
     "abort": {
       "already_configured": "このリモコンは既に設定されています。",
@@ -65,6 +106,7 @@
           "busy_playback": "返答中の新たな押下",
           "context_mode": "会話のコンテキスト",
           "input_mode": "ボタンの動作",
+          "remote_type": "リモコンの種類",
           "min_press_seconds": "短い押下を無視",
           "max_request_seconds": "リクエストの最大長",
           "max_conversation_seconds": "会話の最大長",
@@ -80,6 +122,7 @@
           "busy_playback": "返答の再生中にボタンが押されたときの動作です。押下を拒否する、保留リクエストを 1 件その後で回答する、返答を停止して新しいリクエストを開始する、から選べます。",
           "context_mode": "再利用は Home Assistant の会話を維持するため、「その 2 倍は?」のような追加の質問が使えます。新規は、押下のたびに独立した会話にします。",
           "input_mode": "1 回の長押しにつき 1 リクエストは、ボタンを離すまで録音します。交互の会話は、ボタンを押している間は聞き続けます。話す、間を置く、返答を聞く、再び話す、の繰り返しです。長押しで話すタイプのリモコンが必要です。",
+          "remote_type": "リモコンが誤った種類として検出された場合を除き、自動のままにしてください。変更するとリモコンが再接続されます。",
           "min_press_seconds": "この秒数より短い音声ボタンのタップを無視し、誤ったタップでリクエストが始まらないようにします。実際の長押しは、この分だけ遅れて開始されます。0 で無効になります。起動直後に「マイク音声なし」で失敗する Fire TV リモコンに便利です。起動に使ったキーを瞬間的なタップとして再送するためです。0.1 s から始めるのが適切です。Fire TV リモコンのみが対象です。",
           "max_request_seconds": "どのリモコンでも 1 回のリクエストが続けられる最長時間です。1 リクエストモードでは長押し全体、交互の会話では各ターンが対象です。この時間に達すると、キャプチャー上限エラーでリクエストが終了します。ボタンが押されたままのときの録音を止めるには下げ、長い口述には上げてください。長押しで話すタイプではないリモコンは、音声が約 15 秒続くか無音になった時点のいずれか早い方でも終了します。",
           "max_conversation_seconds": "交互の会話モードで、ボタンを押し続けられる最長時間です。1 リクエストモードでは無視され、リクエストの最大長より短くすることはできません。",
@@ -151,6 +194,13 @@
       "options": {
         "single": "1 回の長押しにつき 1 リクエスト",
         "conversation": "長押し中の会話(交互)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "自動（推奨）",
+        "atvv": "Android TV / Google TV リモコン (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV / Alexa 音声リモコン（押し続けて話す）"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "リモコンの入力デバイスを Home Assistant が利用できません。",
           "hidraw_permission_denied": "Home Assistant にリモコンの入力デバイスを読み取る権限がありません。",
           "opus_decoder_unavailable": "Home Assistant が利用できる Opus オーディオデコーダーがありません。",
+          "fire_voice_unsupported": "この Fire TV リモコンは、使用可能な音声データを報告しません。",
           "invalid_opus_packet": "リモコンがデコードできない音声を送信しました。",
           "other": "別のエラーが発生しました。詳細はエラーコードを確認してください。"
         },

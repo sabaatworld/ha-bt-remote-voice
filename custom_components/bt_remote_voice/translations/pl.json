@@ -26,12 +26,51 @@
         "title": "Wybierz potok Assist",
         "description": "Przed zatwierdzeniem wybudź pilota przyciskiem strzałki. Integracja uruchamia się w trybie samej transkrypcji; zmień to w opcjach, gdy wszystko zadziała.",
         "data": {
-          "pipeline_id": "Potok Assist"
+          "pipeline_id": "Potok Assist",
+          "remote_type": "Typ pilota",
+          "show_report": "Pokaż raport pilota",
+          "test_remote": "Przetestuj mojego pilota"
         },
         "data_description": {
-          "pipeline_id": "Potok Assist, który przetwarza mowę z tego pilota."
+          "pipeline_id": "Potok Assist, który przetwarza mowę z tego pilota.",
+          "remote_type": "Zostaw Automatycznie, chyba że pilot nie jest rozpoznawany lub konfiguracja się nie powiedzie.",
+          "show_report": "Zaznacz i wyślij, aby zobaczyć raport, który możesz skopiować do zgłoszenia na GitHubie.",
+          "test_remote": "Zaznacz i wyślij, a następnie naciśnij i przytrzymaj przycisk głosowy pilota, aby zobaczyć, co robi."
         }
+      },
+      "report": {
+        "title": "Raport pilota",
+        "description": "Skopiuj ten tekst do zgłoszenia na GitHubie. Nie zawiera pełnego adresu Bluetooth, nazw, adresów internetowych ani dźwięku. Zmiany tutaj są ignorowane; Wyślij wraca do konfiguracji.",
+        "data": {
+          "report": "Raport pilota"
+        },
+        "data_description": {
+          "report": "Zaznacz wszystko i skopiuj."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Wynik testu pilota",
+        "description": "Ten pilot sam uruchamia głos, gdy jego przycisk jest przytrzymany. Przytrzymaj ten przycisk, aby mówić. Wyślij, aby kontynuować konfigurację."
+      },
+      "test_result_atvv_tap": {
+        "title": "Wynik testu pilota",
+        "description": "Ten pilot uruchamia głos po krótkim naciśnięciu przycisku i nasłuchuje, dopóki nie przestaniesz mówić. Naciśnij krótko ten przycisk, aby mówić. Wyślij, aby kontynuować konfigurację."
+      },
+      "test_result_fire_voice": {
+        "title": "Wynik testu pilota",
+        "description": "To klawisz głosowy pilota Fire TV. Przytrzymaj go podczas mówienia. Wyślij, aby kontynuować konfigurację."
+      },
+      "test_result_plain_key": {
+        "title": "Wynik testu pilota",
+        "description": "Pilot wysłał zwykłe klawisze, ale nie sygnał głosowy, więc jego przycisk głosowy może nie uruchamiać głosu przez Bluetooth. Wyślij, a następnie zaznacz Pokaż raport pilota, aby udostępnić zaobserwowane dane."
+      },
+      "test_result_nothing": {
+        "title": "Wynik testu pilota",
+        "description": "Z pilota nic nie otrzymano. Obudź go klawiszem strzałki, sprawdź, czy jest połączony z tym komputerem z Home Assistant, i przetestuj ponownie. Wyślij, aby kontynuować."
       }
+    },
+    "progress": {
+      "observing": "Nasłuchiwanie przez 20 sekund. Obudź pilota klawiszem strzałki, następnie naciśnij i przytrzymaj jego przycisk głosowy, powiedz coś krótko i puść."
     },
     "error": {
       "bluetooth_unavailable": "Lokalny Bluetooth jest niedostępny. Sprawdź, czy systemowa magistrala D-Bus jest dostępna.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Wybierz istniejący potok Assist.",
       "hidraw_unavailable": "Urządzenie wejściowe pilota jest niedostępne dla Home Assistant. Wybudź pilota i sprawdź, czy Home Assistant widzi urządzenia /dev/hidraw.",
       "hidraw_permission_denied": "Home Assistant nie ma uprawnień do odczytu urządzenia wejściowego pilota. Zobacz README, aby sprawdzić, jakiego dostępu do urządzenia wymaga ten pilot.",
-      "opus_decoder_unavailable": "Home Assistant nie ma dostępnego dekodera audio Opus, którego wymaga ten pilot."
+      "opus_decoder_unavailable": "Home Assistant nie ma dostępnego dekodera audio Opus, którego wymaga ten pilot.",
+      "fire_voice_unsupported": "Ten pilot Fire TV nie zgłasza danych głosowych, których ta integracja mogłaby użyć. Zaznacz Pokaż raport pilota i udostępnij go w zgłoszeniu na GitHubie.",
+      "voice_service_unavailable": "Pilot nie oferuje usługi głosowej Android TV. W przypadku pilota Fire TV ustaw Typ pilota na Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Ten pilot jest już skonfigurowany.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nowe naciśnięcie podczas odpowiedzi",
           "context_mode": "Kontekst rozmowy",
           "input_mode": "Działanie przycisku",
+          "remote_type": "Typ pilota",
           "min_press_seconds": "Ignoruj krótkie naciśnięcia",
           "max_request_seconds": "Maksymalna długość żądania",
           "max_conversation_seconds": "Maksymalna długość rozmowy",
@@ -80,6 +122,7 @@
           "busy_playback": "Co zrobić, gdy przycisk zostanie naciśnięty podczas odtwarzania odpowiedzi: odrzucić naciśnięcie, odpowiedzieć potem na jedno oczekujące żądanie lub zatrzymać odpowiedź i rozpocząć nowe żądanie.",
           "context_mode": "Ponowne użycie zachowuje rozmowę w Home Assistant, dzięki czemu działają pytania uzupełniające, takie jak „a dwa razy tyle?”. Nowa rozmowa sprawia, że każde naciśnięcie jest niezależną rozmową.",
           "input_mode": "Jedno żądanie na przytrzymanie nagrywa do zwolnienia przycisku. Rozmowa naprzemienna słucha, dopóki przycisk jest przytrzymany: mówisz, robisz pauzę, słyszysz odpowiedź, a potem mówisz ponownie. Wymaga pilota z funkcją „przytrzymaj, aby mówić”.",
+          "remote_type": "Zostaw Automatycznie, chyba że pilot został wykryty jako zły typ. Zmiana ponownie łączy pilota.",
           "min_press_seconds": "Ignoruje krótkie dotknięcia przycisku głosowego, trwające krócej niż ta wartość, aby przypadkowe dotknięcie nie rozpoczynało żądania; prawdziwe przytrzymanie zaczyna się o tyle później. 0 wyłącza tę funkcję. Przydatne w pilocie Fire TV, który po wybudzeniu kończy się błędem „Brak dźwięku z mikrofonu”: ponownie wysyła klawisz, który go wybudził, jako natychmiastowe dotknięcie. Dobrym punktem wyjścia jest 0,1 s. Tylko piloty Fire TV.",
           "max_request_seconds": "Najdłuższy czas pojedynczego żądania na dowolnym pilocie: całe przytrzymanie w trybie jednego żądania oraz każda tura w rozmowie naprzemiennej. Osiągnięcie limitu kończy żądanie błędem limitu nagrywania. Zmniejsz, aby zatrzymać nagrywanie zablokowanego przycisku; zwiększ przy długim dyktowaniu. Piloty bez funkcji „przytrzymaj, aby mówić” kończą też po około 15 sekundach mowy lub po ciszy, zależnie od tego, co nastąpi pierwsze.",
           "max_conversation_seconds": "Najdłuższy czas całego przytrzymania przycisku w trybie rozmowy naprzemiennej. Jest ignorowany w trybie jednego żądania i nie może być krótszy niż maksymalna długość żądania.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Jedno żądanie na przytrzymanie",
         "conversation": "Rozmowa podczas przytrzymania (naprzemienna)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatycznie (zalecane)",
+        "atvv": "Pilot Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Pilot głosowy Amazon Fire TV / Alexa (przytrzymaj, aby mówić)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Urządzenie wejściowe pilota jest niedostępne dla Home Assistant.",
           "hidraw_permission_denied": "Home Assistant nie ma uprawnień do odczytu urządzenia wejściowego pilota.",
           "opus_decoder_unavailable": "Home Assistant nie ma dostępnego dekodera audio Opus.",
+          "fire_voice_unsupported": "Ten pilot Fire TV nie zgłasza użytecznych danych głosowych.",
           "invalid_opus_packet": "Pilot wysłał dźwięk, którego nie udało się zdekodować.",
           "other": "Wystąpił inny błąd. Szczegóły podaje kod błędu."
         },

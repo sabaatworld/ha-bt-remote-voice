@@ -26,12 +26,51 @@
         "title": "Hautatu Assist kanalizazioa",
         "description": "Esnatu urrutiko agintea gezi-botoi batekin bidali aurretik. Integrazioa transkripzio soileko moduan hasten da; aldatu hau aukeretan funtzionatzen duenean.",
         "data": {
-          "pipeline_id": "Assist kanalizazioa"
+          "pipeline_id": "Assist kanalizazioa",
+          "remote_type": "Urruneko agintearen mota",
+          "show_report": "Erakutsi urruneko aginteko txostena",
+          "test_remote": "Probatu nire urruneko agintea"
         },
         "data_description": {
-          "pipeline_id": "Urrutiko aginte honen hizketa prozesatzen duen Assist kanalizazioa."
+          "pipeline_id": "Urrutiko aginte honen hizketa prozesatzen duen Assist kanalizazioa.",
+          "remote_type": "Utzi Automatikoa, urruneko agintea ezagutzen ez bada edo konfigurazioak huts egiten badu izan ezik.",
+          "show_report": "Markatu eta bidali GitHub-eko arazo batean kopia dezakezun txosten bat ikusteko.",
+          "test_remote": "Markatu eta bidali, gero sakatu eta eutsi urruneko agintearen ahots-botoiari zer egiten duen ikusteko."
         }
+      },
+      "report": {
+        "title": "Urruneko agintearen txostena",
+        "description": "Kopiatu testu hau GitHub-eko arazo batean. Ez dauka Bluetooth helbide osorik, izenik, web-helbiderik edo audiorik. Hemengo aldaketak ez dira kontuan hartzen; Bidali botoiak konfiguraziora itzultzen zaitu.",
+        "data": {
+          "report": "Urruneko agintearen txostena"
+        },
+        "data_description": {
+          "report": "Hautatu dena eta kopiatu."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Urruneko agintearen probaren emaitza",
+        "description": "Urruneko aginte honek berak abiarazten du ahotsa botoiari eusten zaion bitartean. Eutsi botoi horri hitz egiteko. Bidali konfigurazioarekin jarraitzeko."
+      },
+      "test_result_atvv_tap": {
+        "title": "Urruneko agintearen probaren emaitza",
+        "description": "Urruneko aginte honek ahotsa abiarazten du botoia ukitzean eta hitz egiteari uzten diozun arte entzuten du. Ukitu botoi hori hitz egiteko. Bidali konfigurazioarekin jarraitzeko."
+      },
+      "test_result_fire_voice": {
+        "title": "Urruneko agintearen probaren emaitza",
+        "description": "Hau Fire TV urruneko aginte baten ahots-tekla da. Eutsi hitz egiten duzun bitartean. Bidali konfigurazioarekin jarraitzeko."
+      },
+      "test_result_plain_key": {
+        "title": "Urruneko agintearen probaren emaitza",
+        "description": "Urruneko aginteak tekla arruntak bidali ditu baina ez ahots-seinalerik, beraz bere ahots-botoiak agian ez du ahotsa abiarazten Bluetooth bidez. Bidali, gero markatu Erakutsi urruneko aginteko txostena ikusitakoa partekatzeko."
+      },
+      "test_result_nothing": {
+        "title": "Urruneko agintearen probaren emaitza",
+        "description": "Ez da ezer jaso urruneko agintetik. Esnatu gezi-tekla batekin, egiaztatu Home Assistant makina honetara konektatuta dagoela eta probatu berriro. Bidali jarraitzeko."
       }
+    },
+    "progress": {
+      "observing": "20 segundoz entzuten. Esnatu urruneko agintea gezi-tekla batekin, gero sakatu eta eutsi bere ahots-botoiari, hitz egin laburki eta askatu."
     },
     "error": {
       "bluetooth_unavailable": "Bluetooth lokala ez dago erabilgarri. Egiaztatu sistemako D-Bus eskuragarri dagoela.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Hautatu lehendik dagoen Assist kanalizazio bat.",
       "hidraw_unavailable": "Urrutiko agintearen sarrera-gailua ez dago Home Assistant-entzat erabilgarri. Esnatu urrutiko agintea eta egiaztatu Home Assistant-ek /dev/hidraw gailuak ikus ditzakeela.",
       "hidraw_permission_denied": "Home Assistant-ek ez du urrutiko agintearen sarrera-gailua irakurtzeko baimenik. Ikusi README urrutiko aginte honek behar duen gailu-sarbiderako.",
-      "opus_decoder_unavailable": "Home Assistant-entzat ez dago Opus audio-deskodetzailerik erabilgarri, eta urrutiko aginte honek hura behar du."
+      "opus_decoder_unavailable": "Home Assistant-entzat ez dago Opus audio-deskodetzailerik erabilgarri, eta urrutiko aginte honek hura behar du.",
+      "fire_voice_unsupported": "Fire TV urruneko aginte honek ez du integrazio honek erabil ditzakeen ahots-daturik jakinarazten. Markatu Erakutsi urruneko aginteko txostena eta partekatu GitHub-eko arazo batean.",
+      "voice_service_unavailable": "Urruneko aginteak ez du Android TV ahots-zerbitzurik eskaintzen. Fire TV urruneko aginterako, ezarri Urruneko agintearen mota Amazon Fire TV gisa."
     },
     "abort": {
       "already_configured": "Urrutiko aginte hau jada konfiguratuta dago.",
@@ -65,6 +106,7 @@
           "busy_playback": "Sakatze berria erantzunean",
           "context_mode": "Elkarrizketaren testuingurua",
           "input_mode": "Botoiaren portaera",
+          "remote_type": "Urruneko agintearen mota",
           "min_press_seconds": "Ez ikusi sakatze laburrak",
           "max_request_seconds": "Eskaeraren gehienezko iraupena",
           "max_conversation_seconds": "Elkarrizketaren gehienezko iraupena",
@@ -80,6 +122,7 @@
           "busy_playback": "Zer egin botoia sakatzen denean erantzun bat erreproduzitzen ari den bitartean: sakatzea baztertu, ondoren zain dagoen eskaera bati erantzun edo erantzuna gelditu eta eskaera berria hasi.",
           "context_mode": "Berrerabiltzeak Home Assistant-en elkarrizketa mantentzen du, “eta bikoitza?” bezalako jarraipen-galderek funtziona dezaten. Elkarrizketa berriak sakatze bakoitza elkarrizketa independente bihurtzen du.",
           "input_mode": "Eskaera bat sakatze-aldi bakoitzeko botoia askatu arte grabatzen du. Txandakatutako elkarrizketak entzuten jarraitzen du botoia sakatuta dagoen bitartean: hitz egin, pausatu, erantzuna entzun eta berriro hitz egin. Sakatuta hitz egiteko urrutiko agintea behar du.",
+          "remote_type": "Utzi Automatikoa, urruneko agintea mota okerrekoa bezala detektatu bada izan ezik. Aldatzean, urruneko agintea berriro konektatzen da.",
           "min_press_seconds": "Hau baino laburragoak diren ahots-botoiaren ukituak ez ditu kontuan hartzen, ukitu faltsu batek inoiz eskaerarik ez hasteko; benetako sakatze luze batek hainbeste beranduago hasten da. 0 balioak desaktibatzen du. Esnatu ondoren berehala “Mikrofonoaren audiorik ez” errorearekin huts egiten duen Fire TV urrutiko agintearentzat erabilgarria: esnatu zuen tekla berriro bidaltzen du berehalako ukitu gisa. 0,1 s abiapuntu ona da. Fire TV urrutiko aginteentzat soilik.",
           "max_request_seconds": "Eskaera bakar batek urrutiko aginte edozeinetan iraun dezakeen denbora luzeena: sakatze osoa Eskaera bakarra moduan, eta txanda bakoitza Txandakatutako elkarrizketan. Hori lortzean eskaera grabazio-mugaren errorearekin amaitzen da. Murriztu trabatutako botoi baten grabazioa gelditzeko; handitu diktatu luzeetarako. Sakatuta hitz egiteko ez diren urrutiko aginteak ere 15 segundo inguruko hizketaren edo isiltasunaren ondoren amaitzen dira, lehenengoa gertatzen dena.",
           "max_conversation_seconds": "Botoi-sakatze oso batek Txandakatutako elkarrizketa moduan iraun dezakeen denbora luzeena. Ez da kontuan hartzen Eskaera bakarra moduan, eta ezin da eskaeraren gehienezko iraupena baino laburragoa izan.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Eskaera bat sakatze-aldi bakoitzeko",
         "conversation": "Elkarrizketa sakatuta dagoen bitartean (txandakatua)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatikoa (gomendatua)",
+        "atvv": "Android TV / Google TV urruneko agintea (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV / Alexa ahots-urruneko agintea (eutsi hitz egiteko)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Urrutiko agintearen sarrera-gailua ez dago Home Assistant-entzat erabilgarri.",
           "hidraw_permission_denied": "Home Assistant-ek ez du urrutiko agintearen sarrera-gailua irakurtzeko baimenik.",
           "opus_decoder_unavailable": "Home Assistant-entzat ez dago Opus audio-deskodetzailerik erabilgarri.",
+          "fire_voice_unsupported": "Fire TV urruneko aginte honek ez du erabilgarri dagoen ahots-daturik jakinarazten.",
           "invalid_opus_packet": "Urrutiko aginteak deskodetu ezin izan den audioa bidali du.",
           "other": "Beste errore bat gertatu da. Errore-kodeak xehetasunak ematen ditu."
         },

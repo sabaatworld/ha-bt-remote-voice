@@ -1,0 +1,34 @@
+name: Remote not recognised or new remote
+description: A remote is rejected during setup, or you want support for a remote that has not been tested.
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping. The **remote report** tells us how Home Assistant sees your remote.
+        It contains no full Bluetooth address (only the public manufacturer prefix), no names,
+        URLs or recorded audio. You can read it before you paste it.
+
+        **How to get it:** in the setup screen tick **Show remote report** and submit, then copy the
+        text. If setup cannot open, run the read-only commands in the README section
+        "My remote is not recognised" on the Home Assistant host shell and paste their output instead.
+  - type: input
+    id: remote
+    attributes:
+      label: Remote (brand and model, as printed on it)
+      placeholder: Alexa Voice Remote 3rd gen, model L5B83G
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: Remote report
+      description: Paste the full report here.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What happened and what you tried
+      description: The error shown, whether you changed Remote type, and anything else useful.

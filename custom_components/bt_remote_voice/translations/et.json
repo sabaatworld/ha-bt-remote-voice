@@ -26,12 +26,51 @@
         "title": "Valige Assisti torujuhe",
         "description": "Äratage kaugjuhtimispult enne esitamist nooleklahviga. Integratsioon alustab ainult transkriptsiooni režiimis; muutke seda suvandites, kui see töötab.",
         "data": {
-          "pipeline_id": "Assisti torujuhe"
+          "pipeline_id": "Assisti torujuhe",
+          "remote_type": "Puldi tüüp",
+          "show_report": "Kuva puldi aruanne",
+          "test_remote": "Testi minu pulti"
         },
         "data_description": {
-          "pipeline_id": "Assisti torujuhe, mis töötleb selle kaugjuhtimispuldi kõnet."
+          "pipeline_id": "Assisti torujuhe, mis töötleb selle kaugjuhtimispuldi kõnet.",
+          "remote_type": "Jätke Automaatne, kui pulti ei tuvastata või seadistamine ebaõnnestub.",
+          "show_report": "Märkige ja saatke, et näha aruannet, mille saate kopeerida GitHubi probleemi.",
+          "test_remote": "Märkige ja saatke, seejärel vajutage ja hoidke puldi häälenuppu, et näha, mida pult teeb."
         }
+      },
+      "report": {
+        "title": "Puldi aruanne",
+        "description": "Kopeerige see tekst GitHubi probleemi. See ei sisalda täielikku Bluetoothi aadressi, nimesid, veebiaadresse ega heli. Siinseid muudatusi eiratakse; Saada viib tagasi seadistuse juurde.",
+        "data": {
+          "report": "Puldi aruanne"
+        },
+        "data_description": {
+          "report": "Valige kõik ja kopeerige."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Puldi testi tulemus",
+        "description": "See pult käivitab hääle ise, kuni selle nuppu hoitakse all. Rääkimiseks hoidke seda nuppu all. Saada, et seadistust jätkata."
+      },
+      "test_result_atvv_tap": {
+        "title": "Puldi testi tulemus",
+        "description": "See pult käivitab hääle nupu puudutamisel ja kuulab, kuni te lõpetate rääkimise. Rääkimiseks puudutage seda nuppu. Saada, et seadistust jätkata."
+      },
+      "test_result_fire_voice": {
+        "title": "Puldi testi tulemus",
+        "description": "See on Fire TV puldi häälenupp. Hoidke seda rääkimise ajal all. Saada, et seadistust jätkata."
+      },
+      "test_result_plain_key": {
+        "title": "Puldi testi tulemus",
+        "description": "Pult saatis tavalisi klahve, kuid mitte hääle signaali, seega selle häälenupp ei pruugi Bluetoothi kaudu häält käivitada. Saatke ja märkige seejärel Kuva puldi aruanne, et jagada nähtut."
+      },
+      "test_result_nothing": {
+        "title": "Puldi testi tulemus",
+        "description": "Pult ei saatnud midagi. Äratage see nooleklahviga, kontrollige, et see on ühendatud selle Home Assistanti masinaga, ja testige uuesti. Saada, et jätkata."
       }
+    },
+    "progress": {
+      "observing": "Kuulamine 20 sekundit. Äratage pult nooleklahviga, seejärel vajutage ja hoidke selle häälenuppu, rääkige lühidalt ja vabastage."
     },
     "error": {
       "bluetooth_unavailable": "Kohalik Bluetooth ei ole saadaval. Kontrollige, kas süsteemi D-Bus on juurdepääsetav.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Valige olemasolev Assisti torujuhe.",
       "hidraw_unavailable": "Kaugjuhtimispuldi sisendseade ei ole Home Assistantile saadaval. Äratage kaugjuhtimispult ja kontrollige, kas Home Assistant näeb /dev/hidraw seadmeid.",
       "hidraw_permission_denied": "Home Assistantil ei ole luba kaugjuhtimispuldi sisendseadet lugeda. Vaadake README-st, millist seadmele juurdepääsu see kaugjuhtimispult vajab.",
-      "opus_decoder_unavailable": "Home Assistantile ei ole saadaval Opus helidekoodrit, mida see kaugjuhtimispult vajab."
+      "opus_decoder_unavailable": "Home Assistantile ei ole saadaval Opus helidekoodrit, mida see kaugjuhtimispult vajab.",
+      "fire_voice_unsupported": "See Fire TV pult ei teata hääleandmeid, mida see integratsioon saaks kasutada. Märkige Kuva puldi aruanne ja jagage seda GitHubi probleemina.",
+      "voice_service_unavailable": "Pult ei paku Android TV hääleteenust. Fire TV puldi korral määrake Puldi tüübiks Amazon Fire TV."
     },
     "abort": {
       "already_configured": "See kaugjuhtimispult on juba seadistatud.",
@@ -65,6 +106,7 @@
           "busy_playback": "Uus vajutus vastuse ajal",
           "context_mode": "Vestluse kontekst",
           "input_mode": "Nupu käitumine",
+          "remote_type": "Puldi tüüp",
           "min_press_seconds": "Eira lühikesi vajutusi",
           "max_request_seconds": "Päringu maksimaalne pikkus",
           "max_conversation_seconds": "Vestluse maksimaalne pikkus",
@@ -80,6 +122,7 @@
           "busy_playback": "Mida teha, kui nuppu vajutatakse vastuse esitamise ajal: vajutus tagasi lükata, vastata hiljem ühele ootel päringule või peatada vastus ja alustada uut päringut.",
           "context_mode": "Taaskasutamine säilitab Home Assistanti vestluse, et järelküsimused nagu „ja kahekordne?“ toimiksid. Uus vestlus muudab iga vajutuse eraldi vestluseks.",
           "input_mode": "Üks päring hoidmise kohta salvestab, kuni nupp vabastatakse. Vahelduv vestlus jätkab kuulamist, kuni nuppu hoitakse: rääkige, tehke paus, kuulake vastust, seejärel rääkige uuesti. See vajab hoia-ja-räägi kaugjuhtimispulti.",
+          "remote_type": "Jätke Automaatne, kui pulti ei tuvastatud valesti. Muutmine ühendab puldi uuesti.",
           "min_press_seconds": "Eirab häälenupu puudutusi, mis on sellest lühemad, et eksliku puudutuse peale päringut ei algaks; tõeline hoidmine algab selle võrra hiljem. 0 lülitab välja. Kasulik Fire TV kaugjuhtimispuldi puhul, mis ebaõnnestub teatega „Mikrofoni heli puudub“ kohe pärast äratamist: see saadab äratanud klahvi uuesti hetkelise puudutusena. 0,1 s on hea lähtepunkt. Ainult Fire TV kaugjuhtimispuldid.",
           "max_request_seconds": "Pikim aeg, kaua üksik päring võib ükskõik millisel kaugjuhtimispuldil kesta: terve hoidmine režiimis „Üks päring“ ja iga vooru kestus vahelduvas vestluses. Selle saavutamine lõpetab päringu salvestuspiiri veaga. Vähendage kinnijäänud nupu salvestamise peatamiseks; suurendage pika dikteerimise jaoks. Kaugjuhtimispuldid, mis ei ole hoia-ja-räägi tüüpi, lõpetavad ka umbes 15 sekundi kõne või vaikuse korral, olenevalt sellest, kumb tuleb enne.",
           "max_conversation_seconds": "Pikim aeg, kaua terve nupuhoidmine võib vahelduva vestluse režiimis kesta. Režiimis „Üks päring“ seda eiratakse ja see ei tohi olla lühem kui päringu maksimaalne pikkus.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Üks päring hoidmise kohta",
         "conversation": "Vestlus hoidmise ajal (vahelduv)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automaatne (soovitatav)",
+        "atvv": "Android TV / Google TV pult (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV / Alexa hääl-pult (rääkimiseks hoidke all)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Kaugjuhtimispuldi sisendseade ei ole Home Assistantile saadaval.",
           "hidraw_permission_denied": "Home Assistantil ei ole luba kaugjuhtimispuldi sisendseadet lugeda.",
           "opus_decoder_unavailable": "Home Assistantile ei ole saadaval Opus helidekoodrit.",
+          "fire_voice_unsupported": "See Fire TV pult ei teata kasutatavaid hääleandmeid.",
           "invalid_opus_packet": "Kaugjuhtimispult saatis heli, mida ei saanud dekodeerida.",
           "other": "Esines mõni muu tõrge. Üksikasjad on vea koodis."
         },

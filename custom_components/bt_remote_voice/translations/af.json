@@ -26,12 +26,51 @@
         "title": "Kies Assist-pyplyn",
         "description": "Maak die afstandsbeheer wakker met 'n pyltjieknoppie voordat jy dit indien. Die integrasie begin in net-transkripsiemodus; verander dit in die opsies sodra dit werk.",
         "data": {
-          "pipeline_id": "Assist-pyplyn"
+          "pipeline_id": "Assist-pyplyn",
+          "remote_type": "Afstandbeheertipe",
+          "show_report": "Wys afstandbeheerverslag",
+          "test_remote": "Toets my afstandbeheer"
         },
         "data_description": {
-          "pipeline_id": "Die Assist-pyplyn wat spraak van hierdie afstandsbeheer verwerk."
+          "pipeline_id": "Die Assist-pyplyn wat spraak van hierdie afstandsbeheer verwerk.",
+          "remote_type": "Los op Outomaties tensy die afstandbeheer nie herken word nie of opstelling misluk.",
+          "show_report": "Merk en dien in om 'n verslag te sien wat jy in 'n GitHub-kwessie kan kopieer.",
+          "test_remote": "Merk en dien in, druk en hou dan die afstandbeheer se stemknoppie om te sien wat die afstandbeheer doen."
         }
+      },
+      "report": {
+        "title": "Afstandbeheerverslag",
+        "description": "Kopieer hierdie teks na 'n GitHub-kwessie. Dit bevat geen volledige Bluetooth-adres, name, webadresse of oudio nie. Wysigings hier word geïgnoreer; Dien in gaan terug na die opstelling.",
+        "data": {
+          "report": "Afstandbeheerverslag"
+        },
+        "data_description": {
+          "report": "Kies alles en kopieer."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Afstandbeheertoets-resultaat",
+        "description": "Hierdie afstandbeheer begin stem self terwyl sy knoppie gehou word. Hou daardie knoppie om te praat. Dien in om met die opstelling voort te gaan."
+      },
+      "test_result_atvv_tap": {
+        "title": "Afstandbeheertoets-resultaat",
+        "description": "Hierdie afstandbeheer begin stem wanneer sy knoppie getik word en luister totdat jy ophou praat. Tik daardie knoppie om te praat. Dien in om met die opstelling voort te gaan."
+      },
+      "test_result_fire_voice": {
+        "title": "Afstandbeheertoets-resultaat",
+        "description": "Dit is die stemsleutel van 'n Fire TV-afstandbeheer. Hou dit terwyl jy praat. Dien in om met die opstelling voort te gaan."
+      },
+      "test_result_plain_key": {
+        "title": "Afstandbeheertoets-resultaat",
+        "description": "Die afstandbeheer het gewone sleutels gestuur maar geen stemsein nie, so sy stemknoppie begin dalk nie stem oor Bluetooth nie. Dien in, merk dan Wys afstandbeheerverslag om te deel wat gesien is."
+      },
+      "test_result_nothing": {
+        "title": "Afstandbeheertoets-resultaat",
+        "description": "Niks is van die afstandbeheer ontvang nie. Maak dit met 'n pyltjie-sleutel wakker, kontroleer dat dit aan hierdie Home Assistant-masjien gekoppel is, en toets weer. Dien in om voort te gaan."
       }
+    },
+    "progress": {
+      "observing": "Luister 20 sekondes lank. Maak die afstandbeheer met 'n pyltjie-sleutel wakker, druk en hou dan sy stemknoppie, praat kortliks en los dit."
     },
     "error": {
       "bluetooth_unavailable": "Plaaslike Bluetooth is nie beskikbaar nie. Kontroleer dat die stelsel-D-Bus toeganklik is.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Kies 'n bestaande Assist-pyplyn.",
       "hidraw_unavailable": "Die afstandsbeheer se invoertoestel is nie vir Home Assistant beskikbaar nie. Maak die afstandsbeheer wakker en kontroleer dat Home Assistant /dev/hidraw-toestelle kan sien.",
       "hidraw_permission_denied": "Home Assistant mag nie die afstandsbeheer se invoertoestel lees nie. Sien die README vir die toesteltoegang wat hierdie afstandsbeheer benodig.",
-      "opus_decoder_unavailable": "Geen Opus-oudiodekodeerder is vir Home Assistant beskikbaar nie, wat hierdie afstandsbeheer benodig."
+      "opus_decoder_unavailable": "Geen Opus-oudiodekodeerder is vir Home Assistant beskikbaar nie, wat hierdie afstandsbeheer benodig.",
+      "fire_voice_unsupported": "Hierdie Fire TV-afstandbeheer rapporteer nie stemdata wat hierdie integrasie kan gebruik nie. Merk Wys afstandbeheerverslag en deel dit in 'n GitHub-kwessie.",
+      "voice_service_unavailable": "Die afstandbeheer bied nie die Android TV-stemdiens nie. Stel vir 'n Fire TV-afstandbeheer die Afstandbeheertipe op Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Hierdie afstandsbeheer is reeds gekonfigureer.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nuwe druk tydens antwoord",
           "context_mode": "Gesprekskonteks",
           "input_mode": "Knoppie-gedrag",
+          "remote_type": "Afstandbeheertipe",
           "min_press_seconds": "Ignoreer kort drukke",
           "max_request_seconds": "Maksimum versoeklengte",
           "max_conversation_seconds": "Maksimum gesprekslengte",
@@ -80,6 +122,7 @@
           "busy_playback": "Wat om te doen wanneer die knoppie gedruk word terwyl 'n antwoord speel: die druk verwerp, daarna een hangende versoek beantwoord, of die antwoord stop en die nuwe versoek begin.",
           "context_mode": "Hergebruik behou die Home Assistant-gesprek sodat opvolgvrae soos 'en dubbel dit?' werk. Vars maak van elke druk 'n onafhanklike gesprek.",
           "input_mode": "Een versoek per hou neem op totdat die knoppie losgelaat word. Wisselende gesprek bly luister terwyl die knoppie gehou word: praat, wag, hoor die antwoord, en praat dan weer. Dit benodig 'n hou-om-te-praat-afstandsbeheer.",
+          "remote_type": "Los op Outomaties tensy die afstandbeheer as die verkeerde tipe bespeur is. As jy dit verander, koppel die afstandbeheer weer.",
           "min_press_seconds": "Ignoreer tikke op die stemknoppie wat korter as dit is, sodat 'n valse tik nooit 'n versoek begin nie; 'n ware hou begin soveel later. 0 skakel dit af. Nuttig vir 'n Fire TV-afstandsbeheer wat net ná wakker word misluk met \"No microphone audio\": dit stuur die sleutel wat dit wakker gemaak het weer as 'n kitstik. 0,1 s is 'n goeie beginpunt. Slegs vir Fire TV-afstandsbeheerders.",
           "max_request_seconds": "Die langste wat 'n enkele versoek op enige afstandsbeheer kan duur: 'n hele hou in Een-versoek-modus, en elke beurt in Wisselende gesprek. As dit bereik word, eindig die versoek met 'n opnamelimiet-fout. Verlaag dit om 'n vasgeklemde knoppie se opname te stop; verhoog dit vir lang dikteer. Afstandsbeheerders wat nie hou-om-te-praat is nie, eindig ook ná ongeveer 15 sekondes spraak of by stilte, wat ook al eerste kom.",
           "max_conversation_seconds": "Die langste wat 'n hele knoppie-hou kan duur in Wisselende gesprek-modus. Dit word geïgnoreer in Een-versoek-modus en mag nie korter as die maksimum versoeklengte wees nie.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Een versoek per hou",
         "conversation": "Gesprek terwyl gehou (wisselend)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Outomaties (aanbeveel)",
+        "atvv": "Android TV- / Google TV-afstandbeheer (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV- / Alexa-stemafstandbeheer (hou om te praat)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Die afstandsbeheer se invoertoestel is nie vir Home Assistant beskikbaar nie.",
           "hidraw_permission_denied": "Home Assistant mag nie die afstandsbeheer se invoertoestel lees nie.",
           "opus_decoder_unavailable": "Geen Opus-oudiodekodeerder is vir Home Assistant beskikbaar nie.",
+          "fire_voice_unsupported": "Hierdie Fire TV-afstandbeheer rapporteer nie bruikbare stemdata nie.",
           "invalid_opus_packet": "Die afstandsbeheer het oudio gestuur wat nie gedekodeer kon word nie.",
           "other": "'n Ander fout het voorgekom. Die foutkode gee die besonderhede."
         },

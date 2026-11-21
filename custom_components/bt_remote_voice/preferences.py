@@ -3,6 +3,8 @@
 from homeassistant.components.assist_pipeline import OPTION_PREFERRED
 from homeassistant.helpers.translation import async_get_cached_translations
 
+from .remote_types import DEFAULT_REMOTE_TYPE, REMOTE_TYPES
+
 DOMAIN = "bt_remote_voice"
 
 # Stored as pipeline_id to follow whichever Assist pipeline Home Assistant prefers (its own
@@ -26,6 +28,7 @@ FORM_ORDER = (
     "busy_playback",
     "context_mode",
     "input_mode",
+    "remote_type",
     "min_press_seconds",
     "max_request_seconds",
     "max_conversation_seconds",
@@ -39,6 +42,7 @@ CHOICES = {
     "busy_playback": ("reject", "queue", "replace"),
     "context_mode": ("reuse", "fresh"),
     "input_mode": ("single", "conversation"),
+    "remote_type": REMOTE_TYPES,
 }
 DEFAULTS = {
     "output_mode": "auto",
@@ -46,6 +50,7 @@ DEFAULTS = {
     "busy_playback": "reject",
     "context_mode": "reuse",
     "input_mode": "single",
+    "remote_type": DEFAULT_REMOTE_TYPE,
     "stream_head_start": 0,
     "min_press_seconds": 0,
     "max_request_seconds": 30,
@@ -159,6 +164,7 @@ ERROR_CODES = (
     "hidraw_unavailable",
     "hidraw_permission_denied",
     "opus_decoder_unavailable",
+    "fire_voice_unsupported",
     "invalid_opus_packet",
 )
 

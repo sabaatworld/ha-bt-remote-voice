@@ -26,12 +26,51 @@
         "title": "Selecciona el pipeline d’Assist",
         "description": "Desperta el comandament amb un botó de fletxa abans d’enviar. La integració comença en mode de només transcripció; canvia-ho a les opcions quan funcioni.",
         "data": {
-          "pipeline_id": "Pipeline d’Assist"
+          "pipeline_id": "Pipeline d’Assist",
+          "remote_type": "Tipus de comandament",
+          "show_report": "Mostra l'informe del comandament",
+          "test_remote": "Prova el meu comandament"
         },
         "data_description": {
-          "pipeline_id": "El pipeline d’Assist que processa la veu d’aquest comandament."
+          "pipeline_id": "El pipeline d’Assist que processa la veu d’aquest comandament.",
+          "remote_type": "Deixeu-ho en Automàtic tret que no es reconegui el comandament o la configuració falli.",
+          "show_report": "Marqueu-ho i envieu per veure un informe que podeu copiar en una incidència de GitHub.",
+          "test_remote": "Marqueu-ho i envieu, i després premeu i mantingueu premut el botó de veu del comandament per veure què fa."
         }
+      },
+      "report": {
+        "title": "Informe del comandament",
+        "description": "Copieu aquest text en una incidència de GitHub. No conté cap adreça Bluetooth completa, noms, adreces web ni àudio. Les edicions aquí s'ignoren; Envia torna a la configuració.",
+        "data": {
+          "report": "Informe del comandament"
+        },
+        "data_description": {
+          "report": "Seleccioneu-ho tot i copieu."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultat de la prova del comandament",
+        "description": "Aquest comandament inicia la veu per si mateix mentre es manté premut el botó. Mantingueu premut aquest botó per parlar. Envia per continuar la configuració."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultat de la prova del comandament",
+        "description": "Aquest comandament inicia la veu quan es toca el botó i escolta fins que deixeu de parlar. Toqueu aquest botó per parlar. Envia per continuar la configuració."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultat de la prova del comandament",
+        "description": "Aquesta és la tecla de veu d'un comandament Fire TV. Mantingueu-la premuda mentre parleu. Envia per continuar la configuració."
+      },
+      "test_result_plain_key": {
+        "title": "Resultat de la prova del comandament",
+        "description": "El comandament ha enviat tecles normals però cap senyal de veu, de manera que el seu botó de veu potser no inicia la veu per Bluetooth. Envia i després marqueu Mostra l'informe del comandament per compartir el que s'ha vist."
+      },
+      "test_result_nothing": {
+        "title": "Resultat de la prova del comandament",
+        "description": "No s'ha rebut res del comandament. Desperteu-lo amb una tecla de fletxa, comproveu que estigui connectat a aquesta màquina amb Home Assistant i torneu a provar. Envia per continuar."
       }
+    },
+    "progress": {
+      "observing": "S'està escoltant durant 20 segons. Desperteu el comandament amb una tecla de fletxa, després premeu i mantingueu premut el seu botó de veu, parleu breument i deixeu-lo anar."
     },
     "error": {
       "bluetooth_unavailable": "El Bluetooth local no està disponible. Comprova que es pot accedir al D-Bus del sistema.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Tria un pipeline d’Assist existent.",
       "hidraw_unavailable": "El dispositiu d’entrada del comandament no està disponible per a Home Assistant. Desperta el comandament i comprova que Home Assistant pot veure els dispositius /dev/hidraw.",
       "hidraw_permission_denied": "Home Assistant no té permís per llegir el dispositiu d’entrada del comandament. Consulta el README per saber quin accés al dispositiu necessita aquest comandament.",
-      "opus_decoder_unavailable": "Home Assistant no disposa de cap descodificador d’àudio Opus, que aquest comandament necessita."
+      "opus_decoder_unavailable": "Home Assistant no disposa de cap descodificador d’àudio Opus, que aquest comandament necessita.",
+      "fire_voice_unsupported": "Aquest comandament Fire TV no informa de dades de veu que aquesta integració pugui fer servir. Marqueu Mostra l'informe del comandament i compartiu-lo en una incidència de GitHub.",
+      "voice_service_unavailable": "El comandament no ofereix el servei de veu d'Android TV. Per a un comandament Fire TV, definiu el Tipus de comandament a Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Aquest comandament ja està configurat.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nova pulsació durant la resposta",
           "context_mode": "Context de la conversa",
           "input_mode": "Comportament del botó",
+          "remote_type": "Tipus de comandament",
           "min_press_seconds": "Ignora les pulsacions curtes",
           "max_request_seconds": "Durada màxima de la sol·licitud",
           "max_conversation_seconds": "Durada màxima de la conversa",
@@ -80,6 +122,7 @@
           "busy_playback": "Què fer quan es prem el botó mentre es reprodueix una resposta: rebutjar la pulsació, respondre després una sol·licitud pendent, o aturar la resposta i iniciar la nova sol·licitud.",
           "context_mode": "Reutilitzar manté la conversa de Home Assistant perquè funcionin preguntes de seguiment com «i el doble?». Nova fa que cada pulsació sigui una conversa independent.",
           "input_mode": "Una sol·licitud per pulsació mantinguda grava fins que s’amolla el botó. La conversa alternada continua escoltant mentre es manté el botó: parla, fes una pausa, escolta la resposta i torna a parlar. Necessita un comandament de prémer per parlar.",
+          "remote_type": "Deixeu-ho en Automàtic tret que el comandament s'hagi detectat amb un tipus incorrecte. Canviar-ho reconnecta el comandament.",
           "min_press_seconds": "Ignora les pulsacions del botó de veu més curtes que aquest valor, de manera que una pulsació espúria mai iniciï una sol·licitud; una pulsació mantinguda real comença aquest temps més tard. 0 ho desactiva. Útil per a un comandament Fire TV que falla amb «No s’ha rebut àudio del micròfon.» just després de despertar-se: reenvia la tecla que l’ha despertat com una pulsació instantània. 0,1 s és un bon punt de partida. Només per a comandaments Fire TV.",
           "max_request_seconds": "La durada màxima d’una sola sol·licitud en qualsevol comandament: tota la pulsació mantinguda en el mode Una sol·licitud, i cada torn en Conversa alternada. En arribar-hi, la sol·licitud acaba amb un error de límit de captura. Redueix-ho per aturar la gravació d’un botó encallat; augmenta-ho per a dictats llargs. Els comandaments que no són de prémer per parlar també acaben al cap d’uns 15 segons de veu o en el silenci, el que passi primer.",
           "max_conversation_seconds": "La durada màxima de tota una pulsació mantinguda en el mode Conversa alternada. S’ignora en el mode Una sol·licitud i no pot ser inferior a la durada màxima de la sol·licitud.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Una sol·licitud per pulsació mantinguda",
         "conversation": "Conversa mentre es manté (alternada)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automàtic (recomanat)",
+        "atvv": "Comandament Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Comandament de veu Amazon Fire TV / Alexa (mantingueu premut per parlar)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "El dispositiu d’entrada del comandament no està disponible per a Home Assistant.",
           "hidraw_permission_denied": "Home Assistant no té permís per llegir el dispositiu d’entrada del comandament.",
           "opus_decoder_unavailable": "Home Assistant no disposa de cap descodificador d’àudio Opus.",
+          "fire_voice_unsupported": "Aquest comandament Fire TV no informa de dades de veu utilitzables.",
           "invalid_opus_packet": "El comandament ha enviat àudio que no s’ha pogut descodificar.",
           "other": "S’ha produït un altre error. El codi d’error en dona els detalls."
         },

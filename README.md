@@ -62,6 +62,10 @@ remote with an arrow button, select it, then keep **Preferred pipeline** or choo
 Assist pipeline. Later, select a speaker and **Execute commands** in **Configure** when you are
 ready to process requests and hear replies.
 
+If setup says the remote is not supported, or it picked the wrong kind of remote, change **Remote type**
+on the same screen and submit again; to ask for help, tick **Show remote report** (see
+[My remote is not recognised](#my-remote-is-not-recognised)).
+
 The initial mode stops after speech recognition. This does not disable tools embedded inside a live
 STT provider: such a provider may act during speech processing. Use a dedicated transcription-only
 STT provider when actions must be disabled.
@@ -93,6 +97,98 @@ do not count.
 Remotes that use Wi-Fi, infrared or RF for voice, and Bluetooth bridges that need
 an ESPHome Bluetooth proxy, cannot be used: this integration needs a Bluetooth
 adapter on the Home Assistant machine itself.
+
+## Which remote do I have?
+
+Answer two questions; **Remote type** can stay on **Automatic** unless setup tells you otherwise.
+
+1. **Does the remote come with an Android TV or Google TV box, and does its microphone button start voice by itself?**
+   That is an Android TV (ATVV) remote, for example the BT19K. Choose or keep **Automatic**.
+2. **Is it an Amazon Fire TV or Alexa voice remote?** Choose or keep **Automatic**; Fire remotes are detected from
+   Amazon's identity in their Bluetooth data and from the voice reports their input device declares. These remotes
+   stream voice only while the microphone key is held.
+3. **Not sure?** Leave **Automatic**. If setup fails, see [My remote is not recognised](#my-remote-is-not-recognised).
+
+Amazon has made many remotes. This table says what is known; "tested" means a person used it with this
+integration on real hardware, everything else is based on other people's published notes or on how the remote
+identifies itself, and is not a promise.
+
+| Amazon remote | Status |
+| --- | --- |
+| Alexa Voice Remote with TV controls (the one tested here, product ID `0x0413`) | **Tested** for held requests. |
+| Fire TV Stick 4K remote, Fire TV Stick Lite remote | Voice protocol documented by [fire-remote-client](https://github.com/justanotheruseer/fire-remote-client); not tested with this integration. |
+| Alexa Voice Remote (3rd gen, 2021 and its 2022 revision) | Setup now recognises it as a Fire remote (reported in [issue 1](https://github.com/sabaatworld/ha-bt-remote-voice/issues/1)); voice not yet confirmed on hardware. Its microphone may behave differently from the tested remote; a report helps. |
+| Alexa Voice Remote Pro, Enhanced, 2024 release | Untested. They may work the same way; share a remote report to help. |
+| Older Fire TV remotes (2014-2017) | **Not supported.** The 2015 voice remotes use Wi-Fi Direct, not Bluetooth. Earlier Bluetooth ones are unverified. |
+
+## Which button do I press?
+
+Press and **hold the remote's own microphone (voice) button**, the one that starts voice on the TV, speak, and
+release. This integration cannot choose a different button: on an Android TV remote the remote's firmware starts
+voice itself, and a Fire remote only streams audio after its own microphone key is held. Other buttons on the
+remote cannot start voice (see [Compatibility and microphone controls](#compatibility-and-microphone-controls)).
+
+- **Not sure which button it is?** In setup tick **Test my remote** and submit, wake the remote with an arrow key,
+  then press and hold its voice button for a few seconds. For 20 seconds the integration only listens (it does not
+  open the microphone and sends the remote only the standard capability request) and then tells you what the remote did: starts voice while held,
+  starts voice on a tap, sent a Fire voice key, sent only ordinary keys, or nothing. The result is also in the
+  remote report (counts of key usages only).
+- **Android TV (ATVV) remotes:** some start voice while the button is held; some start on a tap and listen
+  until you stop speaking. The integration follows what the remote does.
+- **Fire remotes:** hold the microphone key for as long as you speak. Right after the remote wakes, it can send
+  the key that woke it as a quick tap; the **Ignore short presses** setting filters that.
+
+## My remote is not recognised
+
+If setup fails or rejects your remote, you can send a **remote report** so support can be added. It
+takes one minute and needs no technical knowledge.
+
+1. In the setup screen tick **Show remote report** and press **Submit**. The report appears in a box.
+2. Select all of it and copy it. You may read it first.
+3. [Open a new issue](https://github.com/sabaatworld/ha-bt-remote-voice/issues/new?template=new-remote.yml)
+   and paste it, with the remote's brand and model as printed on it.
+
+The report contains the integration, Home Assistant and Python versions, the Bluetooth adapter name
+(`hci0`), what the remote's Bluetooth data says about it, whether it provides the voice reports this integration
+needs, the settings that matter (never names) and the setup result. It never contains your full Bluetooth
+address (only the first three bytes, which for most remotes identify the manufacturer), names, web addresses or recorded audio.
+The report has these fields: `integration`, `core`, `python`, `adapter`, `remote`, `hid`, `observation`, `config`, `outcome`.
+
+If setup cannot open at all, save the commands below as `capture.sh` on the Home Assistant host shell
+(see [Pairing a remote](#pairing-a-remote)), run `sh capture.sh AA:BB:CC:DD:EE:FF` with your remote's address, and
+paste the output instead. It only reads information and sends nothing to the remote; the same commands are in
+`scripts/capture_remote_info.sh`. After setup, the **diagnostics** download contains the same report under
+`remote_report`.
+
+```sh
+# Read-only helper for support requests when setup cannot show the Remote Report.
+# Prints what support needs about one paired Bluetooth remote. It writes nothing to the remote,
+# uses no GATT access and presses no keys. Addresses are masked to their first three bytes and
+# the remote's Name, Alias and HID_NAME lines are left out.
+#
+# Usage (Home Assistant host shell, remote awake and connected): capture_remote_info.sh AA:BB:CC:DD:EE:FF
+set -eu
+
+address="${1:?Usage: $0 <remote Bluetooth address>}"
+
+mask() {
+  sed -E 's/([0-9A-Fa-f]{2})[:_-]([0-9A-Fa-f]{2})[:_-]([0-9A-Fa-f]{2})([:_-][0-9A-Fa-f]{2}){3}/\1:\2:\3:xx:xx:xx/g'
+}
+
+echo "== bluetoothctl info =="
+bluetoothctl info "$address" | grep -v -E '^[[:space:]]*(Name|Alias):' | mask
+
+for dir in /sys/class/hidraw/hidraw*; do
+  [ -e "$dir/device/uevent" ] || continue
+  if grep -qi "^HID_UNIQ=$address" "$dir/device/uevent"; then
+    echo "== $(basename "$dir") uevent =="
+    grep -v '^HID_NAME=' "$dir/device/uevent" | mask
+    echo "== $(basename "$dir") report descriptor (hex) =="
+    od -An -v -tx1 "$dir/device/report_descriptor" | tr -d ' \n'
+    echo
+  fi
+done
+```
 
 ## Pairing a remote
 
@@ -178,6 +274,7 @@ until you choose otherwise.
 | New press during reply | What happens when the button is pressed while a reply is playing. **Reject** lets the reply finish. **Queue one** asks the next question while the reply plays and answers it afterward. **Replace** stops the reply and starts the new request. | **Reject**; Queue one; Replace current reply | Use Queue one or Replace for fast back-and-forth instead of waiting for each reply to end. |
 | Conversation context | Whether requests share one Home Assistant conversation. **Reuse** keeps it, so follow-ups such as "and double that?" work (while Home Assistant retains it). **Fresh** makes every press independent. | **Reuse**; Fresh per request | Use Fresh for independent one-shot commands. |
 | Button behavior | How a hold maps to requests. **One request per hold** records one request and ends at release. **Alternating conversation** keeps listening while the button is held: speak, pause about 0.8 s, hear the reply, then speak again without releasing. | **One request**; Alternating conversation | Alternating needs a hold-to-talk remote and suits a longer back-and-forth. |
+| Remote type | Which kind of remote this is, so the integration talks to it the right way. **Automatic** uses what was detected when you added the remote. **Android TV / Google TV remote (ATVV)** is for remotes whose own microphone button starts voice. **Amazon Fire TV / Alexa voice remote** is for Fire remotes, which stream voice while the microphone key is held. Changing it reconnects the remote. | **Automatic** | Setup says your remote is not supported, or it was detected as the wrong type. Setup also offers this choice, so you are never stuck on a remote that was not recognised. A manual choice never works if the remote lacks the voice features it needs; the error then says what is missing. |
 | Ignore short presses | Ignores voice-button taps shorter than the time you set, so a spurious tap never starts a request (no request, no failure, no Last error). A real hold starts that much later. | 0 to 0.5 seconds in 0.05 s steps (**0**, off) | A Fire TV remote that fails with "No microphone audio" right after waking: a sleeping Fire remote re-sends the key that woke it as an instant tap. Try 0.1 s. Fire TV remotes only; other remotes ignore it. |
 | Maximum request length | The longest a single request can last on any remote; reaching it ends the request with a capture-limit error. In One-request mode it is the longest hold; in Alternating mode it bounds each turn. Remotes that are not hold-to-talk also end at about 15 seconds of speech or at silence, whichever comes first. | 5 to 120 seconds in 5 s steps (**30**) | Lower it to stop a stuck button from recording; raise it for long dictation. |
 | Maximum conversation length | The longest a whole hold can last in Alternating conversation mode. Must not be shorter than the request length. | 30 to 600 seconds in 10 s steps (**120**) | You use Alternating conversation and want longer or shorter conversations. Ignored in One-request mode. |
@@ -367,8 +464,13 @@ satellite attributes. The voice button event still announces every occurrence.
 - **No paired devices / Bluetooth unavailable:** check the host bond and HA Core
   access to local system D-Bus. A bond on another computer is insufficient.
 - **Wake remote:** press an arrow, wait a few seconds, then retry. Do not use power.
-- **Unsupported profile:** download redacted diagnostics and report the model,
-  protocol/capabilities and integration/HA version. Do not publish addresses/audio.
+- **Unsupported profile / "not supported" at setup:** try the other **Remote type**, then send a
+  [remote report](#my-remote-is-not-recognised) (setup) or the diagnostics download (after setup).
+  Do not publish addresses/audio.
+- **"This Fire TV remote does not report voice data":** the remote's input device does not declare the
+  voice reports this integration understands. The remote report shows what it does declare; share it.
+- **Detected as the wrong kind of remote:** set **Remote type** to **Android TV / Google TV remote** or
+  **Amazon Fire TV / Alexa voice remote** in setup or **Configure**.
 - **Audio sequence gap:** retry close to the adapter; inspect last-session frame
   counters and the bounded capture history. Mismatches abort instead of being
   treated as clean EOF. This does not establish whether radio loss, notification

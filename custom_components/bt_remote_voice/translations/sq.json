@@ -26,12 +26,51 @@
         "title": "Zgjidhni pipeline-in e Assist",
         "description": "Zgjojeni telekomandën me një buton shigjete përpara se ta dërgoni. Integrimi nis në modalitetin vetëm me transkriptim; ndryshojeni këtë te opsionet kur të funksionojë.",
         "data": {
-          "pipeline_id": "Pipeline-i i Assist"
+          "pipeline_id": "Pipeline-i i Assist",
+          "remote_type": "Lloji i telekomandës",
+          "show_report": "Shfaq raportin e telekomandës",
+          "test_remote": "Testo telekomandën time"
         },
         "data_description": {
-          "pipeline_id": "Pipeline-i i Assist që përpunon të folurit nga kjo telekomandë."
+          "pipeline_id": "Pipeline-i i Assist që përpunon të folurit nga kjo telekomandë.",
+          "remote_type": "Lëreni në Automatik, përveç nëse telekomanda nuk njihet ose konfigurimi dështon.",
+          "show_report": "Zgjidhni dhe dërgoni për të parë një raport që mund ta kopjoni në një çështje GitHub.",
+          "test_remote": "Zgjidhni dhe dërgoni, pastaj shtypni dhe mbani butonin zanor të telekomandës për të parë çfarë bën."
         }
+      },
+      "report": {
+        "title": "Raporti i telekomandës",
+        "description": "Kopjojeni këtë tekst në një çështje GitHub. Nuk përmban adresë të plotë Bluetooth, emra, adresa uebi ose audio. Ndryshimet këtu shpërfillen; Dërgo kthen te konfigurimi.",
+        "data": {
+          "report": "Raporti i telekomandës"
+        },
+        "data_description": {
+          "report": "Zgjidhni të gjitha dhe kopjojeni."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Rezultati i testit të telekomandës",
+        "description": "Kjo telekomandë e nis vetë zërin ndërsa butoni i saj mbahet i shtypur. Mbani atë buton për të folur. Dërgo për të vazhduar konfigurimin."
+      },
+      "test_result_atvv_tap": {
+        "title": "Rezultati i testit të telekomandës",
+        "description": "Kjo telekomandë e nis zërin kur preket butoni i saj dhe dëgjon derisa të ndaloni së foluri. Prekni atë buton për të folur. Dërgo për të vazhduar konfigurimin."
+      },
+      "test_result_fire_voice": {
+        "title": "Rezultati i testit të telekomandës",
+        "description": "Ky është tasti zanor i një telekomande Fire TV. Mbajeni të shtypur ndërsa flisni. Dërgo për të vazhduar konfigurimin."
+      },
+      "test_result_plain_key": {
+        "title": "Rezultati i testit të telekomandës",
+        "description": "Telekomanda dërgoi taste të zakonshme por jo sinjal zanor, kështu që butoni i saj zanor mund të mos e nisë zërin përmes Bluetooth. Dërgoni, pastaj zgjidhni Shfaq raportin e telekomandës për të ndarë çfarë u pa."
+      },
+      "test_result_nothing": {
+        "title": "Rezultati i testit të telekomandës",
+        "description": "Nuk u mor asgjë nga telekomanda. Zgjojeni me një tast shigjete, kontrolloni që është e lidhur me këtë makinë Home Assistant dhe testoni përsëri. Dërgo për të vazhduar."
       }
+    },
+    "progress": {
+      "observing": "Duke dëgjuar për 20 sekonda. Zgjojeni telekomandën me një tast shigjete, pastaj shtypni dhe mbani butonin e saj zanor, flisni shkurt dhe lëshojeni."
     },
     "error": {
       "bluetooth_unavailable": "Bluetooth-i lokal nuk është i disponueshëm. Kontrolloni që D-Bus i sistemit të jetë i aksesueshëm.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Zgjidhni një pipeline ekzistues të Assist.",
       "hidraw_unavailable": "Pajisja e hyrjes së telekomandës nuk është e disponueshme për Home Assistant. Zgjojeni telekomandën dhe kontrolloni që Home Assistant t'i shohë pajisjet /dev/hidraw.",
       "hidraw_permission_denied": "Home Assistant nuk ka leje të lexojë pajisjen e hyrjes së telekomandës. Shihni README për qasjen në pajisje që i nevojitet kësaj telekomande.",
-      "opus_decoder_unavailable": "Home Assistant nuk ka në dispozicion një dekoder audio Opus, që i nevojitet kësaj telekomande."
+      "opus_decoder_unavailable": "Home Assistant nuk ka në dispozicion një dekoder audio Opus, që i nevojitet kësaj telekomande.",
+      "fire_voice_unsupported": "Ky telekomandë Fire TV nuk raporton të dhëna zanore që kjo integrim mund t'i përdorë. Zgjidhni Shfaq raportin e telekomandës dhe ndajeni në një çështje GitHub.",
+      "voice_service_unavailable": "Telekomanda nuk ofron shërbimin zanor të Android TV. Për një telekomandë Fire TV, vendosni Llojin e telekomandës në Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Kjo telekomandë është konfiguruar tashmë.",
@@ -65,6 +106,7 @@
           "busy_playback": "Shtypje e re gjatë përgjigjes",
           "context_mode": "Konteksti i bisedës",
           "input_mode": "Sjellja e butonit",
+          "remote_type": "Lloji i telekomandës",
           "min_press_seconds": "Injoro shtypjet e shkurtra",
           "max_request_seconds": "Gjatësia maksimale e kërkesës",
           "max_conversation_seconds": "Gjatësia maksimale e bisedës",
@@ -80,6 +122,7 @@
           "busy_playback": "Çfarë të bëhet kur butoni shtypet ndërsa luhet një përgjigje: refuzimi i shtypjes, përgjigjja pas kësaj e një kërkese në pritje ose ndalimi i përgjigjes dhe nisja e kërkesës së re.",
           "context_mode": "Ripërdorimi e mban bisedën e Home Assistant që vazhdimet si „dhe dyfisho atë?“ të funksionojnë. Biseda e re e bën çdo shtypje një bisedë të pavarur.",
           "input_mode": "Një kërkesë për çdo mbajtje regjistron derisa butoni të lëshohet. Bisedë gjatë mbajtjes (me radhë) vazhdon të dëgjojë ndërsa butoni mbahet: flisni, bëni pauzë, dëgjoni përgjigjen, pastaj flisni përsëri. Kërkon telekomandë me të folur gjatë mbajtjes.",
+          "remote_type": "Lëreni në Automatik, përveç nëse telekomanda u zbulua si lloj i gabuar. Ndryshimi e lidh përsëri telekomandën.",
           "min_press_seconds": "Injoron prekjet e butonit të zërit më të shkurtra se kjo vlerë, që një prekje e rreme të mos nisë kurrë një kërkesë; një mbajtje e vërtetë fillon kaq më vonë. 0 e çaktivizon. E dobishme për një telekomandë Fire TV që dështon me „Nuk u mor audio nga mikrofoni“ menjëherë pas zgjimit: ajo ridërgon tastin që e zgjoi si prekje të çastit. 0,1 s është pikë e mirë fillimi. Vetëm për telekomandat Fire TV.",
           "max_request_seconds": "Kohëzgjatja më e gjatë e një kërkese të vetme në çdo telekomandë: gjithë mbajtja në modalitetin e një kërkese dhe çdo radhë në bisedën me radhë. Kur arrihet, kërkesa mbaron me gabim të kufirit të regjistrimit. Ulni për të ndaluar regjistrimin e një butoni të bllokuar; rriteni për diktim të gjatë. Telekomandat pa të folur gjatë mbajtjes mbarojnë gjithashtu pas rreth 15 sekondash të folurit ose në heshtje, cilado vjen e para.",
           "max_conversation_seconds": "Kohëzgjatja më e gjatë e gjithë mbajtjes së butonit në modalitetin e bisedës me radhë. Injorohet në modalitetin e një kërkese dhe nuk duhet të jetë më e shkurtër se gjatësia maksimale e kërkesës.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Një kërkesë për çdo mbajtje",
         "conversation": "Bisedë gjatë mbajtjes (me radhë)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatik (e rekomanduar)",
+        "atvv": "Telekomandë Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Telekomandë zanore Amazon Fire TV / Alexa (mbani të shtypur për të folur)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Pajisja e hyrjes së telekomandës nuk është e disponueshme për Home Assistant.",
           "hidraw_permission_denied": "Home Assistant nuk ka leje të lexojë pajisjen e hyrjes së telekomandës.",
           "opus_decoder_unavailable": "Home Assistant nuk ka në dispozicion një dekoder audio Opus.",
+          "fire_voice_unsupported": "Kjo telekomandë Fire TV nuk raporton të dhëna zanore të përdorshme.",
           "invalid_opus_packet": "Telekomanda dërgoi audio që nuk mund të dekodohej.",
           "other": "Ndodhi një gabim tjetër. Kodi i gabimit jep detajet."
         },

@@ -26,12 +26,51 @@
         "title": "Selectați pipeline-ul Assist",
         "description": "Activați telecomanda cu un buton săgeată înainte de trimitere. Integrarea pornește în modul doar transcriere; schimbați acest lucru în opțiuni după ce funcționează.",
         "data": {
-          "pipeline_id": "Pipeline Assist"
+          "pipeline_id": "Pipeline Assist",
+          "remote_type": "Tipul telecomenzii",
+          "show_report": "Afișează raportul telecomenzii",
+          "test_remote": "Testează telecomanda mea"
         },
         "data_description": {
-          "pipeline_id": "Pipeline-ul Assist care procesează vocea de la această telecomandă."
+          "pipeline_id": "Pipeline-ul Assist care procesează vocea de la această telecomandă.",
+          "remote_type": "Lăsați pe Automat, cu excepția cazului în care telecomanda nu este recunoscută sau configurarea eșuează.",
+          "show_report": "Bifați și trimiteți pentru a vedea un raport pe care îl puteți copia într-o problemă GitHub.",
+          "test_remote": "Bifați și trimiteți, apoi apăsați și mențineți butonul vocal al telecomenzii pentru a vedea ce face."
         }
+      },
+      "report": {
+        "title": "Raportul telecomenzii",
+        "description": "Copiați acest text într-o problemă GitHub. Nu conține adresa Bluetooth completă, nume, adrese web sau audio. Modificările de aici sunt ignorate; Trimite revine la configurare.",
+        "data": {
+          "report": "Raportul telecomenzii"
+        },
+        "data_description": {
+          "report": "Selectați tot și copiați."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Rezultatul testului telecomenzii",
+        "description": "Această telecomandă pornește singură vocea cât timp butonul ei este ținut apăsat. Țineți apăsat acel buton pentru a vorbi. Trimite pentru a continua configurarea."
+      },
+      "test_result_atvv_tap": {
+        "title": "Rezultatul testului telecomenzii",
+        "description": "Această telecomandă pornește vocea când butonul ei este atins și ascultă până încetați să vorbiți. Atingeți acel buton pentru a vorbi. Trimite pentru a continua configurarea."
+      },
+      "test_result_fire_voice": {
+        "title": "Rezultatul testului telecomenzii",
+        "description": "Aceasta este tasta vocală a unei telecomenzi Fire TV. Țineți-o apăsată cât timp vorbiți. Trimite pentru a continua configurarea."
+      },
+      "test_result_plain_key": {
+        "title": "Rezultatul testului telecomenzii",
+        "description": "Telecomanda a trimis taste obișnuite, dar niciun semnal vocal, deci butonul ei vocal poate să nu pornească vocea prin Bluetooth. Trimiteți, apoi bifați Afișează raportul telecomenzii pentru a partaja ce s-a observat."
+      },
+      "test_result_nothing": {
+        "title": "Rezultatul testului telecomenzii",
+        "description": "Nu s-a primit nimic de la telecomandă. Treziți-o cu o tastă săgeată, verificați dacă este conectată la acest computer cu Home Assistant și testați din nou. Trimite pentru a continua."
       }
+    },
+    "progress": {
+      "observing": "Se ascultă timp de 20 de secunde. Treziți telecomanda cu o tastă săgeată, apoi apăsați și mențineți butonul ei vocal, vorbiți scurt și eliberați."
     },
     "error": {
       "bluetooth_unavailable": "Bluetooth-ul local nu este disponibil. Verificați dacă D-Bus-ul sistemului este accesibil.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Alegeți un pipeline Assist existent.",
       "hidraw_unavailable": "Dispozitivul de intrare al telecomenzii nu este disponibil pentru Home Assistant. Activați telecomanda și verificați dacă Home Assistant vede dispozitivele /dev/hidraw.",
       "hidraw_permission_denied": "Home Assistant nu are permisiunea de a citi dispozitivul de intrare al telecomenzii. Consultați README pentru accesul la dispozitiv necesar acestei telecomenzi.",
-      "opus_decoder_unavailable": "Home Assistant nu dispune de un decodor audio Opus, necesar pentru această telecomandă."
+      "opus_decoder_unavailable": "Home Assistant nu dispune de un decodor audio Opus, necesar pentru această telecomandă.",
+      "fire_voice_unsupported": "Această telecomandă Fire TV nu raportează date vocale pe care această integrare le poate folosi. Bifați Afișează raportul telecomenzii și partajați-l într-o problemă GitHub.",
+      "voice_service_unavailable": "Telecomanda nu oferă serviciul vocal Android TV. Pentru o telecomandă Fire TV, setați Tipul telecomenzii la Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Această telecomandă este deja configurată.",
@@ -65,6 +106,7 @@
           "busy_playback": "Apăsare nouă în timpul răspunsului",
           "context_mode": "Contextul conversației",
           "input_mode": "Comportamentul butonului",
+          "remote_type": "Tipul telecomenzii",
           "min_press_seconds": "Ignoră apăsările scurte",
           "max_request_seconds": "Durata maximă a cererii",
           "max_conversation_seconds": "Durata maximă a conversației",
@@ -80,6 +122,7 @@
           "busy_playback": "Ce se întâmplă când butonul este apăsat în timp ce se redă un răspuns: respinge apăsarea, răspunde ulterior unei cereri în așteptare sau oprește răspunsul și pornește noua cerere.",
           "context_mode": "Reutilizare păstrează conversația Home Assistant, astfel încât întrebările ulterioare, cum ar fi „și dublul?”, funcționează. Nouă face din fiecare apăsare o conversație independentă.",
           "input_mode": "O cerere per apăsare înregistrează până la eliberarea butonului. Conversația alternativă continuă să asculte cât timp butonul este ținut apăsat: vorbiți, faceți o pauză, auziți răspunsul, apoi vorbiți din nou. Necesită o telecomandă cu apăsare pentru vorbit.",
+          "remote_type": "Lăsați pe Automat, cu excepția cazului în care telecomanda a fost detectată cu un tip greșit. Modificarea reconectează telecomanda.",
           "min_press_seconds": "Ignoră atingerile butonului vocal mai scurte decât această valoare, astfel încât o atingere accidentală să nu pornească niciodată o cerere; o apăsare reală pornește cu această întârziere. 0 dezactivează funcția. Util pentru o telecomandă Fire TV care eșuează cu „Niciun sunet de la microfon” imediat după activare: retrimite tasta care a activat-o ca o atingere instantanee. 0,1 s este un bun punct de plecare. Doar pentru telecomenzile Fire TV.",
           "max_request_seconds": "Durata maximă a unei singure cereri pe orice telecomandă: o apăsare întreagă în modul O cerere și fiecare tură în conversația alternativă. La atingerea ei, cererea se încheie cu o eroare de limită de captură. Micșorați-o pentru a opri înregistrarea cu butonul blocat; măriți-o pentru dictare lungă. Telecomenzile fără apăsare pentru vorbit se încheie și după aproximativ 15 secunde de vorbire sau la tăcere, oricare survine prima.",
           "max_conversation_seconds": "Durata maximă a unei apăsări întregi a butonului în modul conversație alternativă. Este ignorată în modul O cerere și nu trebuie să fie mai scurtă decât durata maximă a cererii.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "O cerere per apăsare",
         "conversation": "Conversație cât timp este apăsat (alternativ)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automat (recomandat)",
+        "atvv": "Telecomandă Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Telecomandă vocală Amazon Fire TV / Alexa (țineți apăsat pentru a vorbi)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Dispozitivul de intrare al telecomenzii nu este disponibil pentru Home Assistant.",
           "hidraw_permission_denied": "Home Assistant nu are permisiunea de a citi dispozitivul de intrare al telecomenzii.",
           "opus_decoder_unavailable": "Home Assistant nu dispune de un decodor audio Opus.",
+          "fire_voice_unsupported": "Această telecomandă Fire TV nu raportează date vocale utilizabile.",
           "invalid_opus_packet": "Telecomanda a trimis sunet care nu a putut fi decodat.",
           "other": "A apărut o altă eroare. Codul erorii oferă detaliile."
         },

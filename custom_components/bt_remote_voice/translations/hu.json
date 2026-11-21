@@ -26,12 +26,51 @@
         "title": "Válasszon Assist folyamatot",
         "description": "Beküldés előtt ébressze fel a távirányítót egy nyílgombbal. Az integráció csak átirat módban indul; ha működik, módosítsa ezt a beállításokban.",
         "data": {
-          "pipeline_id": "Assist folyamat"
+          "pipeline_id": "Assist folyamat",
+          "remote_type": "Távirányító típusa",
+          "show_report": "Távirányító-jelentés megjelenítése",
+          "test_remote": "A távirányítóm tesztelése"
         },
         "data_description": {
-          "pipeline_id": "Az Assist folyamat, amely feldolgozza a távirányító beszédét."
+          "pipeline_id": "Az Assist folyamat, amely feldolgozza a távirányító beszédét.",
+          "remote_type": "Hagyja Automatikus beállításon, hacsak a távirányítót nem ismeri fel, vagy a beállítás sikertelen.",
+          "show_report": "Jelölje be és küldje el, hogy megjelenjen egy jelentés, amelyet GitHub-hibajegybe másolhat.",
+          "test_remote": "Jelölje be és küldje el, majd tartsa lenyomva a távirányító hangomb gombját, hogy lássa, mit csinál."
         }
+      },
+      "report": {
+        "title": "Távirányító-jelentés",
+        "description": "Másolja ezt a szöveget egy GitHub-hibajegybe. Nem tartalmaz teljes Bluetooth-címet, neveket, webcímeket vagy hangot. Az itteni módosításokat figyelmen kívül hagyja; a Küldés visszavisz a beállításhoz.",
+        "data": {
+          "report": "Távirányító-jelentés"
+        },
+        "data_description": {
+          "report": "Jelölje ki az egészet, és másolja."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "A távirányító tesztjének eredménye",
+        "description": "Ez a távirányító magától indítja a hangot, amíg a gombját nyomva tartják. Beszédhez tartsa lenyomva ezt a gombot. Küldés a beállítás folytatásához."
+      },
+      "test_result_atvv_tap": {
+        "title": "A távirányító tesztjének eredménye",
+        "description": "Ez a távirányító a gomb megérintésére indítja a hangot, és addig hallgat, amíg abba nem hagyja a beszédet. Beszédhez érintse meg ezt a gombot. Küldés a beállítás folytatásához."
+      },
+      "test_result_fire_voice": {
+        "title": "A távirányító tesztjének eredménye",
+        "description": "Ez egy Fire TV-távirányító hangbillentyűje. Beszéd közben tartsa lenyomva. Küldés a beállítás folytatásához."
+      },
+      "test_result_plain_key": {
+        "title": "A távirányító tesztjének eredménye",
+        "description": "A távirányító közönséges billentyűket küldött, de hangjelet nem, így a hang gombja lehet, hogy nem indít hangot Bluetooth-on. Küldje el, majd jelölje be a(z) Távirányító-jelentés megjelenítése lehetőséget a látottak megosztásához."
+      },
+      "test_result_nothing": {
+        "title": "A távirányító tesztjének eredménye",
+        "description": "Nem érkezett semmi a távirányítótól. Ébressze fel egy nyílgombbal, ellenőrizze, hogy csatlakozik-e ehhez a Home Assistant géphez, és tesztelje újra. Küldés a folytatáshoz."
       }
+    },
+    "progress": {
+      "observing": "Hallgatás 20 másodpercig. Ébressze fel a távirányítót egy nyílgombbal, majd tartsa lenyomva a hang gombját, beszéljen röviden, és engedje el."
     },
     "error": {
       "bluetooth_unavailable": "A helyi Bluetooth nem érhető el. Ellenőrizze, hogy a rendszer D-Bus elérhető-e.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Válasszon egy meglévő Assist folyamatot.",
       "hidraw_unavailable": "A távirányító beviteli eszköze nem érhető el a Home Assistant számára. Ébressze fel a távirányítót, és ellenőrizze, hogy a Home Assistant látja-e a /dev/hidraw eszközöket.",
       "hidraw_permission_denied": "A Home Assistant nem olvashatja a távirányító beviteli eszközét. A távirányítóhoz szükséges eszközhozzáférésről lásd a README fájlt.",
-      "opus_decoder_unavailable": "A Home Assistant számára nem érhető el Opus hangdekóder, amelyre ennek a távirányítónak szüksége van."
+      "opus_decoder_unavailable": "A Home Assistant számára nem érhető el Opus hangdekóder, amelyre ennek a távirányítónak szüksége van.",
+      "fire_voice_unsupported": "Ez a Fire TV-távirányító nem jelent olyan hangadatokat, amelyeket ez az integráció használni tudna. Jelölje be a Távirányító-jelentés megjelenítése lehetőséget, és ossza meg egy GitHub-hibajegyben.",
+      "voice_service_unavailable": "A távirányító nem kínálja az Android TV hangszolgáltatását. Fire TV-távirányító esetén állítsa a Távirányító típusát Amazon Fire TV-re."
     },
     "abort": {
       "already_configured": "Ez a távirányító már be van állítva.",
@@ -65,6 +106,7 @@
           "busy_playback": "Új megnyomás válasz közben",
           "context_mode": "Beszélgetés kontextusa",
           "input_mode": "Gomb viselkedése",
+          "remote_type": "Távirányító típusa",
           "min_press_seconds": "Rövid megnyomások figyelmen kívül hagyása",
           "max_request_seconds": "Kérés maximális hossza",
           "max_conversation_seconds": "Beszélgetés maximális hossza",
@@ -80,6 +122,7 @@
           "busy_playback": "Mi történjen, ha a gombot válasz lejátszása közben nyomják meg: a megnyomás elutasítása, egy függőben lévő kérés megválaszolása utólag, vagy a válasz leállítása és az új kérés elindítása.",
           "context_mode": "Az újrahasználat megtartja a Home Assistant beszélgetést, így a követő kérdések, például „és ennek a duplája?”, működnek. Az új beszélgetés minden megnyomást önálló beszélgetéssé tesz.",
           "input_mode": "Egy kérés tartásonként addig rögzít, amíg a gombot el nem engedik. A váltakozó beszélgetés a gomb tartása közben is hallgat: beszéljen, tartson szünetet, hallgassa meg a választ, majd beszéljen újra. Tartva beszélős távirányítót igényel.",
+          "remote_type": "Hagyja Automatikus beállításon, hacsak a távirányítót nem tévesen típusként ismerték fel. A módosítás újracsatlakoztatja a távirányítót.",
           "min_press_seconds": "Figyelmen kívül hagyja az ennél rövidebb hanggomb-érintéseket, így egy téves érintés soha nem indít kérést; a valódi tartás ennyivel később indul. A 0 kikapcsolja. Hasznos Fire TV távirányítóhoz, amely közvetlenül az ébresztés után „Nincs mikrofonhang” hibával meghiúsul: az ébresztő billentyűt azonnali érintésként újraküldi. A 0,1 s jó kiindulópont. Csak Fire TV távirányítókhoz.",
           "max_request_seconds": "A leghosszabb idő, ameddig egyetlen kérés tarthat bármely távirányítón: a teljes tartás Egy kérés módban, és minden forduló Váltakozó beszélgetésben. Elérése a kérést rögzítési korlát hibával fejezi be. Csökkentse egy beragadt gomb rögzítésének megállítására; növelje hosszú diktáláshoz. A nem tartva beszélős távirányítók körülbelül 15 másodpercnyi beszédnél vagy csendnél is véget érnek, amelyik előbb bekövetkezik.",
           "max_conversation_seconds": "A leghosszabb idő, ameddig egy teljes gombtartás tarthat Váltakozó beszélgetés módban. Egy kérés módban figyelmen kívül marad, és nem lehet rövidebb a kérés maximális hosszánál.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Egy kérés tartásonként",
         "conversation": "Beszélgetés tartás közben (váltakozó)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatikus (ajánlott)",
+        "atvv": "Android TV / Google TV távirányító (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV / Alexa hangvezérlő távirányító (beszédhez tartsa lenyomva)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "A távirányító beviteli eszköze nem érhető el a Home Assistant számára.",
           "hidraw_permission_denied": "A Home Assistant nem olvashatja a távirányító beviteli eszközét.",
           "opus_decoder_unavailable": "A Home Assistant számára nem érhető el Opus hangdekóder.",
+          "fire_voice_unsupported": "Ez a Fire TV-távirányító nem jelent használható hangadatokat.",
           "invalid_opus_packet": "A távirányító olyan hangot küldött, amelyet nem sikerült dekódolni.",
           "other": "Másik hiba történt. A hibakód ad részleteket."
         },

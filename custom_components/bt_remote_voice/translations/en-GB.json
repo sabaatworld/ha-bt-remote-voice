@@ -26,12 +26,51 @@
         "title": "Select Assist pipeline",
         "description": "Wake the remote with an arrow button before submitting. The integration starts in transcription-only mode; change this in the options once it works.",
         "data": {
-          "pipeline_id": "Assist pipeline"
+          "pipeline_id": "Assist pipeline",
+          "remote_type": "Remote type",
+          "show_report": "Show remote report",
+          "test_remote": "Test my remote"
         },
         "data_description": {
-          "pipeline_id": "The Assist pipeline that processes speech from this remote."
+          "pipeline_id": "The Assist pipeline that processes speech from this remote.",
+          "remote_type": "Leave on Automatic unless the remote is not recognised or setup fails.",
+          "show_report": "Tick and submit to see a report you can copy into a GitHub issue.",
+          "test_remote": "Tick and submit, then press and hold the remote's voice button to see what the remote does."
         }
+      },
+      "report": {
+        "title": "Remote report",
+        "description": "Copy this text into a GitHub issue. It has no full Bluetooth address, names, web addresses or audio. Edits here are ignored; Submit goes back to setup.",
+        "data": {
+          "report": "Remote report"
+        },
+        "data_description": {
+          "report": "Select all and copy."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Remote test result",
+        "description": "This remote starts voice by itself while its button is held. Hold that button to talk. Submit to continue setup."
+      },
+      "test_result_atvv_tap": {
+        "title": "Remote test result",
+        "description": "This remote starts voice when its button is tapped and listens until you stop speaking. Tap that button to talk. Submit to continue setup."
+      },
+      "test_result_fire_voice": {
+        "title": "Remote test result",
+        "description": "This is the voice key of a Fire TV remote. Hold it while you speak. Submit to continue setup."
+      },
+      "test_result_plain_key": {
+        "title": "Remote test result",
+        "description": "The remote sent ordinary keys but no voice signal, so its voice button may not start voice over Bluetooth. Submit, then tick Show remote report to share what was seen."
+      },
+      "test_result_nothing": {
+        "title": "Remote test result",
+        "description": "Nothing was received from the remote. Wake it with an arrow key, check that it is connected to this Home Assistant machine, and test again. Submit to continue."
       }
+    },
+    "progress": {
+      "observing": "Listening for 20 seconds. Wake the remote with an arrow key, then press and hold its voice button, speak briefly and release."
     },
     "error": {
       "bluetooth_unavailable": "Local Bluetooth is unavailable. Check that system D-Bus is accessible.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Choose an existing Assist pipeline.",
       "hidraw_unavailable": "The remote's input device is not available to Home Assistant. Wake the remote and check that Home Assistant can see /dev/hidraw devices.",
       "hidraw_permission_denied": "Home Assistant is not allowed to read the remote's input device. See the README for the device access this remote needs.",
-      "opus_decoder_unavailable": "No Opus audio decoder is available to Home Assistant, which this remote needs."
+      "opus_decoder_unavailable": "No Opus audio decoder is available to Home Assistant, which this remote needs.",
+      "fire_voice_unsupported": "This Fire TV remote does not report voice data this integration can use. Tick Show remote report and share it in a GitHub issue.",
+      "voice_service_unavailable": "The remote does not offer the Android TV voice service. For a Fire TV remote, set Remote type to Amazon Fire TV."
     },
     "abort": {
       "already_configured": "This remote is already configured.",
@@ -65,6 +106,7 @@
           "busy_playback": "New press during reply",
           "context_mode": "Conversation context",
           "input_mode": "Button behaviour",
+          "remote_type": "Remote type",
           "min_press_seconds": "Ignore short presses",
           "max_request_seconds": "Maximum request length",
           "max_conversation_seconds": "Maximum conversation length",
@@ -80,6 +122,7 @@
           "busy_playback": "What to do when the button is pressed while a reply is playing: reject the press, answer one pending request afterward, or stop the reply and start the new request.",
           "context_mode": "Reuse keeps the Home Assistant conversation so follow-ups such as 'and double that?' work. Fresh makes every press an independent conversation.",
           "input_mode": "One request per hold records until the button is released. Alternating conversation keeps listening while the button is held: speak, pause, hear the reply, then speak again. It needs a hold-to-talk remote.",
+          "remote_type": "Leave on Automatic unless the remote was detected as the wrong type. Changing it reconnects the remote.",
           "min_press_seconds": "Ignores voice-button taps shorter than this, so a spurious tap never starts a request; a real hold starts this much later. 0 turns it off. Useful for a Fire TV remote that fails with \"No microphone audio\" right after waking: it re-sends the key that woke it as an instant tap. 0.1 s is a good starting point. Fire TV remotes only.",
           "max_request_seconds": "The longest a single request can last on any remote: a whole hold in One-request mode, and each turn in Alternating conversation. Reaching it ends the request with a capture-limit error. Lower it to stop a stuck button recording; raise it for long dictation. Remotes that are not hold-to-talk also end at about 15 seconds of speech or at silence, whichever comes first.",
           "max_conversation_seconds": "The longest a whole button hold can last in Alternating conversation mode. It is ignored in One-request mode and must not be shorter than the maximum request length.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "One request per hold",
         "conversation": "Conversation while held (alternating)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatic (recommended)",
+        "atvv": "Android TV / Google TV remote (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV / Alexa voice remote (hold to talk)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "The remote's input device is not available to Home Assistant.",
           "hidraw_permission_denied": "Home Assistant is not allowed to read the remote's input device.",
           "opus_decoder_unavailable": "No Opus audio decoder is available to Home Assistant.",
+          "fire_voice_unsupported": "This Fire TV remote does not report usable voice data.",
           "invalid_opus_packet": "The remote sent audio that could not be decoded.",
           "other": "Another error occurred. The error code gives the details."
         },

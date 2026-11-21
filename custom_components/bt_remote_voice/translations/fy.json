@@ -26,12 +26,51 @@
         "title": "Assist-pipeline selektearje",
         "description": "Wekker de ôfstânsbetsjinning mei in pylkeknop foardat jo ynstjoere. De yntegraasje start yn de modus allinnich transkripsje; wizigje dit yn de opsjes as it wurket.",
         "data": {
-          "pipeline_id": "Assist-pipeline"
+          "pipeline_id": "Assist-pipeline",
+          "remote_type": "Type ôfstânsbetsjinning",
+          "show_report": "Ôfstânsbetsjinningsrapport toane",
+          "test_remote": "Myn ôfstânsbetsjinning testje"
         },
         "data_description": {
-          "pipeline_id": "De Assist-pipeline dy't de spraak fan dizze ôfstânsbetsjinning ferwurket."
+          "pipeline_id": "De Assist-pipeline dy't de spraak fan dizze ôfstânsbetsjinning ferwurket.",
+          "remote_type": "Lit op Automatysk stean, útsein as de ôfstânsbetsjinning net werkend wurdt of ynstellen mislearret.",
+          "show_report": "Markearje en ferstjoer om in rapport te sjen dat jo yn in GitHub-probleem kopiearje kinne.",
+          "test_remote": "Markearje en ferstjoer, hâld dan de spraakknop fan de ôfstânsbetsjinning yndrukt om te sjen wat er dien wurdt."
         }
+      },
+      "report": {
+        "title": "Ôfstânsbetsjinningsrapport",
+        "description": "Kopiearje dizze tekst yn in GitHub-probleem. It befettet gjin folsleine Bluetooth-adres, nammen, webadressen of lûd. Wizigingen hjir wurde negearre; Ferstjoere giet werom nei it ynstellen.",
+        "data": {
+          "report": "Ôfstânsbetsjinningsrapport"
+        },
+        "data_description": {
+          "report": "Selektearje alles en kopiearje."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultaat fan de ôfstânsbetsjinningstest",
+        "description": "Dizze ôfstânsbetsjinning begjint sels spraak sa lang as syn knop yndrukt wurdt. Hâld dy knop yndrukt om te praten. Ferstjoere om troch te gean mei ynstellen."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultaat fan de ôfstânsbetsjinningstest",
+        "description": "Dizze ôfstânsbetsjinning begjint spraak as syn knop oantikke wurdt en harket oant jo ophâlde mei praten. Tik dy knop oan om te praten. Ferstjoere om troch te gean mei ynstellen."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultaat fan de ôfstânsbetsjinningstest",
+        "description": "Dit is de spraaktoets fan in Fire TV-ôfstânsbetsjinning. Hâld him yndrukt wylst jo prate. Ferstjoere om troch te gean mei ynstellen."
+      },
+      "test_result_plain_key": {
+        "title": "Resultaat fan de ôfstânsbetsjinningstest",
+        "description": "De ôfstânsbetsjinning stjoerde gewoane toetsen mar gjin spraaksinjaal, dus syn spraakknop begjint miskien gjin spraak fia Bluetooth. Ferstjoer en markearje dan Ôfstânsbetsjinningsrapport toane om te dielen wat sjoen is."
+      },
+      "test_result_nothing": {
+        "title": "Resultaat fan de ôfstânsbetsjinningstest",
+        "description": "Der is neat fan de ôfstânsbetsjinning ûntfongen. Wekker him mei in pylktoets, kontrolearje dat er ferbûn is mei dizze Home Assistant-masine en test opnij. Ferstjoere om troch te gean."
       }
+    },
+    "progress": {
+      "observing": "20 sekonden harkje. Wekker de ôfstânsbetsjinning mei in pylktoets, hâld dan syn spraakknop yndrukt, sprek koart en lit los."
     },
     "error": {
       "bluetooth_unavailable": "Lokale Bluetooth is net beskikber. Kontrolearje oft de systeem-D-Bus tagonklik is.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Kies in besteande Assist-pipeline.",
       "hidraw_unavailable": "It ynfierapparaat fan de ôfstânsbetsjinning is net beskikber foar Home Assistant. Wekker de ôfstânsbetsjinning en kontrolearje oft Home Assistant /dev/hidraw-apparaten sjen kin.",
       "hidraw_permission_denied": "Home Assistant mei it ynfierapparaat fan de ôfstânsbetsjinning net lêze. Sjoch de README foar de apparaattagong dy't dizze ôfstânsbetsjinning nedich hat.",
-      "opus_decoder_unavailable": "Der is gjin Opus-audiodekoder beskikber foar Home Assistant, dy't dizze ôfstânsbetsjinning nedich hat."
+      "opus_decoder_unavailable": "Der is gjin Opus-audiodekoder beskikber foar Home Assistant, dy't dizze ôfstânsbetsjinning nedich hat.",
+      "fire_voice_unsupported": "Dizze Fire TV-ôfstânsbetsjinning meldt gjin spraakgegevens dy't dizze yntegraasje brûke kin. Markearje Ôfstânsbetsjinningsrapport toane en diel it yn in GitHub-probleem.",
+      "voice_service_unavailable": "De ôfstânsbetsjinning biedt de Android TV-spraakstjinst net oan. Stel foar in Fire TV-ôfstânsbetsjinning it Type ôfstânsbetsjinning yn op Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Dizze ôfstânsbetsjinning is al konfigurearre.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nije druk by antwurd",
           "context_mode": "Petearkontekst",
           "input_mode": "Knopgedrach",
+          "remote_type": "Type ôfstânsbetsjinning",
           "min_press_seconds": "Koarte drukken negearje",
           "max_request_seconds": "Maksimale fersykleangte",
           "max_conversation_seconds": "Maksimale petearleangte",
@@ -80,6 +122,7 @@
           "busy_playback": "Wat te dwaan as de knop yndrukt wurdt wylst in antwurd ôfspile wurdt: de druk wegerje, dernei ien wachtsjend fersyk beantwurdzje, of it antwurd stopje en it nije fersyk starte.",
           "context_mode": "Hergebrûk hâldt it Home Assistant-petear fêst, sadat ferfolchfragen lykas 'en dat dûbel?' wurkje. Farsk makket fan elke druk in selsstannich petear.",
           "input_mode": "Ien fersyk per yndrukke nimt op oant de knop loslitten wurdt. Wikseljend petear bliuwt harkje salang't de knop yndrukt wurdt: sprekke, pauzearje, it antwurd hearre en dan wer sprekke. Dit hat in ôfstânsbetsjinning mei push-to-talk nedich.",
+          "remote_type": "Lit op Automatysk stean, útsein as de ôfstânsbetsjinning as it ferkearde type ûntdekt waard. Wizigje ferbynt de ôfstânsbetsjinning opnij.",
           "min_press_seconds": "Negearret tikken op de spraakknop dy't koarter binne as dit, sadat in ûnbedoelde tik nea in fersyk start; in echte druk begjint safolle letter. 0 skeakelet it út. Nuttich foar in Fire TV-ôfstânsbetsjinning dy't direkt nei it wekker wurden mislearret mei \"No microphone audio\": hy stjoert de toets dy't him wekker makke opnij as direkte tik. 0,1 s is in goed útgongspunt. Allinnich foar Fire TV-ôfstânsbetsjinnings.",
           "max_request_seconds": "De langste tiid dat ien fersyk duorje kin op elke ôfstânsbetsjinning: in hiele druk yn de modus Ien fersyk, en elke beurt yn Wikseljend petear. As it berikt wurdt, einiget it fersyk mei in opnamelimytflater. Ferleegje it om in fêstsitten knop net einleas opnimme te litten; ferhooch it foar lang dikteren. Ôfstânsbetsjinnings sûnder push-to-talk einigje ek nei likernôch 15 sekonden spraak of by stilte, wat it earst komt.",
           "max_conversation_seconds": "De langste tiid dat in hiele knopdruk duorje kin yn de modus Wikseljend petear. Wurdt negearre yn de modus Ien fersyk en mei net koarter wêze as de maksimale fersykleangte.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Ien fersyk per yndrukke",
         "conversation": "Petear wylst yndrukt (wikseljend)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatysk (oanrekommandearre)",
+        "atvv": "Android TV- / Google TV-ôfstânsbetsjinning (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV- / Alexa-spraakôfstânsbetsjinning (yndrukke hâlde om te praten)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "It ynfierapparaat fan de ôfstânsbetsjinning is net beskikber foar Home Assistant.",
           "hidraw_permission_denied": "Home Assistant mei it ynfierapparaat fan de ôfstânsbetsjinning net lêze.",
           "opus_decoder_unavailable": "Der is gjin Opus-audiodekoder beskikber foar Home Assistant.",
+          "fire_voice_unsupported": "Dizze Fire TV-ôfstânsbetsjinning meldt gjin brûkbere spraakgegevens.",
           "invalid_opus_packet": "De ôfstânsbetsjinning stjoerde audio dy't net dekodearre wurde koe.",
           "other": "Der is in oare flater optreden. De flaterkoade jout de details."
         },

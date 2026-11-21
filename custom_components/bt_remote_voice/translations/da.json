@@ -26,12 +26,51 @@
         "title": "Vælg Assist-pipeline",
         "description": "Væk fjernbetjeningen med en piletast, før du sender. Integrationen starter i tilstanden kun transskribering; ændr det i indstillingerne, når det virker.",
         "data": {
-          "pipeline_id": "Assist-pipeline"
+          "pipeline_id": "Assist-pipeline",
+          "remote_type": "Fjernbetjeningstype",
+          "show_report": "Vis fjernbetjeningsrapport",
+          "test_remote": "Test min fjernbetjening"
         },
         "data_description": {
-          "pipeline_id": "Den Assist-pipeline, der behandler tale fra denne fjernbetjening."
+          "pipeline_id": "Den Assist-pipeline, der behandler tale fra denne fjernbetjening.",
+          "remote_type": "Lad stå på Automatisk, medmindre fjernbetjeningen ikke genkendes, eller opsætningen mislykkes.",
+          "show_report": "Markér og send for at se en rapport, du kan kopiere ind i en GitHub-sag.",
+          "test_remote": "Markér og send, og tryk og hold derefter fjernbetjeningens stemmeknap for at se, hvad fjernbetjeningen gør."
         }
+      },
+      "report": {
+        "title": "Fjernbetjeningsrapport",
+        "description": "Kopiér denne tekst ind i en GitHub-sag. Den indeholder ingen fuld Bluetooth-adresse, navne, webadresser eller lyd. Ændringer her ignoreres; Send går tilbage til opsætningen.",
+        "data": {
+          "report": "Fjernbetjeningsrapport"
+        },
+        "data_description": {
+          "report": "Markér alt, og kopiér."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultat af fjernbetjeningstest",
+        "description": "Denne fjernbetjening starter selv stemme, mens knappen holdes nede. Hold knappen nede for at tale. Send for at fortsætte opsætningen."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultat af fjernbetjeningstest",
+        "description": "Denne fjernbetjening starter stemme, når der trykkes på knappen, og lytter, til du holder op med at tale. Tryk på knappen for at tale. Send for at fortsætte opsætningen."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultat af fjernbetjeningstest",
+        "description": "Dette er stemmetasten på en Fire TV-fjernbetjening. Hold den nede, mens du taler. Send for at fortsætte opsætningen."
+      },
+      "test_result_plain_key": {
+        "title": "Resultat af fjernbetjeningstest",
+        "description": "Fjernbetjeningen sendte almindelige taster, men intet stemmesignal, så dens stemmeknap starter måske ikke stemme via Bluetooth. Send, og markér derefter Vis fjernbetjeningsrapport for at dele, hvad der blev set."
+      },
+      "test_result_nothing": {
+        "title": "Resultat af fjernbetjeningstest",
+        "description": "Der blev ikke modtaget noget fra fjernbetjeningen. Væk den med en piletast, kontrollér, at den er forbundet til denne Home Assistant-maskine, og test igen. Send for at fortsætte."
       }
+    },
+    "progress": {
+      "observing": "Lytter i 20 sekunder. Væk fjernbetjeningen med en piletast, tryk og hold derefter dens stemmeknap, sig noget kort, og slip."
     },
     "error": {
       "bluetooth_unavailable": "Lokal Bluetooth er ikke tilgængelig. Kontroller, at systemets D-Bus er tilgængelig.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Vælg en eksisterende Assist-pipeline.",
       "hidraw_unavailable": "Fjernbetjeningens inputenhed er ikke tilgængelig for Home Assistant. Væk fjernbetjeningen, og kontroller, at Home Assistant kan se /dev/hidraw-enheder.",
       "hidraw_permission_denied": "Home Assistant har ikke tilladelse til at læse fjernbetjeningens inputenhed. Se README for den enhedsadgang, denne fjernbetjening kræver.",
-      "opus_decoder_unavailable": "Der er ingen Opus-lyddekoder tilgængelig for Home Assistant, hvilket denne fjernbetjening kræver."
+      "opus_decoder_unavailable": "Der er ingen Opus-lyddekoder tilgængelig for Home Assistant, hvilket denne fjernbetjening kræver.",
+      "fire_voice_unsupported": "Denne Fire TV-fjernbetjening rapporterer ikke stemmedata, som denne integration kan bruge. Markér Vis fjernbetjeningsrapport, og del den i en GitHub-sag.",
+      "voice_service_unavailable": "Fjernbetjeningen tilbyder ikke Android TV-stemmetjenesten. For en Fire TV-fjernbetjening skal Fjernbetjeningstype indstilles til Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Denne fjernbetjening er allerede konfigureret.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nyt tryk under svar",
           "context_mode": "Samtalekontekst",
           "input_mode": "Knapadfærd",
+          "remote_type": "Fjernbetjeningstype",
           "min_press_seconds": "Ignorer korte tryk",
           "max_request_seconds": "Maksimal anmodningslængde",
           "max_conversation_seconds": "Maksimal samtalelængde",
@@ -80,6 +122,7 @@
           "busy_playback": "Hvad der skal ske, når knappen trykkes, mens et svar afspilles: afvis trykket, besvar en ventende anmodning bagefter, eller stop svaret og start den nye anmodning.",
           "context_mode": "Genbrug bevarer Home Assistant-samtalen, så opfølgende spørgsmål som \"og det dobbelte?\" virker. Ny gør hvert tryk til en uafhængig samtale.",
           "input_mode": "Én anmodning pr. hold optager, indtil knappen slippes. Skiftevis samtale bliver ved med at lytte, mens knappen holdes nede: tal, hold pause, hør svaret, og tal igen. Kræver en fjernbetjening med hold-for-at-tale.",
+          "remote_type": "Lad stå på Automatisk, medmindre fjernbetjeningen blev registreret som den forkerte type. Ændring genopretter forbindelsen til fjernbetjeningen.",
           "min_press_seconds": "Ignorerer tryk på stemmeknappen, der er kortere end dette, så et utilsigtet tryk aldrig starter en anmodning; et rigtigt hold starter så meget senere. 0 slår det fra. Nyttigt til en Fire TV-fjernbetjening, der fejler med \"Ingen mikrofonlyd\" lige efter opvågning: den gensender den tast, der vækkede den, som et øjeblikkeligt tryk. 0,1 s er et godt udgangspunkt. Kun til Fire TV-fjernbetjeninger.",
           "max_request_seconds": "Den længste tid, en enkelt anmodning kan vare på en fjernbetjening: et helt hold i tilstanden Én anmodning og hver tur i skiftevis samtale. Når grænsen nås, slutter anmodningen med en fejl om optagegrænse. Sænk den for at stoppe optagelse med hængende knap; hæv den til lange diktater. Fjernbetjeninger uden hold-for-at-tale slutter også efter ca. 15 sekunders tale eller ved stilhed, alt efter hvad der kommer først.",
           "max_conversation_seconds": "Den længste tid, et helt knaphold kan vare i tilstanden skiftevis samtale. Ignoreres i tilstanden Én anmodning og må ikke være kortere end den maksimale anmodningslængde.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Én anmodning pr. hold",
         "conversation": "Samtale, mens knappen holdes (skiftevis)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatisk (anbefalet)",
+        "atvv": "Android TV- / Google TV-fjernbetjening (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV- / Alexa-stemmefjernbetjening (hold for at tale)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Fjernbetjeningens inputenhed er ikke tilgængelig for Home Assistant.",
           "hidraw_permission_denied": "Home Assistant har ikke tilladelse til at læse fjernbetjeningens inputenhed.",
           "opus_decoder_unavailable": "Der er ingen Opus-lyddekoder tilgængelig for Home Assistant.",
+          "fire_voice_unsupported": "Denne Fire TV-fjernbetjening rapporterer ikke brugbare stemmedata.",
           "invalid_opus_packet": "Fjernbetjeningen sendte lyd, der ikke kunne dekodes.",
           "other": "Der opstod en anden fejl. Fejlkoden angiver detaljerne."
         },

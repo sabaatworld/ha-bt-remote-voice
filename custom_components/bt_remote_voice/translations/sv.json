@@ -26,12 +26,51 @@
         "title": "Välj Assist-pipeline",
         "description": "Väck fjärrkontrollen med en piltangent innan du skickar. Integrationen startar i läget endast transkribering; ändra det i alternativen när det fungerar.",
         "data": {
-          "pipeline_id": "Assist-pipeline"
+          "pipeline_id": "Assist-pipeline",
+          "remote_type": "Fjärrkontrolltyp",
+          "show_report": "Visa fjärrkontrollsrapport",
+          "test_remote": "Testa min fjärrkontroll"
         },
         "data_description": {
-          "pipeline_id": "Assist-pipelinen som bearbetar tal från den här fjärrkontrollen."
+          "pipeline_id": "Assist-pipelinen som bearbetar tal från den här fjärrkontrollen.",
+          "remote_type": "Lämna på Automatisk, om inte fjärrkontrollen inte känns igen eller konfigurationen misslyckas.",
+          "show_report": "Markera och skicka för att se en rapport som du kan kopiera till ett GitHub-ärende.",
+          "test_remote": "Markera och skicka, tryck och håll sedan fjärrkontrollens röstknapp för att se vad fjärrkontrollen gör."
         }
+      },
+      "report": {
+        "title": "Fjärrkontrollsrapport",
+        "description": "Kopiera den här texten till ett GitHub-ärende. Den innehåller ingen fullständig Bluetooth-adress, inga namn, webbadresser eller ljud. Ändringar här ignoreras; Skicka går tillbaka till konfigurationen.",
+        "data": {
+          "report": "Fjärrkontrollsrapport"
+        },
+        "data_description": {
+          "report": "Markera allt och kopiera."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultat av fjärrkontrolltest",
+        "description": "Den här fjärrkontrollen startar röst själv medan knappen hålls nedtryckt. Håll knappen nedtryckt för att tala. Skicka för att fortsätta konfigurationen."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultat av fjärrkontrolltest",
+        "description": "Den här fjärrkontrollen startar röst när knappen trycks kort och lyssnar tills du slutar tala. Tryck kort på knappen för att tala. Skicka för att fortsätta konfigurationen."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultat av fjärrkontrolltest",
+        "description": "Det här är röstknappen på en Fire TV-fjärrkontroll. Håll den nedtryckt medan du talar. Skicka för att fortsätta konfigurationen."
+      },
+      "test_result_plain_key": {
+        "title": "Resultat av fjärrkontrolltest",
+        "description": "Fjärrkontrollen skickade vanliga tangenter men ingen röstsignal, så dess röstknapp kanske inte startar röst via Bluetooth. Skicka och markera sedan Visa fjärrkontrollsrapport för att dela det som sågs."
+      },
+      "test_result_nothing": {
+        "title": "Resultat av fjärrkontrolltest",
+        "description": "Inget togs emot från fjärrkontrollen. Väck den med en piltangent, kontrollera att den är ansluten till den här Home Assistant-maskinen och testa igen. Skicka för att fortsätta."
       }
+    },
+    "progress": {
+      "observing": "Lyssnar i 20 sekunder. Väck fjärrkontrollen med en piltangent, tryck och håll sedan dess röstknapp, säg något kort och släpp."
     },
     "error": {
       "bluetooth_unavailable": "Lokal Bluetooth är inte tillgänglig. Kontrollera att systemets D-Bus är åtkomlig.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Välj en befintlig Assist-pipeline.",
       "hidraw_unavailable": "Fjärrkontrollens indataenhet är inte tillgänglig för Home Assistant. Väck fjärrkontrollen och kontrollera att Home Assistant kan se /dev/hidraw-enheter.",
       "hidraw_permission_denied": "Home Assistant har inte behörighet att läsa fjärrkontrollens indataenhet. Se README för den enhetsåtkomst som den här fjärrkontrollen behöver.",
-      "opus_decoder_unavailable": "Ingen Opus-ljudavkodare är tillgänglig för Home Assistant, vilket den här fjärrkontrollen kräver."
+      "opus_decoder_unavailable": "Ingen Opus-ljudavkodare är tillgänglig för Home Assistant, vilket den här fjärrkontrollen kräver.",
+      "fire_voice_unsupported": "Den här Fire TV-fjärrkontrollen rapporterar inga röstdata som den här integrationen kan använda. Markera Visa fjärrkontrollsrapport och dela den i ett GitHub-ärende.",
+      "voice_service_unavailable": "Fjärrkontrollen erbjuder inte Android TV:s rösttjänst. För en Fire TV-fjärrkontroll ställer du in Fjärrkontrolltyp på Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Den här fjärrkontrollen är redan konfigurerad.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nytt tryck under svar",
           "context_mode": "Konversationskontext",
           "input_mode": "Knappbeteende",
+          "remote_type": "Fjärrkontrolltyp",
           "min_press_seconds": "Ignorera korta tryck",
           "max_request_seconds": "Maximal förfrågningslängd",
           "max_conversation_seconds": "Maximal konversationslängd",
@@ -80,6 +122,7 @@
           "busy_playback": "Vad som ska hända när knappen trycks medan ett svar spelas upp: avvisa trycket, besvara en väntande förfrågan efteråt eller stoppa svaret och starta den nya förfrågan.",
           "context_mode": "Återanvänd behåller Home Assistant-konversationen så att följdfrågor som ”och dubbelt så mycket?” fungerar. Ny gör varje tryck till en fristående konversation.",
           "input_mode": "En förfrågan per håll spelar in tills knappen släpps. Växlande konversation fortsätter lyssna medan knappen hålls nedtryckt: tala, pausa, hör svaret och tala igen. Kräver en fjärrkontroll med håll-för-att-tala.",
+          "remote_type": "Lämna på Automatisk, om inte fjärrkontrollen identifierades som fel typ. Om du ändrar det ansluts fjärrkontrollen igen.",
           "min_press_seconds": "Ignorerar tryck på röstknappen som är kortare än så här, så att ett oavsiktligt tryck aldrig startar en förfrågan; ett riktigt håll startar så här mycket senare. 0 stänger av funktionen. Användbart för en Fire TV-fjärrkontroll som misslyckas med ”Inget mikrofonljud” direkt efter att den väckts: den skickar om tangenten som väckte den som ett omedelbart tryck. 0,1 s är en bra startpunkt. Endast för Fire TV-fjärrkontroller.",
           "max_request_seconds": "Den längsta tiden en enskild förfrågan kan pågå på valfri fjärrkontroll: ett helt håll i läget En förfrågan och varje tur i växlande konversation. När gränsen nås avslutas förfrågan med ett fel om inspelningsgräns. Sänk den för att stoppa inspelning med fastnad knapp; höj den för långa diktamen. Fjärrkontroller utan håll-för-att-tala avslutar också efter cirka 15 sekunders tal eller vid tystnad, beroende på vilket som inträffar först.",
           "max_conversation_seconds": "Den längsta tiden ett helt knapphåll kan pågå i läget växlande konversation. Ignoreras i läget En förfrågan och får inte vara kortare än den maximala förfrågningslängden.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "En förfrågan per håll",
         "conversation": "Konversation medan knappen hålls (växlande)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatisk (rekommenderas)",
+        "atvv": "Android TV- / Google TV-fjärrkontroll (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV- / Alexa-röstfjärrkontroll (håll intryckt för att tala)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Fjärrkontrollens indataenhet är inte tillgänglig för Home Assistant.",
           "hidraw_permission_denied": "Home Assistant har inte behörighet att läsa fjärrkontrollens indataenhet.",
           "opus_decoder_unavailable": "Ingen Opus-ljudavkodare är tillgänglig för Home Assistant.",
+          "fire_voice_unsupported": "Den här Fire TV-fjärrkontrollen rapporterar inga användbara röstdata.",
           "invalid_opus_packet": "Fjärrkontrollen skickade ljud som inte kunde avkodas.",
           "other": "Ett annat fel inträffade. Felkoden ger detaljerna."
         },

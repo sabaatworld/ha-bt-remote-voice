@@ -26,12 +26,51 @@
         "title": "Vyberte pipeline Assist",
         "description": "Pred odoslaním zobuďte ovládač tlačidlom so šípkou. Integrácia sa spúšťa v režime iba prepisu; keď všetko funguje, zmeňte to v možnostiach.",
         "data": {
-          "pipeline_id": "Pipeline Assist"
+          "pipeline_id": "Pipeline Assist",
+          "remote_type": "Typ ovládača",
+          "show_report": "Zobraziť správu o ovládači",
+          "test_remote": "Otestovať môj ovládač"
         },
         "data_description": {
-          "pipeline_id": "Pipeline Assist, ktorá spracúva reč z tohto ovládača."
+          "pipeline_id": "Pipeline Assist, ktorá spracúva reč z tohto ovládača.",
+          "remote_type": "Nechajte Automaticky, ak ovládač nie je rozpoznaný alebo sa nastavenie nepodarí.",
+          "show_report": "Zaškrtnite a odošlite, zobrazí sa správa, ktorú môžete skopírovať do hlásenia na GitHube.",
+          "test_remote": "Zaškrtnite a odošlite, potom stlačte a podržte hlasové tlačidlo ovládača, aby ste videli, čo robí."
         }
+      },
+      "report": {
+        "title": "Správa o ovládači",
+        "description": "Skopírujte tento text do hlásenia na GitHube. Neobsahuje úplnú adresu Bluetooth, mená, webové adresy ani zvuk. Úpravy tu sa ignorujú; Odoslať vás vráti k nastaveniu.",
+        "data": {
+          "report": "Správa o ovládači"
+        },
+        "data_description": {
+          "report": "Vyberte všetko a skopírujte."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Výsledok testu ovládača",
+        "description": "Tento ovládač spúšťa hlas sám, kým je jeho tlačidlo podržané. Podržte toto tlačidlo a hovorte. Odoslať na pokračovanie nastavenia."
+      },
+      "test_result_atvv_tap": {
+        "title": "Výsledok testu ovládača",
+        "description": "Tento ovládač spúšťa hlas ťuknutím na tlačidlo a počúva, kým neprestanete hovoriť. Ťuknite na toto tlačidlo a hovorte. Odoslať na pokračovanie nastavenia."
+      },
+      "test_result_fire_voice": {
+        "title": "Výsledok testu ovládača",
+        "description": "Toto je hlasová klávesa ovládača Fire TV. Podržte ju pri hovorení. Odoslať na pokračovanie nastavenia."
+      },
+      "test_result_plain_key": {
+        "title": "Výsledok testu ovládača",
+        "description": "Ovládač poslal bežné klávesy, ale žiadny hlasový signál, takže jeho hlasové tlačidlo možno nespúšťa hlas cez Bluetooth. Odošlite a potom zaškrtnite Zobraziť správu o ovládači, aby ste zdieľali, čo bolo zistené."
+      },
+      "test_result_nothing": {
+        "title": "Výsledok testu ovládača",
+        "description": "Z ovládača nič neprišlo. Prebuďte ho šípkou, skontrolujte, či je pripojený k tomuto počítaču s Home Assistant, a otestujte znova. Odoslať na pokračovanie."
       }
+    },
+    "progress": {
+      "observing": "Počúvanie 20 sekúnd. Prebuďte ovládač šípkou, potom stlačte a podržte jeho hlasové tlačidlo, krátko prehovorte a pustite."
     },
     "error": {
       "bluetooth_unavailable": "Lokálny Bluetooth nie je k dispozícii. Skontrolujte, či je systémová zbernica D-Bus dostupná.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Vyberte existujúcu pipeline Assist.",
       "hidraw_unavailable": "Vstupné zariadenie ovládača nie je pre Home Assistant dostupné. Zobuďte ovládač a skontrolujte, či Home Assistant vidí zariadenia /dev/hidraw.",
       "hidraw_permission_denied": "Home Assistant nemá oprávnenie čítať vstupné zariadenie ovládača. Potrebný prístup k zariadeniu nájdete v súbore README.",
-      "opus_decoder_unavailable": "Home Assistant nemá k dispozícii audio dekodér Opus, ktorý tento ovládač vyžaduje."
+      "opus_decoder_unavailable": "Home Assistant nemá k dispozícii audio dekodér Opus, ktorý tento ovládač vyžaduje.",
+      "fire_voice_unsupported": "Tento ovládač Fire TV nehlási hlasové údaje, ktoré by táto integrácia mohla použiť. Zaškrtnite Zobraziť správu o ovládači a zdieľajte ju v hlásení na GitHube.",
+      "voice_service_unavailable": "Ovládač neponúka hlasovú službu Android TV. Pri ovládači Fire TV nastavte Typ ovládača na Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Tento ovládač je už nakonfigurovaný.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nové stlačenie počas odpovede",
           "context_mode": "Kontext konverzácie",
           "input_mode": "Správanie tlačidla",
+          "remote_type": "Typ ovládača",
           "min_press_seconds": "Ignorovať krátke stlačenia",
           "max_request_seconds": "Maximálna dĺžka požiadavky",
           "max_conversation_seconds": "Maximálna dĺžka konverzácie",
@@ -80,6 +122,7 @@
           "busy_playback": "Čo urobiť, keď sa tlačidlo stlačí počas prehrávania odpovede: stlačenie odmietnuť, potom zodpovedať jednu čakajúcu požiadavku, alebo odpoveď zastaviť a začať novú požiadavku.",
           "context_mode": "Opätovné použitie zachová konverzáciu Home Assistant, aby fungovali nadväzujúce otázky ako „a dvakrát toľko?“. Nová konverzácia robí z každého stlačenia samostatnú konverzáciu.",
           "input_mode": "Jedna požiadavka na podržanie nahráva, kým sa tlačidlo nepustí. Striedavá konverzácia počúva, kým je tlačidlo podržané: hovoríte, urobíte pauzu, vypočujete si odpoveď a hovoríte znova. Vyžaduje ovládač s funkciou „podrž a hovor“.",
+          "remote_type": "Nechajte Automaticky, ak ovládač nebol zistený ako nesprávny typ. Zmena ovládač znova pripojí.",
           "min_press_seconds": "Ignoruje ťuknutia na hlasové tlačidlo kratšie ako táto hodnota, aby falošné ťuknutie nikdy nezačalo požiadavku; skutočné podržanie sa začne o toľko neskôr. 0 to vypne. Užitočné pre ovládač Fire TV, ktorý po zobudení zlyhá s chybou „Žiadny zvuk z mikrofónu“: znova odošle kláves, ktorý ho zobudil, ako okamžité ťuknutie. Dobrým začiatkom je 0,1 s. Iba ovládače Fire TV.",
           "max_request_seconds": "Najdlhší čas jednej požiadavky na ľubovoľnom ovládači: celé podržanie v režime jednej požiadavky a každé kolo v striedavej konverzácii. Dosiahnutie limitu ukončí požiadavku chybou limitu záznamu. Znížte, aby sa zastavilo nahrávanie zaseknutého tlačidla; zvýšte pre dlhé diktovanie. Ovládače bez funkcie „podrž a hovor“ tiež končia po približne 15 sekundách reči alebo pri tichu, podľa toho, čo nastane skôr.",
           "max_conversation_seconds": "Najdlhší čas celého podržania tlačidla v režime striedavej konverzácie. V režime jednej požiadavky sa ignoruje a nesmie byť kratší ako maximálna dĺžka požiadavky.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Jedna požiadavka na podržanie",
         "conversation": "Konverzácia pri podržaní (striedavo)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automaticky (odporúčané)",
+        "atvv": "Ovládač Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Hlasový ovládač Amazon Fire TV / Alexa (podržte a hovorte)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Vstupné zariadenie ovládača nie je pre Home Assistant dostupné.",
           "hidraw_permission_denied": "Home Assistant nemá oprávnenie čítať vstupné zariadenie ovládača.",
           "opus_decoder_unavailable": "Home Assistant nemá k dispozícii audio dekodér Opus.",
+          "fire_voice_unsupported": "Tento ovládač Fire TV nehlási použiteľné hlasové údaje.",
           "invalid_opus_packet": "Ovládač odoslal zvuk, ktorý sa nedal dekódovať.",
           "other": "Vyskytla sa iná chyba. Podrobnosti uvádza kód chyby."
         },

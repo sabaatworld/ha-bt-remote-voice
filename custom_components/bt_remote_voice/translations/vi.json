@@ -26,12 +26,51 @@
         "title": "Chọn pipeline Assist",
         "description": "Hãy đánh thức điều khiển từ xa bằng một nút mũi tên trước khi gửi. Tích hợp khởi động ở chế độ chỉ chép lời; hãy thay đổi trong tùy chọn khi mọi thứ đã hoạt động.",
         "data": {
-          "pipeline_id": "Pipeline Assist"
+          "pipeline_id": "Pipeline Assist",
+          "remote_type": "Loại điều khiển",
+          "show_report": "Hiển thị báo cáo điều khiển",
+          "test_remote": "Kiểm tra điều khiển của tôi"
         },
         "data_description": {
-          "pipeline_id": "Pipeline Assist xử lý giọng nói từ điều khiển từ xa này."
+          "pipeline_id": "Pipeline Assist xử lý giọng nói từ điều khiển từ xa này.",
+          "remote_type": "Hãy để ở Tự động, trừ khi điều khiển không được nhận dạng hoặc thiết lập thất bại.",
+          "show_report": "Chọn rồi gửi để xem báo cáo mà bạn có thể sao chép vào một vấn đề trên GitHub.",
+          "test_remote": "Chọn rồi gửi, sau đó nhấn và giữ nút giọng nói của điều khiển để xem điều khiển làm gì."
         }
+      },
+      "report": {
+        "title": "Báo cáo điều khiển",
+        "description": "Hãy sao chép văn bản này vào một vấn đề trên GitHub. Văn bản không chứa địa chỉ Bluetooth đầy đủ, tên, địa chỉ web hay âm thanh. Các chỉnh sửa ở đây sẽ bị bỏ qua; Gửi sẽ quay lại phần thiết lập.",
+        "data": {
+          "report": "Báo cáo điều khiển"
+        },
+        "data_description": {
+          "report": "Chọn tất cả và sao chép."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Kết quả kiểm tra điều khiển",
+        "description": "Điều khiển này tự bắt đầu giọng nói khi nút của nó được giữ. Hãy giữ nút đó để nói. Gửi để tiếp tục thiết lập."
+      },
+      "test_result_atvv_tap": {
+        "title": "Kết quả kiểm tra điều khiển",
+        "description": "Điều khiển này bắt đầu giọng nói khi chạm vào nút của nó và lắng nghe cho đến khi bạn ngừng nói. Hãy chạm vào nút đó để nói. Gửi để tiếp tục thiết lập."
+      },
+      "test_result_fire_voice": {
+        "title": "Kết quả kiểm tra điều khiển",
+        "description": "Đây là phím giọng nói của điều khiển Fire TV. Hãy giữ nó khi bạn nói. Gửi để tiếp tục thiết lập."
+      },
+      "test_result_plain_key": {
+        "title": "Kết quả kiểm tra điều khiển",
+        "description": "Điều khiển đã gửi các phím thông thường nhưng không có tín hiệu giọng nói, nên nút giọng nói của nó có thể không bắt đầu giọng nói qua Bluetooth. Gửi, sau đó chọn Hiển thị báo cáo điều khiển để chia sẻ những gì đã thấy."
+      },
+      "test_result_nothing": {
+        "title": "Kết quả kiểm tra điều khiển",
+        "description": "Không nhận được gì từ điều khiển. Hãy đánh thức nó bằng một phím mũi tên, kiểm tra xem nó đã kết nối với máy Home Assistant này chưa, rồi kiểm tra lại. Gửi để tiếp tục."
       }
+    },
+    "progress": {
+      "observing": "Đang lắng nghe trong 20 giây. Đánh thức điều khiển bằng một phím mũi tên, sau đó nhấn và giữ nút giọng nói của nó, nói ngắn gọn rồi thả ra."
     },
     "error": {
       "bluetooth_unavailable": "Bluetooth cục bộ không khả dụng. Hãy kiểm tra xem có thể truy cập D-Bus của hệ thống hay không.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Hãy chọn một pipeline Assist hiện có.",
       "hidraw_unavailable": "Home Assistant không dùng được thiết bị đầu vào của điều khiển từ xa. Hãy đánh thức điều khiển và kiểm tra xem Home Assistant có thấy các thiết bị /dev/hidraw hay không.",
       "hidraw_permission_denied": "Home Assistant không được phép đọc thiết bị đầu vào của điều khiển từ xa. Xem README để biết quyền truy cập thiết bị mà điều khiển này cần.",
-      "opus_decoder_unavailable": "Home Assistant không có bộ giải mã âm thanh Opus, mà điều khiển từ xa này cần."
+      "opus_decoder_unavailable": "Home Assistant không có bộ giải mã âm thanh Opus, mà điều khiển từ xa này cần.",
+      "fire_voice_unsupported": "Điều khiển Fire TV này không báo cáo dữ liệu giọng nói mà tích hợp này có thể dùng. Hãy chọn Hiển thị báo cáo điều khiển và chia sẻ trong một vấn đề trên GitHub.",
+      "voice_service_unavailable": "Điều khiển không cung cấp dịch vụ giọng nói của Android TV. Với điều khiển Fire TV, hãy đặt Loại điều khiển thành Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Điều khiển từ xa này đã được cấu hình.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nhấn mới khi đang phản hồi",
           "context_mode": "Ngữ cảnh hội thoại",
           "input_mode": "Hành vi nút",
+          "remote_type": "Loại điều khiển",
           "min_press_seconds": "Bỏ qua lần nhấn ngắn",
           "max_request_seconds": "Độ dài yêu cầu tối đa",
           "max_conversation_seconds": "Độ dài hội thoại tối đa",
@@ -80,6 +122,7 @@
           "busy_playback": "Việc cần làm khi nhấn nút trong lúc đang phát phản hồi: từ chối lần nhấn, trả lời sau một yêu cầu đang chờ, hoặc dừng phản hồi và bắt đầu yêu cầu mới.",
           "context_mode": "Dùng lại giữ nguyên cuộc hội thoại Home Assistant để các câu hỏi tiếp theo như \"gấp đôi con số đó thì sao?\" hoạt động. Mới biến mỗi lần nhấn thành một cuộc hội thoại độc lập.",
           "input_mode": "Một yêu cầu cho mỗi lần giữ ghi âm cho đến khi nhả nút. Hội thoại luân phiên tiếp tục lắng nghe khi đang giữ nút: nói, dừng, nghe phản hồi, rồi nói tiếp. Cần điều khiển từ xa kiểu nhấn giữ để nói.",
+          "remote_type": "Hãy để ở Tự động, trừ khi điều khiển bị phát hiện sai loại. Thay đổi sẽ kết nối lại điều khiển.",
           "min_press_seconds": "Bỏ qua các lần chạm nút giọng nói ngắn hơn giá trị này, để lần chạm nhầm không bắt đầu yêu cầu; lần giữ thật sẽ bắt đầu muộn hơn chừng đó. 0 là tắt. Hữu ích cho điều khiển Fire TV bị lỗi \"Không có âm thanh micrô\" ngay sau khi đánh thức: nó gửi lại phím đã đánh thức dưới dạng một lần chạm tức thì. 0.1 s là điểm khởi đầu tốt. Chỉ dành cho điều khiển Fire TV.",
           "max_request_seconds": "Thời gian dài nhất của một yêu cầu trên mọi điều khiển từ xa: toàn bộ lần giữ ở chế độ một yêu cầu, và mỗi lượt trong hội thoại luân phiên. Khi đạt giới hạn, yêu cầu kết thúc với lỗi giới hạn thu âm. Giảm để ngăn nút bị kẹt tiếp tục ghi âm; tăng cho việc đọc chính tả dài. Điều khiển không phải kiểu nhấn giữ để nói cũng kết thúc sau khoảng 15 giây giọng nói hoặc khi im lặng, tùy điều nào đến trước.",
           "max_conversation_seconds": "Thời gian dài nhất của một lần giữ nút ở chế độ hội thoại luân phiên. Bị bỏ qua ở chế độ một yêu cầu và không được ngắn hơn độ dài yêu cầu tối đa.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Một yêu cầu cho mỗi lần giữ",
         "conversation": "Hội thoại khi giữ nút (luân phiên)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Tự động (khuyến nghị)",
+        "atvv": "Điều khiển Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Điều khiển giọng nói Amazon Fire TV / Alexa (nhấn giữ để nói)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Home Assistant không dùng được thiết bị đầu vào của điều khiển từ xa.",
           "hidraw_permission_denied": "Home Assistant không được phép đọc thiết bị đầu vào của điều khiển từ xa.",
           "opus_decoder_unavailable": "Home Assistant không có bộ giải mã âm thanh Opus.",
+          "fire_voice_unsupported": "Điều khiển Fire TV này không báo cáo dữ liệu giọng nói dùng được.",
           "invalid_opus_packet": "Điều khiển từ xa đã gửi âm thanh không thể giải mã.",
           "other": "Đã xảy ra một lỗi khác. Mã lỗi cho biết chi tiết."
         },

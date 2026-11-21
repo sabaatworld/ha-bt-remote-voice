@@ -26,12 +26,51 @@
         "title": "Elektu Assist-duktubon",
         "description": "Vekigu la teleregilon per sagoklavo antaŭ ol sendi. La integriĝo komencas en reĝimo nur por transskribo; ŝanĝu tion en la opcioj kiam ĝi funkcias.",
         "data": {
-          "pipeline_id": "Assist-duktubo"
+          "pipeline_id": "Assist-duktubo",
+          "remote_type": "Tipo de teleregilo",
+          "show_report": "Montri raporton pri teleregilo",
+          "test_remote": "Testi mian teleregilon"
         },
         "data_description": {
-          "pipeline_id": "La Assist-duktubo, kiu prilaboras paroladon de ĉi tiu teleregilo."
+          "pipeline_id": "La Assist-duktubo, kiu prilaboras paroladon de ĉi tiu teleregilo.",
+          "remote_type": "Lasu je Aŭtomata, krom se la teleregilo ne estas rekonata aŭ la agordo malsukcesas.",
+          "show_report": "Markobu kaj sendu por vidi raporton, kiun vi povas kopii en GitHub-problemon.",
+          "test_remote": "Markobu kaj sendu, poste premu kaj tenu la voĉan butonon de la teleregilo por vidi kion ĝi faras."
         }
+      },
+      "report": {
+        "title": "Raporto pri teleregilo",
+        "description": "Kopiu ĉi tiun tekston en GitHub-problemon. Ĝi enhavas neniun plenan Bluetooth-adreson, nomojn, retadresojn aŭ sonon. Redaktoj ĉi tie estas ignoritaj; Sendi revenigas al la agordo.",
+        "data": {
+          "report": "Raporto pri teleregilo"
+        },
+        "data_description": {
+          "report": "Elektu ĉion kaj kopiu."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Rezulto de la teleregila testo",
+        "description": "Ĉi tiu teleregilo mem komencas voĉon dum ĝia butono estas tenata. Tenu tiun butonon por paroli. Sendi por daŭrigi la agordon."
+      },
+      "test_result_atvv_tap": {
+        "title": "Rezulto de la teleregila testo",
+        "description": "Ĉi tiu teleregilo komencas voĉon kiam ĝia butono estas tuŝeta kaj aŭskultas ĝis vi ĉesas paroli. Tuŝetu tiun butonon por paroli. Sendi por daŭrigi la agordon."
+      },
+      "test_result_fire_voice": {
+        "title": "Rezulto de la teleregila testo",
+        "description": "Ĉi tio estas la voĉa klavo de Fire TV-teleregilo. Tenu ĝin dum vi parolas. Sendi por daŭrigi la agordon."
+      },
+      "test_result_plain_key": {
+        "title": "Rezulto de la teleregila testo",
+        "description": "La teleregilo sendis ordinarajn klavojn sed neniun voĉan signalon, do ĝia voĉa butono eble ne komencas voĉon per Bluetooth. Sendu, poste markobu Montri raporton pri teleregilo por kundividi tion, kio estis vidita."
+      },
+      "test_result_nothing": {
+        "title": "Rezulto de la teleregila testo",
+        "description": "Nenio estis ricevita de la teleregilo. Vekiĝu ĝin per sagoklavo, kontrolu ke ĝi estas konektita al ĉi tiu Home Assistant-maŝino kaj testu denove. Sendi por daŭrigi."
       }
+    },
+    "progress": {
+      "observing": "Aŭskultado dum 20 sekundoj. Vekiĝu la teleregilon per sagoklavo, poste premu kaj tenu ĝian voĉan butonon, parolu mallonge kaj liberigu."
     },
     "error": {
       "bluetooth_unavailable": "Loka Bluetooth ne disponeblas. Kontrolu, ke la sistema D-Bus estas alirebla.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Elektu ekzistantan Assist-duktubon.",
       "hidraw_unavailable": "La enigaparato de la teleregilo ne disponeblas por Home Assistant. Vekigu la teleregilon kaj kontrolu, ke Home Assistant povas vidi aparatojn /dev/hidraw.",
       "hidraw_permission_denied": "Home Assistant ne rajtas legi la enigaparaton de la teleregilo. Vidu la README pri la aparata aliro, kiun ĉi tiu teleregilo bezonas.",
-      "opus_decoder_unavailable": "Neniu Opus-sondekodilo disponeblas por Home Assistant, kiun ĉi tiu teleregilo bezonas."
+      "opus_decoder_unavailable": "Neniu Opus-sondekodilo disponeblas por Home Assistant, kiun ĉi tiu teleregilo bezonas.",
+      "fire_voice_unsupported": "Ĉi tiu Fire TV-teleregilo ne raportas voĉdatenojn, kiujn ĉi tiu integriĝo povas uzi. Markobu Montri raporton pri teleregilo kaj kundividu ĝin en GitHub-problemo.",
+      "voice_service_unavailable": "La teleregilo ne ofertas la voĉan servon de Android TV. Por Fire TV-teleregilo, agordu Tipon de teleregilo al Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Ĉi tiu teleregilo jam estas agordita.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nova premo dum respondo",
           "context_mode": "Konversacia kunteksto",
           "input_mode": "Konduto de butono",
+          "remote_type": "Tipo de teleregilo",
           "min_press_seconds": "Ignori mallongajn premojn",
           "max_request_seconds": "Maksimuma daŭro de peto",
           "max_conversation_seconds": "Maksimuma daŭro de konversacio",
@@ -80,6 +122,7 @@
           "busy_playback": "Kion fari kiam la butono estas premata dum respondo estas ludata: malakcepti la premon, poste respondi unu pritraktatan peton, aŭ halti la respondon kaj komenci la novan peton.",
           "context_mode": "Reuzi konservas la konversacion de Home Assistant, tiel ke postaj demandoj kiel «kaj duoble?» funkcias. Nova faras ĉiun premon sendependa konversacio.",
           "input_mode": "Unu peto per tenado registras ĝis la butono estas lasita. Alterna konversacio daŭre aŭskultas dum la butono estas tenata: paroli, paŭzi, aŭdi la respondon, poste paroli denove. Ĝi bezonas teleregilon por tenado-por-paroli.",
+          "remote_type": "Lasu je Aŭtomata, krom se la teleregilo estis detektita kiel malĝusta tipo. Ŝanĝo rekonektas la teleregilon.",
           "min_press_seconds": "Ignoras tuŝetojn de la voĉa butono pli mallongajn ol ĉi tio, por ke falsa tuŝeto neniam komencu peton; vera tenado komenciĝas tiom pli malfrue. 0 malŝaltas ĝin. Utila por Fire TV-teleregilo, kiu malsukcesas kun «Neniu mikrofona sono» tuj post vekiĝo: ĝi resendas la klavon, kiu vekis ĝin, kiel tuj-tuŝeton. 0.1 s estas bona komenca valoro. Nur por Fire TV-teleregiloj.",
           "max_request_seconds": "La plej longa daŭro de unuopa peto ĉe iu ajn teleregilo: tuta tenado en reĝimo de Unu peto, kaj ĉiu vico en Alterna konversacio. Atingo de ĝi finas la peton per eraro de kaptolimo. Malpliigu ĝin por haltigi blokitan butonon, kiu daŭre registras; pliigu ĝin por longa dikto. Teleregiloj, kiuj ne estas tenado-por-paroli, ankaŭ finiĝas post ĉirkaŭ 15 sekundoj da parolo aŭ ĉe silento, kiu ajn venas unue.",
           "max_conversation_seconds": "La plej longa daŭro de tuta butontenado en reĝimo de Alterna konversacio. Ĝi estas ignorata en reĝimo de Unu peto kaj ne devas esti pli mallonga ol la maksimuma daŭro de peto.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Unu peto per tenado",
         "conversation": "Konversacio dum tenado (alterna)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Aŭtomata (rekomendita)",
+        "atvv": "Android TV / Google TV-teleregilo (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV / Alexa voĉa teleregilo (tenu por paroli)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "La enigaparato de la teleregilo ne disponeblas por Home Assistant.",
           "hidraw_permission_denied": "Home Assistant ne rajtas legi la enigaparaton de la teleregilo.",
           "opus_decoder_unavailable": "Neniu Opus-sondekodilo disponeblas por Home Assistant.",
+          "fire_voice_unsupported": "Ĉi tiu Fire TV-teleregilo ne raportas uzeblajn voĉdatenojn.",
           "invalid_opus_packet": "La teleregilo sendis sonon, kiu ne povis esti malkodita.",
           "other": "Okazis alia eraro. La erarkodo donas la detalojn."
         },

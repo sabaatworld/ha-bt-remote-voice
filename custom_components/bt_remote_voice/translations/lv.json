@@ -26,12 +26,51 @@
         "title": "Izvēlieties Assist konveijeru",
         "description": "Pirms iesniegšanas pamodiniet tālvadības pulti ar bultiņu pogu. Integrācija sāk darbu tikai transkripcijas režīmā; kad tā darbojas, mainiet to opcijās.",
         "data": {
-          "pipeline_id": "Assist konveijers"
+          "pipeline_id": "Assist konveijers",
+          "remote_type": "Tālvadības pults veids",
+          "show_report": "Rādīt tālvadības pults pārskatu",
+          "test_remote": "Pārbaudīt manu tālvadības pulti"
         },
         "data_description": {
-          "pipeline_id": "Assist konveijers, kas apstrādā runu no šīs tālvadības pults."
+          "pipeline_id": "Assist konveijers, kas apstrādā runu no šīs tālvadības pults.",
+          "remote_type": "Atstājiet Automātiski, ja vien tālvadības pults netiek atpazīta vai iestatīšana neizdodas.",
+          "show_report": "Atzīmējiet un iesniedziet, lai redzētu pārskatu, ko varat kopēt GitHub problēmā.",
+          "test_remote": "Atzīmējiet un iesniedziet, pēc tam nospiediet un turiet tālvadības pults balss pogu, lai redzētu, ko tā dara."
         }
+      },
+      "report": {
+        "title": "Tālvadības pults pārskats",
+        "description": "Nokopējiet šo tekstu GitHub problēmā. Tajā nav pilnas Bluetooth adreses, nosaukumu, tīmekļa adrešu vai audio. Šeit veiktie labojumi tiek ignorēti; Iesniegt atgriež pie iestatīšanas.",
+        "data": {
+          "report": "Tālvadības pults pārskats"
+        },
+        "data_description": {
+          "report": "Atlasiet visu un kopējiet."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Tālvadības pults pārbaudes rezultāts",
+        "description": "Šī tālvadības pults pati sāk balsi, kamēr tās poga tiek turēta nospiesta. Lai runātu, turiet šo pogu. Iesniegt, lai turpinātu iestatīšanu."
+      },
+      "test_result_atvv_tap": {
+        "title": "Tālvadības pults pārbaudes rezultāts",
+        "description": "Šī tālvadības pults sāk balsi, pieskaroties tās pogai, un klausās, līdz beidzat runāt. Lai runātu, pieskarieties šai pogai. Iesniegt, lai turpinātu iestatīšanu."
+      },
+      "test_result_fire_voice": {
+        "title": "Tālvadības pults pārbaudes rezultāts",
+        "description": "Šis ir Fire TV tālvadības pults balss taustiņš. Turiet to nospiestu, kamēr runājat. Iesniegt, lai turpinātu iestatīšanu."
+      },
+      "test_result_plain_key": {
+        "title": "Tālvadības pults pārbaudes rezultāts",
+        "description": "Tālvadības pults nosūtīja parastus taustiņus, bet ne balss signālu, tāpēc tās balss poga, iespējams, nesāk balsi, izmantojot Bluetooth. Iesniedziet un atzīmējiet Rādīt tālvadības pults pārskatu, lai kopīgotu redzēto."
+      },
+      "test_result_nothing": {
+        "title": "Tālvadības pults pārbaudes rezultāts",
+        "description": "No tālvadības pults nekas netika saņemts. Pamodiniet to ar bultiņas taustiņu, pārbaudiet, vai tā ir savienota ar šo Home Assistant datoru, un pārbaudiet vēlreiz. Iesniegt, lai turpinātu."
       }
+    },
+    "progress": {
+      "observing": "Klausās 20 sekundes. Pamodiniet tālvadības pulti ar bultiņas taustiņu, pēc tam nospiediet un turiet tās balss pogu, īsi runājiet un atlaidiet."
     },
     "error": {
       "bluetooth_unavailable": "Lokālais Bluetooth nav pieejams. Pārbaudiet, vai sistēmas D-Bus ir pieejams.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Izvēlieties esošu Assist konveijeru.",
       "hidraw_unavailable": "Tālvadības pults ievades ierīce nav pieejama Home Assistant. Pamodiniet tālvadības pulti un pārbaudiet, vai Home Assistant redz /dev/hidraw ierīces.",
       "hidraw_permission_denied": "Home Assistant nav atļauts lasīt tālvadības pults ievades ierīci. Skatiet README, lai uzzinātu, kāda ierīces piekļuve šai pultij nepieciešama.",
-      "opus_decoder_unavailable": "Home Assistant nav pieejams Opus audio dekodētājs, kas šai tālvadības pultij ir nepieciešams."
+      "opus_decoder_unavailable": "Home Assistant nav pieejams Opus audio dekodētājs, kas šai tālvadības pultij ir nepieciešams.",
+      "fire_voice_unsupported": "Šī Fire TV tālvadības pults neziņo par balss datiem, ko šī integrācija varētu izmantot. Atzīmējiet Rādīt tālvadības pults pārskatu un kopīgojiet to GitHub problēmā.",
+      "voice_service_unavailable": "Tālvadības pults nepiedāvā Android TV balss pakalpojumu. Fire TV tālvadības pultij iestatiet Tālvadības pults veidu uz Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Šī tālvadības pults jau ir konfigurēta.",
@@ -65,6 +106,7 @@
           "busy_playback": "Jauna nospiešana atbildes laikā",
           "context_mode": "Sarunas konteksts",
           "input_mode": "Pogas darbība",
+          "remote_type": "Tālvadības pults veids",
           "min_press_seconds": "Ignorēt īsas nospiešanas",
           "max_request_seconds": "Maksimālais pieprasījuma ilgums",
           "max_conversation_seconds": "Maksimālais sarunas ilgums",
@@ -80,6 +122,7 @@
           "busy_playback": "Ko darīt, ja poga tiek nospiesta, kamēr tiek atskaņota atbilde: noraidīt nospiešanu, pēc tam atbildēt uz vienu gaidošu pieprasījumu vai apturēt atbildi un sākt jauno pieprasījumu.",
           "context_mode": "Atkārtota izmantošana saglabā Home Assistant sarunu, lai darbotos papildjautājumi, piemēram, “un divreiz vairāk?”. Jauna saruna padara katru nospiešanu par neatkarīgu sarunu.",
           "input_mode": "Viens pieprasījums uz turēšanu ieraksta, līdz poga tiek atlaista. Mijiedarbīga saruna turpina klausīties, kamēr poga tiek turēta: runājiet, pauzējiet, uzklausiet atbildi, tad runājiet atkal. Tai nepieciešama tālvadības pults ar turēšanu runāšanai.",
+          "remote_type": "Atstājiet Automātiski, ja vien tālvadības pults netika noteikta kā nepareizs veids. Mainot to, tālvadības pults tiek pievienota vēlreiz.",
           "min_press_seconds": "Ignorē balss pogas pieskārienus, kas ir īsāki par šo vērtību, lai nejaušs pieskāriens nekad nesāktu pieprasījumu; īsta turēšana sākas par tik vēlāk. 0 to izslēdz. Noderīgi Fire TV tālvadības pultij, kas tūlīt pēc pamodināšanas beidzas ar kļūdu “Nav mikrofona audio”: tā atkārtoti nosūta taustiņu, kas to pamodināja, kā tūlītēju pieskārienu. 0,1 s ir labs sākumpunkts. Tikai Fire TV tālvadības pultīm.",
           "max_request_seconds": "Ilgākais laiks, cik var ilgt viens pieprasījums jebkurai tālvadības pultij: visa turēšana režīmā “Viens pieprasījums”, un katra kārta mijiedarbīgajā sarunā. Sasniedzot to, pieprasījums beidzas ar ierakstīšanas ierobežojuma kļūdu. Samaziniet, lai apturētu iestrēgušas pogas ierakstīšanu; palieliniet garai diktēšanai. Tālvadības pultis, kas nav paredzētas turēšanai runāšanai, beidzas arī pēc aptuveni 15 sekunžu runas vai pie klusuma, atkarībā no tā, kas notiek pirmais.",
           "max_conversation_seconds": "Ilgākais laiks, cik var ilgt visa pogas turēšana mijiedarbīgās sarunas režīmā. Režīmā “Viens pieprasījums” tas tiek ignorēts, un tas nedrīkst būt īsāks par maksimālo pieprasījuma ilgumu.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Viens pieprasījums uz turēšanu",
         "conversation": "Saruna turēšanas laikā (mijiedarbīga)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automātiski (ieteicams)",
+        "atvv": "Android TV / Google TV tālvadības pults (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV / Alexa balss tālvadības pults (turiet nospiestu, lai runātu)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Tālvadības pults ievades ierīce nav pieejama Home Assistant.",
           "hidraw_permission_denied": "Home Assistant nav atļauts lasīt tālvadības pults ievades ierīci.",
           "opus_decoder_unavailable": "Home Assistant nav pieejams Opus audio dekodētājs.",
+          "fire_voice_unsupported": "Šī Fire TV tālvadības pults neziņo par izmantojamiem balss datiem.",
           "invalid_opus_packet": "Tālvadības pults nosūtīja audio, ko nevarēja atkodēt.",
           "other": "Radās cita kļūda. Sīkāku informāciju sniedz kļūdas kods."
         },

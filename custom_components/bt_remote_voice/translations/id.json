@@ -26,12 +26,51 @@
         "title": "Pilih pipeline Assist",
         "description": "Bangunkan remote dengan tombol panah sebelum mengirim. Integrasi dimulai dalam mode hanya transkripsi; ubah ini di opsi setelah berfungsi.",
         "data": {
-          "pipeline_id": "Pipeline Assist"
+          "pipeline_id": "Pipeline Assist",
+          "remote_type": "Jenis remote",
+          "show_report": "Tampilkan laporan remote",
+          "test_remote": "Uji remote saya"
         },
         "data_description": {
-          "pipeline_id": "Pipeline Assist yang memproses ucapan dari remote ini."
+          "pipeline_id": "Pipeline Assist yang memproses ucapan dari remote ini.",
+          "remote_type": "Biarkan pada Otomatis kecuali remote tidak dikenali atau penyiapan gagal.",
+          "show_report": "Centang lalu kirim untuk melihat laporan yang dapat Anda salin ke isu GitHub.",
+          "test_remote": "Centang lalu kirim, kemudian tekan dan tahan tombol suara remote untuk melihat apa yang dilakukan remote."
         }
+      },
+      "report": {
+        "title": "Laporan remote",
+        "description": "Salin teks ini ke isu GitHub. Teks ini tidak berisi alamat Bluetooth lengkap, nama, alamat web, atau audio. Perubahan di sini diabaikan; Kirim kembali ke penyiapan.",
+        "data": {
+          "report": "Laporan remote"
+        },
+        "data_description": {
+          "report": "Pilih semua lalu salin."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Hasil uji remote",
+        "description": "Remote ini memulai suara sendiri selama tombolnya ditahan. Tahan tombol itu untuk berbicara. Kirim untuk melanjutkan penyiapan."
+      },
+      "test_result_atvv_tap": {
+        "title": "Hasil uji remote",
+        "description": "Remote ini memulai suara saat tombolnya diketuk dan mendengarkan sampai Anda berhenti berbicara. Ketuk tombol itu untuk berbicara. Kirim untuk melanjutkan penyiapan."
+      },
+      "test_result_fire_voice": {
+        "title": "Hasil uji remote",
+        "description": "Ini adalah tombol suara remote Fire TV. Tahan saat Anda berbicara. Kirim untuk melanjutkan penyiapan."
+      },
+      "test_result_plain_key": {
+        "title": "Hasil uji remote",
+        "description": "Remote mengirim tombol biasa tetapi tidak ada sinyal suara, sehingga tombol suaranya mungkin tidak memulai suara lewat Bluetooth. Kirim, lalu centang Tampilkan laporan remote untuk membagikan apa yang terlihat."
+      },
+      "test_result_nothing": {
+        "title": "Hasil uji remote",
+        "description": "Tidak ada yang diterima dari remote. Bangunkan dengan tombol panah, pastikan terhubung ke mesin Home Assistant ini, lalu uji lagi. Kirim untuk melanjutkan."
       }
+    },
+    "progress": {
+      "observing": "Mendengarkan selama 20 detik. Bangunkan remote dengan tombol panah, lalu tekan dan tahan tombol suaranya, berbicaralah singkat, dan lepaskan."
     },
     "error": {
       "bluetooth_unavailable": "Bluetooth lokal tidak tersedia. Periksa apakah D-Bus sistem dapat diakses.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Pilih pipeline Assist yang sudah ada.",
       "hidraw_unavailable": "Perangkat input remote tidak tersedia untuk Home Assistant. Bangunkan remote dan periksa apakah Home Assistant dapat melihat perangkat /dev/hidraw.",
       "hidraw_permission_denied": "Home Assistant tidak diizinkan membaca perangkat input remote. Lihat README untuk akses perangkat yang dibutuhkan remote ini.",
-      "opus_decoder_unavailable": "Tidak ada dekoder audio Opus yang tersedia untuk Home Assistant, padahal dibutuhkan oleh remote ini."
+      "opus_decoder_unavailable": "Tidak ada dekoder audio Opus yang tersedia untuk Home Assistant, padahal dibutuhkan oleh remote ini.",
+      "fire_voice_unsupported": "Remote Fire TV ini tidak melaporkan data suara yang dapat digunakan integrasi ini. Centang Tampilkan laporan remote dan bagikan di isu GitHub.",
+      "voice_service_unavailable": "Remote tidak menawarkan layanan suara Android TV. Untuk remote Fire TV, setel Jenis remote ke Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Remote ini sudah dikonfigurasi.",
@@ -65,6 +106,7 @@
           "busy_playback": "Penekanan baru saat balasan",
           "context_mode": "Konteks percakapan",
           "input_mode": "Perilaku tombol",
+          "remote_type": "Jenis remote",
           "min_press_seconds": "Abaikan penekanan singkat",
           "max_request_seconds": "Durasi permintaan maksimum",
           "max_conversation_seconds": "Durasi percakapan maksimum",
@@ -80,6 +122,7 @@
           "busy_playback": "Yang dilakukan saat tombol ditekan ketika balasan sedang diputar: tolak penekanan, jawab satu permintaan tertunda setelahnya, atau hentikan balasan dan mulai permintaan baru.",
           "context_mode": "Gunakan ulang mempertahankan percakapan Home Assistant sehingga pertanyaan lanjutan seperti 'dan dua kalinya?' berfungsi. Baru membuat setiap penekanan menjadi percakapan independen.",
           "input_mode": "Satu permintaan per tahan merekam hingga tombol dilepas. Percakapan bergantian terus mendengarkan selama tombol ditahan: bicara, jeda, dengarkan balasan, lalu bicara lagi. Membutuhkan remote tahan-untuk-bicara.",
+          "remote_type": "Biarkan pada Otomatis kecuali remote terdeteksi sebagai jenis yang salah. Mengubahnya akan menyambungkan ulang remote.",
           "min_press_seconds": "Mengabaikan ketukan tombol suara yang lebih singkat dari ini, sehingga ketukan palsu tidak memulai permintaan; tahan yang sebenarnya dimulai selambat ini. 0 menonaktifkan. Berguna untuk remote Fire TV yang gagal dengan «Tidak ada audio mikrofon» tepat setelah dibangunkan: remote mengirim ulang tombol yang membangunkannya sebagai ketukan instan. 0,1 s adalah titik awal yang baik. Hanya untuk remote Fire TV.",
           "max_request_seconds": "Durasi terlama satu permintaan pada remote mana pun: seluruh tahan dalam mode Satu permintaan, dan setiap giliran dalam Percakapan bergantian. Mencapainya mengakhiri permintaan dengan error batas perekaman. Turunkan untuk menghentikan perekaman tombol yang macet; naikkan untuk dikte panjang. Remote yang bukan tahan-untuk-bicara juga berakhir pada sekitar 15 detik ucapan atau saat hening, mana yang lebih dulu.",
           "max_conversation_seconds": "Durasi terlama seluruh tahan tombol dalam mode Percakapan bergantian. Diabaikan dalam mode Satu permintaan dan tidak boleh lebih pendek dari durasi permintaan maksimum.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Satu permintaan per tahan",
         "conversation": "Percakapan selama ditahan (bergantian)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Otomatis (disarankan)",
+        "atvv": "Remote Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Remote suara Amazon Fire TV / Alexa (tahan untuk berbicara)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Perangkat input remote tidak tersedia untuk Home Assistant.",
           "hidraw_permission_denied": "Home Assistant tidak diizinkan membaca perangkat input remote.",
           "opus_decoder_unavailable": "Tidak ada dekoder audio Opus yang tersedia untuk Home Assistant.",
+          "fire_voice_unsupported": "Remote Fire TV ini tidak melaporkan data suara yang dapat digunakan.",
           "invalid_opus_packet": "Remote mengirim audio yang tidak dapat didekode.",
           "other": "Terjadi error lain. Kode error memberikan detailnya."
         },

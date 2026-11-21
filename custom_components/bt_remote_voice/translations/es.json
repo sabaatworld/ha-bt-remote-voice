@@ -26,12 +26,51 @@
         "title": "Seleccionar pipeline de Assist",
         "description": "Activa el mando con un botón de flecha antes de enviar. La integración empieza en modo de solo transcripción; cámbialo en las opciones cuando funcione.",
         "data": {
-          "pipeline_id": "Pipeline de Assist"
+          "pipeline_id": "Pipeline de Assist",
+          "remote_type": "Tipo de mando",
+          "show_report": "Mostrar informe del mando",
+          "test_remote": "Probar mi mando"
         },
         "data_description": {
-          "pipeline_id": "El pipeline de Assist que procesa la voz de este mando."
+          "pipeline_id": "El pipeline de Assist que procesa la voz de este mando.",
+          "remote_type": "Déjalo en Automático, a menos que no se reconozca el mando o falle la configuración.",
+          "show_report": "Márcalo y envía para ver un informe que puedes copiar en una incidencia de GitHub.",
+          "test_remote": "Márcalo y envía, luego mantén pulsado el botón de voz del mando para ver qué hace."
         }
+      },
+      "report": {
+        "title": "Informe del mando",
+        "description": "Copia este texto en una incidencia de GitHub. No contiene ninguna dirección Bluetooth completa, nombres, direcciones web ni audio. Las ediciones aquí se ignoran; Enviar vuelve a la configuración.",
+        "data": {
+          "report": "Informe del mando"
+        },
+        "data_description": {
+          "report": "Selecciona todo y copia."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultado de la prueba del mando",
+        "description": "Este mando inicia la voz por sí mismo mientras se mantiene pulsado su botón. Mantén pulsado ese botón para hablar. Envía para continuar la configuración."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultado de la prueba del mando",
+        "description": "Este mando inicia la voz cuando se toca su botón y escucha hasta que dejes de hablar. Toca ese botón para hablar. Envía para continuar la configuración."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultado de la prueba del mando",
+        "description": "Esta es la tecla de voz de un mando Fire TV. Mantenla pulsada mientras hablas. Envía para continuar la configuración."
+      },
+      "test_result_plain_key": {
+        "title": "Resultado de la prueba del mando",
+        "description": "El mando envió teclas normales pero ninguna señal de voz, así que su botón de voz quizá no inicie la voz por Bluetooth. Envía y luego marca Mostrar informe del mando para compartir lo que se vio."
+      },
+      "test_result_nothing": {
+        "title": "Resultado de la prueba del mando",
+        "description": "No se recibió nada del mando. Despiértalo con una tecla de flecha, comprueba que esté conectado a esta máquina con Home Assistant y vuelve a probar. Envía para continuar."
       }
+    },
+    "progress": {
+      "observing": "Escuchando durante 20 segundos. Despierta el mando con una tecla de flecha, luego mantén pulsado su botón de voz, habla brevemente y suéltalo."
     },
     "error": {
       "bluetooth_unavailable": "El Bluetooth local no está disponible. Comprueba que se puede acceder al D-Bus del sistema.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Elige un pipeline de Assist existente.",
       "hidraw_unavailable": "El dispositivo de entrada del mando no está disponible para Home Assistant. Activa el mando y comprueba que Home Assistant puede ver los dispositivos /dev/hidraw.",
       "hidraw_permission_denied": "Home Assistant no tiene permiso para leer el dispositivo de entrada del mando. Consulta el README para ver el acceso al dispositivo que necesita este mando.",
-      "opus_decoder_unavailable": "Home Assistant no dispone de ningún decodificador de audio Opus, que este mando necesita."
+      "opus_decoder_unavailable": "Home Assistant no dispone de ningún decodificador de audio Opus, que este mando necesita.",
+      "fire_voice_unsupported": "Este mando Fire TV no informa de datos de voz que esta integración pueda usar. Marca Mostrar informe del mando y compártelo en una incidencia de GitHub.",
+      "voice_service_unavailable": "El mando no ofrece el servicio de voz de Android TV. Para un mando Fire TV, establece el Tipo de mando en Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Este mando ya está configurado.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nueva pulsación durante la respuesta",
           "context_mode": "Contexto de conversación",
           "input_mode": "Comportamiento del botón",
+          "remote_type": "Tipo de mando",
           "min_press_seconds": "Ignorar pulsaciones cortas",
           "max_request_seconds": "Duración máxima de la solicitud",
           "max_conversation_seconds": "Duración máxima de la conversación",
@@ -80,6 +122,7 @@
           "busy_playback": "Qué hacer cuando se pulsa el botón mientras se reproduce una respuesta: rechazar la pulsación, responder después a una solicitud pendiente, o detener la respuesta e iniciar la nueva solicitud.",
           "context_mode": "Reutilizar mantiene la conversación de Home Assistant para que funcionen preguntas de seguimiento como «¿y el doble?». Nueva convierte cada pulsación en una conversación independiente.",
           "input_mode": "Una solicitud por pulsación mantenida graba hasta que se suelta el botón. Conversación alterna sigue escuchando mientras se mantiene el botón: habla, haz una pausa, escucha la respuesta y vuelve a hablar. Requiere un mando de pulsar para hablar.",
+          "remote_type": "Déjalo en Automático, a menos que el mando se haya detectado con un tipo incorrecto. Cambiarlo vuelve a conectar el mando.",
           "min_press_seconds": "Ignora las pulsaciones del botón de voz más cortas que este valor, para que una pulsación espuria nunca inicie una solicitud; una pulsación mantenida real empieza esa cantidad más tarde. 0 lo desactiva. Útil para un mando Fire TV que falla con «No se recibió audio del micrófono» justo después de activarse: reenvía la tecla que lo activó como una pulsación instantánea. 0,1 s es un buen punto de partida. Solo para mandos Fire TV.",
           "max_request_seconds": "La duración máxima de una sola solicitud en cualquier mando: toda la pulsación mantenida en el modo Una solicitud, y cada turno en Conversación alterna. Al alcanzarla, la solicitud termina con un error de límite de captura. Redúcela para detener la grabación de un botón atascado; aumenta para dictados largos. Los mandos que no son de pulsar para hablar también terminan tras unos 15 segundos de voz o en el silencio, lo que ocurra primero.",
           "max_conversation_seconds": "La duración máxima de toda una pulsación mantenida en el modo Conversación alterna. Se ignora en el modo Una solicitud y no debe ser menor que la duración máxima de la solicitud.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Una solicitud por pulsación mantenida",
         "conversation": "Conversación mientras se mantiene (alterna)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automático (recomendado)",
+        "atvv": "Mando Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Mando de voz Amazon Fire TV / Alexa (mantén pulsado para hablar)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "El dispositivo de entrada del mando no está disponible para Home Assistant.",
           "hidraw_permission_denied": "Home Assistant no tiene permiso para leer el dispositivo de entrada del mando.",
           "opus_decoder_unavailable": "Home Assistant no dispone de ningún decodificador de audio Opus.",
+          "fire_voice_unsupported": "Este mando Fire TV no informa de datos de voz utilizables.",
           "invalid_opus_packet": "El mando envió audio que no se pudo decodificar.",
           "other": "Se ha producido otro error. El código de error da los detalles."
         },

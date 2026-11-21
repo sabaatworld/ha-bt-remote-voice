@@ -26,12 +26,51 @@
         "title": "Pasirinkite Assist srautą",
         "description": "Prieš pateikdami pažadinkite pultą rodyklės mygtuku. Integracija pradeda veikti tik transkripcijos režimu; pakeiskite tai parinktyse, kai viskas veiks.",
         "data": {
-          "pipeline_id": "Assist srautas"
+          "pipeline_id": "Assist srautas",
+          "remote_type": "Pultelio tipas",
+          "show_report": "Rodyti pultelio ataskaitą",
+          "test_remote": "Išbandyti mano pultelį"
         },
         "data_description": {
-          "pipeline_id": "Assist srautas, apdorojantis šio pulto kalbą."
+          "pipeline_id": "Assist srautas, apdorojantis šio pulto kalbą.",
+          "remote_type": "Palikite Automatinis, nebent pultelis neatpažįstamas arba nustatymas nepavyksta.",
+          "show_report": "Pažymėkite ir pateikite, kad pamatytumėte ataskaitą, kurią galite nukopijuoti į „GitHub“ problemą.",
+          "test_remote": "Pažymėkite ir pateikite, tada paspauskite ir palaikykite pultelio balso mygtuką, kad pamatytumėte, ką jis daro."
         }
+      },
+      "report": {
+        "title": "Pultelio ataskaita",
+        "description": "Nukopijuokite šį tekstą į „GitHub“ problemą. Jame nėra viso „Bluetooth“ adreso, pavadinimų, interneto adresų ar garso. Čia atlikti pakeitimai ignoruojami; Pateikti grąžina į nustatymą.",
+        "data": {
+          "report": "Pultelio ataskaita"
+        },
+        "data_description": {
+          "report": "Pasirinkite viską ir nukopijuokite."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Pultelio bandymo rezultatas",
+        "description": "Šis pultelis pats pradeda balsą, kol laikomas jo mygtukas. Norėdami kalbėti, laikykite tą mygtuką. Pateikti, kad tęstumėte nustatymą."
+      },
+      "test_result_atvv_tap": {
+        "title": "Pultelio bandymo rezultatas",
+        "description": "Šis pultelis pradeda balsą palietus jo mygtuką ir klauso, kol nustosite kalbėti. Norėdami kalbėti, palieskite tą mygtuką. Pateikti, kad tęstumėte nustatymą."
+      },
+      "test_result_fire_voice": {
+        "title": "Pultelio bandymo rezultatas",
+        "description": "Tai „Fire TV“ pultelio balso klavišas. Laikykite jį kalbėdami. Pateikti, kad tęstumėte nustatymą."
+      },
+      "test_result_plain_key": {
+        "title": "Pultelio bandymo rezultatas",
+        "description": "Pultelis atsiuntė įprastus klavišus, bet ne balso signalą, todėl jo balso mygtukas gali nepradėti balso per „Bluetooth“. Pateikite, tada pažymėkite Rodyti pultelio ataskaitą, kad pasidalytumėte matytu rezultatu."
+      },
+      "test_result_nothing": {
+        "title": "Pultelio bandymo rezultatas",
+        "description": "Iš pultelio nieko negauta. Pažadinkite jį rodyklės klavišu, patikrinkite, ar jis prijungtas prie šio „Home Assistant“ kompiuterio, ir išbandykite dar kartą. Pateikti, kad tęstumėte."
       }
+    },
+    "progress": {
+      "observing": "Klausoma 20 sekundžių. Pažadinkite pultelį rodyklės klavišu, tada paspauskite ir palaikykite jo balso mygtuką, trumpai kalbėkite ir atleiskite."
     },
     "error": {
       "bluetooth_unavailable": "Vietinis Bluetooth nepasiekiamas. Patikrinkite, ar sistemos D-Bus yra pasiekiama.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Pasirinkite esamą Assist srautą.",
       "hidraw_unavailable": "Pulto įvesties įrenginys nepasiekiamas Home Assistant. Pažadinkite pultą ir patikrinkite, ar Home Assistant mato /dev/hidraw įrenginius.",
       "hidraw_permission_denied": "Home Assistant neturi leidimo skaityti pulto įvesties įrenginio. Žr. README, kokios prieigos prie įrenginio reikia šiam pultui.",
-      "opus_decoder_unavailable": "Home Assistant nepasiekiamas Opus garso dekoderis, kurio reikia šiam pultui."
+      "opus_decoder_unavailable": "Home Assistant nepasiekiamas Opus garso dekoderis, kurio reikia šiam pultui.",
+      "fire_voice_unsupported": "Šis „Fire TV“ pultelis nepraneša balso duomenų, kuriuos ši integracija galėtų naudoti. Pažymėkite Rodyti pultelio ataskaitą ir pasidalykite ja „GitHub“ problemoje.",
+      "voice_service_unavailable": "Pultelis nesiūlo „Android TV“ balso paslaugos. „Fire TV“ pulteliui nustatykite Pultelio tipą į „Amazon Fire TV“."
     },
     "abort": {
       "already_configured": "Šis pultas jau sukonfigūruotas.",
@@ -65,6 +106,7 @@
           "busy_playback": "Naujas paspaudimas atsakymo metu",
           "context_mode": "Pokalbio kontekstas",
           "input_mode": "Mygtuko elgsena",
+          "remote_type": "Pultelio tipas",
           "min_press_seconds": "Ignoruoti trumpus paspaudimus",
           "max_request_seconds": "Didžiausias užklausos ilgis",
           "max_conversation_seconds": "Didžiausias pokalbio ilgis",
@@ -80,6 +122,7 @@
           "busy_playback": "Ką daryti, kai mygtukas paspaudžiamas atkuriant atsakymą: atmesti paspaudimą, vėliau atsakyti į vieną laukiančią užklausą arba sustabdyti atsakymą ir pradėti naują užklausą.",
           "context_mode": "Pakartotinis naudojimas išlaiko Home Assistant pokalbį, kad tęsiniai, pvz., „o padvigubink tai?“, veiktų. Naujas pokalbys paverčia kiekvieną paspaudimą nepriklausomu pokalbiu.",
           "input_mode": "Viena užklausa laikant įrašo, kol mygtukas atleidžiamas. Pokalbis laikant (pakaitomis) toliau klauso, kol mygtukas laikomas: kalbėkite, padarykite pauzę, išklausykite atsakymą, tada kalbėkite vėl. Reikia pulto su kalbėjimu laikant.",
+          "remote_type": "Palikite Automatinis, nebent pultelis buvo aptiktas kaip netinkamo tipo. Pakeitus pultelis prijungiamas iš naujo.",
           "min_press_seconds": "Ignoruoja balso mygtuko palietimus, trumpesnius nei ši reikšmė, kad klaidingas palietimas niekada nepradėtų užklausos; tikras laikymas prasideda tiek vėliau. 0 išjungia. Naudinga Fire TV pultui, kuris iškart po pažadinimo klysta su „Negauta mikrofono garso“: jis pakartotinai siunčia jį pažadinusį klavišą kaip momentinį palietimą. 0,1 s yra geras pradinis taškas. Tik Fire TV pultams.",
           "max_request_seconds": "Ilgiausia vienos užklausos trukmė bet kuriame pulte: visas laikymas vienos užklausos režimu ir kiekviena eilė pokalbyje pakaitomis. Pasiekus ribą užklausa baigiasi įrašymo ribos klaida. Sumažinkite, kad sustabdytumėte užstrigusio mygtuko įrašymą; padidinkite ilgam diktavimui. Pultai be kalbėjimo laikant taip pat baigia po maždaug 15 sekundžių kalbos arba tylos, atsižvelgiant į tai, kas įvyksta pirma.",
           "max_conversation_seconds": "Ilgiausia viso mygtuko laikymo trukmė pokalbio pakaitomis režimu. Ignoruojama vienos užklausos režimu ir negali būti trumpesnė nei didžiausias užklausos ilgis.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Viena užklausa laikant",
         "conversation": "Pokalbis laikant (pakaitomis)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatinis (rekomenduojama)",
+        "atvv": "„Android TV“ / „Google TV“ pultelis (ATVV)",
+        "fire_press_to_talk": "„Amazon Fire TV“ / „Alexa“ balso pultelis (norėdami kalbėti, palaikykite nuspaudę)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Pulto įvesties įrenginys nepasiekiamas Home Assistant.",
           "hidraw_permission_denied": "Home Assistant neturi leidimo skaityti pulto įvesties įrenginio.",
           "opus_decoder_unavailable": "Home Assistant nepasiekiamas Opus garso dekoderis.",
+          "fire_voice_unsupported": "Šis „Fire TV“ pultelis nepraneša naudojamų balso duomenų.",
           "invalid_opus_packet": "Pultas atsiuntė garsą, kurio nepavyko iškoduoti.",
           "other": "Įvyko kita klaida. Išsamią informaciją pateikia klaidos kodas."
         },

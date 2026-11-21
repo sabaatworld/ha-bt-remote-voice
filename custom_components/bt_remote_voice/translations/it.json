@@ -26,12 +26,51 @@
         "title": "Seleziona la pipeline Assist",
         "description": "Riattiva il telecomando con un tasto freccia prima di inviare. L'integrazione parte in modalità di sola trascrizione; modificala nelle opzioni quando funziona.",
         "data": {
-          "pipeline_id": "Pipeline Assist"
+          "pipeline_id": "Pipeline Assist",
+          "remote_type": "Tipo di telecomando",
+          "show_report": "Mostra rapporto del telecomando",
+          "test_remote": "Prova il mio telecomando"
         },
         "data_description": {
-          "pipeline_id": "La pipeline Assist che elabora la voce di questo telecomando."
+          "pipeline_id": "La pipeline Assist che elabora la voce di questo telecomando.",
+          "remote_type": "Lascia su Automatico, a meno che il telecomando non venga riconosciuto o la configurazione non riesca.",
+          "show_report": "Seleziona e invia per vedere un rapporto che puoi copiare in una segnalazione su GitHub.",
+          "test_remote": "Seleziona e invia, poi tieni premuto il pulsante vocale del telecomando per vedere cosa fa."
         }
+      },
+      "report": {
+        "title": "Rapporto del telecomando",
+        "description": "Copia questo testo in una segnalazione su GitHub. Non contiene indirizzi Bluetooth completi, nomi, indirizzi web o audio. Le modifiche qui vengono ignorate; Invia torna alla configurazione.",
+        "data": {
+          "report": "Rapporto del telecomando"
+        },
+        "data_description": {
+          "report": "Seleziona tutto e copia."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Risultato della prova del telecomando",
+        "description": "Questo telecomando avvia la voce da solo finché il suo pulsante è tenuto premuto. Tieni premuto quel pulsante per parlare. Invia per continuare la configurazione."
+      },
+      "test_result_atvv_tap": {
+        "title": "Risultato della prova del telecomando",
+        "description": "Questo telecomando avvia la voce quando si tocca il suo pulsante e ascolta finché non smetti di parlare. Tocca quel pulsante per parlare. Invia per continuare la configurazione."
+      },
+      "test_result_fire_voice": {
+        "title": "Risultato della prova del telecomando",
+        "description": "Questo è il tasto vocale di un telecomando Fire TV. Tienilo premuto mentre parli. Invia per continuare la configurazione."
+      },
+      "test_result_plain_key": {
+        "title": "Risultato della prova del telecomando",
+        "description": "Il telecomando ha inviato tasti normali ma nessun segnale vocale, quindi il suo pulsante vocale potrebbe non avviare la voce via Bluetooth. Invia, poi seleziona Mostra rapporto del telecomando per condividere ciò che è stato rilevato."
+      },
+      "test_result_nothing": {
+        "title": "Risultato della prova del telecomando",
+        "description": "Non è stato ricevuto nulla dal telecomando. Risveglialo con un tasto freccia, verifica che sia connesso a questa macchina Home Assistant e riprova. Invia per continuare."
       }
+    },
+    "progress": {
+      "observing": "Ascolto per 20 secondi. Risveglia il telecomando con un tasto freccia, poi tieni premuto il suo pulsante vocale, parla brevemente e rilascia."
     },
     "error": {
       "bluetooth_unavailable": "Il Bluetooth locale non è disponibile. Verifica che il D-Bus di sistema sia accessibile.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Scegli una pipeline Assist esistente.",
       "hidraw_unavailable": "Il dispositivo di input del telecomando non è disponibile per Home Assistant. Riattiva il telecomando e verifica che Home Assistant veda i dispositivi /dev/hidraw.",
       "hidraw_permission_denied": "Home Assistant non è autorizzato a leggere il dispositivo di input del telecomando. Consulta il README per l'accesso al dispositivo richiesto da questo telecomando.",
-      "opus_decoder_unavailable": "Home Assistant non dispone di un decodificatore audio Opus, necessario per questo telecomando."
+      "opus_decoder_unavailable": "Home Assistant non dispone di un decodificatore audio Opus, necessario per questo telecomando.",
+      "fire_voice_unsupported": "Questo telecomando Fire TV non segnala dati vocali che questa integrazione possa usare. Seleziona Mostra rapporto del telecomando e condividilo in una segnalazione su GitHub.",
+      "voice_service_unavailable": "Il telecomando non offre il servizio vocale di Android TV. Per un telecomando Fire TV, imposta il Tipo di telecomando su Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Questo telecomando è già configurato.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nuova pressione durante la risposta",
           "context_mode": "Contesto della conversazione",
           "input_mode": "Comportamento del tasto",
+          "remote_type": "Tipo di telecomando",
           "min_press_seconds": "Ignora pressioni brevi",
           "max_request_seconds": "Durata massima della richiesta",
           "max_conversation_seconds": "Durata massima della conversazione",
@@ -80,6 +122,7 @@
           "busy_playback": "Cosa fare quando il tasto viene premuto mentre una risposta è in riproduzione: rifiutare la pressione, rispondere dopo a una richiesta in attesa oppure interrompere la risposta e avviare la nuova richiesta.",
           "context_mode": "Riutilizza mantiene la conversazione di Home Assistant, così i seguiti come \"e il doppio?\" funzionano. Nuova rende ogni pressione una conversazione indipendente.",
           "input_mode": "Una richiesta per pressione registra finché il tasto non viene rilasciato. La conversazione alternata continua ad ascoltare mentre il tasto è premuto: parli, fai una pausa, ascolti la risposta, poi parli di nuovo. Richiede un telecomando con push-to-talk.",
+          "remote_type": "Lascia su Automatico, a meno che il telecomando non sia stato rilevato con un tipo errato. Modificarlo ricollega il telecomando.",
           "min_press_seconds": "Ignora i tocchi del tasto vocale più brevi di questo valore, così un tocco spurio non avvia mai una richiesta; una pressione reale parte con questo ritardo. 0 lo disattiva. Utile per un telecomando Fire TV che fallisce con \"Nessun audio dal microfono\" subito dopo la riattivazione: invia di nuovo il tasto che l'ha riattivato come tocco istantaneo. 0,1 s è un buon punto di partenza. Solo per telecomandi Fire TV.",
           "max_request_seconds": "La durata massima di una singola richiesta su qualsiasi telecomando: un'intera pressione in modalità Una richiesta e ogni turno nella conversazione alternata. Al raggiungimento, la richiesta termina con un errore di limite di acquisizione. Riducila per evitare registrazioni con tasto bloccato; aumentala per dettature lunghe. I telecomandi senza push-to-talk terminano anche dopo circa 15 secondi di voce o al silenzio, a seconda di quale avviene prima.",
           "max_conversation_seconds": "La durata massima di un'intera pressione del tasto in modalità conversazione alternata. Viene ignorata in modalità Una richiesta e non deve essere inferiore alla durata massima della richiesta.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Una richiesta per pressione",
         "conversation": "Conversazione durante la pressione (alternata)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatico (consigliato)",
+        "atvv": "Telecomando Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Telecomando vocale Amazon Fire TV / Alexa (tieni premuto per parlare)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Il dispositivo di input del telecomando non è disponibile per Home Assistant.",
           "hidraw_permission_denied": "Home Assistant non è autorizzato a leggere il dispositivo di input del telecomando.",
           "opus_decoder_unavailable": "Home Assistant non dispone di un decodificatore audio Opus.",
+          "fire_voice_unsupported": "Questo telecomando Fire TV non segnala dati vocali utilizzabili.",
           "invalid_opus_packet": "Il telecomando ha inviato audio che non è stato possibile decodificare.",
           "other": "Si è verificato un altro errore. Il codice errore ne indica i dettagli."
         },

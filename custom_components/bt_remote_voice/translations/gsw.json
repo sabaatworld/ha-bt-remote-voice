@@ -26,12 +26,51 @@
         "title": "Assist-Pipeline uswähle",
         "description": "Wecked Sie d Fernbedienig vor em Abschicke mit ere Pfiltaschte uf. D Integration startet im Modus nur für d Transkription; ändered Sie das i de Optione, sobald alles funktioniert.",
         "data": {
-          "pipeline_id": "Assist-Pipeline"
+          "pipeline_id": "Assist-Pipeline",
+          "remote_type": "Fernbedienigstyp",
+          "show_report": "Fernbedienigsbricht aazeige",
+          "test_remote": "Mini Fernbedienig teste"
         },
         "data_description": {
-          "pipeline_id": "D Assist-Pipeline, wo d Sprach vo dere Fernbedienig verarbeitet."
+          "pipeline_id": "D Assist-Pipeline, wo d Sprach vo dere Fernbedienig verarbeitet.",
+          "remote_type": "Uf Automatisch la, usser d Fernbedienig wird nöd erkannt oder d Iirichtig schlaht fähl.",
+          "show_report": "Aktivier und schick ab, zum en Bricht aazeige, wo du i es GitHub-Issue chasch kopiere.",
+          "test_remote": "Aktivier und schick ab, halt denn d Sprachtaschte vo de Fernbedienig gedrückt, zum gseh, was sie macht."
         }
+      },
+      "report": {
+        "title": "Fernbedienigsbricht",
+        "description": "Kopier dä Text i es GitHub-Issue. Er enthaltet kei vollständigi Bluetooth-Adrässe, kei Name, Webadrässe oder Audio. Änderige do wärde ignoriert; Abschicke bringt di zrugg zur Iirichtig.",
+        "data": {
+          "report": "Fernbedienigsbricht"
+        },
+        "data_description": {
+          "report": "Alles uswähle und kopiere."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Ergäbnis vom Fernbedienigstescht",
+        "description": "Die Fernbedienig startet d Sprach sälber, solang ihri Taschte gha wird. Halt die Taschte zum Rede. Abschicke, zum d Iirichtig wiiterfüehre."
+      },
+      "test_result_atvv_tap": {
+        "title": "Ergäbnis vom Fernbedienigstescht",
+        "description": "Die Fernbedienig startet d Sprach, wenn ihri Taschte tippt wird, und lost zue, bis du ufhörsch rede. Tipp zum Rede uf die Taschte. Abschicke, zum d Iirichtig wiiterfüehre."
+      },
+      "test_result_fire_voice": {
+        "title": "Ergäbnis vom Fernbedienigstescht",
+        "description": "Das isch d Sprachtaschte vo ere Fire-TV-Fernbedienig. Halt sie gedrückt, während du redsch. Abschicke, zum d Iirichtig wiiterfüehre."
+      },
+      "test_result_plain_key": {
+        "title": "Ergäbnis vom Fernbedienigstescht",
+        "description": "D Fernbedienig het gwöhnlichi Taschte gschickt, aber kes Sprachsignal, drum startet ihri Sprachtaschte d Sprach villicht nöd über Bluetooth. Abschicke und denn Fernbedienigsbricht aazeige aktivier, zum teile, was gseh worde isch."
+      },
+      "test_result_nothing": {
+        "title": "Ergäbnis vom Fernbedienigstescht",
+        "description": "Vo de Fernbedienig isch nüt acho. Weck sie mit ere Pfiiltaschte uf, prüef, öb sie mit dem Home-Assistant-Rechner verbunde isch, und teschte nomal. Abschicke, zum wiiterfahre."
       }
+    },
+    "progress": {
+      "observing": "20 Sekunde lang zuelose. Weck d Fernbedienig mit ere Pfiiltaschte uf, halt denn ihri Sprachtaschte gedrückt, red churz und lah los."
     },
     "error": {
       "bluetooth_unavailable": "Lokals Bluetooth isch nöd verfüegbar. Prüefed Sie, öb de System-D-Bus erreichbar isch.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Wähled Sie e bestehendi Assist-Pipeline us.",
       "hidraw_unavailable": "S Igabgrät vo de Fernbedienig isch für Home Assistant nöd verfüegbar. Wecked Sie d Fernbedienig uf und prüefed Sie, öb Home Assistant /dev/hidraw-Grät gseht.",
       "hidraw_permission_denied": "Home Assistant darf s Igabgrät vo de Fernbedienig nöd läse. Wele Grätezuegriff die Fernbedienig bruucht, staat im README.",
-      "opus_decoder_unavailable": "Für Home Assistant isch kein Opus-Audiodecoder verfüegbar, wo die Fernbedienig bruucht."
+      "opus_decoder_unavailable": "Für Home Assistant isch kein Opus-Audiodecoder verfüegbar, wo die Fernbedienig bruucht.",
+      "fire_voice_unsupported": "Die Fire-TV-Fernbedienig meldet kei Sprachdate, wo die Integration chönnt bruche. Aktivier Fernbedienigsbricht aazeige und teil en i, es GitHub-Issue.",
+      "voice_service_unavailable": "D Fernbedienig bietet de Android-TV-Sprachdienscht nöd aa. Stell bi ere Fire-TV-Fernbedienig de Fernbedienigstyp uf Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Die Fernbedienig isch scho konfiguriert.",
@@ -65,6 +106,7 @@
           "busy_playback": "Neue Tastedruck während de Antwort",
           "context_mode": "Konversationskontext",
           "input_mode": "Tastiverhalte",
+          "remote_type": "Fernbedienigstyp",
           "min_press_seconds": "Churzi Tastedrück ignoriere",
           "max_request_seconds": "Maximali Aafraglängi",
           "max_conversation_seconds": "Maximali Konversationslängi",
@@ -80,6 +122,7 @@
           "busy_playback": "Was passiert, wenn d Taschte drückt wird, während e Antwort abgspielt wird: de Tastedruck ablehne, nachher e vorgmerkti Aafrag beantworte oder d Antwort stoppe und di neui Aafrag starte.",
           "context_mode": "«Widerverwände» bhaltet d Home-Assistant-Konversation, so dass Folgfroge wie «und s Doppleti?» funktioniered. «Neu» macht jede Tastedruck zunere eigeständige Konversation.",
           "input_mode": "«Ei Aafrag pro Halte» nimmt uf, bis d Taschte losglaa wird. «Wächslendi Konversation» lost wiiter, solang d Taschte gha wird: spräche, pausiere, d Antwort ghöre, denn wider spräche. Dafür bruucht s e Fernbedienig mit Push-to-Talk.",
+          "remote_type": "Uf Automatisch la, usser d Fernbedienig isch als falsche Typ erkannt worde. Wenn mer das ändert, verbindet sich d Fernbedienig neu.",
           "min_press_seconds": "Ignoriert churzi Aatippe vo de Sprachtaschte, wo churzer sind als dä Wert, damit es versehentlichs Aatippe kei Aafrag startet; es würklichs Halte fangt entsprächend spöter aa. 0 schaltet d Funktion uus. Nützlich für e Fire TV-Fernbedienig, wo grad nach em Ufwecke mit «No microphone audio» fehlschlaat: Si schickt d Taschte, wo si gweckt hät, nomal als churzes Aatippe. 0,1 s isch en gute Startwert. Nume für Fire TV-Fernbedienige.",
           "max_request_seconds": "Di längsti Duur vo ere einzelne Aafrag bi jeder Fernbedienig: es ganzes Halte im Modus «Ei Aafrag» und jede Durchgang bi «Wächslendi Konversation». Wenn si erreicht wird, ändet d Aafrag mit emene Ufnahmegränze-Fehler. Verchlinered Sie si, um e hängendi Taschte am Ufnäh z hindere; erhöched Sie si für lang Diktat. Fernbedienige ohni Push-to-Talk ändet zudem nach öppe 15 Sekunde Sprach oder bi Stilli, je nachdem, was zersch iitrifft.",
           "max_conversation_seconds": "Di längsti Duur vom ganze Tastehalte im Modus «Wächslendi Konversation». Im Modus «Ei Aafrag» wird si ignoriert und darf nöd churzer sii als d maximali Aafraglängi.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Ei Aafrag pro Halte",
         "conversation": "Konversation bim Halte (wächslend)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatisch (empfohle)",
+        "atvv": "Android-TV-/Google-TV-Fernbedienig (ATVV)",
+        "fire_press_to_talk": "Amazon-Fire-TV-/Alexa-Sprachfernbedienig (zum Rede halte)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "S Igabgrät vo de Fernbedienig isch für Home Assistant nöd verfüegbar.",
           "hidraw_permission_denied": "Home Assistant darf s Igabgrät vo de Fernbedienig nöd läse.",
           "opus_decoder_unavailable": "Für Home Assistant isch kein Opus-Audiodecoder verfüegbar.",
+          "fire_voice_unsupported": "Die Fire-TV-Fernbedienig meldet kei bruchbari Sprachdate.",
           "invalid_opus_packet": "D Fernbedienig het Audio gschickt, wo nöd het chönne dekodiert wärde.",
           "other": "Es isch en anderen Fehler ufträte. De Fehlercode git d Details."
         },

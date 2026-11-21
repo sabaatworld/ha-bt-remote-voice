@@ -13,6 +13,7 @@ from .held import HeldTurns
 from .history import CaptureHistory
 from .preferences import DEFAULTS, PRESS_RANGE, capture_buffer_bytes
 from .protocol import parse_control
+from .remote_types import transport_family
 from .reply_condition import ReplyCondition
 from .session import AudioFailure, VoiceSession
 
@@ -272,7 +273,7 @@ class VoiceCoordinator:
         while not self.stopping:
             self.transport = transport = (
                 FireTransport(min_press_seconds=self.min_press_seconds())
-                if self.entry.data.get("family") == "fire"
+                if transport_family(self.entry.options, self.entry.data) == "fire"
                 else BlueZTransport()
             )
             try:

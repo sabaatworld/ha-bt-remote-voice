@@ -1,6 +1,7 @@
 """Local paired-device transport. Never pairs, trusts or disconnects HID devices."""
 
 import asyncio
+import re
 from dataclasses import dataclass
 
 from dbus_fast import BusType, Message, MessageType, Variant
@@ -12,6 +13,8 @@ from .protocol import CTL, GET_CAPS, RX, SERVICE, TX, capabilities
 HID_SERVICE = "00001812-0000-1000-8000-00805f9b34fb"
 DEVICE = "org.bluez.Device1"
 CHAR = "org.bluez.GattCharacteristic1"
+AMAZON_ID = 0x0171  # USB vendor id and Bluetooth SIG company id of Amazon (Lab126)
+MODALIAS = re.compile(r"(?:usb|bluetooth):v([0-9A-Fa-f]{4})p([0-9A-Fa-f]{4})(?:d[0-9A-Fa-f]{4})?")
 
 
 @dataclass(frozen=True)
@@ -22,6 +25,75 @@ class Remote:
     connected: bool
     compatible: bool | None
     family: str = "atvv"  # "fire" for an Amazon Fire TV voice remote (HID + vendor voice service)
+    # Classification inputs, kept so a failed setup can be diagnosed (all immutable).
+    uuids: tuple[str, ...] = ()
+    modalias: str | None = None
+    vendor_id: int | None = None
+    product_id: int | None = None
+    manufacturer: tuple[tuple[int, str], ...] = ()  # (company id, value hex)
+    appearance: int | None = None
+    bonded: bool | None = None
+    reasons: tuple[str, ...] = ()  # why the remote was classified Fire
+
+    def signals(self):
+        """Everything the classification used, as plain data for the Remote Report."""
+        adapter = re.search(r"/(hci\d+)/", self.path or "")
+        return {
+            "name": self.name,
+            "address": self.address,
+            "family": self.family,
+            "reasons": list(self.reasons),
+            "vendor_id": None if self.vendor_id is None else f"0x{self.vendor_id:04x}",
+            "product_id": None if self.product_id is None else f"0x{self.product_id:04x}",
+            "modalias": self.modalias,
+            "uuids": list(self.uuids),
+            "manufacturer": [
+                {"company": f"0x{company:04x}", "value": value}
+                for company, value in self.manufacturer
+            ],
+            "appearance": None if self.appearance is None else f"0x{self.appearance:04x}",
+            "bonded": self.bonded,
+            "connected": self.connected,
+            "adapter": adapter[1] if adapter else None,
+        }
+
+
+def parse_modalias(value):
+    """(vendor, product) from a BlueZ Modalias such as ``usb:v0171p0413``, else None."""
+    match = MODALIAS.fullmatch(value or "")
+    return (int(match[1], 16), int(match[2], 16)) if match else None
+
+
+def manufacturer_data(value):
+    """((company id, value hex), ...) from BlueZ's a{qv}; odd shapes are skipped, never raised."""
+    result = []
+    try:
+        items = list(value.items())
+    except AttributeError:
+        return ()
+    for key, item in items:
+        try:
+            payload = getattr(item, "value", item)
+            if isinstance(payload, (bytes, bytearray)) or (
+                isinstance(payload, list) and all(isinstance(b, int) for b in payload)
+            ):
+                result.append((int(key), bytes(payload).hex()))
+        except TypeError, ValueError:
+            continue
+    return tuple(result)
+
+
+def amazon_reasons(uuids, modalias, manufacturer_ids):
+    """Signals that mark an Amazon remote; any one is enough, none is a model table."""
+    reasons = []
+    if FIRE_VOICE_SERVICE in uuids:
+        reasons.append("vendor_uuid")
+    ids = parse_modalias(modalias)
+    if ids and ids[0] == AMAZON_ID:
+        reasons.append("modalias_0171")
+    if AMAZON_ID in manufacturer_ids:
+        reasons.append("manufacturer_0171")
+    return tuple(reasons)
 
 
 def paired_devices(objects: dict) -> list[Remote]:
@@ -39,7 +111,15 @@ def paired_devices(objects: dict) -> list[Remote]:
         if not address:
             continue
         uuids = [v.lower() for v in get("UUIDs", [])]
-        fire = HID_SERVICE in uuids and FIRE_VOICE_SERVICE in uuids
+        modalias = get("Modalias")
+        manufacturer = manufacturer_data(get("ManufacturerData", {}))
+        reasons = (
+            amazon_reasons(uuids, modalias, [key for key, _ in manufacturer])
+            if HID_SERVICE in uuids and SERVICE not in uuids
+            else ()
+        )
+        fire = bool(reasons)
+        ids = parse_modalias(modalias)
         result.append(
             Remote(
                 address,
@@ -48,6 +128,14 @@ def paired_devices(objects: dict) -> list[Remote]:
                 get("Connected", False),
                 True if SERVICE in uuids or fire else None,
                 "fire" if fire else "atvv",
+                tuple(uuids),
+                modalias,
+                ids[0] if ids else None,
+                ids[1] if ids else None,
+                manufacturer,
+                get("Appearance"),
+                get("Bonded"),
+                reasons,
             )
         )
     return sorted(result, key=lambda x: (x.compatible is not True, x.name, x.path))

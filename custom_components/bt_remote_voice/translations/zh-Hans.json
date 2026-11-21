@@ -26,12 +26,51 @@
         "title": "选择 Assist 管道",
         "description": "提交前请按方向键唤醒遥控器。该集成以仅转录模式启动；待其正常工作后，可在选项中更改。",
         "data": {
-          "pipeline_id": "Assist 管道"
+          "pipeline_id": "Assist 管道",
+          "remote_type": "遥控器类型",
+          "show_report": "显示遥控器报告",
+          "test_remote": "测试我的遥控器"
         },
         "data_description": {
-          "pipeline_id": "处理此遥控器语音的 Assist 管道。"
+          "pipeline_id": "处理此遥控器语音的 Assist 管道。",
+          "remote_type": "除非遥控器未被识别或设置失败，否则请保持为“自动”。",
+          "show_report": "勾选并提交，即可查看可复制到 GitHub 问题中的报告。",
+          "test_remote": "勾选并提交，然后按住遥控器的语音按钮，查看遥控器的行为。"
         }
+      },
+      "report": {
+        "title": "遥控器报告",
+        "description": "请将此文本复制到 GitHub 问题中。其中不含完整的 Bluetooth 地址、名称、网址或音频。此处的编辑将被忽略；提交会返回设置。",
+        "data": {
+          "report": "遥控器报告"
+        },
+        "data_description": {
+          "report": "全选并复制。"
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "遥控器测试结果",
+        "description": "此遥控器在按住其按钮时会自行启动语音。按住该按钮即可说话。提交以继续设置。"
+      },
+      "test_result_atvv_tap": {
+        "title": "遥控器测试结果",
+        "description": "此遥控器在点按其按钮时启动语音，并一直监听到您停止说话。点按该按钮即可说话。提交以继续设置。"
+      },
+      "test_result_fire_voice": {
+        "title": "遥控器测试结果",
+        "description": "这是 Fire TV 遥控器的语音键。说话时请按住它。提交以继续设置。"
+      },
+      "test_result_plain_key": {
+        "title": "遥控器测试结果",
+        "description": "遥控器发送了普通按键，但没有语音信号，因此其语音按钮可能无法通过 Bluetooth 启动语音。提交，然后勾选“显示遥控器报告”以分享检测到的内容。"
+      },
+      "test_result_nothing": {
+        "title": "遥控器测试结果",
+        "description": "未从遥控器收到任何内容。用方向键唤醒它，检查它是否已连接到这台 Home Assistant 设备，然后重新测试。提交以继续。"
       }
+    },
+    "progress": {
+      "observing": "正在监听 20 秒。用方向键唤醒遥控器，然后按住其语音按钮，简短说话后松开。"
     },
     "error": {
       "bluetooth_unavailable": "本地 Bluetooth 不可用。请检查是否可以访问系统 D-Bus。",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "请选择现有的 Assist 管道。",
       "hidraw_unavailable": "Home Assistant 无法使用该遥控器的输入设备。请唤醒遥控器，并检查 Home Assistant 是否能看到 /dev/hidraw 设备。",
       "hidraw_permission_denied": "Home Assistant 无权读取该遥控器的输入设备。有关此遥控器所需的设备访问权限，请参阅 README。",
-      "opus_decoder_unavailable": "Home Assistant 没有可用的 Opus 音频解码器，而此遥控器需要它。"
+      "opus_decoder_unavailable": "Home Assistant 没有可用的 Opus 音频解码器，而此遥控器需要它。",
+      "fire_voice_unsupported": "此 Fire TV 遥控器未报告此集成可使用的语音数据。请勾选“显示遥控器报告”，并在 GitHub 问题中分享。",
+      "voice_service_unavailable": "此遥控器不提供 Android TV 语音服务。对于 Fire TV 遥控器，请将“遥控器类型”设置为 Amazon Fire TV。"
     },
     "abort": {
       "already_configured": "此遥控器已配置。",
@@ -65,6 +106,7 @@
           "busy_playback": "回复期间再次按键",
           "context_mode": "对话上下文",
           "input_mode": "按键行为",
+          "remote_type": "遥控器类型",
           "min_press_seconds": "忽略短按",
           "max_request_seconds": "请求最大时长",
           "max_conversation_seconds": "对话最大时长",
@@ -80,6 +122,7 @@
           "busy_playback": "在播放回复时按下按键的处理方式：拒绝按键、之后回答一个待处理请求，或停止回复并开始新请求。",
           "context_mode": "重复使用会保留 Home Assistant 对话，因此“那再翻倍呢？”之类的追问可以正常工作。全新则让每次按键都成为独立的对话。",
           "input_mode": "每次按住一个请求会录音直到松开按键。交替对话在按住按键期间持续聆听：说话、停顿、听取回复，然后再次说话。需要按住说话式遥控器。",
+          "remote_type": "除非遥控器被检测为错误的类型，否则请保持为“自动”。更改后会重新连接遥控器。",
           "min_press_seconds": "忽略短于此时长的语音按键轻点，避免误触发请求；真正的按住会相应延后开始。0 表示关闭。适用于唤醒后立即出现“无麦克风音频”错误的 Fire TV 遥控器：它会把唤醒它的按键作为瞬时轻点重新发送。建议从 0.1 s 开始。仅适用于 Fire TV 遥控器。",
           "max_request_seconds": "任何遥控器上单个请求可持续的最长时间：单请求模式下为整个按住过程，交替对话中为每一轮。达到该时长后，请求会因捕获上限错误而结束。调低可防止按键卡住时持续录音；调高可用于长时间听写。非按住说话式遥控器还会在语音持续约 15 秒或出现静音时（以先到者为准）结束。",
           "max_conversation_seconds": "在交替对话模式下，整个按键按住过程可持续的最长时间。在单请求模式下被忽略，且不得短于请求最大时长。",
@@ -151,6 +194,13 @@
       "options": {
         "single": "每次按住一个请求",
         "conversation": "按住期间对话（交替）"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "自动（推荐）",
+        "atvv": "Android TV / Google TV 遥控器 (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV / Alexa 语音遥控器（按住说话）"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Home Assistant 无法使用该遥控器的输入设备。",
           "hidraw_permission_denied": "Home Assistant 无权读取该遥控器的输入设备。",
           "opus_decoder_unavailable": "Home Assistant 没有可用的 Opus 音频解码器。",
+          "fire_voice_unsupported": "此 Fire TV 遥控器未报告可用的语音数据。",
           "invalid_opus_packet": "遥控器发送了无法解码的音频。",
           "other": "发生了其他错误。详细信息请查看错误代码。"
         },

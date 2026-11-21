@@ -26,12 +26,51 @@
         "title": "Dewis piblinell Assist",
         "description": "Deffrwch y teclyn gyda botwm saeth cyn cyflwyno. Mae'r integreiddio'n cychwyn yn y modd trawsgrifio yn unig; newidiwch hyn yn yr opsiynau unwaith y bydd yn gweithio.",
         "data": {
-          "pipeline_id": "Piblinell Assist"
+          "pipeline_id": "Piblinell Assist",
+          "remote_type": "Math o declyn rheoli",
+          "show_report": "Dangos adroddiad y teclyn rheoli",
+          "test_remote": "Profi fy nheclyn rheoli"
         },
         "data_description": {
-          "pipeline_id": "Y biblinell Assist sy'n prosesu lleferydd o'r teclyn hwn."
+          "pipeline_id": "Y biblinell Assist sy'n prosesu lleferydd o'r teclyn hwn.",
+          "remote_type": "Gadewch ar Awtomatig oni bai nad yw'r teclyn rheoli'n cael ei adnabod neu fod y gosod yn methu.",
+          "show_report": "Ticiwch a chyflwynwch i weld adroddiad y gallwch ei gopïo i fater GitHub.",
+          "test_remote": "Ticiwch a chyflwynwch, yna pwyswch a daliwch botwm llais y teclyn rheoli i weld beth mae'n ei wneud."
         }
+      },
+      "report": {
+        "title": "Adroddiad teclyn rheoli",
+        "description": "Copïwch y testun hwn i fater GitHub. Nid yw'n cynnwys cyfeiriad Bluetooth llawn, enwau, cyfeiriadau gwe na sain. Anwybyddir golygiadau yma; mae Cyflwyno yn mynd yn ôl i'r gosod.",
+        "data": {
+          "report": "Adroddiad teclyn rheoli"
+        },
+        "data_description": {
+          "report": "Dewiswch bopeth a chopïwch."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Canlyniad prawf y teclyn rheoli",
+        "description": "Mae'r teclyn rheoli hwn yn dechrau llais ei hun tra bod ei fotwm yn cael ei ddal. Daliwch y botwm hwnnw i siarad. Cyflwyno i barhau â'r gosod."
+      },
+      "test_result_atvv_tap": {
+        "title": "Canlyniad prawf y teclyn rheoli",
+        "description": "Mae'r teclyn rheoli hwn yn dechrau llais pan gaiff ei fotwm ei dapio ac yn gwrando nes i chi stopio siarad. Tapiwch y botwm hwnnw i siarad. Cyflwyno i barhau â'r gosod."
+      },
+      "test_result_fire_voice": {
+        "title": "Canlyniad prawf y teclyn rheoli",
+        "description": "Dyma allwedd llais teclyn rheoli Fire TV. Daliwch hi wrth siarad. Cyflwyno i barhau â'r gosod."
+      },
+      "test_result_plain_key": {
+        "title": "Canlyniad prawf y teclyn rheoli",
+        "description": "Anfonodd y teclyn rheoli allweddi cyffredin ond dim signal llais, felly efallai nad yw ei fotwm llais yn dechrau llais dros Bluetooth. Cyflwynwch, yna ticiwch Dangos adroddiad y teclyn rheoli i rannu'r hyn a welwyd."
+      },
+      "test_result_nothing": {
+        "title": "Canlyniad prawf y teclyn rheoli",
+        "description": "Ni dderbyniwyd dim gan y teclyn rheoli. Deffrowch ef gydag allwedd saeth, gwiriwch ei fod wedi'i gysylltu â'r peiriant Home Assistant hwn, a phrofwch eto. Cyflwyno i barhau."
       }
+    },
+    "progress": {
+      "observing": "Yn gwrando am 20 eiliad. Deffrowch y teclyn rheoli gydag allwedd saeth, yna pwyswch a daliwch ei fotwm llais, siaradwch yn fyr a rhyddhewch."
     },
     "error": {
       "bluetooth_unavailable": "Nid yw Bluetooth lleol ar gael. Gwiriwch fod D-Bus y system yn hygyrch.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Dewiswch biblinell Assist sy'n bodoli.",
       "hidraw_unavailable": "Nid yw dyfais fewnbwn y teclyn ar gael i Home Assistant. Deffrwch y teclyn a gwiriwch y gall Home Assistant weld dyfeisiau /dev/hidraw.",
       "hidraw_permission_denied": "Nid yw Home Assistant yn cael darllen dyfais fewnbwn y teclyn. Gweler y README am y mynediad i'r ddyfais sydd ei angen ar y teclyn hwn.",
-      "opus_decoder_unavailable": "Nid oes datgodiwr sain Opus ar gael i Home Assistant, ac mae ei angen ar y teclyn hwn."
+      "opus_decoder_unavailable": "Nid oes datgodiwr sain Opus ar gael i Home Assistant, ac mae ei angen ar y teclyn hwn.",
+      "fire_voice_unsupported": "Nid yw'r teclyn rheoli Fire TV hwn yn adrodd data llais y gall yr integreiddio hwn ei ddefnyddio. Ticiwch Dangos adroddiad y teclyn rheoli a'i rannu mewn mater GitHub.",
+      "voice_service_unavailable": "Nid yw'r teclyn rheoli yn cynnig gwasanaeth llais Android TV. Ar gyfer teclyn rheoli Fire TV, gosodwch Math o declyn rheoli i Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Mae'r teclyn hwn eisoes wedi'i ffurfweddu.",
@@ -65,6 +106,7 @@
           "busy_playback": "Gwasgiad newydd yn ystod ateb",
           "context_mode": "Cyd-destun sgwrs",
           "input_mode": "Ymddygiad botwm",
+          "remote_type": "Math o declyn rheoli",
           "min_press_seconds": "Anwybyddu gwasgiadau byr",
           "max_request_seconds": "Hyd uchaf cais",
           "max_conversation_seconds": "Hyd uchaf sgwrs",
@@ -80,6 +122,7 @@
           "busy_playback": "Beth i'w wneud pan fydd y botwm yn cael ei wasgu wrth i ateb chwarae: gwrthod y gwasgiad, ateb un cais sy'n aros wedyn, neu stopio'r ateb a dechrau'r cais newydd.",
           "context_mode": "Mae ailddefnyddio yn cadw sgwrs Home Assistant fel bod cwestiynau dilynol fel 'a dwbl hynny?' yn gweithio. Mae ffres yn gwneud pob gwasgiad yn sgwrs annibynnol.",
           "input_mode": "Mae un cais fesul daliad yn recordio nes bod y botwm yn cael ei ryddhau. Mae sgwrs bob yn ail yn dal i wrando tra bod y botwm yn cael ei ddal: siaradwch, oedwch, clywch yr ateb, yna siaradwch eto. Mae angen teclyn dal-i-siarad.",
+          "remote_type": "Gadewch ar Awtomatig oni bai bod y teclyn rheoli wedi'i ganfod fel y math anghywir. Mae ei newid yn ailgysylltu'r teclyn rheoli.",
           "min_press_seconds": "Yn anwybyddu tapiau byrrach na hyn ar y botwm llais, fel na fydd tap ffug byth yn cychwyn cais; mae daliad go iawn yn cychwyn mor hwyr â hyn. Mae 0 yn ei ddiffodd. Defnyddiol ar gyfer teclyn Fire TV sy'n methu gyda \"No microphone audio\" yn syth ar ôl deffro: mae'n ailanfon yr allwedd a'i deffrodd fel tap ar unwaith. Mae 0.1 s yn fan cychwyn da. Teclynnau Fire TV yn unig.",
           "max_request_seconds": "Yr hiraf y gall un cais bara ar unrhyw declyn: daliad cyfan yn y modd Un cais, a phob tro yn y Sgwrs bob yn ail. Mae ei gyrraedd yn gorffen y cais â gwall terfyn dal. Gostyngwch ef i atal recordio botwm sy'n sownd; cynyddwch ef ar gyfer arddweud hir. Mae teclynnau nad ydynt yn dal-i-siarad hefyd yn gorffen ar ôl tua 15 eiliad o leferydd neu ar ddistawrwydd, pa un bynnag ddaw gyntaf.",
           "max_conversation_seconds": "Yr hiraf y gall daliad botwm cyfan bara yn y modd Sgwrs bob yn ail. Caiff ei anwybyddu yn y modd Un cais ac ni all fod yn fyrrach na hyd uchaf cais.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Un cais fesul daliad",
         "conversation": "Sgwrs wrth ddal (bob yn ail)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Awtomatig (argymhellir)",
+        "atvv": "Teclyn rheoli Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Teclyn rheoli llais Amazon Fire TV / Alexa (daliwch i siarad)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Nid yw dyfais fewnbwn y teclyn ar gael i Home Assistant.",
           "hidraw_permission_denied": "Nid yw Home Assistant yn cael darllen dyfais fewnbwn y teclyn.",
           "opus_decoder_unavailable": "Nid oes datgodiwr sain Opus ar gael i Home Assistant.",
+          "fire_voice_unsupported": "Nid yw'r teclyn rheoli Fire TV hwn yn adrodd data llais defnyddiadwy.",
           "invalid_opus_packet": "Anfonodd y teclyn sain na ellid ei datgodio.",
           "other": "Digwyddodd gwall arall. Mae cod y gwall yn rhoi'r manylion."
         },

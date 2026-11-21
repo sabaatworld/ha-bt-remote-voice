@@ -26,12 +26,51 @@
         "title": "Assist-Pipeline auswielen",
         "description": "Weckt d'Fernbedienung mat enger Päiltast op, ier Dir se schéckt. D'Integratioun start am Modus nëmme Transkriptioun; ännert dat an den Optiounen, soubal et funktionéiert.",
         "data": {
-          "pipeline_id": "Assist-Pipeline"
+          "pipeline_id": "Assist-Pipeline",
+          "remote_type": "Fernbedienungstyp",
+          "show_report": "Fernbedienungsbericht weisen",
+          "test_remote": "Meng Fernbedienung testen"
         },
         "data_description": {
-          "pipeline_id": "D'Assist-Pipeline, déi d'Sprooch vun dëser Fernbedienung verschafft."
+          "pipeline_id": "D'Assist-Pipeline, déi d'Sprooch vun dëser Fernbedienung verschafft.",
+          "remote_type": "Op Automatesch loossen, ausser d'Fernbedienung gëtt net erkannt oder d'Astellung schléit fehl.",
+          "show_report": "Aktivéieren a schécken, fir e Bericht ze gesinn, deen Dir an e GitHub-Issue kopéiere kënnt.",
+          "test_remote": "Aktivéiert a schéckt of, haalt dann d'Sproochtast vun der Fernbedienung gedréckt, fir ze gesinn, wat si mécht."
         }
+      },
+      "report": {
+        "title": "Fernbedienungsbericht",
+        "description": "Kopéiert dësen Text an e GitHub-Issue. Hien enthält keng voll Bluetooth-Adress, keng Nimm, Webadressen oder Audio. Ännerungen hei ginn ignoréiert; Schécken féiert zréck zur Astellung.",
+        "data": {
+          "report": "Fernbedienungsbericht"
+        },
+        "data_description": {
+          "report": "Alles auswielen a kopéieren."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultat vum Fernbedienungstest",
+        "description": "Dës Fernbedienung start d'Sprooch selwer, solang hir Tast gehale gëtt. Haalt déi Tast fir ze schwätzen. Schécken, fir d'Astellung weiderzemaachen."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultat vum Fernbedienungstest",
+        "description": "Dës Fernbedienung start d'Sprooch, wann hir Tast ugetippt gëtt, a lauschtert, bis Dir ophält ze schwätzen. Tippt fir ze schwätzen op déi Tast. Schécken, fir d'Astellung weiderzemaachen."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultat vum Fernbedienungstest",
+        "description": "Dat ass d'Sproochtast vun enger Fire-TV-Fernbedienung. Haalt si gedréckt, wärend Dir schwätzt. Schécken, fir d'Astellung weiderzemaachen."
+      },
+      "test_result_plain_key": {
+        "title": "Resultat vum Fernbedienungstest",
+        "description": "D'Fernbedienung huet normal Tasten, awer kee Sproochsignal geschéckt, dofir start hir Sproochtast d'Sprooch vläicht net iwwer Bluetooth. Schéckt of an aktivéiert dann Fernbedienungsbericht weisen, fir ze deelen, wat gesi gouf."
+      },
+      "test_result_nothing": {
+        "title": "Resultat vum Fernbedienungstest",
+        "description": "Vun der Fernbedienung ass näischt ukomm. Weckt si mat enger Pfeiltast op, kontrolléiert, ob si mat dëser Home-Assistant-Maschinn verbonne ass, a testet nach eng Kéier. Schécken, fir weiderzefueren."
       }
+    },
+    "progress": {
+      "observing": "20 Sekonne lauschteren. Weckt d'Fernbedienung mat enger Pfeiltast op, haalt dann hir Sproochtast gedréckt, schwätzt kuerz a looss lass."
     },
     "error": {
       "bluetooth_unavailable": "Lokale Bluetooth ass net verfügbar. Kontrolléiert, ob de System-D-Bus accessibel ass.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Wielt eng bestoend Assist-Pipeline aus.",
       "hidraw_unavailable": "D'Aginn-Apparat vun der Fernbedienung ass net fir Home Assistant verfügbar. Weckt d'Fernbedienung op a kontrolléiert, ob Home Assistant /dev/hidraw-Apparater gesäit.",
       "hidraw_permission_denied": "Home Assistant däerf d'Aginn-Apparat vun der Fernbedienung net liesen. Kuckt am README, wéi en Apparat-Zougang dës Fernbedienung brauch.",
-      "opus_decoder_unavailable": "Et ass keen Opus-Audiodecoder fir Home Assistant verfügbar, deen dës Fernbedienung brauch."
+      "opus_decoder_unavailable": "Et ass keen Opus-Audiodecoder fir Home Assistant verfügbar, deen dës Fernbedienung brauch.",
+      "fire_voice_unsupported": "Dës Fire-TV-Fernbedienung mellt keng Sproochdaten, déi dës Integratioun benotze kann. Aktivéiert Fernbedienungsbericht weisen a deelt en an engem GitHub-Issue.",
+      "voice_service_unavailable": "D'Fernbedienung bitt den Android-TV-Sproochdingscht net un. Stellt bei enger Fire-TV-Fernbedienung den Fernbedienungstyp op Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Dës Fernbedienung ass schonn konfiguréiert.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nei Tast während der Äntwert",
           "context_mode": "Gespréichskontext",
           "input_mode": "Tastverhalen",
+          "remote_type": "Fernbedienungstyp",
           "min_press_seconds": "Kuerz Tastendréck ignoréieren",
           "max_request_seconds": "Maximal Uflängt",
           "max_conversation_seconds": "Maximal Gespréichslängt",
@@ -80,6 +122,7 @@
           "busy_playback": "Wat geschitt, wann d'Tast gedréckt gëtt, während eng Äntwert ofgespillt gëtt: d'Tast ofleenen, duerno eng Ufro an der Rei beäntweren oder d'Äntwert stoppen an déi nei Ufro starten.",
           "context_mode": "Weiderbenotzen behält d'Home-Assistant-Gespréich, sou datt Folgefroen wéi „an dat duebel?“ funktionéieren. Frësch mécht vun all Tast en onofhängegt Gespréich.",
           "input_mode": "Eng Ufro pro Halen hëlt op, bis d'Tast lassgelooss gëtt. Wiesselend Gespréich lauschtert weider, soulaang d'Tast gehale gëtt: schwätzen, pausen, d'Äntwert héieren, dann nees schwätzen. Dofir brauch et eng Fernbedienung mat Push-to-Talk.",
+          "remote_type": "Op Automatesch loossen, ausser d'Fernbedienung gouf als falschen Typ erkannt. Eng Ännerung verbënnt d'Fernbedienung nei.",
           "min_press_seconds": "Ignoréiert Tippe op d'Sproochtast, déi méi kuerz si wéi dëst, fir datt en onbeabsiichtegt Tippe ni eng Ufro start; e richtegt Halen fänkt entspriechend méi spéit un. 0 schalt et aus. Nëtzlech fir eng Fire TV-Fernbedienung, déi direkt nom Opwecken mat \"No microphone audio\" feelschléit: si schéckt d'Tast, déi si opgeweckt huet, nees als direkten Tipp. 0,1 s ass e gudde Startwäert. Nëmme fir Fire TV-Fernbedienungen.",
           "max_request_seconds": "Déi längst Dauer vun enger eenzeler Ufro op all Fernbedienung: e ganzt Halen am Modus Eng Ufro, an all Tour am Wiesselend Gespréich. Wann se erreecht gëtt, endet d'Ufro mat engem Opnamlimit-Feeler. Verréngert et, fir eng blockéiert Tast ze hanneren, ewech ze huelen; erhéicht et fir laang Diktater. Fernbedienunge ouni Push-to-Talk enden och no ongeféier 15 Sekonnen Sprooch oder bei Rou, wat fréier kënnt.",
           "max_conversation_seconds": "Déi längst Dauer vun engem ganzen Tasthalen am Modus Wiesselend Gespréich. Gëtt am Modus Eng Ufro ignoréiert a muss net méi kuerz sinn wéi déi maximal Uflängt.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Eng Ufro pro Halen",
         "conversation": "Gespréich beim Halen (wiesselend)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatesch (recommandéiert)",
+        "atvv": "Android-TV-/Google-TV-Fernbedienung (ATVV)",
+        "fire_press_to_talk": "Amazon-Fire-TV-/Alexa-Sproochfernbedienung (zum Schwätze gedréckt halen)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "D'Aginn-Apparat vun der Fernbedienung ass net fir Home Assistant verfügbar.",
           "hidraw_permission_denied": "Home Assistant däerf d'Aginn-Apparat vun der Fernbedienung net liesen.",
           "opus_decoder_unavailable": "Et ass keen Opus-Audiodecoder fir Home Assistant verfügbar.",
+          "fire_voice_unsupported": "Dës Fire-TV-Fernbedienung mellt keng brauchbar Sproochdaten.",
           "invalid_opus_packet": "D'Fernbedienung huet Audio geschéckt, déi net konnt dekodéiert ginn.",
           "other": "Et ass en aneren Feeler opgetratt. De Feelercode gëtt d'Detailer."
         },

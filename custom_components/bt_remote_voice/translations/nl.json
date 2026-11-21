@@ -26,12 +26,51 @@
         "title": "Assist-pipeline selecteren",
         "description": "Maak de afstandsbediening wakker met een pijltoets voordat je verstuurt. De integratie start in de modus alleen transcriptie; wijzig dit in de opties zodra het werkt.",
         "data": {
-          "pipeline_id": "Assist-pipeline"
+          "pipeline_id": "Assist-pipeline",
+          "remote_type": "Type afstandsbediening",
+          "show_report": "Afstandsbedieningsrapport tonen",
+          "test_remote": "Mijn afstandsbediening testen"
         },
         "data_description": {
-          "pipeline_id": "De Assist-pipeline die de spraak van deze afstandsbediening verwerkt."
+          "pipeline_id": "De Assist-pipeline die de spraak van deze afstandsbediening verwerkt.",
+          "remote_type": "Laat op Automatisch staan, tenzij de afstandsbediening niet wordt herkend of het instellen mislukt.",
+          "show_report": "Vink aan en verstuur om een rapport te zien dat je in een GitHub-issue kunt kopiëren.",
+          "test_remote": "Vink aan en verstuur, houd daarna de spraakknop van de afstandsbediening ingedrukt om te zien wat hij doet."
         }
+      },
+      "report": {
+        "title": "Afstandsbedieningsrapport",
+        "description": "Kopieer deze tekst in een GitHub-issue. Hij bevat geen volledig Bluetooth-adres, namen, webadressen of audio. Wijzigingen hier worden genegeerd; Verzenden gaat terug naar het instellen.",
+        "data": {
+          "report": "Afstandsbedieningsrapport"
+        },
+        "data_description": {
+          "report": "Selecteer alles en kopieer."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultaat van de afstandsbedieningstest",
+        "description": "Deze afstandsbediening start zelf spraak zolang zijn knop wordt ingedrukt. Houd die knop ingedrukt om te praten. Verzenden om door te gaan met instellen."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultaat van de afstandsbedieningstest",
+        "description": "Deze afstandsbediening start spraak wanneer zijn knop wordt aangetikt en luistert tot je stopt met praten. Tik op die knop om te praten. Verzenden om door te gaan met instellen."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultaat van de afstandsbedieningstest",
+        "description": "Dit is de spraaktoets van een Fire TV-afstandsbediening. Houd hem ingedrukt terwijl je praat. Verzenden om door te gaan met instellen."
+      },
+      "test_result_plain_key": {
+        "title": "Resultaat van de afstandsbedieningstest",
+        "description": "De afstandsbediening stuurde gewone toetsen maar geen spraaksignaal, dus zijn spraakknop start mogelijk geen spraak via Bluetooth. Verstuur en vink dan Afstandsbedieningsrapport tonen aan om te delen wat is gezien."
+      },
+      "test_result_nothing": {
+        "title": "Resultaat van de afstandsbedieningstest",
+        "description": "Er is niets ontvangen van de afstandsbediening. Maak hem wakker met een pijltoets, controleer of hij verbonden is met deze Home Assistant-machine en test opnieuw. Verzenden om door te gaan."
       }
+    },
+    "progress": {
+      "observing": "20 seconden luisteren. Maak de afstandsbediening wakker met een pijltoets, houd daarna zijn spraakknop ingedrukt, spreek kort en laat los."
     },
     "error": {
       "bluetooth_unavailable": "Lokale Bluetooth is niet beschikbaar. Controleer of de systeem-D-Bus toegankelijk is.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Kies een bestaande Assist-pipeline.",
       "hidraw_unavailable": "Het invoerapparaat van de afstandsbediening is niet beschikbaar voor Home Assistant. Maak de afstandsbediening wakker en controleer of Home Assistant /dev/hidraw-apparaten kan zien.",
       "hidraw_permission_denied": "Home Assistant mag het invoerapparaat van de afstandsbediening niet lezen. Zie de README voor de apparaattoegang die deze afstandsbediening nodig heeft.",
-      "opus_decoder_unavailable": "Er is geen Opus-audiodecoder beschikbaar voor Home Assistant, die deze afstandsbediening nodig heeft."
+      "opus_decoder_unavailable": "Er is geen Opus-audiodecoder beschikbaar voor Home Assistant, die deze afstandsbediening nodig heeft.",
+      "fire_voice_unsupported": "Deze Fire TV-afstandsbediening meldt geen spraakgegevens die deze integratie kan gebruiken. Vink Afstandsbedieningsrapport tonen aan en deel het in een GitHub-issue.",
+      "voice_service_unavailable": "De afstandsbediening biedt de Android TV-spraakservice niet aan. Stel voor een Fire TV-afstandsbediening het Type afstandsbediening in op Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Deze afstandsbediening is al geconfigureerd.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nieuwe druk tijdens antwoord",
           "context_mode": "Gesprekscontext",
           "input_mode": "Knopgedrag",
+          "remote_type": "Type afstandsbediening",
           "min_press_seconds": "Korte drukken negeren",
           "max_request_seconds": "Maximale verzoeklengte",
           "max_conversation_seconds": "Maximale gesprekslengte",
@@ -80,6 +122,7 @@
           "busy_playback": "Wat te doen als de knop wordt ingedrukt terwijl een antwoord wordt afgespeeld: de druk weigeren, daarna één verzoek in afwachting beantwoorden of het antwoord stoppen en het nieuwe verzoek starten.",
           "context_mode": "Hergebruiken behoudt het Home Assistant-gesprek, zodat vervolgvragen zoals 'en dat dubbel?' werken. Nieuw maakt van elke druk een zelfstandig gesprek.",
           "input_mode": "Eén verzoek per indrukken neemt op totdat de knop wordt losgelaten. Wisselend gesprek blijft luisteren zolang de knop wordt ingedrukt: spreken, pauzeren, het antwoord horen en dan opnieuw spreken. Hiervoor is een afstandsbediening met push-to-talk nodig.",
+          "remote_type": "Laat op Automatisch staan, tenzij de afstandsbediening als het verkeerde type is gedetecteerd. Wijzigen verbindt de afstandsbediening opnieuw.",
           "min_press_seconds": "Negeert tikken op de spraakknop die korter zijn dan dit, zodat een onbedoelde tik nooit een verzoek start; een echte druk begint even later. 0 schakelt het uit. Handig voor een Fire TV-afstandsbediening die direct na het wakker worden mislukt met \"No microphone audio\": hij stuurt de toets die hem wakker maakte opnieuw als directe tik. 0,1 s is een goed beginpunt. Alleen voor Fire TV-afstandsbedieningen.",
           "max_request_seconds": "De langste duur van één verzoek op elke afstandsbediening: een hele druk in de modus Eén verzoek en elke beurt in Wisselend gesprek. Als de limiet wordt bereikt, eindigt het verzoek met een opnamelimietfout. Verlaag dit om een vastzittende knop niet eindeloos te laten opnemen; verhoog het voor lange dictaten. Afstandsbedieningen zonder push-to-talk eindigen ook na ongeveer 15 seconden spraak of bij stilte, wat het eerst komt.",
           "max_conversation_seconds": "De langste duur van een hele knopdruk in de modus Wisselend gesprek. Wordt genegeerd in de modus Eén verzoek en mag niet korter zijn dan de maximale verzoeklengte.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Eén verzoek per indrukken",
         "conversation": "Gesprek tijdens indrukken (wisselend)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatisch (aanbevolen)",
+        "atvv": "Android TV- / Google TV-afstandsbediening (ATVV)",
+        "fire_press_to_talk": "Amazon Fire TV- / Alexa-spraakafstandsbediening (ingedrukt houden om te praten)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Het invoerapparaat van de afstandsbediening is niet beschikbaar voor Home Assistant.",
           "hidraw_permission_denied": "Home Assistant mag het invoerapparaat van de afstandsbediening niet lezen.",
           "opus_decoder_unavailable": "Er is geen Opus-audiodecoder beschikbaar voor Home Assistant.",
+          "fire_voice_unsupported": "Deze Fire TV-afstandsbediening meldt geen bruikbare spraakgegevens.",
           "invalid_opus_packet": "De afstandsbediening stuurde audio die niet kon worden gedecodeerd.",
           "other": "Er is een andere fout opgetreden. De foutcode geeft de details."
         },

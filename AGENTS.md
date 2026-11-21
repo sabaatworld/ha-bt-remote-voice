@@ -52,10 +52,17 @@ the HA audio dependencies; mount the repo read-only and set
   Provider behavior is detected from HA's signals, never guessed from names.
 - **Privacy.** History, diagnostics, events and attributes never contain PCM,
   transcripts, Bluetooth addresses, URLs or other identifiers; only counts,
-  fixed codes and numeric timings. Keep this when adding fields.
+  fixed codes and numeric timings. Keep this when adding fields. The one exception
+  is the user-initiated Remote Report (setup's "Show remote report" and the
+  `remote_report` entry in diagnostics): it may show the first three bytes of a
+  remote's address (usually the public manufacturer prefix) with the rest masked,
+  plus the remote's own Bluetooth identity data as it advertises it (UUIDs,
+  product id, manufacturer-data bytes, HID descriptor), but never a name or alias. `report.mask_address`
+  is the only place that decides this, and a report field change bumps `SCHEMA`.
 - **Keep private material out of this repo.** Packet captures, recordings,
   credentials, deployment notes, household research and test logs belong in the
-  maintainer's private workspace, not here.
+  maintainer's private workspace, not here. A remote's HID report descriptor (hex)
+  is configuration data, not a capture, and may be kept as a test fixture.
 - **Translations, always.** No user-visible text in code: entity names via
   `translation_key`, choice labels via `SelectSelector(translation_key=...)` with
   `selector` entries, every form field needs `data` and `data_description`,
@@ -84,7 +91,7 @@ the HA audio dependencies; mount the repo read-only and set
   `tests/test_config_flow.py`). Temporary unavailability is not a repair.
 - **Option order.** The options form lists fields in a deliberate order (pipeline,
   voice mode, reply speaker, reply condition, reply timing, head start, busy
-  policies, context, button behavior, short-press filter, then limits). Put new options in that
+  policies, context, button behavior, remote type, short-press filter, then limits). Put new options in that
   grouping and keep the README configuration table in the same order.
 - **Behavior-preserving defaults.** A new option must default to existing behavior,
   be validated in `preferences.py`, appear in `config_flow.py` and in every translation file (`en.json` first),

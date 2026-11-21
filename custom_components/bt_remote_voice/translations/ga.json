@@ -26,12 +26,51 @@
         "title": "Roghnaigh píblíne Assist",
         "description": "Dúisigh an cianrialtán le cnaipe saighde sula gcuireann tú isteach é. Tosaíonn an comhtháthú i mód trascríbhinne amháin; athraigh é seo sna roghanna nuair a oibríonn sé.",
         "data": {
-          "pipeline_id": "Píblíne Assist"
+          "pipeline_id": "Píblíne Assist",
+          "remote_type": "Cineál cianrialtáin",
+          "show_report": "Taispeáin tuarascáil an chianrialtáin",
+          "test_remote": "Tástáil mo chianrialtán"
         },
         "data_description": {
-          "pipeline_id": "An phíblíne Assist a phróiseálann caint ón gcianrialtán seo."
+          "pipeline_id": "An phíblíne Assist a phróiseálann caint ón gcianrialtán seo.",
+          "remote_type": "Fág ar Uathoibríoch mura n-aithnítear an cianrialtán nó mura n-éiríonn leis an socrú.",
+          "show_report": "Cuir tic leis agus seol chun tuarascáil a fheiceáil ar féidir leat a chóipeáil i gcás GitHub.",
+          "test_remote": "Cuir tic leis agus seol, ansin brúigh agus coinnigh cnaipe gutha an chianrialtáin chun a fheiceáil cad a dhéanann sé."
         }
+      },
+      "report": {
+        "title": "Tuarascáil cianrialtáin",
+        "description": "Cóipeáil an téacs seo i gcás GitHub. Níl seoladh Bluetooth iomlán, ainmneacha, seoltaí gréasáin ná fuaim ann. Déantar neamhaird d'athruithe anseo; filleann Seol ar an socrú.",
+        "data": {
+          "report": "Tuarascáil cianrialtáin"
+        },
+        "data_description": {
+          "report": "Roghnaigh gach rud agus cóipeáil."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Toradh thástáil an chianrialtáin",
+        "description": "Cuireann an cianrialtán seo guth ar siúl leis féin cé go gcoinnítear a chnaipe. Coinnigh an cnaipe sin chun labhairt. Seol chun leanúint leis an socrú."
+      },
+      "test_result_atvv_tap": {
+        "title": "Toradh thástáil an chianrialtáin",
+        "description": "Cuireann an cianrialtán seo guth ar siúl nuair a thapáiltear a chnaipe agus éisteann sé go stopann tú ag labhairt. Tapáil an cnaipe sin chun labhairt. Seol chun leanúint leis an socrú."
+      },
+      "test_result_fire_voice": {
+        "title": "Toradh thástáil an chianrialtáin",
+        "description": "Seo eochair ghutha cianrialtáin Fire TV. Coinnigh í agus tú ag labhairt. Seol chun leanúint leis an socrú."
+      },
+      "test_result_plain_key": {
+        "title": "Toradh thástáil an chianrialtáin",
+        "description": "Sheol an cianrialtán eochracha ghnácha ach gan comhartha gutha, mar sin b'fhéidir nach gcuireann a chnaipe gutha guth ar siúl thar Bluetooth. Seol, ansin cuir tic le Taispeáin tuarascáil an chianrialtáin chun an méid a chonacthas a roinnt."
+      },
+      "test_result_nothing": {
+        "title": "Toradh thástáil an chianrialtáin",
+        "description": "Ní bhfuarthas aon rud ón gcianrialtán. Músclaigh é le heochair saighde, seiceáil go bhfuil sé ceangailte leis an meaisín Home Assistant seo agus tástáil arís. Seol chun leanúint ar aghaidh."
       }
+    },
+    "progress": {
+      "observing": "Ag éisteacht ar feadh 20 soicind. Músclaigh an cianrialtán le heochair saighde, ansin brúigh agus coinnigh a chnaipe gutha, labhair go hachomair agus lig dó imeacht."
     },
     "error": {
       "bluetooth_unavailable": "Níl Bluetooth áitiúil ar fáil. Seiceáil go bhfuil rochtain ar D-Bus an chórais.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Roghnaigh píblíne Assist atá ann cheana.",
       "hidraw_unavailable": "Níl gléas ionchuir an chianrialtáin ar fáil do Home Assistant. Dúisigh an cianrialtán agus seiceáil an bhfeiceann Home Assistant gléasanna /dev/hidraw.",
       "hidraw_permission_denied": "Níl cead ag Home Assistant gléas ionchuir an chianrialtáin a léamh. Féach an README le haghaidh na rochtana gléis a theastaíonn ón gcianrialtán seo.",
-      "opus_decoder_unavailable": "Níl díchódóir fuaime Opus ar fáil do Home Assistant, rud a theastaíonn ón gcianrialtán seo."
+      "opus_decoder_unavailable": "Níl díchódóir fuaime Opus ar fáil do Home Assistant, rud a theastaíonn ón gcianrialtán seo.",
+      "fire_voice_unsupported": "Ní thuairiscíonn an cianrialtán Fire TV seo sonraí gutha is féidir leis an lamháil seo a úsáid. Cuir tic le Taispeáin tuarascáil an chianrialtáin agus roinn é i gcás GitHub.",
+      "voice_service_unavailable": "Ní thairgeann an cianrialtán seirbhís ghutha Android TV. I gcás cianrialtán Fire TV, socraigh Cineál cianrialtáin go Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Tá an cianrialtán seo cumraithe cheana.",
@@ -65,6 +106,7 @@
           "busy_playback": "Brú nua le linn freagra",
           "context_mode": "Comhthéacs comhrá",
           "input_mode": "Iompar cnaipe",
+          "remote_type": "Cineál cianrialtáin",
           "min_press_seconds": "Déan neamhaird de bhrúnna gearra",
           "max_request_seconds": "Fad uasta iarratais",
           "max_conversation_seconds": "Fad uasta comhrá",
@@ -80,6 +122,7 @@
           "busy_playback": "Cad atá le déanamh nuair a bhrúitear an cnaipe agus freagra á sheinm: an brú a dhiúltú, iarratas ar feitheamh amháin a fhreagairt ina dhiaidh, nó an freagra a stopadh agus an t-iarratas nua a thosú.",
           "context_mode": "Coinníonn Athúsáid comhrá Home Assistant ionas n-oibríonn ceisteanna leantacha amhail 'agus faoi dhó sin?'. Déanann Úr comhrá neamhspleách de gach brú.",
           "input_mode": "Taifeadann Iarratas amháin in aghaidh gach coinneála go dtí go scaoiltear an cnaipe. Coinníonn Comhrá malartach ag éisteacht fad is a choinnítear an cnaipe: labhair, déan sos, cloisigh an freagra, ansin labhair arís. Teastaíonn cianrialtán coinnigh-chun-labhairt uaidh.",
+          "remote_type": "Fág ar Uathoibríoch mura bhfuarthas an cianrialtán mar an cineál mícheart. Nuair a athraítear é, athcheanglaítear an cianrialtán.",
           "min_press_seconds": "Déanann sé neamhaird de thapáil ar an gcnaipe gutha atá níos giorra ná seo, ionas nach dtosaíonn tapáil bhréagach iarratas; tosaíonn fíor-choinneáil an méid seo níos déanaí. Casann 0 as é. Úsáideach do chianrialtán Fire TV a theipeann leis le “Níl aon fhuaim micreafóin” díreach tar éis dúiseacht: athsheolann sé an eochair a dhúisigh é mar thapáil ar an toirt. Is pointe tosaigh maith é 0.1 s. Cianrialtáin Fire TV amháin.",
           "max_request_seconds": "An t-am is faide is féidir le hiarratas amháin a mhaireachtáil ar aon chianrialtán: coinneáil iomlán i mód Iarratas amháin, agus gach casadh i gComhrá malartach. Má shroichtear é, críochnaíonn an t-iarratas le hearráid teorann gabhála. Laghdaigh é chun taifeadadh cnaipe greamaithe a stopadh; ardaigh é le haghaidh dictála fada. Críochnaíonn cianrialtáin nach bhfuil coinnigh-chun-labhairt tar éis thart ar 15 soicind cainte nó ag tost, cibé acu is túisce.",
           "max_conversation_seconds": "An t-am is faide is féidir le coinneáil iomlán cnaipe a mhaireachtáil i mód Comhrá malartach. Déantar neamhaird de i mód Iarratas amháin agus ní mór dó a bheith chomh fada leis an uasfhad iarratais ar a laghad.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Iarratas amháin in aghaidh gach coinneála",
         "conversation": "Comhrá agus an cnaipe coinnithe (malartach)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Uathoibríoch (molta)",
+        "atvv": "Cianrialtán Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Cianrialtán gutha Amazon Fire TV / Alexa (coinnigh chun labhairt)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Níl gléas ionchuir an chianrialtáin ar fáil do Home Assistant.",
           "hidraw_permission_denied": "Níl cead ag Home Assistant gléas ionchuir an chianrialtáin a léamh.",
           "opus_decoder_unavailable": "Níl díchódóir fuaime Opus ar fáil do Home Assistant.",
+          "fire_voice_unsupported": "Ní thuairiscíonn an cianrialtán Fire TV seo sonraí gutha inúsáidte.",
           "invalid_opus_packet": "Sheol an cianrialtán fuaim nárbh fhéidir a dhíchódú.",
           "other": "Tharla earráid eile. Tugann cód na hearráide na sonraí."
         },

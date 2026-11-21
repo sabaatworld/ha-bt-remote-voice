@@ -26,12 +26,51 @@
         "title": "Selecionar pipeline do Assist",
         "description": "Ative o controle remoto com um botão de seta antes de enviar. A integração começa no modo apenas de transcrição; altere-o nas opções quando estiver funcionando.",
         "data": {
-          "pipeline_id": "Pipeline do Assist"
+          "pipeline_id": "Pipeline do Assist",
+          "remote_type": "Tipo de controle remoto",
+          "show_report": "Mostrar relatório do controle remoto",
+          "test_remote": "Testar meu controle remoto"
         },
         "data_description": {
-          "pipeline_id": "O pipeline do Assist que processa a voz deste controle remoto."
+          "pipeline_id": "O pipeline do Assist que processa a voz deste controle remoto.",
+          "remote_type": "Deixe em Automático, a menos que o controle remoto não seja reconhecido ou a configuração falhe.",
+          "show_report": "Marque e envie para ver um relatório que você pode copiar em uma issue do GitHub.",
+          "test_remote": "Marque e envie, depois mantenha pressionado o botão de voz do controle remoto para ver o que ele faz."
         }
+      },
+      "report": {
+        "title": "Relatório do controle remoto",
+        "description": "Copie este texto em uma issue do GitHub. Ele não contém endereço Bluetooth completo, nomes, endereços da web nem áudio. As edições aqui são ignoradas; Enviar volta para a configuração.",
+        "data": {
+          "report": "Relatório do controle remoto"
+        },
+        "data_description": {
+          "report": "Selecione tudo e copie."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultado do teste do controle remoto",
+        "description": "Este controle remoto inicia a voz sozinho enquanto o botão é mantido pressionado. Mantenha esse botão pressionado para falar. Envie para continuar a configuração."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultado do teste do controle remoto",
+        "description": "Este controle remoto inicia a voz quando o botão é tocado e ouve até você parar de falar. Toque nesse botão para falar. Envie para continuar a configuração."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultado do teste do controle remoto",
+        "description": "Esta é a tecla de voz de um controle remoto Fire TV. Mantenha-a pressionada enquanto fala. Envie para continuar a configuração."
+      },
+      "test_result_plain_key": {
+        "title": "Resultado do teste do controle remoto",
+        "description": "O controle remoto enviou teclas comuns, mas nenhum sinal de voz, então o botão de voz pode não iniciar a voz por Bluetooth. Envie e depois marque Mostrar relatório do controle remoto para compartilhar o que foi visto."
+      },
+      "test_result_nothing": {
+        "title": "Resultado do teste do controle remoto",
+        "description": "Nada foi recebido do controle remoto. Acorde-o com uma tecla de seta, verifique se ele está conectado a esta máquina com Home Assistant e teste novamente. Envie para continuar."
       }
+    },
+    "progress": {
+      "observing": "Ouvindo por 20 segundos. Acorde o controle remoto com uma tecla de seta, depois mantenha pressionado o botão de voz, fale brevemente e solte."
     },
     "error": {
       "bluetooth_unavailable": "O Bluetooth local não está disponível. Verifique se o D-Bus do sistema está acessível.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Escolha um pipeline do Assist existente.",
       "hidraw_unavailable": "O dispositivo de entrada do controle remoto não está disponível para o Home Assistant. Ative o controle remoto e verifique se o Home Assistant consegue ver os dispositivos /dev/hidraw.",
       "hidraw_permission_denied": "O Home Assistant não tem permissão para ler o dispositivo de entrada do controle remoto. Consulte o README para saber o acesso ao dispositivo de que este controle remoto necessita.",
-      "opus_decoder_unavailable": "Não está disponível nenhum decodificador de áudio Opus para o Home Assistant, que este controle remoto necessita."
+      "opus_decoder_unavailable": "Não está disponível nenhum decodificador de áudio Opus para o Home Assistant, que este controle remoto necessita.",
+      "fire_voice_unsupported": "Este controle remoto Fire TV não informa dados de voz que esta integração possa usar. Marque Mostrar relatório do controle remoto e compartilhe-o em uma issue do GitHub.",
+      "voice_service_unavailable": "O controle remoto não oferece o serviço de voz do Android TV. Para um controle remoto Fire TV, defina o Tipo de controle remoto como Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Este controle remoto já está configurado.",
@@ -65,6 +106,7 @@
           "busy_playback": "Nova pressão durante a resposta",
           "context_mode": "Contexto da conversa",
           "input_mode": "Comportamento do botão",
+          "remote_type": "Tipo de controle remoto",
           "min_press_seconds": "Ignorar pressões curtas",
           "max_request_seconds": "Duração máxima do pedido",
           "max_conversation_seconds": "Duração máxima da conversa",
@@ -80,6 +122,7 @@
           "busy_playback": "O que fazer quando o botão é pressionado enquanto uma resposta está sendo reproduzida: rejeitar a pressão, responder depois a um pedido pendente, ou parar a resposta e iniciar o novo pedido.",
           "context_mode": "Reutilizar mantém a conversa do Home Assistant para que perguntas de seguimento como «e o dobro?» funcionem. Nova faz de cada pressão uma conversa independente.",
           "input_mode": "Um pedido por pressão contínua grava até o botão ser liberado. A conversa alternada continua ouvindo enquanto o botão é mantido pressionado: fale, faça uma pausa, ouça a resposta e volte a falar. Requer um controle remoto de pressionar para falar.",
+          "remote_type": "Deixe em Automático, a menos que o controle remoto tenha sido detectado com o tipo errado. Alterar reconecta o controle remoto.",
           "min_press_seconds": "Ignora os toques no botão de voz mais curtos do que este valor, para que um toque espúrio nunca inicie um pedido; uma pressão contínua real começa essa duração mais tarde. 0 desativa. Útil para um controle remoto Fire TV que falha com «Não foi recebido áudio do microfone» logo após ser ativado: reenvia a tecla que o ativou como um toque instantâneo. 0,1 s é um bom ponto de partida. Apenas para controles remotos Fire TV.",
           "max_request_seconds": "A duração máxima de um único pedido em qualquer controle remoto: toda a pressão contínua no modo Um pedido, e cada turno na Conversa alternada. Ao atingi-la, o pedido termina com um erro de limite de captura. Reduza-a para parar a gravação de um botão preso; aumente-a para ditados longos. Os controles remotos que não são de pressionar para falar também terminam após cerca de 15 segundos de fala ou no silêncio, o que ocorrer primeiro.",
           "max_conversation_seconds": "A duração máxima de toda uma pressão contínua no modo de conversa alternada. É ignorada no modo Um pedido e não pode ser inferior à duração máxima do pedido.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Um pedido por pressão contínua",
         "conversation": "Conversa enquanto mantido pressionado (alternada)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automático (recomendado)",
+        "atvv": "Controle remoto Android TV / Google TV (ATVV)",
+        "fire_press_to_talk": "Controle remoto de voz Amazon Fire TV / Alexa (mantenha pressionado para falar)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "O dispositivo de entrada do controle remoto não está disponível para o Home Assistant.",
           "hidraw_permission_denied": "O Home Assistant não tem permissão para ler o dispositivo de entrada do controle remoto.",
           "opus_decoder_unavailable": "Não está disponível nenhum decodificador de áudio Opus para o Home Assistant.",
+          "fire_voice_unsupported": "Este controle remoto Fire TV não informa dados de voz utilizáveis.",
           "invalid_opus_packet": "O controle remoto enviou áudio que não pôde ser decodificado.",
           "other": "Ocorreu outro erro. O código de erro indica os detalhes."
         },

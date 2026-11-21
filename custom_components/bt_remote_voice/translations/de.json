@@ -26,12 +26,51 @@
         "title": "Assist-Pipeline auswählen",
         "description": "Wecken Sie die Fernbedienung vor dem Absenden mit einer Pfeiltaste auf. Die Integration startet im reinen Transkriptionsmodus; ändern Sie dies in den Optionen, sobald alles funktioniert.",
         "data": {
-          "pipeline_id": "Assist-Pipeline"
+          "pipeline_id": "Assist-Pipeline",
+          "remote_type": "Fernbedienungstyp",
+          "show_report": "Fernbedienungsbericht anzeigen",
+          "test_remote": "Meine Fernbedienung testen"
         },
         "data_description": {
-          "pipeline_id": "Die Assist-Pipeline, die die Sprache dieser Fernbedienung verarbeitet."
+          "pipeline_id": "Die Assist-Pipeline, die die Sprache dieser Fernbedienung verarbeitet.",
+          "remote_type": "Auf Automatisch lassen, außer die Fernbedienung wird nicht erkannt oder die Einrichtung schlägt fehl.",
+          "show_report": "Aktivieren und absenden, um einen Bericht anzuzeigen, den Sie in ein GitHub-Issue kopieren können.",
+          "test_remote": "Aktivieren und absenden, dann die Sprachtaste der Fernbedienung gedrückt halten, um zu sehen, was die Fernbedienung tut."
         }
+      },
+      "report": {
+        "title": "Fernbedienungsbericht",
+        "description": "Kopieren Sie diesen Text in ein GitHub-Issue. Er enthält keine vollständige Bluetooth-Adresse, keine Namen, Webadressen oder Audiodaten. Änderungen hier werden ignoriert; Absenden führt zurück zur Einrichtung.",
+        "data": {
+          "report": "Fernbedienungsbericht"
+        },
+        "data_description": {
+          "report": "Alles auswählen und kopieren."
+        }
+      },
+      "test_result_atvv_hold": {
+        "title": "Ergebnis des Fernbedienungstests",
+        "description": "Diese Fernbedienung startet die Sprache selbst, solange ihre Taste gehalten wird. Halten Sie diese Taste zum Sprechen. Absenden, um die Einrichtung fortzusetzen."
+      },
+      "test_result_atvv_tap": {
+        "title": "Ergebnis des Fernbedienungstests",
+        "description": "Diese Fernbedienung startet die Sprache, wenn ihre Taste getippt wird, und hört zu, bis Sie aufhören zu sprechen. Tippen Sie zum Sprechen auf diese Taste. Absenden, um die Einrichtung fortzusetzen."
+      },
+      "test_result_fire_voice": {
+        "title": "Ergebnis des Fernbedienungstests",
+        "description": "Das ist die Sprachtaste einer Fire-TV-Fernbedienung. Halten Sie sie beim Sprechen gedrückt. Absenden, um die Einrichtung fortzusetzen."
+      },
+      "test_result_plain_key": {
+        "title": "Ergebnis des Fernbedienungstests",
+        "description": "Die Fernbedienung hat normale Tasten, aber kein Sprachsignal gesendet; ihre Sprachtaste startet die Sprache möglicherweise nicht über Bluetooth. Absenden und dann Fernbedienungsbericht anzeigen aktivieren, um das Gesehene zu teilen."
+      },
+      "test_result_nothing": {
+        "title": "Ergebnis des Fernbedienungstests",
+        "description": "Von der Fernbedienung wurde nichts empfangen. Wecken Sie sie mit einer Pfeiltaste, prüfen Sie, ob sie mit diesem Home-Assistant-Rechner verbunden ist, und testen Sie erneut. Absenden, um fortzufahren."
       }
+    },
+    "progress": {
+      "observing": "Es wird 20 Sekunden lang zugehört. Wecken Sie die Fernbedienung mit einer Pfeiltaste, halten Sie dann ihre Sprachtaste gedrückt, sprechen Sie kurz und lassen Sie los."
     },
     "error": {
       "bluetooth_unavailable": "Lokales Bluetooth ist nicht verfügbar. Prüfen Sie, ob der System-D-Bus erreichbar ist.",
@@ -43,7 +82,9 @@
       "invalid_pipeline": "Wählen Sie eine vorhandene Assist-Pipeline aus.",
       "hidraw_unavailable": "Das Eingabegerät der Fernbedienung ist für Home Assistant nicht verfügbar. Wecken Sie die Fernbedienung auf und prüfen Sie, ob Home Assistant /dev/hidraw-Geräte sehen kann.",
       "hidraw_permission_denied": "Home Assistant darf das Eingabegerät der Fernbedienung nicht lesen. Welchen Gerätezugriff diese Fernbedienung benötigt, steht in der README.",
-      "opus_decoder_unavailable": "Für Home Assistant ist kein Opus-Audiodecoder verfügbar, den diese Fernbedienung benötigt."
+      "opus_decoder_unavailable": "Für Home Assistant ist kein Opus-Audiodecoder verfügbar, den diese Fernbedienung benötigt.",
+      "fire_voice_unsupported": "Diese Fire-TV-Fernbedienung meldet keine Sprachdaten, die diese Integration verwenden kann. Aktivieren Sie Fernbedienungsbericht anzeigen und teilen Sie ihn in einem GitHub-Issue.",
+      "voice_service_unavailable": "Die Fernbedienung bietet den Android-TV-Sprachdienst nicht an. Stellen Sie bei einer Fire-TV-Fernbedienung den Fernbedienungstyp auf Amazon Fire TV."
     },
     "abort": {
       "already_configured": "Diese Fernbedienung ist bereits konfiguriert.",
@@ -65,6 +106,7 @@
           "busy_playback": "Neuer Tastendruck während der Antwort",
           "context_mode": "Konversationskontext",
           "input_mode": "Tastenverhalten",
+          "remote_type": "Fernbedienungstyp",
           "min_press_seconds": "Kurze Tastendrücke ignorieren",
           "max_request_seconds": "Maximale Anfragelänge",
           "max_conversation_seconds": "Maximale Konversationslänge",
@@ -80,6 +122,7 @@
           "busy_playback": "Was passiert, wenn die Taste gedrückt wird, während eine Antwort abgespielt wird: den Tastendruck ablehnen, danach eine vorgemerkte Anfrage beantworten oder die Antwort stoppen und die neue Anfrage starten.",
           "context_mode": "„Wiederverwenden“ behält die Home-Assistant-Konversation bei, sodass Folgefragen wie „und das Doppelte?“ funktionieren. „Neu“ macht jeden Tastendruck zu einer eigenständigen Konversation.",
           "input_mode": "„Eine Anfrage pro Halten“ nimmt auf, bis die Taste losgelassen wird. „Wechselnde Konversation“ hört weiter zu, solange die Taste gehalten wird: sprechen, pausieren, die Antwort hören, dann erneut sprechen. Dafür ist eine Fernbedienung mit Push-to-Talk nötig.",
+          "remote_type": "Auf Automatisch lassen, außer die Fernbedienung wurde als falscher Typ erkannt. Eine Änderung verbindet die Fernbedienung neu.",
           "min_press_seconds": "Ignoriert kurze Antippen der Sprachtaste, die kürzer als dieser Wert sind, damit ein versehentliches Antippen keine Anfrage startet; ein echtes Halten beginnt entsprechend später. 0 schaltet die Funktion aus. Nützlich für eine Fire TV-Fernbedienung, die direkt nach dem Aufwecken mit „No microphone audio“ fehlschlägt: Sie sendet die Taste, die sie geweckt hat, erneut als kurzes Antippen. 0,1 s ist ein guter Startwert. Nur für Fire TV-Fernbedienungen.",
           "max_request_seconds": "Die längste Dauer einer einzelnen Anfrage bei jeder Fernbedienung: ein ganzes Halten im Modus „Eine Anfrage“ und jeder Durchgang bei „Wechselnde Konversation“. Wird sie erreicht, endet die Anfrage mit einem Aufnahmegrenzen-Fehler. Verringern Sie sie, um eine hängende Taste an der Aufnahme zu hindern; erhöhen Sie sie für lange Diktate. Fernbedienungen ohne Push-to-Talk enden außerdem nach etwa 15 Sekunden Sprache oder bei Stille, je nachdem, was zuerst eintritt.",
           "max_conversation_seconds": "Die längste Dauer eines gesamten Tastenhaltens im Modus „Wechselnde Konversation“. Im Modus „Eine Anfrage“ wird sie ignoriert und darf nicht kürzer als die maximale Anfragelänge sein.",
@@ -151,6 +194,13 @@
       "options": {
         "single": "Eine Anfrage pro Halten",
         "conversation": "Konversation beim Halten (wechselnd)"
+      }
+    },
+    "remote_type": {
+      "options": {
+        "auto": "Automatisch (empfohlen)",
+        "atvv": "Android-TV-/Google-TV-Fernbedienung (ATVV)",
+        "fire_press_to_talk": "Amazon-Fire-TV-/Alexa-Sprachfernbedienung (zum Sprechen halten)"
       }
     }
   },
@@ -292,6 +342,7 @@
           "hidraw_unavailable": "Das Eingabegerät der Fernbedienung ist für Home Assistant nicht verfügbar.",
           "hidraw_permission_denied": "Home Assistant darf das Eingabegerät der Fernbedienung nicht lesen.",
           "opus_decoder_unavailable": "Für Home Assistant ist kein Opus-Audiodecoder verfügbar.",
+          "fire_voice_unsupported": "Diese Fire-TV-Fernbedienung meldet keine verwendbaren Sprachdaten.",
           "invalid_opus_packet": "Die Fernbedienung hat Audio gesendet, das nicht dekodiert werden konnte.",
           "other": "Es ist ein anderer Fehler aufgetreten. Der Fehlercode nennt die Details."
         },
