@@ -11,8 +11,12 @@ component = root / "custom_components" / "bt_remote_voice"
 manifest = json.loads((component / "manifest.json").read_text())
 assert manifest["domain"] == component.name
 assert manifest["config_flow"]
-assert re.fullmatch(r"\d+\.\d+\.\d+", manifest["version"]), "version must be SemVer"
-# A release tag (for example v0.4.0) must equal the manifest version.
+# SemVer, optionally with a beta/rc suffix (0.6.0-beta.1): Home Assistant's version parser reads it as
+# SemVer and orders it below 0.6.0 and above 0.5.0, and the release workflow flags it as a pre-release.
+assert re.fullmatch(r"\d+\.\d+\.\d+(?:-(?:beta|rc)\.\d+)?", manifest["version"]), (
+    "version must be SemVer, optionally -beta.N or -rc.N"
+)
+# A release tag (for example v0.4.0 or v0.6.0-beta.1) must equal the manifest version.
 tag = os.environ.get("GITHUB_REF_NAME", "")
 if tag.startswith("v"):
     assert tag == f"v{manifest['version']}", f"tag {tag} != manifest version {manifest['version']}"
@@ -37,4 +41,5 @@ with ZipFile(dist / "bt_remote_voice.zip", "w", ZIP_DEFLATED) as archive:
             archive.write(path, path.relative_to(component))
 with ZipFile(dist / "bt_remote_voice.zip") as archive:
     assert "THIRD_PARTY_NOTICES.md" in archive.namelist(), "notice missing from release zip"
-print("Metadata validated; component-only release archive built")
+kind = "pre-release" if "-" in manifest["version"] else "regular release"
+print(f"Metadata validated ({manifest['version']}, {kind}); component-only release archive built")

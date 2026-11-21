@@ -48,6 +48,20 @@ Or add it by hand (Home Assistant 2026.11 or later, which has the Marketplace bu
 
 <!-- ha-marketplace:exclude-end -->
 
+### Trying a beta release
+
+Beta versions (for example `0.6.0-beta.1`) are published as GitHub pre-releases. The Marketplace offers
+stable releases only, until you opt in for this repository:
+
+1. Open **Settings → Devices & services → Marketplace** and select the device for **Bluetooth Remote Voice**.
+2. Enable the **Pre-release** entity (it is disabled by default), then turn its switch on.
+3. Open **Settings → Marketplace**, select **Bluetooth Remote Voice** and install the update (or use the
+   three-dot menu and **Install another version**). Restart Home Assistant when asked.
+
+Turn the switch off again to go back to stable releases. Do not use **Install another version** to roll
+back after an update; restore a backup instead. Please report what you find in the
+[issues](https://github.com/sabaatworld/ha-bt-remote-voice/issues).
+
 ### 2. Pair your remote
 
 Pair the remote with the Home Assistant machine itself; this integration never pairs remotes.
@@ -585,7 +599,10 @@ remote models physically before upgrading their compatibility claim.
 Versions follow [SemVer](https://semver.org/) and the version in
 `custom_components/bt_remote_voice/manifest.json` must equal the release tag without the `v`
 (tag `v0.4.0` for version `0.4.0`). To release, update that version, merge to `main` and push
-the tag. The Release workflow runs `scripts/check_package.py`, which fails if the tag and manifest
+the tag. For a beta use a suffix (`0.6.0-beta.1`, tag `v0.6.0-beta.1`; only `-beta.N` and `-rc.N` are
+accepted): the Release workflow then publishes it as a GitHub pre-release, which the Marketplace offers only
+to people who turned on the repository's Pre-release switch, and only while it is newer than the latest
+stable release. The Release workflow runs `scripts/check_package.py`, which fails if the tag and manifest
 version disagree, builds `dist/bt_remote_voice.zip` (component files only) and attaches it to a
 GitHub release with generated notes; the Marketplace installs from that zip. CI also runs hassfest and
 the Marketplace (HACS action) validation on every push, and a weekly job runs the tests against the

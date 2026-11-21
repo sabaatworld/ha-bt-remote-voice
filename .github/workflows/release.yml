@@ -25,4 +25,11 @@ jobs:
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/bt_remote_voice.zip --generate-notes --title "$GITHUB_REF_NAME"
+        run: |
+          # A tag with a suffix (v0.6.0-beta.1) is published as a GitHub pre-release: the Marketplace
+          # offers those only to people who turned on the repository's Pre-release switch.
+          flags=""
+          case "$GITHUB_REF_NAME" in
+            *-*) flags="--prerelease" ;;
+          esac
+          gh release create "$GITHUB_REF_NAME" dist/bt_remote_voice.zip --generate-notes --title "$GITHUB_REF_NAME" $flags

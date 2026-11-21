@@ -126,7 +126,10 @@ the HA audio dependencies; mount the repo read-only and set
   equal to the release tag, `issue_tracker`, `documentation` and 1 to 3 `categories`, a public
   repo with description, topics and issues, and the GitHub-only README sections wrapped in
   `<!-- ha-marketplace:exclude-start -->` / `<!-- ha-marketplace:exclude-end -->`. Install
-  instructions say Marketplace, not HACS. The `hacs/default` listing pull request needs the
+  instructions say Marketplace, not HACS. **Betas:** tag `vX.Y.Z-beta.N` (or `-rc.N`) with the
+  same manifest `version`; the Release workflow flags it as a GitHub pre-release, and users opt in with the
+  repository's Pre-release switch (Marketplace docs). Never publish a beta as a regular release, and verify a
+  release candidate (full tests, CI on `main`, the built zip) before pushing its tag. The `hacs/default` listing pull request needs the
   maintainer's go-ahead. Spec: https://contributors.home-assistant.io/marketplace/guides/integrations/
 - **Hardware safety.** Never press or script a remote's power buttons. Do not
   open a microphone without a physical voice notification.
