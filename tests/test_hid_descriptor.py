@@ -164,3 +164,63 @@ def test_a_constant_item_is_never_treated_as_a_key_array():
     descriptor = bytes.fromhex("0507 7508 9501 8101 9501 8100".replace(" ", ""))
     (report,) = parse_reports(descriptor)
     assert [item[4] for item in report.items] == [False, True]
+
+
+# ---- issue #1: a 3rd-gen remote (0x0414) declares its vendor page as 0x00FF -----------------
+from custom_components.bt_remote_voice.hid_descriptor import voice_checks  # noqa: E402
+
+FIXTURE_0414 = Path(__file__).parent / "fixtures" / "fire_0414_report_descriptor.hex"
+
+
+def fire_0414():
+    return bytes.fromhex(FIXTURE_0414.read_text().strip())
+
+
+def test_the_reported_0414_descriptor_has_the_voice_pair_on_page_00ff():
+    reports = table(parse_reports(fire_0414()))
+    assert (
+        reports[("input", 0xF0)].usage_page == 0x00FF and reports[("input", 0xF0)].size_bytes == 80
+    )
+    assert reports[("output", 0xF2)].size_bytes == 1
+    assert reports[("input", 0xEF)].size_bytes == 3  # the 3rd gen's app-button report
+    audio, mic = find_voice_reports(parse_reports(fire_0414()))
+    assert (audio.id, mic.id) == (0xF0, 0xF2)
+
+
+@pytest.mark.parametrize("page", [0xFF00, 0xFF01, 0xFFFF, 0x00FF])
+def test_vendor_style_pages_are_accepted(page):
+    assert find_voice_reports(
+        [report(0xF0, "input", 80, page=page), report(0xF2, "output", 1, page=page)]
+    )
+
+
+@pytest.mark.parametrize("page", [0x0001, 0x0007, 0x000C, 0x00FE, 0x0100, None])
+def test_ordinary_pages_are_still_refused(page):
+    assert (
+        find_voice_reports([report(0xF0, "input", 80, page=page), report(0xF2, "output", 1)])
+        is None
+    )
+
+
+def test_voice_checks_explain_each_requirement_for_a_passing_descriptor():
+    checks = voice_checks(parse_reports(fire_0413()))
+    assert [c["check"] for c in checks] == [
+        "audio_in_present",
+        "audio_in_size_80",
+        "audio_in_vendor_page",
+        "mic_out_present",
+        "mic_out_size_1",
+    ]
+    assert all(c["ok"] for c in checks)
+
+
+def test_voice_checks_name_the_requirement_that_failed_and_what_was_found():
+    # audio on an ordinary page, microphone report 10 bytes long
+    reports = [report(0xF0, "input", 80, page=0x000C), report(0xF2, "output", 10)]
+    failed = {c["check"]: c["found"] for c in voice_checks(reports) if not c["ok"]}
+    assert failed == {"audio_in_vendor_page": "0x000c", "mic_out_size_1": 10}
+
+
+def test_voice_checks_on_an_empty_descriptor_fail_everything_without_raising():
+    checks = voice_checks(())
+    assert [c["ok"] for c in checks] == [False] * 5 and checks[0]["found"] is None

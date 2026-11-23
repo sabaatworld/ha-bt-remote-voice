@@ -6,6 +6,7 @@ form down to the public manufacturer prefix. It is text for a GitHub issue, not 
 is English only; the screens that show it are translated.
 """
 
+import hashlib
 import json
 import platform
 import re
@@ -14,7 +15,7 @@ from pathlib import Path
 
 from homeassistant.const import __version__ as CORE_VERSION
 
-from .hid_descriptor import find_voice_reports
+from .hid_descriptor import find_voice_reports, voice_checks
 from .preferences import PIPELINE_PREFERRED
 
 SCHEMA = 1
@@ -96,7 +97,17 @@ def hid_summary(reports, descriptor_hex, nodes=None):
             for r in reports
         ],
         "voice_reports": bool(find_voice_reports(reports)) if reports else None,
+        "voice_checks": voice_checks(reports) if reports else None,
+        "descriptor_sha256": _sha(descriptor_hex),
     }
+
+
+def _sha(descriptor_hex):
+    """Short fingerprint of the descriptor so reports of the same remote model match at a glance."""
+    try:
+        return hashlib.sha256(bytes.fromhex(descriptor_hex)).hexdigest()[:16]
+    except TypeError, ValueError:
+        return None
 
 
 def config_summary(options, data):
@@ -162,6 +173,8 @@ def _payload(data, *, keep_descriptor):
         "hid": {
             "nodes": hid.get("nodes", UNKNOWN),
             "voice_reports": hid.get("voice_reports", UNKNOWN),
+            "voice_checks": hid.get("voice_checks") or UNKNOWN,
+            "descriptor_sha256": hid.get("descriptor_sha256") or UNKNOWN,
             "reports": [r for r in _list(hid.get("reports"), 64) if isinstance(r, dict)],
             "descriptor_hex": (
                 _clip(descriptor, 4096)
@@ -174,6 +187,13 @@ def _payload(data, *, keep_descriptor):
         "config": {k: _clip(v) for k, v in _dict(data.config).items()},
         "outcome": {k: _clip(v) for k, v in _dict(data.outcome).items()},
     }
+
+
+def _checks_line(checks):
+    if not isinstance(checks, list):
+        return UNKNOWN
+    failed = [f"{c.get('check')} (found {c.get('found')})" for c in checks if not c.get("ok")]
+    return "all passed" if not failed else "failed: " + ", ".join(failed)
 
 
 def _render(payload):
@@ -189,6 +209,7 @@ def _render(payload):
         f"(reasons: {', '.join(remote['reasons']) or 'none'})",
         f"- Vendor / product: {remote['vendor_id']} / {remote['product_id']}",
         f"- HID voice reports (0xF0 audio, 0xF2 mic): {hid['voice_reports']}",
+        f"- Voice checks: {_checks_line(hid['voice_checks'])}",
         f"- Remote type setting: {remote['remote_type']}",
         f"- Result: {outcome.get('error', UNKNOWN)} ({outcome.get('stage', UNKNOWN)})",
         "",

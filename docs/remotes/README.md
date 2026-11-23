@@ -17,6 +17,10 @@ Never commit packet captures, audio, full Bluetooth addresses or household detai
 | Remote | Evidence | Used by |
 | --- | --- | --- |
 | Amazon Alexa Voice Remote with TV controls (product ID `0x0413`) | Report descriptor `tests/fixtures/fire_0413_report_descriptor.hex` (input reports `0x01`, `0x02`, `0x03`, `0xF0` audio, `0xF1`; output `0xF2` microphone enable, `0xF3`) | `tests/test_hid_descriptor.py`, `tests/test_fire.py`, `tests/test_report.py` |
+| Amazon Alexa Voice Remote 3rd gen (product ID `0x0414`, from [issue 1](https://github.com/sabaatworld/ha-bt-remote-voice/issues/1)) | Report descriptor `tests/fixtures/fire_0414_report_descriptor.hex`: the same voice reports as `0x0413` (input `0xF0` 80 bytes, output `0xF2` 1 byte) plus the 3rd-gen app-key report `0xEF`, but the vendor usage page is declared as `0x00FF`, not `0xFF00` | `tests/test_hid_descriptor.py` |
+
+Descriptors of the same remote model share a `descriptor_sha256` fingerprint in the remote report, which is how a new
+report is matched to a fixture at a glance.
 
 ## Adding a remote
 

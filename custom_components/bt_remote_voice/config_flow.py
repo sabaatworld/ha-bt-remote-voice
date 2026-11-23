@@ -112,6 +112,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self.remotes = {}
         self.selected = None
         self.attempt = None  # outcome of the last connection attempt, for the Remote Report
+        self.attempts = []  # (remote type, error code) history, newest last, bounded
         self.form = {}  # last submitted setup values, kept across the report/test steps
         self.observation = None  # result of "Test my remote", shown in the report
         self.observe_task = None
@@ -228,6 +229,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     "descriptor_hex": getattr(transport, "descriptor_hex", None),
                     "nodes": getattr(transport, "hidraw_nodes", None),
                 }
+                self.attempts = [
+                    *self.attempts[-4:],
+                    {"remote_type": remote_type, "error": errors.get("base")},
+                ]
                 if not errors:
                     return self.async_create_entry(
                         title=self.selected.name,
@@ -290,11 +295,14 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 adapter={"name": remote.get("adapter")},
                 remote=remote,
                 hid=hid,
-                config=config_summary({"remote_type": remote_type}, {}),
+                config=config_summary(
+                    {"remote_type": remote_type, "pipeline_id": self.form.get("pipeline_id")}, {}
+                ),
                 observation=self.observation.to_dict() if self.observation else {},
                 outcome={
                     "error": attempt.get("error") or ("none" if attempt else None),
                     "stage": stage,
+                    "attempts": self.attempts,
                 },
             )
         )

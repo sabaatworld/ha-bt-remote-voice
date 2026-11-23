@@ -273,7 +273,8 @@ async def test_diagnostics_include_the_report_and_tolerate_missing_inputs():
             },
         },
     )
-    text = (await async_get_config_entry_diagnostics(None, entry))["remote_report"]
+    diag = await async_get_config_entry_diagnostics(None, entry)
+    text = diag["remote_report"]
     block = json_block(text)
     assert (
         block["remote"]["family"] == "fire"
@@ -281,6 +282,7 @@ async def test_diagnostics_include_the_report_and_tolerate_missing_inputs():
     )
     assert "11:22:33" not in text and "secret" not in text
     assert block["remote"]["uuids"] == [HID] and block["adapter"] == {"name": "hci0"}
+    assert "fire_stats" in diag and diag["fire_stats"] is None  # no Fire transport running
     assert block["remote"]["manufacturer"][0]["value"] == "0414027d00000008"
     bare = SimpleNamespace(runtime_data=c, options={}, data={})
     assert json_block((await async_get_config_entry_diagnostics(None, bare))["remote_report"])
@@ -388,3 +390,63 @@ def test_the_known_address_is_masked_with_spaces_or_dots_in_either_byte_order(fo
     assert "xx" in text  # something was masked
     flat = re.sub(r"[\s.:_-]", "", text.lower())
     assert "112233" not in flat and "332211" not in flat
+
+
+# ---- review of issue #1: make "why was it refused" visible, keep the report accurate ----
+
+
+def test_the_hid_summary_lists_the_voice_checks_and_a_descriptor_fingerprint():
+    hid = hid_summary(parse_reports(DESCRIPTOR), DESCRIPTOR.hex(), nodes=1)
+    assert [c["check"] for c in hid["voice_checks"]][0] == "audio_in_present"
+    assert all(c["ok"] for c in hid["voice_checks"])
+    import hashlib
+
+    assert hid["descriptor_sha256"] == hashlib.sha256(DESCRIPTOR).hexdigest()[:16]
+    block = json_block(build_report(ReportInput(hid=hid)))
+    assert block["hid"]["voice_checks"] == hid["voice_checks"]
+    assert block["hid"]["descriptor_sha256"] == hid["descriptor_sha256"]
+    assert "Voice checks" in build_report(ReportInput(hid=hid))
+
+
+def test_a_failed_check_appears_in_the_human_summary():
+    reports = [report_obj(0xF0, 80, 0x000C), report_obj(0xF2, 1, 0xFF00)]
+    text = build_report(ReportInput(hid=hid_summary(reports, None)))
+    assert "audio_in_vendor_page" in text.split("```json")[0]
+
+
+def report_obj(rid, size, page):
+    from custom_components.bt_remote_voice.hid_descriptor import Report
+
+    return Report(rid, "input" if rid == 0xF0 else "output", size, page, True)
+
+
+async def test_the_report_carries_the_chosen_pipeline_kind_and_the_attempt_history(hass):
+    flow = _flow(hass)
+
+    class Refuses:
+        async def open(self, *args):
+            raise ValueError("fire_voice_unsupported")
+
+        async def close(self):
+            pass
+
+    with (
+        patch("custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "P"}),
+        patch("custom_components.bt_remote_voice.config_flow.FireTransport", Refuses),
+    ):
+        await flow.async_step_configure({"pipeline_id": "p", "remote_type": "auto"})
+        await flow.async_step_configure({"pipeline_id": "p", "remote_type": "fire_press_to_talk"})
+        await flow.async_step_configure(
+            {"pipeline_id": "p", "remote_type": "fire_press_to_talk", "show_report": True}
+        )
+    block = json_block(
+        next(iter((await flow.async_step_report())["data_schema"].schema)).description[
+            "suggested_value"
+        ]
+    )
+    assert block["config"]["pipeline"] == "explicit"  # kind only, never the name
+    assert block["outcome"]["attempts"] == [
+        {"remote_type": "auto", "error": "fire_voice_unsupported"},
+        {"remote_type": "fire_press_to_talk", "error": "fire_voice_unsupported"},
+    ]
+    assert block["outcome"]["error"] == "fire_voice_unsupported"

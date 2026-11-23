@@ -238,7 +238,8 @@ async def test_one_of_two_nodes_vanishing_mid_test_keeps_counting_the_other():
         find_all=lambda a: list(nodes),
         read=lambda p: DESCRIPTOR,
     )
-    assert obs.errors == ["hidraw_unavailable"] and obs.keys == {KeyUsage(0x0C, 0x0221): 1}
+    # reading from a node that disappeared means the remote disconnected, not that no node existed
+    assert obs.errors == ["remote_disconnected"] and obs.keys == {KeyUsage(0x0C, 0x0221): 1}
 
 
 async def test_a_capability_timeout_and_a_failing_node_lookup_get_accurate_codes():
@@ -308,3 +309,44 @@ async def test_a_connect_attempt_stuck_past_the_deadline_cannot_hang_the_test():
     finally:
         observe_module.ATVV_GRACE_SECONDS = original
     assert "bluetooth_operation_failed" in obs.errors
+
+
+async def test_the_timeline_orders_presses_with_times_and_is_capped():
+    obs = await run("fire", node=Node([VOICE_DOWN, RELEASE, ARROW_UP, RELEASE]))
+    events = [(e["event"], e.get("detail")) for e in obs.timeline]
+    assert events[0][0] == "node_found"
+    assert events[1:] == [
+        ("key_down", "0x000c/0x0221"),
+        ("key_up", "0x000c/0x0221"),
+        ("key_down", "0x0007/0x0052"),
+        ("key_up", "0x0007/0x0052"),
+    ]
+    times = [e["t"] for e in obs.timeline]
+    assert times == sorted(times) and all(isinstance(t, float) for t in times)
+    assert obs.to_dict()["timeline"] == obs.timeline
+
+    flood = []
+    for usage in range(0x100, 0x100 + 100):
+        flood += [bytes([2, usage & 255, usage >> 8, 0, 0]), RELEASE]
+    capped = await run("fire", node=Node(flood))
+    assert len(capped.timeline) == 40
+
+
+async def test_a_disconnect_during_the_test_is_a_timeline_event():
+    class Drops(Node):
+        async def read(self):
+            if self.queue.empty():
+                raise OSError(19, "gone")
+            return await super().read()
+
+    obs = await run("fire", node=Drops([VOICE_DOWN, RELEASE]))
+    assert obs.errors == ["remote_disconnected"]
+    assert obs.timeline[-1]["event"] == "disconnected"
+
+
+async def test_atvv_events_appear_on_the_timeline():
+    obs = await run("atvv", atvv=Atvv([bytes([4, 3, 2, 1]), bytes([8])]), nodes=())
+    assert [(e["event"], e.get("detail")) for e in obs.timeline] == [
+        ("atvv_start", "reason 3"),
+        ("atvv_search", None),
+    ]

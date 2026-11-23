@@ -131,7 +131,7 @@ identifies itself, and is not a promise.
 | --- | --- |
 | Alexa Voice Remote with TV controls (the one tested here, product ID `0x0413`) | **Tested** for held requests. |
 | Fire TV Stick 4K remote, Fire TV Stick Lite remote | Voice protocol documented by [fire-remote-client](https://github.com/justanotheruseer/fire-remote-client); not tested with this integration. |
-| Alexa Voice Remote (3rd gen, 2021 and its 2022 revision) | Setup now recognises it as a Fire remote (reported in [issue 1](https://github.com/sabaatworld/ha-bt-remote-voice/issues/1)); voice not yet confirmed on hardware. Its microphone may behave differently from the tested remote; a report helps. |
+| Alexa Voice Remote (3rd gen, 2021 and its 2022 revision; product ID `0x0414` reported) | Setup recognises it as a Fire remote and accepts its voice reports ([issue 1](https://github.com/sabaatworld/ha-bt-remote-voice/issues/1)). Whether voice works end to end is still being confirmed on that remote. |
 | Alexa Voice Remote Pro, Enhanced, 2024 release | Untested. They may work the same way; share a remote report to help. |
 | Older Fire TV remotes (2014-2017) | **Not supported.** The 2015 voice remotes use Wi-Fi Direct, not Bluetooth. Earlier Bluetooth ones are unverified. |
 
@@ -498,6 +498,18 @@ satellite attributes. The voice button event still announces every occurrence.
 
 Physical coverage does not establish all-model compatibility or behavior under
 battery depletion, radio interference, adapter removal or a host reboot.
+
+### Getting more detail
+
+- **Remote report** (setup) and **diagnostics** (after setup) both include **Voice checks**: for each thing the
+  integration needs from a Fire remote's input device it says what it found, so a refusal explains itself.
+  **Test my remote** adds a short timeline (seconds since the test began) of what the remote sent.
+- **Fire remote runtime counters** are in the diagnostics download under `fire_stats`: voice-key presses,
+  microphone enables written, audio frames received, the delay to the first frame, the longest gap between
+  frames and the Opus header bytes seen. They show whether the remote really streams audio after a press.
+- **Debug log:** on the integration's page choose **Enable debug logging**, reproduce the problem, then
+  **Disable debug logging** to download the log. For a Fire remote it records the voice key going down and up, the
+  microphone enable and the first audio frame; it never contains audio or a full Bluetooth address.
 
 ## Languages
 

@@ -813,3 +813,58 @@ async def test_an_empty_descriptor_counts_as_unreadable_and_keeps_legacy_behavio
     await transport.open(ADDRESS, lambda d: None, lambda d: None)
     assert opened == ["/dev/hidraw4"] and transport.descriptor_reports is None
     await transport.close()
+
+
+# ---- runtime counters for support: what the remote actually does after a press ----------
+async def test_stats_count_presses_enables_frames_toc_bytes_and_timing():
+    transport, device, sink, _ = await _open()
+    device.feed(VOICE_DOWN)
+    for _ in range(3):
+        device.feed(AUDIO)
+    device.feed(VOICE_UP)
+    await asyncio.sleep(0.1)
+    stats = transport.stats
+    assert (stats["presses"], stats["enables"], stats["frames"]) == (1, 1, 3)
+    assert stats["toc"] == {"b8": 3}
+    assert stats["first_frame_ms"] is not None and stats["first_frame_ms"] >= 0
+    assert stats["max_gap_ms"] >= 0
+    await transport.close()
+
+
+async def test_a_press_without_audio_leaves_the_frame_stats_empty():
+    transport, device, sink, _ = await _open()
+    device.feed(VOICE_DOWN)
+    device.feed(VOICE_UP)
+    await asyncio.sleep(0.05)
+    assert transport.stats["presses"] == 1 and transport.stats["enables"] == 1
+    assert transport.stats["frames"] == 0 and transport.stats["first_frame_ms"] is None
+    await transport.close()
+
+
+async def test_the_toc_histogram_is_bounded():
+    transport, device, sink, _ = await _open()
+    device.feed(VOICE_DOWN)
+    for toc in range(40):
+        device.feed(b"\xf0" + bytes([toc]) + bytes(79))
+    await asyncio.sleep(0.2)
+    assert len(transport.stats["toc"]) <= 8
+    await transport.close()
+
+
+async def test_debug_logs_follow_a_press_without_leaking_audio_or_addresses(caplog):
+    with caplog.at_level("DEBUG", logger="custom_components.bt_remote_voice.fire"):
+        transport, device, sink, _ = await _open()
+        device.feed(VOICE_DOWN)
+        device.feed(AUDIO)
+        device.feed(VOICE_UP)
+        await asyncio.sleep(0.1)
+        await transport.close()
+    text = " ".join(r.getMessage() for r in caplog.records)
+    for phrase in (
+        "voice key down",
+        "microphone enable written",
+        "first audio frame",
+        "voice key up",
+    ):
+        assert phrase in text
+    assert ADDRESS not in text and "b8" not in text.replace("first audio frame", "")

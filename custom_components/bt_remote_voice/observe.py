@@ -18,6 +18,7 @@ from .protocol import parse_control
 OBSERVE_SECONDS = 20
 VOICE_KEY = KeyUsage(CONSUMER_PAGE, 0x0221)  # consumer "voice command"
 MAX_EVENTS = 20
+MAX_TIMELINE = 40
 MAX_KEYS = 32  # distinct key usages recorded; a mistaken keyboard cannot flood the report
 MAX_DESCRIPTORS = 4
 WAKE_RETRY_SECONDS = 2
@@ -51,6 +52,8 @@ class Observation:
     descriptors: dict = field(default_factory=dict)  # node -> descriptor hex, for the report
     nodes: int | None = None
     errors: list = field(default_factory=list)  # stable codes only
+    started: float = 0.0  # monotonic start, for the timeline
+    timeline: list = field(default_factory=list)  # [{"t": seconds, "event": ..., "detail": ...}]
 
     @property
     def result(self):
@@ -80,7 +83,21 @@ class Observation:
             "raw_reports": self.raw_reports,
             "hidraw_nodes": self.nodes,
             "errors": list(self.errors),
+            "timeline": list(self.timeline),
         }
+
+
+def _mark(obs, event, detail=None):
+    """Append a timestamped event (seconds since the test began), bounded."""
+    if len(obs.timeline) < MAX_TIMELINE:
+        entry = {"t": round(time.monotonic() - obs.started, 1), "event": event}
+        if detail:
+            entry["detail"] = detail
+        obs.timeline.append(entry)
+
+
+def _usage_name(key):
+    return f"0x{key.page:04x}/0x{key.usage:04x}"
 
 
 def _error(obs, code):
@@ -113,15 +130,20 @@ async def _watch_node(node, deadline, obs, opener, read):
             except TimeoutError:
                 return
             except OSError:
-                _error(obs, "hidraw_unavailable")
+                # The node disappeared while reading: the remote disconnected (it sleeps when idle).
+                _error(obs, "remote_disconnected")
+                _mark(obs, "disconnected")
                 return
             if not reports:  # cannot be decoded without a descriptor: count, never keep
                 obs.raw_reports += 1
                 continue
             keys = decode_keys(reports, report)
-            for key in keys - held:  # count presses, not repeated reports
+            for key in sorted(keys - held, key=lambda k: (k.page, k.usage)):  # presses, not repeats
+                _mark(obs, "key_down", _usage_name(key))
                 if key in obs.keys or len(obs.keys) < MAX_KEYS:
                     obs.keys[key] = obs.keys.get(key, 0) + 1
+            for key in sorted(held - keys, key=lambda k: (k.page, k.usage)):
+                _mark(obs, "key_up", _usage_name(key))
             held = keys
     finally:
         device.close()
@@ -141,6 +163,7 @@ async def _watch_hid(address, deadline, obs, opener, find_all, read):
     if not nodes:
         _error(obs, "no_hidraw_node")
         return
+    _mark(obs, "node_found", f"{len(nodes)} node(s)")
     await asyncio.gather(*(_watch_node(n, deadline, obs, opener, read) for n in nodes))
 
 
@@ -152,6 +175,11 @@ async def _watch_atvv(address, deadline, obs, factory):
         event = parse_control(data, holder.get("caps"))
         if event and event.kind in ("start", "search") and len(obs.atvv_events) < MAX_EVENTS:
             obs.atvv_events.append((event.kind, event.reason, event.codec))
+            _mark(
+                obs,
+                f"atvv_{event.kind}",
+                f"reason {event.reason}" if event.kind == "start" else None,
+            )
 
     def on_audio(data):
         obs.audio_frames += 1
@@ -191,8 +219,8 @@ async def observe(
     read=read_descriptor,
 ):
     """Listen for ``seconds`` and return an ``Observation``. Never writes; never raises."""
-    obs = Observation(seconds=seconds, family=family)
-    deadline = time.monotonic() + seconds
+    obs = Observation(seconds=seconds, family=family, started=time.monotonic())
+    deadline = obs.started + seconds
     watchers = [_watch_hid(address, deadline, obs, opener, find_all, read)]
     if family != "fire":
         watchers.append(

@@ -31,6 +31,9 @@ async def async_get_config_entry_diagnostics(hass, entry):
             zip(("max_request_seconds", "max_conversation_seconds"), c.limits(), strict=True)
         ),
         "remote_report": remote_report(entry, c),
+        "fire_stats": stats
+        if isinstance(stats := getattr(c.transport, "stats", None), dict)
+        else None,
     }
 
 

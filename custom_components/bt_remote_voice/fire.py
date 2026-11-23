@@ -181,6 +181,16 @@ class FireTransport:
         self.mic_closed = False
         self.frames = 0
         self.last_frame = self.last_enable = 0.0
+        # Counters for support (no audio, no addresses): what the remote did after each press.
+        self.stats = {
+            "presses": 0,
+            "enables": 0,
+            "frames": 0,
+            "first_frame_ms": None,  # enable -> first audio frame, last press
+            "max_gap_ms": 0,  # longest silence between frames inside a press
+            "toc": {},  # Opus TOC byte (hex) -> frames, at most 8 distinct
+        }
+        self._awaiting_first = False
 
     async def open(self, address, on_control, on_audio):
         if not opus_available():
@@ -254,6 +264,10 @@ class FireTransport:
             return
         if on:
             self.last_enable = time.monotonic()
+            self.stats["enables"] += 1
+            self._awaiting_first = True
+            self.stats["first_frame_ms"] = None
+            _LOGGER.debug("Fire remote: microphone enable written")
 
     async def _reader(self):
         while True:
@@ -278,6 +292,8 @@ class FireTransport:
     def _handle(self, data):
         kind, payload = parse_report(data, self.voice_down)
         if kind == "voice_down":
+            self.stats["presses"] += 1
+            _LOGGER.debug("Fire remote: voice key down")
             self.voice_down, self.mic_closed, self.frames = True, False, 0
             if self.min_press_seconds > 0:
                 # A sleeping remote replays the key that woke it as an instant tap: wait
@@ -294,15 +310,31 @@ class FireTransport:
             self.ignored_presses += 1
             _LOGGER.debug("Fire remote voice press shorter than the minimum was ignored")
         elif kind == "voice_up":
+            _LOGGER.debug("Fire remote: voice key up after %s audio frames", self.frames)
             self.voice_down = False
             if not self.mic_closed:
                 self._enable(False)
             self.mic_closed = False
             self.on_control(HOLD_STOP)
         elif kind == "audio" and self.voice_down and not self.mic_closed and not self.pending:
+            now = time.monotonic()
+            self._count_frame(payload, now)
             self.frames += 1
-            self.last_frame = time.monotonic()
+            self.last_frame = now
             self.on_audio(payload)
+
+    def _count_frame(self, payload, now):
+        stats = self.stats
+        stats["frames"] += 1
+        if self._awaiting_first:
+            self._awaiting_first = False
+            stats["first_frame_ms"] = round((now - self.last_enable) * 1000)
+            _LOGGER.debug("Fire remote: first audio frame after %s ms", stats["first_frame_ms"])
+        elif self.frames:
+            stats["max_gap_ms"] = max(stats["max_gap_ms"], round((now - self.last_frame) * 1000))
+        toc = payload[:1].hex()
+        if toc in stats["toc"] or len(stats["toc"]) < 8:
+            stats["toc"][toc] = stats["toc"].get(toc, 0) + 1
 
     def _begin_hold(self):
         self.pending = None
