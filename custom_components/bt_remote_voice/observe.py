@@ -89,7 +89,7 @@ class Observation:
 
 def _mark(obs, event, detail=None):
     """Append a timestamped event (seconds since the test began), bounded."""
-    if len(obs.timeline) < MAX_TIMELINE:
+    if len(obs.timeline) < MAX_TIMELINE or event == "disconnected":  # the ending is always kept
         entry = {"t": round(time.monotonic() - obs.started, 1), "event": event}
         if detail:
             entry["detail"] = detail

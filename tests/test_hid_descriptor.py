@@ -194,7 +194,7 @@ def test_vendor_style_pages_are_accepted(page):
     )
 
 
-@pytest.mark.parametrize("page", [0x0001, 0x0007, 0x000C, 0x00FE, 0x0100, None])
+@pytest.mark.parametrize("page", [0x0001, 0x0007, 0x000C, 0x00FE, 0x0100, 0xFE00, 0xFEFF, None])
 def test_ordinary_pages_are_still_refused(page):
     assert (
         find_voice_reports([report(0xF0, "input", 80, page=page), report(0xF2, "output", 1)])

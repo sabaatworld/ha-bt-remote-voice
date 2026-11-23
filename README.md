@@ -505,8 +505,9 @@ battery depletion, radio interference, adapter removal or a host reboot.
   integration needs from a Fire remote's input device it says what it found, so a refusal explains itself.
   **Test my remote** adds a short timeline (seconds since the test began) of what the remote sent.
 - **Fire remote runtime counters** are in the diagnostics download under `fire_stats`: voice-key presses,
-  microphone enables written, audio frames received, the delay to the first frame, the longest gap between
-  frames and the Opus header bytes seen. They show whether the remote really streams audio after a press.
+  microphone enables written (and how many were re-arms after frames stopped), audio frames received, the delay
+  from a press's first enable to its first frame, the longest gap between two frames and the Opus header bytes seen.
+  They count from when the integration last connected to the remote, so they reset on a reconnect. They show whether the remote really streams audio after a press.
 - **Debug log:** on the integration's page choose **Enable debug logging**, reproduce the problem, then
   **Disable debug logging** to download the log. For a Fire remote it records the voice key going down and up, the
   microphone enable and the first audio frame; it never contains audio or a full Bluetooth address.

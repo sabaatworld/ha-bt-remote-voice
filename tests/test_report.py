@@ -450,3 +450,43 @@ async def test_the_report_carries_the_chosen_pipeline_kind_and_the_attempt_histo
         {"remote_type": "fire_press_to_talk", "error": "fire_voice_unsupported"},
     ]
     assert block["outcome"]["error"] == "fire_voice_unsupported"
+
+
+def test_a_malformed_voice_checks_entry_degrades_only_that_line():
+    data = ReportInput(
+        remote={"address": "A8:42:A7:11:22:33", "family": "fire"},
+        hid={"voice_checks": [1, None], "voice_reports": False},
+    )
+    text = build_report(data)
+    summary = text.split("```json")[0]
+    assert "A8:42:A7:xx:xx:xx" in summary and "detected as **fire**" in summary
+    assert "Voice checks: unknown" in summary
+
+
+def test_an_oversized_report_drops_the_timeline_before_it_drops_everything():
+    timeline = [{"t": float(i), "event": "key_down", "detail": "x" * 400} for i in range(40)]
+    data = ReportInput(
+        remote={"address": "A8:42:A7:11:22:33", "family": "fire", "reasons": ["vendor_uuid"]},
+        observation={"result": "fire_voice", "timeline": timeline},
+    )
+    text = build_report(data)
+    assert len(text) < 19_000 and json_block(text)["remote"]["family"] == "fire"
+    assert "x" * 400 not in text  # the timeline went, the rest of the report stayed
+
+
+async def test_diagnostics_ignore_a_transport_that_is_not_a_fire_transport():
+    from unittest.mock import MagicMock
+
+    from custom_components.bt_remote_voice.diagnostics import async_get_config_entry_diagnostics
+    from tests.test_limits import _coordinator
+
+    c = _coordinator({})
+    c.caps = None
+    c.transport = MagicMock()
+    entry = SimpleNamespace(runtime_data=c, options={}, data={})
+    assert (await async_get_config_entry_diagnostics(None, entry))["fire_stats"] is None
+    c.transport = SimpleNamespace(stats={"presses": 1, "rearms": 0})
+    assert (await async_get_config_entry_diagnostics(None, entry))["fire_stats"] == {
+        "presses": 1,
+        "rearms": 0,
+    }

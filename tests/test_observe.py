@@ -350,3 +350,18 @@ async def test_atvv_events_appear_on_the_timeline():
         ("atvv_start", "reason 3"),
         ("atvv_search", None),
     ]
+
+
+async def test_a_late_disconnect_is_kept_even_when_the_timeline_is_full():
+    class FloodsThenDrops(Node):
+        async def read(self):
+            if self.queue.empty():
+                raise OSError(19, "gone")
+            return await super().read()
+
+    flood = []
+    for usage in range(0x100, 0x100 + 60):
+        flood += [bytes([2, usage & 255, usage >> 8, 0, 0]), RELEASE]
+    obs = await run("fire", node=FloodsThenDrops(flood))
+    assert obs.timeline[-1]["event"] == "disconnected" and len(obs.timeline) <= 41
+    assert obs.errors == ["remote_disconnected"]

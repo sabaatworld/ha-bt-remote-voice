@@ -223,3 +223,36 @@ async def test_a_stale_attempt_with_another_remote_type_is_not_reported(hass):
         block["outcome"]["stage"] == "not_tried"
         and block["outcome"]["error"] != "fire_voice_unsupported"
     )
+
+
+async def test_the_reported_0414_remote_passes_setup_through_the_real_transport(hass):
+    """Issue #1 end to end: real FireTransport, the reporter's descriptor, forced nothing."""
+    from custom_components.bt_remote_voice.fire import FireTransport
+
+    descriptor = bytes.fromhex(
+        (Path(__file__).parent / "fixtures" / "fire_0414_report_descriptor.hex").read_text().strip()
+    )
+    opened, writes = [], []
+
+    class Device:
+        def write(self, data):
+            writes.append(data)
+
+        def close(self):
+            pass
+
+    def make():
+        return FireTransport(
+            opener=lambda path: opened.append(path) or Device(),
+            find_all=lambda address: ["/dev/hidraw6"],
+            read_descriptor=lambda node: descriptor,
+        )
+
+    flow = flow_for(hass, family="fire")
+    with (
+        patch("custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "P"}),
+        patch("custom_components.bt_remote_voice.config_flow.FireTransport", make),
+    ):
+        result = await flow.async_step_configure({"pipeline_id": "p"})
+    assert result["type"] == "create_entry" and result["data"]["family"] == "fire"
+    assert opened == ["/dev/hidraw6"] and writes == []  # setup only opens the node

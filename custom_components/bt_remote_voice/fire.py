@@ -187,7 +187,8 @@ class FireTransport:
             "enables": 0,
             "frames": 0,
             "first_frame_ms": None,  # enable -> first audio frame, last press
-            "max_gap_ms": 0,  # longest silence between frames inside a press
+            "rearms": 0,  # microphone re-enables after frames stopped while the key was held
+            "max_gap_ms": 0,  # longest silence between two frames since the remote connected
             "toc": {},  # Opus TOC byte (hex) -> frames, at most 8 distinct
         }
         self._awaiting_first = False
@@ -256,18 +257,23 @@ class FireTransport:
     def _write_mic(self, on):
         self.device.write(bytes([REPORT_MIC, 1 if on else 0]))
 
-    def _enable(self, on):
+    def _enable(self, on, rearm=False):
         try:
             self._write_mic(on)
         except OSError:
+            self._awaiting_first = False  # nothing was asked of the remote: no first frame to time
             self.lost.set()
             return
         if on:
             self.last_enable = time.monotonic()
             self.stats["enables"] += 1
-            self._awaiting_first = True
-            self.stats["first_frame_ms"] = None
-            _LOGGER.debug("Fire remote: microphone enable written")
+            if rearm:  # the press's first-frame time stays what it was
+                self.stats["rearms"] += 1
+                _LOGGER.debug("Fire remote: microphone re-enabled after frames stopped")
+            else:
+                self._awaiting_first = True
+                self.stats["first_frame_ms"] = None
+                _LOGGER.debug("Fire remote: microphone enable written")
 
     async def _reader(self):
         while True:
@@ -318,7 +324,10 @@ class FireTransport:
             self.on_control(HOLD_STOP)
         elif kind == "audio" and self.voice_down and not self.mic_closed and not self.pending:
             now = time.monotonic()
-            self._count_frame(payload, now)
+            try:
+                self._count_frame(payload, now)
+            except Exception:  # noqa: BLE001 - counters must never cost an audio frame
+                _LOGGER.debug("Fire remote: stats update failed", exc_info=True)
             self.frames += 1
             self.last_frame = now
             self.on_audio(payload)
@@ -330,7 +339,7 @@ class FireTransport:
             self._awaiting_first = False
             stats["first_frame_ms"] = round((now - self.last_enable) * 1000)
             _LOGGER.debug("Fire remote: first audio frame after %s ms", stats["first_frame_ms"])
-        elif self.frames:
+        if self.frames:  # not this press's first frame: the silence since the previous one
             stats["max_gap_ms"] = max(stats["max_gap_ms"], round((now - self.last_frame) * 1000))
         toc = payload[:1].hex()
         if toc in stats["toc"] or len(stats["toc"]) < 8:
@@ -358,7 +367,7 @@ class FireTransport:
             and now - self.last_frame > self.rearm_seconds
             and now - self.last_enable >= self.rearm_seconds
         ):
-            self._enable(True)
+            self._enable(True, rearm=True)
 
     async def write(self, data):
         """Translate the coordinator's microphone messages (ATVV close/open/keepalive)."""

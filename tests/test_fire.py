@@ -826,8 +826,9 @@ async def test_stats_count_presses_enables_frames_toc_bytes_and_timing():
     stats = transport.stats
     assert (stats["presses"], stats["enables"], stats["frames"]) == (1, 1, 3)
     assert stats["toc"] == {"b8": 3}
-    assert stats["first_frame_ms"] is not None and stats["first_frame_ms"] >= 0
-    assert stats["max_gap_ms"] >= 0
+    assert isinstance(stats["first_frame_ms"], int) and 0 <= stats["first_frame_ms"] < 1000
+    assert isinstance(stats["max_gap_ms"], int) and 0 <= stats["max_gap_ms"] < 1000
+    assert stats["rearms"] == 0
     await transport.close()
 
 
@@ -868,3 +869,81 @@ async def test_debug_logs_follow_a_press_without_leaking_audio_or_addresses(capl
     ):
         assert phrase in text
     assert ADDRESS not in text and "b8" not in text.replace("first audio frame", "")
+
+
+async def test_a_rearm_does_not_reset_the_first_frame_time_and_records_the_gap():
+    transport, device, sink, _ = await _open(rearm_seconds=0.05)
+    device.feed(VOICE_DOWN)
+    device.feed(AUDIO)
+    device.feed(AUDIO)
+    await asyncio.sleep(0.05)
+    first = transport.stats["first_frame_ms"]
+    assert first is not None
+    await asyncio.sleep(
+        0.35
+    )  # frames stop while the key is held: the reader re-arms the microphone
+    stats = transport.stats
+    assert stats["rearms"] >= 1 and stats["enables"] == stats["rearms"] + 1  # 1 initial + re-arms
+    assert transport.stats["first_frame_ms"] == first  # not overwritten by the re-arm
+    device.feed(AUDIO)
+    await asyncio.sleep(0.05)
+    assert transport.stats["first_frame_ms"] == first
+    assert transport.stats["max_gap_ms"] >= 250  # the silence that triggered the re-arm
+    await transport.close()
+
+
+async def test_stats_accumulate_across_presses_and_first_frame_is_per_press():
+    transport, device, sink, _ = await _open()
+    for _ in range(2):
+        device.feed(VOICE_DOWN)
+        device.feed(AUDIO)
+        device.feed(VOICE_UP)
+        await asyncio.sleep(0.05)
+    stats = transport.stats
+    assert (stats["presses"], stats["enables"], stats["frames"]) == (2, 2, 2)
+    assert isinstance(stats["first_frame_ms"], int)
+    await transport.close()
+
+
+async def test_a_failed_enable_leaves_no_stale_first_frame_wait():
+    class Refuses(FakeHid):
+        def write(self, data):
+            raise OSError(5, "io error")
+
+    transport, device, sink, _ = await _open(Refuses())
+    device.feed(VOICE_DOWN)
+    await asyncio.wait_for(transport.lost.wait(), 1)
+    assert transport._awaiting_first is False and transport.stats["enables"] == 0
+    await transport.close()
+
+
+async def test_a_failure_while_counting_never_drops_the_audio_frame():
+    transport, device, sink, _ = await _open()
+
+    def boom(payload, now):
+        raise RuntimeError("stats bug")
+
+    transport._count_frame = boom
+    device.feed(VOICE_DOWN)
+    device.feed(AUDIO)
+    await asyncio.sleep(0.05)
+    assert sink.audio == [AUDIO[1:]] and not transport.lost.is_set()
+    await transport.close()
+
+
+FIXTURE_0414 = Path(__file__).parent / "fixtures" / "fire_0414_report_descriptor.hex"
+
+
+async def test_the_reported_0414_descriptor_opens_and_streams_like_the_tested_remote():
+    descriptor = bytes.fromhex(FIXTURE_0414.read_text().strip())
+    transport, device, sink, _, opened = await _open_validated(
+        ["/dev/hidraw6"], {"/dev/hidraw6": descriptor}
+    )
+    device.feed(VOICE_DOWN)
+    device.feed(AUDIO)
+    device.feed(VOICE_UP)
+    await asyncio.sleep(0.05)
+    assert opened == ["/dev/hidraw6"]
+    assert device.writes == [b"\xf2\x01", b"\xf2\x00"] and sink.audio == [AUDIO[1:]]
+    assert {r.id for r in transport.descriptor_reports} >= {0xEF, 0xF0, 0xF2}
+    await transport.close()

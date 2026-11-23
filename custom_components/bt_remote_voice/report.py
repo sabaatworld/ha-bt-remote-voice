@@ -143,7 +143,16 @@ def _clip(value, limit=200):
     return value if not isinstance(value, str) else value[:limit]
 
 
-def _payload(data, *, keep_descriptor):
+def _observation(observation, keep_timeline):
+    observation = _dict(observation)
+    if not observation:
+        return UNKNOWN
+    return (
+        observation if keep_timeline else {k: v for k, v in observation.items() if k != "timeline"}
+    )
+
+
+def _payload(data, *, keep_descriptor, keep_timeline=True):
     remote, hid = _dict(data.remote), _dict(data.hid)
     descriptor = hid.get("descriptor_hex")
     return {
@@ -183,14 +192,14 @@ def _payload(data, *, keep_descriptor):
             ),
             "descriptor_truncated": isinstance(descriptor, str) and len(descriptor) > 4096,
         },
-        "observation": _dict(data.observation) or UNKNOWN,
+        "observation": _observation(data.observation, keep_timeline),
         "config": {k: _clip(v) for k, v in _dict(data.config).items()},
         "outcome": {k: _clip(v) for k, v in _dict(data.outcome).items()},
     }
 
 
 def _checks_line(checks):
-    if not isinstance(checks, list):
+    if not isinstance(checks, list) or not all(isinstance(c, dict) for c in checks):
         return UNKNOWN
     failed = [f"{c.get('check')} (found {c.get('found')})" for c in checks if not c.get("ok")]
     return "all passed" if not failed else "failed: " + ", ".join(failed)
@@ -226,8 +235,10 @@ def build_report(data):
     """The report text (Markdown summary plus one JSON block); never raises, always bounded."""
     try:
         text = _render(_payload(data, keep_descriptor=True))
-        if len(text) > MAX_CHARS:
+        if len(text) > MAX_CHARS:  # shed the bulkiest evidence first, keep the rest
             text = _render(_payload(data, keep_descriptor=False))
+        if len(text) > MAX_CHARS:
+            text = _render(_payload(data, keep_descriptor=False, keep_timeline=False))
         if len(text) > MAX_CHARS:
             text = _render(_payload(ReportInput(), keep_descriptor=False))
     except Exception:  # noqa: BLE001 - a report must never break setup or diagnostics
