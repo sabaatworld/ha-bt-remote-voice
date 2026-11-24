@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Thiếu loa phản hồi cho {remote}",
       "description": "Điều khiển từ xa **{remote}** được đặt để phát phản hồi trên `{speaker}`, nhưng loa này không còn tồn tại. Các lệnh vẫn chạy, nhưng phản hồi bằng giọng nói sẽ không phát.\n\nVào **Cài đặt → Thiết bị & dịch vụ → Bluetooth Remote Voice**, mở menu của **{remote}**, chọn **Định cấu hình** và chọn loa khác hoặc chọn không có."
+    },
+    "speaker_unavailable": {
+      "title": "Loa phản hồi không hoạt động cho {remote}",
+      "description": "Phản hồi của điều khiển **{remote}** không phát được nhiều lần liên tiếp vì loa `{speaker}` không hoạt động. Các lệnh vẫn được thực thi nhưng phản hồi bằng giọng nói bị mất. Thông báo này sẽ biến mất khi một phản hồi được phát lại.\n\nVào **Cài đặt → Thiết bị & dịch vụ → Bluetooth Remote Voice**, mở menu của **{remote}**, chọn **Định cấu hình** và chọn loa khác hoặc chọn không có."
     }
   }
 }

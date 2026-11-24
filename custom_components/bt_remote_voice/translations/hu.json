@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Hiányzik a válaszhangszóró ehhez: {remote}",
       "description": "A(z) **{remote}** távirányító a válaszokat a(z) `{speaker}` eszközön játssza le, amely már nem létezik. A parancsok továbbra is végrehajtódnak, de a felolvasott válaszuk nem szólal meg.\n\nLépjen a **Beállítások → Eszközök és szolgáltatások → Bluetooth Remote Voice** oldalra, nyissa meg a(z) **{remote}** menüjét, válassza a **Konfigurálás** lehetőséget, és válasszon másik hangszórót, vagy ne válasszon egyet sem."
+    },
+    "speaker_unavailable": {
+      "title": "A válaszhangszóró nem működik a következőhöz: {remote}",
+      "description": "A(z) **{remote}** távirányító válaszait többször egymás után nem lehetett lejátszani, mert a(z) `{speaker}` hangszóró nem működik. A parancsok továbbra is végrehajtódnak, de a kimondott válasz elvész. Ez az értesítés eltűnik, amint egy válasz újra lejátszódik.\n\nLépjen a **Beállítások → Eszközök és szolgáltatások → Bluetooth Remote Voice** oldalra, nyissa meg a(z) **{remote}** menüjét, válassza a **Konfigurálás** lehetőséget, és válasszon másik hangszórót, vagy ne válasszon egyet sem."
     }
   }
 }

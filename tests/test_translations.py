@@ -286,6 +286,6 @@ def test_every_repair_issue_has_a_title_and_description():
 
     root = Path(__file__).parents[1] / "custom_components" / "bt_remote_voice"
     issues = json.loads((root / "translations" / "en.json").read_text())["issues"]
-    assert set(issues) == {"pipeline_missing", "speaker_missing"}
+    assert set(issues) == {"pipeline_missing", "speaker_missing", "speaker_unavailable"}
     for text in issues.values():
         assert text["title"] and "Configure" in text["description"]

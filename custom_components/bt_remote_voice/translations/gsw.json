@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Antwort-Lautsprächer fehlt für {remote}",
       "description": "D Fernbedienig **{remote}** isch so igstellt, dass Antworte uf `{speaker}` abgspielt wärded, wo s nüme git. Befehl wärded wiiterhin usgfüehrt, aber ihri gsprochni Antwort wird nöd abgspielt.\n\nGönd Sie zu **Istellige → Grät & Dienscht → Bluetooth Remote Voice**, öffned Sie s Menü vo **{remote}**, wähled Sie **Konfiguriere** und wähled Sie en anderen Lautsprächer oder keine us."
+    },
+    "speaker_unavailable": {
+      "title": "Antwort-Lutsprächer funktioniert nöd für {remote}",
+      "description": "Antworte vo de Fernbedienig **{remote}** hend mehreri Mol hinereinand nöd chöne abgspilt werde, will de Lutsprächer `{speaker}` nöd funktioniert. Befehl wärded wiiterhin usgfüehrt, aber ihri gsproche Antwort goht verlore. Die Hiiwis verschwindet, sobald widr e Antwort abgspilt wird.\n\nGönd Sie zu **Istellige → Grät & Dienscht → Bluetooth Remote Voice**, öffned Sie s Menü vo **{remote}**, wähled Sie **Konfiguriere** und wähled Sie en anderen Lautsprächer oder keine us."
     }
   }
 }

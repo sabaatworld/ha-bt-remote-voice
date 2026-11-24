@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Antwoordluidspreker ontbreek vir {remote}",
       "description": "Die afstandsbeheer **{remote}** is gestel om antwoorde op `{speaker}` te speel, wat nie meer bestaan nie. Opdragte loop steeds, maar hul gesproke antwoord sal nie speel nie.\n\nGaan na **Instellings → Toestelle en dienste → Bluetooth Remote Voice**, maak die kieslys van **{remote}** oop, kies **Konfigureer**, en kies 'n ander luidspreker of kies geen."
+    },
+    "speaker_unavailable": {
+      "title": "Antwoordluidspreker werk nie vir {remote}",
+      "description": "Antwoorde van die afstandbeheer **{remote}** kon etlike kere agtereenvolgens nie gespeel word nie, omdat die luidspreker `{speaker}` nie werk nie. Opdragte word steeds uitgevoer, maar hul gesproke antwoord gaan verlore. Hierdie kennisgewing verdwyn wanneer ’n antwoord weer speel.\n\nGaan na **Instellings → Toestelle en dienste → Bluetooth Remote Voice**, maak die kieslys van **{remote}** oop, kies **Konfigureer**, en kies 'n ander luidspreker of kies geen."
     }
   }
 }

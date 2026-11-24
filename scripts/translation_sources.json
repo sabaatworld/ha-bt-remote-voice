@@ -143,6 +143,8 @@
   "issues.pipeline_missing.title": "2dbfcc98802942e7",
   "issues.speaker_missing.description": "f6e01267acbbe99c",
   "issues.speaker_missing.title": "2c3058370efb8abe",
+  "issues.speaker_unavailable.description": "a8f1d3ae1e34b1ce",
+  "issues.speaker_unavailable.title": "948343d5c5795fb4",
   "options.abort.no_pipelines": "f5dca9929f14d7bc",
   "options.error.invalid_pipeline": "1fc6a60c360ce14a",
   "options.error.invalid_preferences": "e08092434b830b1c",

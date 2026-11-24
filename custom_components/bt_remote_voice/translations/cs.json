@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Chybí reproduktor odpovědí pro {remote}",
       "description": "Ovladač **{remote}** je nastaven na přehrávání odpovědí na `{speaker}`, který již neexistuje. Příkazy se stále provádějí, ale jejich hlasová odpověď se nepřehraje.\n\nPřejděte do **Nastavení → Zařízení a služby → Bluetooth Remote Voice**, otevřete nabídku **{remote}**, zvolte **Nakonfigurovat** a vyberte jiný reproduktor nebo zvolte žádný."
+    },
+    "speaker_unavailable": {
+      "title": "Reproduktor odpovědí nefunguje pro {remote}",
+      "description": "Odpovědi dálkového ovladače **{remote}** se několikrát za sebou nepodařilo přehrát, protože reproduktor `{speaker}` nefunguje. Příkazy se stále provádějí, ale mluvená odpověď se ztrácí. Toto upozornění zmizí, jakmile se odpověď znovu přehraje.\n\nPřejděte do **Nastavení → Zařízení a služby → Bluetooth Remote Voice**, otevřete nabídku **{remote}**, zvolte **Nakonfigurovat** a vyberte jiný reproduktor nebo zvolte žádný."
     }
   }
 }

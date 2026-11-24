@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Vastuste kõlar puudub kaugjuhtimispuldil {remote}",
       "description": "Kaugjuhtimispult **{remote}** on seadistatud esitama vastuseid seadmes `{speaker}`, mida enam ei ole. Käsud täidetakse endiselt, kuid nende kõnevastust ei esitata.\n\nMinge jaotisse **Seaded → Seadmed ja teenused → Bluetooth Remote Voice**, avage **{remote}** menüü, valige **Seadista** ja valige mõni muu kõlar või ärge valige ühtegi."
+    },
+    "speaker_unavailable": {
+      "title": "Vastuste kõlar ei tööta seadmele {remote}",
+      "description": "Puldi **{remote}** vastuseid ei õnnestunud mitu korda järjest esitada, sest kõlar `{speaker}` ei tööta. Käsud täidetakse endiselt, kuid öeldud vastus läheb kaduma. See teade kaob, kui vastus jälle esitatakse.\n\nMinge jaotisse **Seaded → Seadmed ja teenused → Bluetooth Remote Voice**, avage **{remote}** menüü, valige **Seadista** ja valige mõni muu kõlar või ärge valige ühtegi."
     }
   }
 }

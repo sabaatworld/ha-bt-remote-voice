@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "{remote} için yanıt hoparlörü eksik",
       "description": "**{remote}** uzaktan kumandası, yanıtları artık mevcut olmayan `{speaker}` üzerinde oynatacak şekilde ayarlı. Komutlar yine de çalışır, ancak sesli yanıtları oynatılmaz.\n\n**Ayarlar → Cihazlar ve hizmetler → Bluetooth Remote Voice** bölümüne gidin, **{remote}** menüsünü açın, **Yapılandır**'ı seçin ve başka bir hoparlör seçin veya hiçbirini seçmeyin."
+    },
+    "speaker_unavailable": {
+      "title": "{remote} için yanıt hoparlörü çalışmıyor",
+      "description": "Uzaktan kumanda **{remote}** yanıtları, `{speaker}` hoparlörü çalışmadığı için art arda birkaç kez oynatılamadı. Komutlar çalışmaya devam eder ancak sesli yanıt kaybolur. Bir yanıt yeniden oynatıldığında bu bildirim kaybolur.\n\n**Ayarlar → Cihazlar ve hizmetler → Bluetooth Remote Voice** bölümüne gidin, **{remote}** menüsünü açın, **Yapılandır**'ı seçin ve başka bir hoparlör seçin veya hiçbirini seçmeyin."
     }
   }
 }

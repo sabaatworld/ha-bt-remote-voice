@@ -10,7 +10,7 @@ from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.event import async_track_state_change_event
 
 from .config_flow import pipelines
-from .preferences import DOMAIN, PIPELINE_PREFERRED
+from .preferences import DOMAIN, PIPELINE_PREFERRED, SPEAKER_SKIP_LIMIT
 
 
 def _set(hass, entry, key, severity, missing, placeholders):
@@ -53,11 +53,32 @@ def sync_issues(hass, entry):
         bool(speaker) and hass.states.get(speaker) is None,
         {"speaker": speaker},
     )
+    # A reload starts the counter again, so a stale hint never outlives the entry's last run.
+    sync_speaker_issue(
+        hass, entry, getattr(getattr(entry, "runtime_data", None), "speaker_skips", 0)
+    )
+
+
+@callback
+def sync_speaker_issue(hass, entry, skips):
+    """Warn when replies keep getting lost because the speaker is not working.
+
+    Only a run of lost replies raises it, never one blip; a spoken reply, the speaker coming
+    back, or a reload of the entry clears it. ``speaker_missing`` covers a removed entity.
+    """
+    _set(
+        hass,
+        entry,
+        "speaker_unavailable",
+        ir.IssueSeverity.WARNING,
+        skips >= SPEAKER_SKIP_LIMIT,
+        {"speaker": entry.options.get("speaker") or ""},
+    )
 
 
 @callback
 def clear_issues(hass, entry):
-    for key in ("pipeline_missing", "speaker_missing"):
+    for key in ("pipeline_missing", "speaker_missing", "speaker_unavailable"):
         ir.async_delete_issue(hass, DOMAIN, f"{key}_{entry.entry_id}")
 
 
@@ -69,9 +90,17 @@ def watch_speaker(hass, entry):
         return lambda: None
 
     @callback
-    def changed(_event):
+    def changed(event):
         # While starting, the started check decides; other integrations may not be loaded.
         if hass.state is CoreState.running:
+            new, old = event.data.get("new_state"), event.data.get("old_state")
+            coordinator = getattr(entry, "runtime_data", None)
+            gone = (None, "unknown", "unavailable")
+            came_back = old is None or old.state in gone
+            # Only a return from unavailable counts; a speaker that merely changes between idle,
+            # buffering and playing while replies keep failing must not wipe the count.
+            if new is not None and new.state not in gone and came_back and coordinator:
+                coordinator.speaker_skips = 0
             sync_issues(hass, entry)
 
     return async_track_state_change_event(hass, [speaker], changed)

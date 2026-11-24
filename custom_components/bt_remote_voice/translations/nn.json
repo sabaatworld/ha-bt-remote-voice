@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Svarhøgtalar manglar for {remote}",
       "description": "Fjernkontrollen **{remote}** er sett til å spele av svar på `{speaker}`, som ikkje finst lenger. Kommandoar blir framleis køyrde, men det opplesne svaret blir ikkje spelt av.\n\nGå til **Innstillingar → Einingar og tenester → Bluetooth Remote Voice**, opne menyen for **{remote}**, vel **Konfigurer**, og vel ein annan høgtalar eller ingen."
+    },
+    "speaker_unavailable": {
+      "title": "Svarhøgtalaren fungerer ikkje for {remote}",
+      "description": "Svar frå fjernkontrollen **{remote}** kunne ikkje spelast av fleire gonger på rad fordi høgtalaren `{speaker}` ikkje fungerer. Kommandoar blir framleis utførte, men det talte svaret går tapt. Dette varselet forsvinn når eit svar blir spelt av att.\n\nGå til **Innstillingar → Einingar og tenester → Bluetooth Remote Voice**, opne menyen for **{remote}**, vel **Konfigurer**, og vel ein annan høgtalar eller ingen."
     }
   }
 }

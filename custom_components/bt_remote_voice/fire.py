@@ -236,10 +236,11 @@ class FireTransport:
         self.hidraw_nodes = len(nodes)
         if not nodes:
             return None
-        readable = False
+        readable, unreadable = False, []
         for node in nodes:
             data = self.read_descriptor(node) if self.read_descriptor else None
             if not data:  # None (unreadable) or empty: nothing to judge the node by
+                unreadable.append(node)
                 continue
             readable = True
             reports = parse_reports(data)
@@ -247,12 +248,14 @@ class FireTransport:
             if find_voice_reports(reports):
                 self.unsupported_since = None
                 return node
-        if readable:
+        if readable and not unreadable:
             if self.unsupported_since is None:
                 self.unsupported_since = time.monotonic()
             return None
+        # A node whose descriptor cannot be read might be the voice one: keep the original behavior
+        # for it (first such node, fixed report IDs) rather than refusing the remote.
         _LOGGER.debug("Fire remote descriptor unreadable; using the fixed voice report IDs")
-        return nodes[0]
+        return unreadable[0]
 
     def _write_mic(self, on):
         self.device.write(bytes([REPORT_MIC, 1 if on else 0]))

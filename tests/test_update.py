@@ -606,7 +606,7 @@ async def test_pending_request_expires_while_original_still_running():
     await c.stop()
 
 
-async def test_early_playback_error_cancels_generation_promptly():
+async def test_early_non_skippable_playback_error_cancels_generation_promptly():
     from homeassistant.components.assist_pipeline import PipelineEvent, PipelineEventType
 
     from custom_components.bt_remote_voice.assist_satellite import RemoteSatellite
@@ -648,10 +648,10 @@ async def test_early_playback_error_cancels_generation_promptly():
         patch.object(sat, "async_accept_pipeline_from_satellite", side_effect=accept),
         patch(
             "custom_components.bt_remote_voice.assist_satellite.play_reply",
-            AsyncMock(side_effect=AudioFailure("speaker_busy")),
+            AsyncMock(side_effect=AudioFailure("playback_interrupted")),
         ),
     ):
-        with pytest.raises(AudioFailure, match="speaker_busy"):
+        with pytest.raises(AudioFailure, match="playback_interrupted"):
             await asyncio.wait_for(sat.run(s), 0.2)
     assert cancelled.is_set()
 

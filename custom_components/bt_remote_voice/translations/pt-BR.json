@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Falta o alto-falante de resposta para {remote}",
       "description": "O controle remoto **{remote}** está configurado para reproduzir respostas em `{speaker}`, que não existe mais. Os comandos continuam sendo executados, mas a respectiva resposta falada não será reproduzida.\n\nVá para **Configurações → Dispositivos e serviços → Bluetooth Remote Voice**, abra o menu de **{remote}**, escolha **Configurar** e selecione outro alto-falante ou nenhum."
+    },
+    "speaker_unavailable": {
+      "title": "O alto-falante de respostas não está funcionando para {remote}",
+      "description": "As respostas do controle remoto **{remote}** não puderam ser reproduzidas várias vezes seguidas porque o alto-falante `{speaker}` não está funcionando. Os comandos ainda são executados, mas a resposta falada se perde. Este aviso desaparece quando uma resposta for reproduzida novamente.\n\nVá para **Configurações → Dispositivos e serviços → Bluetooth Remote Voice**, abra o menu de **{remote}**, escolha **Configurar** e selecione outro alto-falante ou nenhum."
     }
   }
 }

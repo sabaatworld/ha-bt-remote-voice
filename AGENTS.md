@@ -118,6 +118,12 @@ the HA audio dependencies; mount the repo read-only and set
   compatibility need physical acceptance tests; unit tests do not establish
   them. Timings are *request/report* times, not acoustic first-sound. Full
   duplex stays reported unavailable until a complete interruption contract is verified.
+- **A reply speaker never costs a command.** An unavailable, busy or unable speaker skips only the
+  spoken reply (`reply_skipped`, not a failure; `playback.SKIPPABLE`) and the pipeline keeps running.
+  Anything that may leave audio playing stays a failure: a start timeout, a speaker lost after
+  playback began (`AudioFailure.after_start`), interrupted or unfinished playback, and every
+  `playback_stop_*`. The Repairs hint `speaker_unavailable` is raised by a coordinator counter (3 lost
+  replies in a row; busy neither counts nor resets), never from `sync_issues` alone.
 - **Naming.** The product is "Bluetooth Remote Voice". Write "ATVV" only when naming that
   protocol (profiles, parsing, compatibility rows, the ATVVoice credit). Background task names,
   docstrings and user-facing text must not present the whole integration as ATVV.

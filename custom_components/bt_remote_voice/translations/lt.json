@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Trūksta atsakymų garsiakalbio pultui {remote}",
       "description": "Pultas **{remote}** nustatytas atkurti atsakymus per `{speaker}`, kurio nebėra. Komandos vis dar vykdomos, bet jų tariamas atsakymas nebus atkurtas.\n\nEikite į **Nustatymai → Įrenginiai ir paslaugos → Bluetooth Remote Voice**, atidarykite pulto **{remote}** meniu, pasirinkite **Konfigūruoti** ir pasirinkite kitą garsiakalbį arba jokio."
+    },
+    "speaker_unavailable": {
+      "title": "Atsakymų garsiakalbis neveikia: {remote}",
+      "description": "Nuotolinio valdymo pulto **{remote}** atsakymų kelis kartus iš eilės nepavyko atkurti, nes garsiakalbis `{speaker}` neveikia. Komandos vis tiek vykdomos, bet ištartas atsakymas prarandamas. Šis pranešimas išnyks, kai atsakymas vėl bus atkurtas.\n\nEikite į **Nustatymai → Įrenginiai ir paslaugos → Bluetooth Remote Voice**, atidarykite pulto **{remote}** meniu, pasirinkite **Konfigūruoti** ir pasirinkite kitą garsiakalbį arba jokio."
     }
   }
 }

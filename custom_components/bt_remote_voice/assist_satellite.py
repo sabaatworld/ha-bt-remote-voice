@@ -18,7 +18,7 @@ from homeassistant.components.assist_satellite.entity import AssistSatelliteStat
 
 from .entity import RemoteEntity
 from .pipeline import run_audio_pipeline
-from .playback import play_reply
+from .playback import SKIPPABLE, play_reply, speaker_blocker
 from .preferences import PIPELINE_PREFERRED, error_message
 from .session import AudioFailure
 
@@ -37,6 +37,7 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
         self.current_session = None
         self.tts_output = None
         self.reply_allowed = True
+        self.speaker_skip = None
         coordinator.run_pipeline = self.run
         coordinator.satellite = self
 
@@ -132,6 +133,31 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
             self._set_state(AssistSatelliteState.RESPONDING)
         self.coordinator.changed()
 
+    def _skip_reply(self, code, *, started=False, count=True):
+        """The reply is lost to the speaker but the request is fine: record it, keep running."""
+        self.speaker_skip = code
+        self.coordinator.outcome("reply_skipped", code)
+        if count:
+            self.coordinator.note_reply(code)
+        if started:
+            # Playback had begun; the rest of the run is ordinary processing again, so a new press
+            # must not be judged by the busy_playback policy and the entity is not "responding".
+            self.coordinator.phase = "processing"
+            if self.entity_id:
+                self._set_state(AssistSatelliteState.PROCESSING)
+            self.coordinator.changed()
+
+    def _settle_playback(self):
+        """Result of a finished playback task; a speaker problem becomes a skipped reply."""
+        if self.speaker_skip:
+            return
+        try:
+            self.playback_task.result()
+        except AudioFailure as err:
+            if str(err) not in SKIPPABLE or getattr(err, "after_start", False):
+                raise
+            self._skip_reply(str(err), started=True)
+
     async def run(self, session):
         self._resolve_pipeline()
         self.current_session = session
@@ -142,6 +168,7 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
         self.playback_task = None
         self.head_start_task = None
         self.reply_allowed = True
+        self.speaker_skip = None
         if self.speaker:
             # Decided once per request (each held turn, and a queued request when it
             # starts); the pipeline below runs unchanged either way.
@@ -156,6 +183,11 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
             self.reply_allowed = allowed
             if not allowed:
                 self.coordinator.outcome("reply_skipped", code)
+            elif code := speaker_blocker(self.hass, self.speaker):
+                # Nothing could be played: run the command and skip the reply (no TTS is made).
+                self.reply_allowed = False
+                # A removed speaker is already a Repairs issue of its own (speaker_missing).
+                self._skip_reply(code, count=self.hass.states.get(self.speaker) is not None)
         self.pipeline_error = None
         self.playback_ready = asyncio.Event()
         self.generation_complete = False
@@ -165,7 +197,11 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
             self.async_accept_pipeline_from_satellite(
                 session.stream(),
                 start_stage=PipelineStage.STT,
-                end_stage=(PipelineStage.TTS if self.speaker else PipelineStage.INTENT)
+                end_stage=(
+                    PipelineStage.TTS
+                    if self.speaker and not self.speaker_skip
+                    else PipelineStage.INTENT
+                )
                 if mode == "commands"
                 else PipelineStage.STT,
             ),
@@ -180,10 +216,10 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
                 elif not self.playback_task.done():
                     watch.add(self.playback_task)
                 else:
-                    self.playback_task.result()
+                    self._settle_playback()
                 await asyncio.wait(watch, return_when=asyncio.FIRST_COMPLETED)
                 if self.playback_task and self.playback_task.done():
-                    self.playback_task.result()
+                    self._settle_playback()
             await generation
             self.generation_complete = True
             self.timing("generation_complete")
@@ -193,8 +229,11 @@ class RemoteSatellite(RemoteEntity, AssistSatelliteEntity):
                 if self.playback_task is None and self.tts_output:
                     self.start_playback(self.tts_output)
                 if self.playback_task:
-                    await asyncio.shield(self.playback_task)
-                    self.tts_response_finished()
+                    await asyncio.wait({self.playback_task})
+                    self._settle_playback()
+                    if not self.speaker_skip:
+                        self.tts_response_finished()
+                        self.coordinator.note_reply()
         finally:
             stop_error = None
             if self.head_start_task:

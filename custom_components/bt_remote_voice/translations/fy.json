@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Antwurdluidspreker ûntbrekt foar {remote}",
       "description": "De ôfstânsbetsjinning **{remote}** is ynsteld om antwurden op `{speaker}` ôf te spyljen, dy't net mear bestiet. Kommando's wurde noch hieltyd útfierd, mar harren sprutsen antwurd wurdt net ôfspile.\n\nGean nei **Ynstellingen → Apparaten en tsjinsten → Bluetooth Remote Voice**, iepenje it menu fan **{remote}**, kies **Konfigurearje** en selektearje in oare luidspreker of kies gjin."
+    },
+    "speaker_unavailable": {
+      "title": "Antwurdspeaker wurket net foar {remote}",
+      "description": "Antwurden fan de ôfstânsbetsjinning **{remote}** koene ferskate kearen efterinoar net ôfspile wurde, om’t de speaker `{speaker}` net wurket. Kommando’s wurde noch hieltyd útfierd, mar it sprutsen antwurd giet ferlern. Dizze melding ferdwynt as in antwurd wer ôfspile wurdt.\n\nGean nei **Ynstellingen → Apparaten en tsjinsten → Bluetooth Remote Voice**, iepenje it menu fan **{remote}**, kies **Konfigurearje** en selektearje in oare luidspreker of kies gjin."
     }
   }
 }

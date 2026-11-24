@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Speaker balasan untuk {remote} tidak ada",
       "description": "Remote **{remote}** diatur untuk memutar balasan pada `{speaker}`, yang sudah tidak ada. Perintah tetap dijalankan, tetapi balasan lisannya tidak akan diputar.\n\nBuka **Pengaturan → Perangkat & layanan → Bluetooth Remote Voice**, buka menu **{remote}**, pilih **Konfigurasikan**, lalu pilih speaker lain atau pilih tanpa."
+    },
+    "speaker_unavailable": {
+      "title": "Speaker balasan tidak berfungsi untuk {remote}",
+      "description": "Balasan dari remote **{remote}** gagal diputar beberapa kali berturut-turut karena speaker `{speaker}` tidak berfungsi. Perintah tetap dijalankan, tetapi balasan suaranya hilang. Pemberitahuan ini hilang saat balasan diputar lagi.\n\nBuka **Pengaturan → Perangkat & layanan → Bluetooth Remote Voice**, buka menu **{remote}**, pilih **Konfigurasikan**, lalu pilih speaker lain atau pilih tanpa."
     }
   }
 }

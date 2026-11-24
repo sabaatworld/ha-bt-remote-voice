@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Haut-parleur de réponse manquant pour {remote}",
       "description": "La télécommande **{remote}** est configurée pour lire les réponses sur `{speaker}`, qui n’existe plus. Les commandes sont toujours exécutées, mais leur réponse vocale ne sera pas lue.\n\nAllez dans **Paramètres → Appareils et services → Bluetooth Remote Voice**, ouvrez le menu de **{remote}**, choisissez **Configurer** et sélectionnez un autre haut-parleur ou aucun."
+    },
+    "speaker_unavailable": {
+      "title": "Haut-parleur de réponse inactif pour {remote}",
+      "description": "Les réponses de la télécommande **{remote}** n’ont pas pu être lues plusieurs fois de suite, car le haut-parleur `{speaker}` ne fonctionne pas. Les commandes sont toujours exécutées, mais leur réponse vocale est perdue. Cet avis disparaît dès qu’une réponse est de nouveau lue.\n\nAllez dans **Paramètres → Appareils et services → Bluetooth Remote Voice**, ouvrez le menu de **{remote}**, choisissez **Configurer** et sélectionnez un autre haut-parleur ou aucun."
     }
   }
 }

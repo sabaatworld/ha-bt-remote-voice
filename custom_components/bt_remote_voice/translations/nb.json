@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Svarhøyttaler mangler for {remote}",
       "description": "Fjernkontrollen **{remote}** er satt til å spille av svar på `{speaker}`, som ikke finnes lenger. Kommandoer kjøres fortsatt, men det opplesne svaret spilles ikke av.\n\nGå til **Innstillinger → Enheter og tjenester → Bluetooth Remote Voice**, åpne menyen for **{remote}**, velg **Konfigurer**, og velg en annen høyttaler eller ingen."
+    },
+    "speaker_unavailable": {
+      "title": "Svarhøyttaleren fungerer ikke for {remote}",
+      "description": "Svar fra fjernkontrollen **{remote}** kunne ikke spilles av flere ganger på rad fordi høyttaleren `{speaker}` ikke fungerer. Kommandoer utføres fortsatt, men det talte svaret går tapt. Dette varselet forsvinner når et svar spilles av igjen.\n\nGå til **Innstillinger → Enheter og tjenester → Bluetooth Remote Voice**, åpne menyen for **{remote}**, velg **Konfigurer**, og velg en annen høyttaler eller ingen."
     }
   }
 }

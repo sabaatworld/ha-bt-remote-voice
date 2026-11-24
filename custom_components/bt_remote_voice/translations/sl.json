@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Manjka zvočnik za odgovore za {remote}",
       "description": "Daljinec **{remote}** je nastavljen na predvajanje odgovorov na `{speaker}`, ki ne obstaja več. Ukazi se še vedno izvajajo, vendar se njihov govorni odgovor ne bo predvajal.\n\nOdprite **Nastavitve → Naprave in storitve → Bluetooth Remote Voice**, odprite meni za **{remote}**, izberite **Konfiguriraj** in izberite drug zvočnik ali možnost brez."
+    },
+    "speaker_unavailable": {
+      "title": "Zvočnik za odgovore ne deluje za {remote}",
+      "description": "Odgovorov daljinca **{remote}** ni bilo mogoče večkrat zapored predvajati, ker zvočnik `{speaker}` ne deluje. Ukazi se še vedno izvajajo, a govorjeni odgovor se izgubi. To obvestilo izgine, ko se odgovor spet predvaja.\n\nOdprite **Nastavitve → Naprave in storitve → Bluetooth Remote Voice**, odprite meni za **{remote}**, izberite **Konfiguriraj** in izberite drug zvočnik ali možnost brez."
     }
   }
 }

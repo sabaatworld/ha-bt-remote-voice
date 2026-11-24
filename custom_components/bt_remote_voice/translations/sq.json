@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Mungon altoparlanti i përgjigjeve për {remote}",
       "description": "Telekomanda **{remote}** është caktuar të luajë përgjigjet te `{speaker}`, që nuk ekziston më. Komandat vazhdojnë të ekzekutohen, por përgjigjja e tyre me zë nuk do të luhet.\n\nShkoni te **Cilësimet → Pajisjet dhe shërbimet → Bluetooth Remote Voice**, hapni menunë e **{remote}**, zgjidhni **Konfiguro** dhe zgjidhni një altoparlant tjetër ose asnjë."
+    },
+    "speaker_unavailable": {
+      "title": "Altoparlanti i përgjigjeve nuk funksionon për {remote}",
+      "description": "Përgjigjet e telekomandës **{remote}** nuk u luajtën disa herë radhazi, sepse altoparlanti `{speaker}` nuk funksionon. Komandat vazhdojnë të ekzekutohen, por përgjigjja e folur humbet. Ky njoftim zhduket kur një përgjigje luhet përsëri.\n\nShkoni te **Cilësimet → Pajisjet dhe shërbimet → Bluetooth Remote Voice**, hapni menunë e **{remote}**, zgjidhni **Konfiguro** dhe zgjidhni një altoparlant tjetër ose asnjë."
     }
   }
 }

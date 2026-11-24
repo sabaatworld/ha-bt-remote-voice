@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Reply speaker missing for {remote}",
       "description": "The remote **{remote}** is set to play replies on `{speaker}`, which no longer exists. Commands still run, but their spoken reply will not play.\n\nGo to **Settings → Devices & services → Bluetooth Remote Voice**, open the menu of **{remote}**, choose **Configure**, and pick another speaker or choose none."
+    },
+    "speaker_unavailable": {
+      "title": "Reply speaker not working for {remote}",
+      "description": "Replies from the remote **{remote}** could not be played several times in a row because the speaker `{speaker}` is not working. Commands still run, but their spoken reply is lost. This notice clears when a reply plays again.\n\nGo to **Settings → Devices & services → Bluetooth Remote Voice**, open the menu of **{remote}**, choose **Configure**, and pick another speaker or choose none."
     }
   }
 }

@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Svarhøjttaler mangler for {remote}",
       "description": "Fjernbetjeningen **{remote}** er indstillet til at afspille svar på `{speaker}`, som ikke længere findes. Kommandoer udføres stadig, men det oplæste svar afspilles ikke.\n\nGå til **Indstillinger → Enheder og tjenester → Bluetooth Remote Voice**, åbn menuen for **{remote}**, vælg **Konfigurer**, og vælg en anden højttaler eller ingen."
+    },
+    "speaker_unavailable": {
+      "title": "Svarhøjttaleren virker ikke for {remote}",
+      "description": "Svar fra fjernbetjeningen **{remote}** kunne ikke afspilles flere gange i træk, fordi højttaleren `{speaker}` ikke virker. Kommandoer udføres stadig, men det talte svar går tabt. Denne meddelelse forsvinder, når et svar afspilles igen.\n\nGå til **Indstillinger → Enheder og tjenester → Bluetooth Remote Voice**, åbn menuen for **{remote}**, vælg **Konfigurer**, og vælg en anden højttaler eller ingen."
     }
   }
 }

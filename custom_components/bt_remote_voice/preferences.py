@@ -11,6 +11,7 @@ DOMAIN = "bt_remote_voice"
 # select option value); resolved at request time, so later changes apply to the next request.
 PIPELINE_PREFERRED = OPTION_PREFERRED
 
+SPEAKER_SKIP_LIMIT = 3  # consecutive lost replies before the Repairs hint appears
 MAX_HEAD_START = 10  # seconds
 REQUEST_RANGE = (5, 120, 5)  # seconds: (min, max, step)
 CONVERSATION_RANGE = (30, 600, 10)

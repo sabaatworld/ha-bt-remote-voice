@@ -723,6 +723,16 @@ async def test_unreadable_descriptor_keeps_legacy_behavior():
     await transport.close()
 
 
+async def test_one_unreadable_node_keeps_legacy_behavior_instead_of_refusing():
+    # A readable node without the pair next to one that cannot be read: the unreadable one might
+    # be the voice node, so the original first-node behavior applies (0.5.0) rather than a refusal.
+    transport, _, _, _, opened = await _open_validated(
+        ["/dev/hidraw3", "/dev/hidraw4"], {"/dev/hidraw3": NO_PAIR_DESCRIPTOR}
+    )
+    assert opened == ["/dev/hidraw4"]
+    await transport.close()
+
+
 async def test_a_later_node_with_the_pair_is_chosen_over_an_earlier_one_without():
     transport, _, _, _, opened = await _open_validated(
         ["/dev/hidraw3", "/dev/hidraw4"],

@@ -21,6 +21,31 @@ def speaker_choices(hass):
     }
 
 
+# Speaker problems before any sound was started: the action ran (or runs) and only the spoken reply
+# is lost. Start/stop/interrupt/finish failures and a speaker lost *after* playback began
+# (``AudioFailure.after_start``) are deliberately not listed or are excluded: the media may still be
+# playing or start late, so those stay failures.
+SKIPPABLE = frozenset({"speaker_unavailable", "speaker_busy", "speaker_cannot_play"})
+# Speaker codes that count towards the "speaker is not working" Repairs hint. A busy speaker is
+# ordinary (music, an announcement) and neither counts nor resets it.
+COUNTED = SKIPPABLE - {"speaker_busy"}
+
+
+def speaker_blocker(hass, speaker):
+    """``speaker_unavailable`` when the reply speaker cannot be used right now, else None.
+
+    Checked once at the start of a request so no reply is generated for a speaker that is not there.
+    A missing ``hass.states`` (bare test objects) never blocks.
+    """
+    states = getattr(hass, "states", None)
+    if not speaker or states is None:
+        return None
+    state = states.get(speaker)
+    if state is None or state.state in ("unknown", "unavailable"):
+        return "speaker_unavailable"
+    return None
+
+
 async def play_reply(
     hass, speaker, output, *, start_timeout=10, finish_timeout=90, stop_timeout=3, on_stage=None
 ):
@@ -38,6 +63,11 @@ async def play_reply(
         raise AudioFailure("missing_tts_audio")
     loop = asyncio.get_running_loop()
     started, finished = loop.create_future(), loop.create_future()
+
+    def failure(code):
+        err = AudioFailure(code)
+        err.after_start = started.done()  # a speaker lost mid-playback is not a skipped reply
+        return err
 
     @callback
     def changed(event):
@@ -85,13 +115,13 @@ async def play_reply(
         if not done:
             raise AudioFailure("playback_start_timeout")
         if finished.done() and finished.result():
-            raise AudioFailure(finished.result())
+            raise failure(finished.result())
         try:
             error = await asyncio.wait_for(finished, finish_timeout)
         except TimeoutError as err:
             raise AudioFailure("playback_finish_timeout") from err
         if error:
-            raise AudioFailure(error)
+            raise failure(error)
     except asyncio.CancelledError, Exception:
         # Stop only this request's media on *every* abnormal exit, including
         # service/finish timeouts. A different source may have taken the player.

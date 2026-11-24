@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Vastauskaiutin puuttuu kaukosäätimeltä {remote}",
       "description": "Kaukosäädin **{remote}** on määritetty toistamaan vastaukset laitteella `{speaker}`, jota ei enää ole. Komennot suoritetaan edelleen, mutta niiden puhuttua vastausta ei toisteta.\n\nSiirry kohtaan **Asetukset → Laitteet ja palvelut → Bluetooth Remote Voice**, avaa kohteen **{remote}** valikko, valitse **Määritä** ja valitse toinen kaiutin tai valitse ei mitään."
+    },
+    "speaker_unavailable": {
+      "title": "Vastauskaiutin ei toimi laitteelle {remote}",
+      "description": "Kaukosäätimen **{remote}** vastauksia ei voitu toistaa useita kertoja peräkkäin, koska kaiutin `{speaker}` ei toimi. Komennot suoritetaan edelleen, mutta puhuttu vastaus menetetään. Tämä ilmoitus poistuu, kun vastaus toistetaan taas.\n\nSiirry kohtaan **Asetukset → Laitteet ja palvelut → Bluetooth Remote Voice**, avaa kohteen **{remote}** valikko, valitse **Määritä** ja valitse toinen kaiutin tai valitse ei mitään."
     }
   }
 }

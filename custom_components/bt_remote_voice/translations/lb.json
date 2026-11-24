@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Äntwert-Lautsprecher feelt fir {remote}",
       "description": "D'Fernbedienung **{remote}** ass agestallt, fir Äntwerten op `{speaker}` ofzespillen, deen et net méi gëtt. Befehler gi weiderhin ausgefouert, awer hir geschwat Äntwert gëtt net ofgespillt.\n\nGitt an **Astellungen → Geräter & Servicer → Bluetooth Remote Voice**, mécht d'Menü vun **{remote}** op, wielt **Konfiguréieren** a wielt en aneren Lautsprecher oder wielt keen."
+    },
+    "speaker_unavailable": {
+      "title": "De Äntwertlautsprecher funktionéiert net fir {remote}",
+      "description": "D’Äntwerte vun der Fernbedienung **{remote}** konnten e puer Mol hannerteneen netofgespillt ginn, well de Lautsprecher `{speaker}` net funktionéiert. Befehle ginn weiderhin ausgefouert, awer hir geschwat Äntwert geet verluer. Dës Notifikatioun verschwënnt, soubal erëm eng Äntwert ofgespillt gëtt.\n\nGitt an **Astellungen → Geräter & Servicer → Bluetooth Remote Voice**, mécht d'Menü vun **{remote}** op, wielt **Konfiguréieren** a wielt en aneren Lautsprecher oder wielt keen."
     }
   }
 }

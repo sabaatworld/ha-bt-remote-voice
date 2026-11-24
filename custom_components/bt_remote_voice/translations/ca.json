@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Falta l’altaveu de resposta de {remote}",
       "description": "El comandament **{remote}** està configurat per reproduir les respostes a `{speaker}`, que ja no existeix. Les ordres encara s’executen, però la seva resposta parlada no es reproduirà.\n\nVés a **Configuració → Dispositius i serveis → Bluetooth Remote Voice**, obre el menú de **{remote}**, tria **Configura** i selecciona un altre altaveu o cap."
+    },
+    "speaker_unavailable": {
+      "title": "L’altaveu de respostes no funciona per a {remote}",
+      "description": "Les respostes del comandament **{remote}** no s’han pogut reproduir diverses vegades seguides perquè l’altaveu `{speaker}` no funciona. Les ordres continuen executant-se, però la resposta parlada es perd. Aquest avís desapareix quan una resposta es torna a reproduir.\n\nVés a **Configuració → Dispositius i serveis → Bluetooth Remote Voice**, obre el menú de **{remote}**, tria **Configura** i selecciona un altre altaveu o cap."
     }
   }
 }

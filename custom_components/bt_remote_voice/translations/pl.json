@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Brak głośnika odpowiedzi dla {remote}",
       "description": "Pilot **{remote}** jest ustawiony na odtwarzanie odpowiedzi na `{speaker}`, który już nie istnieje. Polecenia nadal są wykonywane, ale ich odpowiedź głosowa nie będzie odtwarzana.\n\nPrzejdź do **Ustawienia → Urządzenia i usługi → Bluetooth Remote Voice**, otwórz menu **{remote}**, wybierz **Skonfiguruj** i wskaż inny głośnik lub wybierz brak."
+    },
+    "speaker_unavailable": {
+      "title": "Głośnik odpowiedzi nie działa dla {remote}",
+      "description": "Odpowiedzi pilota **{remote}** nie udało się odtworzyć kilka razy z rzędu, ponieważ głośnik `{speaker}` nie działa. Polecenia nadal są wykonywane, ale mówiona odpowiedź jest tracona. To powiadomienie zniknie, gdy odpowiedź zostanie ponownie odtworzona.\n\nPrzejdź do **Ustawienia → Urządzenia i usługi → Bluetooth Remote Voice**, otwórz menu **{remote}**, wybierz **Skonfiguruj** i wskaż inny głośnik lub wybierz brak."
     }
   }
 }

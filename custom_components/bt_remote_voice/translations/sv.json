@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Svarshögtalare saknas för {remote}",
       "description": "Fjärrkontrollen **{remote}** är inställd på att spela upp svar på `{speaker}`, som inte längre finns. Kommandon körs fortfarande, men det upplästa svaret spelas inte upp.\n\nGå till **Inställningar → Enheter och tjänster → Bluetooth Remote Voice**, öppna menyn för **{remote}**, välj **Konfigurera** och välj en annan högtalare eller ingen."
+    },
+    "speaker_unavailable": {
+      "title": "Svarshögtalaren fungerar inte för {remote}",
+      "description": "Svar från fjärrkontrollen **{remote}** kunde inte spelas upp flera gånger i rad eftersom högtalaren `{speaker}` inte fungerar. Kommandon körs fortfarande, men det talade svaret går förlorat. Det här meddelandet försvinner när ett svar spelas upp igen.\n\nGå till **Inställningar → Enheter och tjänster → Bluetooth Remote Voice**, öppna menyn för **{remote}**, välj **Konfigurera** och välj en annan högtalare eller ingen."
     }
   }
 }

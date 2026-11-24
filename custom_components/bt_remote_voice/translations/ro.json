@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Difuzor de răspuns lipsă pentru {remote}",
       "description": "Telecomanda **{remote}** este setată să redea răspunsurile pe `{speaker}`, care nu mai există. Comenzile sunt în continuare executate, dar răspunsul vocal nu va fi redat.\n\nAccesați **Setări → Dispozitive și servicii → Bluetooth Remote Voice**, deschideți meniul pentru **{remote}**, alegeți **Configurează** și selectați alt difuzor sau fără."
+    },
+    "speaker_unavailable": {
+      "title": "Difuzorul de răspunsuri nu funcționează pentru {remote}",
+      "description": "Răspunsurile telecomenzii **{remote}** nu au putut fi redate de mai multe ori la rând, deoarece difuzorul `{speaker}` nu funcționează. Comenzile se execută în continuare, dar răspunsul vorbit se pierde. Această notificare dispare când un răspuns este redat din nou.\n\nAccesați **Setări → Dispozitive și servicii → Bluetooth Remote Voice**, deschideți meniul pentru **{remote}**, alegeți **Configurează** și selectați alt difuzor sau fără."
     }
   }
 }

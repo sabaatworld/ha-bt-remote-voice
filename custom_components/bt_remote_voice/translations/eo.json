@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Parolilo de respondoj mankas por {remote}",
       "description": "La teleregilo **{remote}** estas agordita ludi respondojn per `{speaker}`, kiu ne plu ekzistas. Komandoj ankoraŭ rulas, sed ilia parola respondo ne ludiĝos.\n\nIru al **Agordoj → Aparatoj kaj servoj → Bluetooth Remote Voice**, malfermu la menuon de **{remote}**, elektu **Agordi**, kaj elektu alian parolilon aŭ elektu neniun."
+    },
+    "speaker_unavailable": {
+      "title": "La respondoparolilo ne funkcias por {remote}",
+      "description": "Respondoj de la teleregilo **{remote}** ne povis esti ludataj plurfoje sinsekve, ĉar la laŭtparolilo `{speaker}` ne funkcias. Komandoj ankoraŭ plenumiĝas, sed ilia parola respondo perdiĝas. Ĉi tiu sciigo malaperas kiam respondo denove ludiĝas.\n\nIru al **Agordoj → Aparatoj kaj servoj → Bluetooth Remote Voice**, malfermu la menuon de **{remote}**, elektu **Agordi**, kaj elektu alian parolilon aŭ elektu neniun."
     }
   }
 }

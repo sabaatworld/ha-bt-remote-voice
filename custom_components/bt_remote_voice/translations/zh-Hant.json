@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "{remote} 缺少回覆喇叭",
       "description": "遙控器 **{remote}** 被設定為在 `{speaker}` 上播放回覆，但該喇叭已不存在。指令仍會執行，但不會播放其語音回覆。\n\n請前往 **設定 → 裝置與服務 → Bluetooth Remote Voice**，開啟 **{remote}** 的選單，選擇 **設定**，然後選擇另一個喇叭或選擇無。"
+    },
+    "speaker_unavailable": {
+      "title": "{remote} 的回覆喇叭無法運作",
+      "description": "遙控器 **{remote}** 的回覆連續多次無法播放，因為喇叭 `{speaker}` 無法運作。指令仍會執行，但語音回覆會遺失。當回覆再次播放時，此通知會消失。\n\n請前往 **設定 → 裝置與服務 → Bluetooth Remote Voice**，開啟 **{remote}** 的選單，選擇 **設定**，然後選擇另一個喇叭或選擇無。"
     }
   }
 }

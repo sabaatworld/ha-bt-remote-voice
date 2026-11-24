@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Uchelseinydd ateb ar goll ar gyfer {remote}",
       "description": "Mae'r teclyn **{remote}** wedi'i osod i chwarae atebion ar `{speaker}`, nad yw'n bodoli mwyach. Mae gorchmynion yn dal i redeg, ond ni fydd eu hateb llafar yn chwarae.\n\nAewch i **Gosodiadau → Dyfeisiau a gwasanaethau → Bluetooth Remote Voice**, agorwch ddewislen **{remote}**, dewiswch **Ffurfweddu**, a dewiswch uchelseinydd arall neu dewiswch ddim un."
+    },
+    "speaker_unavailable": {
+      "title": "Nid yw'r seinydd ateb yn gweithio ar gyfer {remote}",
+      "description": "Nid oedd modd chwarae atebion y teclyn rheoli **{remote}** sawl gwaith yn olynol oherwydd nad yw'r seinydd `{speaker}` yn gweithio. Mae gorchmynion yn dal i redeg, ond collir yr ateb llafar. Bydd yr hysbysiad hwn yn diflannu pan fydd ateb yn chwarae eto.\n\nAewch i **Gosodiadau → Dyfeisiau a gwasanaethau → Bluetooth Remote Voice**, agorwch ddewislen **{remote}**, dewiswch **Ffurfweddu**, a dewiswch uchelseinydd arall neu dewiswch ddim un."
     }
   }
 }

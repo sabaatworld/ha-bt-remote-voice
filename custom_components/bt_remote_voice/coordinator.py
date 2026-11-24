@@ -11,7 +11,8 @@ from .bluez import BlueZTransport
 from .fire import FireTransport
 from .held import HeldTurns
 from .history import CaptureHistory
-from .preferences import DEFAULTS, PRESS_RANGE, capture_buffer_bytes
+from .playback import COUNTED
+from .preferences import DEFAULTS, PRESS_RANGE, SPEAKER_SKIP_LIMIT, capture_buffer_bytes
 from .protocol import parse_control
 from .remote_types import transport_family
 from .reply_condition import ReplyCondition
@@ -38,6 +39,7 @@ class VoiceCoordinator:
         self.ignored_press = False
         self.sessions = 0
         self.failures = 0
+        self.speaker_skips = 0  # consecutive replies lost to the speaker (Repairs hint)
         self.pipeline_timeout = 150
         # Must exceed retirement_wait: the satellite's own cleanup (bounded generation
         # wait plus verified speaker stop) runs inside it.
@@ -107,6 +109,18 @@ class VoiceCoordinator:
             }
         self.event(kind)
         self.changed()
+
+    def note_reply(self, skipped=None):
+        """Track consecutive replies lost to the reply speaker; a spoken reply resets the count."""
+        from .issues import sync_speaker_issue
+
+        if skipped is not None and skipped not in COUNTED:
+            return  # a busy speaker is ordinary: it neither counts nor resets
+        before = self.speaker_skips
+        self.speaker_skips = before + 1 if skipped else 0
+        # The Repairs hint only changes when the count crosses the limit.
+        if (before >= SPEAKER_SKIP_LIMIT) != (self.speaker_skips >= SPEAKER_SKIP_LIMIT):
+            sync_speaker_issue(self.hass, self.entry, self.speaker_skips)
 
     @staticmethod
     def cancel_release_timer(owner):

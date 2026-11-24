@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "{remote} 缺少回复扬声器",
       "description": "遥控器 **{remote}** 被设置为在 `{speaker}` 上播放回复，但该扬声器已不存在。命令仍会执行，但不会播放其语音回复。\n\n请前往 **设置 → 设备与服务 → Bluetooth Remote Voice**，打开 **{remote}** 的菜单，选择 **配置**，然后选择另一个扬声器或选择无。"
+    },
+    "speaker_unavailable": {
+      "title": "{remote} 的回复扬声器无法工作",
+      "description": "遥控器 **{remote}** 的回复连续多次无法播放，因为扬声器 `{speaker}` 无法工作。命令仍会执行，但语音回复会丢失。当回复再次播放时，此通知会消失。\n\n请前往 **设置 → 设备与服务 → Bluetooth Remote Voice**，打开 **{remote}** 的菜单，选择 **配置**，然后选择另一个扬声器或选择无。"
     }
   }
 }

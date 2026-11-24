@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Falta o altofalante de resposta de {remote}",
       "description": "O mando **{remote}** está configurado para reproducir as respostas en `{speaker}`, que xa non existe. Os comandos seguen executándose, pero a súa resposta falada non se reproducirá.\n\nVai a **Configuración → Dispositivos e servizos → Bluetooth Remote Voice**, abre o menú de **{remote}**, escolle **Configurar** e selecciona outro altofalante ou ningún."
+    },
+    "speaker_unavailable": {
+      "title": "O altofalante de respostas non funciona para {remote}",
+      "description": "As respostas do mando **{remote}** non se puideron reproducir varias veces seguidas porque o altofalante `{speaker}` non funciona. As ordes seguen executándose, pero a resposta falada perdese. Este aviso desaparece cando unha resposta volva reproducirse.\n\nVai a **Configuración → Dispositivos e servizos → Bluetooth Remote Voice**, abre o menú de **{remote}**, escolle **Configurar** e selecciona outro altofalante ou ningún."
     }
   }
 }

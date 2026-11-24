@@ -25,6 +25,7 @@ async def async_get_config_entry_diagnostics(hass, entry):
         "last_outcome": c.last_outcome,
         "capabilities": capability_status(),
         "last_failure": c.last_failure,
+        "speaker_skips": c.speaker_skips,
         "spoken_replies": bool(entry.options.get("speaker")),
         "ignored_presses": getattr(c.transport, "ignored_presses", None),
         "limits": dict(

@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Atbildes skaļrunis nav atrasts tālvadības pultij {remote}",
       "description": "Tālvadības pults **{remote}** ir iestatīta atskaņot atbildes uz `{speaker}`, kas vairs neeksistē. Komandas joprojām tiek izpildītas, bet to izrunātā atbilde netiks atskaņota.\n\nPārejiet uz **Iestatījumi → Ierīces un pakalpojumi → Bluetooth Remote Voice**, atveriet **{remote}** izvēlni, izvēlieties **Konfigurēt** un izvēlieties citu skaļruni vai neizvēlieties nevienu."
+    },
+    "speaker_unavailable": {
+      "title": "Atbilžu skaļrunis nedarbojas: {remote}",
+      "description": "Tālvadības pults **{remote}** atbildes vairākas reizes pēc kārtas neizdevās atskaņot, jo skaļrunis `{speaker}` nedarbojas. Komandas joprojām tiek izpildītas, bet runātā atbilde tiek zaudēta. Šis paziņojums pazudīs, kad atbilde atkal tiks atskaņota.\n\nPārejiet uz **Iestatījumi → Ierīces un pakalpojumi → Bluetooth Remote Voice**, atveriet **{remote}** izvēlni, izvēlieties **Konfigurēt** un izvēlieties citu skaļruni vai neizvēlieties nevienu."
     }
   }
 }

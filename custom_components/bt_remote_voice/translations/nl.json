@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Antwoordluidspreker ontbreekt voor {remote}",
       "description": "De afstandsbediening **{remote}** is ingesteld om antwoorden af te spelen op `{speaker}`, dat niet meer bestaat. Opdrachten worden nog steeds uitgevoerd, maar hun gesproken antwoord wordt niet afgespeeld.\n\nGa naar **Instellingen → Apparaten & services → Bluetooth Remote Voice**, open het menu van **{remote}**, kies **Configureren** en selecteer een andere luidspreker of kies geen."
+    },
+    "speaker_unavailable": {
+      "title": "Antwoordspeaker werkt niet voor {remote}",
+      "description": "Antwoorden van de afstandsbediening **{remote}** konden meerdere keren achter elkaar niet worden afgespeeld, omdat de speaker `{speaker}` niet werkt. Opdrachten worden nog steeds uitgevoerd, maar het gesproken antwoord gaat verloren. Deze melding verdwijnt zodra een antwoord weer wordt afgespeeld.\n\nGa naar **Instellingen → Apparaten & services → Bluetooth Remote Voice**, open het menu van **{remote}**, kies **Configureren** en selecteer een andere luidspreker of kies geen."
     }
   }
 }

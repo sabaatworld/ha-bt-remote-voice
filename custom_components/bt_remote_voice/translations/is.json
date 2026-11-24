@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Svarhátalara vantar fyrir {remote}",
       "description": "Fjarstýringin **{remote}** er stillt á að spila svör á `{speaker}`, sem er ekki lengur til. Skipanir eru enn framkvæmdar en talaða svarið verður ekki spilað.\n\nFarðu í **Stillingar → Tæki og þjónustur → Bluetooth Remote Voice**, opnaðu valmynd **{remote}**, veldu **Stilla** og veldu annan hátalara eða engan."
+    },
+    "speaker_unavailable": {
+      "title": "Svarhátalarinn virkar ekki fyrir {remote}",
+      "description": "Ekki tókst að spila svör fjarstýringarinnar **{remote}** nokkrum sinnum í röð því hátalarinn `{speaker}` virkar ekki. Skipanir eru enn framkvæmdar en talað svar tapast. Þessi tilkynning hverfur þegar svar er spilað aftur.\n\nFarðu í **Stillingar → Tæki og þjónustur → Bluetooth Remote Voice**, opnaðu valmynd **{remote}**, veldu **Stilla** og veldu annan hátalara eða engan."
     }
   }
 }

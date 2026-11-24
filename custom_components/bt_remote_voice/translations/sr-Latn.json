@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Zvučnik za odgovore nedostaje za {remote}",
       "description": "Daljinski **{remote}** je podešen da reprodukuje odgovore na `{speaker}`, koji više ne postoji. Komande se i dalje izvršavaju, ali njihov izgovoreni odgovor se neće reprodukovati.\n\nIdite na **Podešavanja → Uređaji i usluge → Bluetooth Remote Voice**, otvorite meni daljinskog **{remote}**, izaberite **Konfiguriši** i odaberite drugi zvučnik ili izaberite nijedan."
+    },
+    "speaker_unavailable": {
+      "title": "Zvučnik za odgovore ne radi za {remote}",
+      "description": "Odgovori daljinskog upravljača **{remote}** nekoliko puta zaredom nisu mogli da se reprodukuju jer zvučnik `{speaker}` ne radi. Komande se i dalje izvršavaju, ali se izgovoreni odgovor gubi. Ovo obaveštenje nestaje kada se odgovor ponovo reprodukuje.\n\nIdite na **Podešavanja → Uređaji i usluge → Bluetooth Remote Voice**, otvorite meni daljinskog **{remote}**, izaberite **Konfiguriši** i odaberite drugi zvučnik ili izaberite nijedan."
     }
   }
 }

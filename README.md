@@ -24,7 +24,7 @@ speech-to-speech providers such as [Gemini Live](https://github.com/matt123p/ha-
 - **Local and private.** Bluetooth goes straight to the Home Assistant machine; there is no cloud
   service of its own and no recordings are kept.
 - **Built for real remotes.** Hardware-tested, with sleep and wake handling, busy-request policies
-  (reject, queue or replace) and Repairs notices when a pipeline or speaker goes missing.
+  (reject, queue or replace) and Repairs notices when a pipeline or speaker goes missing or keeps failing.
 
 How it works: pair the remote with the Home Assistant machine, add the integration, then hold
 the voice button and speak. It needs Home Assistant 2026.11.1 or later on Linux with a Bluetooth
@@ -280,14 +280,14 @@ until you choose otherwise.
 | --- | --- | --- | --- |
 | Assist pipeline | The pipeline that processes speech: speech-to-text, conversation agent and text-to-speech. | **Preferred pipeline** (follows Home Assistant's preferred pipeline) or any existing pipeline; the default for a new remote is Preferred | You want a different agent or speech provider than Home Assistant's preferred one. A removed explicit pipeline, or no preferred pipeline at all, fails with a clear error instead of silently falling back. |
 | Voice mode | Decides how far a request goes. **Transcription** stops after speech recognition: nothing is run and no reply plays. **Commands** runs the whole pipeline and, with a speaker, speaks the reply. | **Transcription**; Commands | Start in Transcription to check the microphone path and the speech provider; switch to Commands when you want actions and replies. |
-| Reply speaker | The media player that speaks replies. With none, the pipeline stops at the intent stage and nothing is played. It must report when playback starts and finishes. | Any media player that can play media, or **none** | You want spoken replies. Used only in Commands mode. |
+| Reply speaker | The media player that speaks replies. With none, the pipeline stops at the intent stage and nothing is played. It must report when playback starts and finishes. If it is unavailable or busy, the command still runs and only the reply is skipped (see [When the reply speaker cannot play](#when-the-reply-speaker-cannot-play)). | Any media player that can play media, or **none** | You want spoken replies. Used only in Commands mode. |
 | Reply condition | Conditions, built with Home Assistant's condition editor, that must pass for a reply to be spoken. Checked once at the start of each request. See [Reply condition](#reply-condition). | Any Home Assistant conditions (state, numeric state, zone, time, template, and, or, not); **empty (always speak)** | You want a reply spoken only sometimes, for example only when you are in the room the reply speaker is in. |
 | Reply timing | When playback of the reply begins. **Automatic** starts speaking as soon as the pipeline reports a streamed reply. **Wait for complete reply** plays a finished audio file. Short replies may not stream at all, in which case the completed reply is played. | **Automatic**; Wait for complete reply | Automatic gives the earliest start if the provider produces speech faster than real time. Choose Wait when a provider only produces speech at about real-time pace or the speaker stutters on a live stream: the start is later but it avoids breakup. |
 | Streaming head start | Waits this long after a streamed reply is ready before asking the speaker to play, or starts at once if the reply finishes sooner. It gives the speaker a lead but cannot help if the provider keeps producing speech more slowly than it plays. No effect with Wait for complete reply or when the reply is not streamed. | 0 to 10 seconds in 0.5 s steps (**0**) | Streamed replies break up in the first seconds. Try 0.5 to 3 seconds. |
 | New press while processing | What happens when the voice button is pressed before the previous request is answered. **Reject** ignores the press. **Queue one** keeps one pending request and runs it afterward. **Replace** cancels the current request so the new one starts at once; this cannot undo an action the old request already performed. | **Reject**; Queue one; Replace current request | Reject is the safest. Use Queue one for quick follow-ups and Replace when the newest request should win. |
 | New press during reply | What happens when the button is pressed while a reply is playing. **Reject** lets the reply finish. **Queue one** asks the next question while the reply plays and answers it afterward. **Replace** stops the reply and starts the new request. | **Reject**; Queue one; Replace current reply | Use Queue one or Replace for fast back-and-forth instead of waiting for each reply to end. |
 | Conversation context | Whether requests share one Home Assistant conversation. **Reuse** keeps it, so follow-ups such as "and double that?" work (while Home Assistant retains it). **Fresh** makes every press independent. | **Reuse**; Fresh per request | Use Fresh for independent one-shot commands. |
-| Button behavior | How a hold maps to requests. **One request per hold** records one request and ends at release. **Alternating conversation** keeps listening while the button is held: speak, pause about 0.8 s, hear the reply, then speak again without releasing. | **One request**; Alternating conversation | Alternating needs a hold-to-talk remote and suits a longer back-and-forth. |
+| Button behavior | How a hold maps to requests. **One request per hold** records one request and ends at release. **Alternating conversation** keeps listening while the button is held: speak, pause about 0.8 s, hear the reply, then speak again without releasing. | **One request**; Alternating conversation | Alternating needs a hold-to-talk remote and suits a longer back-and-forth. It starts a request only after about 0.3 s of speech is heard, so a very short or quiet hold is dropped without an error; use One request per hold for short commands. |
 | Remote type | Which kind of remote this is, so the integration talks to it the right way. **Automatic** uses what was detected when you added the remote. **Android TV / Google TV remote (ATVV)** is for remotes whose own microphone button starts voice. **Amazon Fire TV / Alexa voice remote** is for Fire remotes, which stream voice while the microphone key is held. Changing it reconnects the remote. | **Automatic** | Setup says your remote is not supported, or it was detected as the wrong type. Setup also offers this choice, so you are never stuck on a remote that was not recognised. A manual choice never works if the remote lacks the voice features it needs; the error then says what is missing. |
 | Ignore short presses | Ignores voice-button taps shorter than the time you set, so a spurious tap never starts a request (no request, no failure, no Last error). A real hold starts that much later. | 0 to 0.5 seconds in 0.05 s steps (**0**, off) | A Fire TV remote that fails with "No microphone audio" right after waking: a sleeping Fire remote re-sends the key that woke it as an instant tap. Try 0.1 s. Fire TV remotes only; other remotes ignore it. |
 | Maximum request length | The longest a single request can last on any remote; reaching it ends the request with a capture-limit error. In One-request mode it is the longest hold; in Alternating mode it bounds each turn. Remotes that are not hold-to-talk also end at about 15 seconds of speech or at silence, whichever comes first. | 5 to 120 seconds in 5 s steps (**30**) | Lower it to stop a stuck button from recording; raise it for long dictation. |
@@ -357,7 +357,7 @@ the rule to one speaker.
 | Entity | Purpose |
 | --- | --- |
 | Voice (assist satellite) | Runs requests. Attributes show readiness, session, failure, rejection and queue counts, the last outcome and error, and that full duplex is unavailable. |
-| Voice button (event) | Announces `pressed`, `released`, `accepted`, `rejected`, `queued`, `failed`, `context_reset` and `reply_skipped`; outcomes carry a stage, code and readable message. |
+| Voice button (event) | Announces `pressed`, `released`, `accepted`, `rejected`, `queued`, `failed`, `context_reset` and `reply_skipped`; outcomes carry a stage and a code (failures also a readable message; a skipped reply carries its code only). |
 | Microphone active (binary sensor) | On while the remote is capturing audio. |
 | Last error (diagnostic sensor) | The most recent failed request, or `none`. See [Reporting errors](#reporting-errors). |
 
@@ -446,6 +446,22 @@ provider-side actions. Stream failures propagate as failures, never as a clean
 release; uncertain actions are not retried automatically. Reusing an HA
 conversation ID does not guarantee provider memory survived a cancelled session.
 
+### When the reply speaker cannot play
+
+A speaker that is unavailable, busy with something else or unable to play audio never stops a
+command. The request still runs (commands execute, and in Alternating conversation the next
+turn is ready straight away); only the spoken reply is skipped. The voice button event entity
+reports a `reply_skipped` event with the code `speaker_unavailable`, `speaker_busy` or
+`speaker_cannot_play`; it is not a failure and does not touch the Last error sensor. If the
+speaker is unavailable when you press, no reply speech is generated at all, and a speaker that
+comes back mid-request stays silent for that request. If replies are lost three requests in a
+row (a busy speaker does not count), Home Assistant shows a **Reply speaker not working**
+warning under **Settings → System → Repairs**; it clears when a reply plays again, when the
+speaker returns from unavailable, or when you save the remote's settings. Anything that may
+leave audio playing is still a failure: a speaker that never started playing, one that goes
+offline after it started, a playback that was interrupted or never finished, and a stop that
+could not be verified.
+
 ### Missing pipeline or speaker
 
 If the Assist pipeline you chose explicitly (not **Preferred pipeline**, which follows Home
@@ -457,7 +473,7 @@ deleted while running is noticed at the next restart or save (requests fail with
 clear error meanwhile). The speaker is checked live and only in Voice commands
 mode, since that is the only mode that plays replies. The notice clears once you
 choose an existing one in **Configure**, or the speaker returns, and it stays
-dismissed if you dismissed it. A speaker that is only offline is not reported. In
+dismissed if you dismissed it. A speaker that is only offline is not reported as missing (see above). In
 **Configure**, a missing saved value stays visible with a message instead of being
 replaced, and you can still save other settings.
 
@@ -492,7 +508,7 @@ satellite attributes. The voice button event still announces every occurrence.
 - **No speech / audio stalled:** check the actual microphone control and selected
   speech-to-text provider. A normal HID key cannot substitute for mic activation.
 - **No reply:** verify command mode, selected pipeline TTS and configured speaker.
-  Speaker busy/unavailable and playback start/finish timeouts are distinct errors.
+  An unavailable or busy speaker skips the reply but still runs the command (see [When the reply speaker cannot play](#when-the-reply-speaker-cannot-play)); playback finish timeouts are failures.
 - **Reconnect:** wake the remote and allow up to 30 seconds for retry. Reload the
   integration if necessary; re-pair externally only when the bond itself is broken.
 

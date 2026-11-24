@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Callaire freagra ar iarraidh do {remote}",
       "description": "Tá an cianrialtán **{remote}** socraithe chun freagraí a sheinm ar `{speaker}`, nach bhfuil ann a thuilleadh. Rithfear orduithe fós, ach ní sheinnfear a bhfreagra labhartha.\n\nTéigh go **Socruithe → Feistí & seirbhísí → Bluetooth Remote Voice**, oscail roghchlár **{remote}**, roghnaigh **Cumraigh**, agus roghnaigh callaire eile nó roghnaigh gan aon cheann."
+    },
+    "speaker_unavailable": {
+      "title": "Níl an callaire freagra ag obair do {remote}",
+      "description": "Níorbh fhéidir freagraí an chianrialaithe **{remote}** a sheinm arís agus arís eile mar nach bhfuil an callaire `{speaker}` ag obair. Leanann orduithe de rith, ach cailltear an freagra labhartha. Imeoidh an fógra seo nuair a sheinntear freagra arís.\n\nTéigh go **Socruithe → Feistí & seirbhísí → Bluetooth Remote Voice**, oscail roghchlár **{remote}**, roghnaigh **Cumraigh**, agus roghnaigh callaire eile nó roghnaigh gan aon cheann."
     }
   }
 }

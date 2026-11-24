@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "{remote} urrutiko agintearen erantzun-bozgorailua falta da",
       "description": "**{remote}** urrutiko agintea erantzunak `{speaker}` gailuan erreproduzitzeko ezarrita dago, baina ez dago jada. Komandoak exekutatzen jarraitzen dute, baina haien ahoskatutako erantzuna ez da erreproduzituko.\n\nJoan **Ezarpenak → Gailuak eta zerbitzuak → Bluetooth Remote Voice** atalera, ireki **{remote}** gailuaren menua, hautatu **Konfiguratu** eta aukeratu beste bozgorailu bat edo ez aukeratu bat ere."
+    },
+    "speaker_unavailable": {
+      "title": "Erantzunen bozgorailuak ez du funtzionatzen {remote} urrutiko aginterako",
+      "description": "**{remote}** urrutiko aginteko erantzunak ezin izan dira hainbat aldiz jarraian erreproduzitu, `{speaker}` bozgorailuak ez duelako funtzionatzen. Aginduak exekutatzen jarraitzen dute, baina ahozko erantzuna galtzen da. Jakinarazpen hau desagertuko da erantzun bat berriro erreproduzitzen denean.\n\nJoan **Ezarpenak → Gailuak eta zerbitzuak → Bluetooth Remote Voice** atalera, ireki **{remote}** gailuaren menua, hautatu **Konfiguratu** eta aukeratu beste bozgorailu bat edo ez aukeratu bat ere."
     }
   }
 }

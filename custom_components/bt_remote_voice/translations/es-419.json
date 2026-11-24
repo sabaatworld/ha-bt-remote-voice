@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Falta el bocina de respuesta de {remote}",
       "description": "El control remoto **{remote}** está configurado para reproducir las respuestas en `{speaker}`, que ya no existe. Los comandos se siguen ejecutando, pero su respuesta hablada no se reproducirá.\n\nVe a **Configuración → Dispositivos y servicios → Bluetooth Remote Voice**, abre el menú de **{remote}**, elige **Configurar** y selecciona otro bocina o ninguno."
+    },
+    "speaker_unavailable": {
+      "title": "El altavoz de respuestas no funciona para {remote}",
+      "description": "Las respuestas del control remoto **{remote}** no se pudieron reproducir varias veces seguidas porque el altavoz `{speaker}` no funciona. Los comandos se siguen ejecutando, pero su respuesta hablada se pierde. Este aviso desaparece cuando una respuesta se vuelve a reproducir.\n\nVe a **Configuración → Dispositivos y servicios → Bluetooth Remote Voice**, abre el menú de **{remote}**, elige **Configurar** y selecciona otro bocina o ninguno."
     }
   }
 }

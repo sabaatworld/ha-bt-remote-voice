@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Chýba reproduktor odpovedí pre {remote}",
       "description": "Ovládač **{remote}** je nastavený na prehrávanie odpovedí na `{speaker}`, ktorý už neexistuje. Príkazy sa stále vykonávajú, ale ich hlasová odpoveď sa neprehrá.\n\nPrejdite do **Nastavenia → Zariadenia a služby → Bluetooth Remote Voice**, otvorte ponuku **{remote}**, zvoľte **Konfigurovať** a vyberte iný reproduktor alebo zvoľte žiadny."
+    },
+    "speaker_unavailable": {
+      "title": "Reproduktor odpovedí nefunguje pre {remote}",
+      "description": "Odpovede diaľkového ovládača **{remote}** sa niekoľkokrát za sebou nepodarilo prehrať, pretože reproduktor `{speaker}` nefunguje. Príkazy sa stále vykonávajú, ale hovorená odpoveď sa stráca. Toto upozornenie zmizne, keď sa odpoveď znova prehrá.\n\nPrejdite do **Nastavenia → Zariadenia a služby → Bluetooth Remote Voice**, otvorte ponuku **{remote}**, zvoľte **Konfigurovať** a vyberte iný reproduktor alebo zvoľte žiadny."
     }
   }
 }

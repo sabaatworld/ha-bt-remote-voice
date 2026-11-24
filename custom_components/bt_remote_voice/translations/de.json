@@ -371,6 +371,10 @@
     "speaker_missing": {
       "title": "Antwort-Lautsprecher fehlt für {remote}",
       "description": "Die Fernbedienung **{remote}** ist so eingestellt, dass Antworten auf `{speaker}` wiedergegeben werden, das nicht mehr existiert. Befehle werden weiterhin ausgeführt, aber ihre gesprochene Antwort wird nicht abgespielt.\n\nGehen Sie zu **Einstellungen → Geräte & Dienste → Bluetooth Remote Voice**, öffnen Sie das Menü von **{remote}**, wählen Sie **Konfigurieren** und wählen Sie einen anderen Lautsprecher oder keinen aus."
+    },
+    "speaker_unavailable": {
+      "title": "Antwort-Lautsprecher funktioniert nicht für {remote}",
+      "description": "Antworten der Fernbedienung **{remote}** konnten mehrmals hintereinander nicht abgespielt werden, weil der Lautsprecher `{speaker}` nicht funktioniert. Befehle werden weiterhin ausgeführt, aber ihre gesprochene Antwort geht verloren. Dieser Hinweis verschwindet, sobald wieder eine Antwort abgespielt wird.\n\nGehen Sie zu **Einstellungen → Geräte & Dienste → Bluetooth Remote Voice**, öffnen Sie das Menü von **{remote}**, wählen Sie **Konfigurieren** und wählen Sie einen anderen Lautsprecher oder keinen aus."
     }
   }
 }
