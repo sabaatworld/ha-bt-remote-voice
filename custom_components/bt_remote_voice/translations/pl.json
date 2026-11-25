@@ -35,7 +35,7 @@
           "pipeline_id": "Potok Assist, który przetwarza mowę z tego pilota.",
           "remote_type": "Zostaw Automatycznie, chyba że pilot nie jest rozpoznawany lub konfiguracja się nie powiedzie.",
           "show_report": "Zaznacz i wyślij, aby zobaczyć raport, który możesz skopiować do zgłoszenia na GitHubie.",
-          "test_remote": "Zaznacz i wyślij, a następnie naciśnij i przytrzymaj przycisk głosowy pilota, aby zobaczyć, co robi."
+          "test_remote": "Zaznacz i wyślij, a następnie naciśnij i przytrzymaj przycisk głosowy pilota, gdy mówisz. Każde naciśnięcie jest nagrywane, aby można było go potem odsłuchać."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Wynik testu pilota",
-        "description": "Ten pilot sam uruchamia głos, gdy jego przycisk jest przytrzymany. Przytrzymaj ten przycisk, aby mówić. Wyślij, aby kontynuować konfigurację."
+        "description": "Twój pilot działa. Sam zaczyna nasłuchiwać, dopóki przytrzymujesz jego przycisk głosowy, więc przytrzymuj przycisk, gdy mówisz. Wyślij, aby kontynuować konfigurację."
       },
       "test_result_atvv_tap": {
         "title": "Wynik testu pilota",
-        "description": "Ten pilot uruchamia głos po krótkim naciśnięciu przycisku i nasłuchuje, dopóki nie przestaniesz mówić. Naciśnij krótko ten przycisk, aby mówić. Wyślij, aby kontynuować konfigurację."
+        "description": "Twój pilot działa. Dotknij jego przycisku głosowego, aby zacząć mówić; przestaje nasłuchiwać, gdy przestaniesz mówić. Wyślij, aby kontynuować konfigurację."
       },
       "test_result_fire_voice": {
         "title": "Wynik testu pilota",
-        "description": "To klawisz głosowy pilota Fire TV. Przytrzymaj go podczas mówienia. Wyślij, aby kontynuować konfigurację."
+        "description": "Twój pilot działa. Przytrzymuj jego przycisk głosowy tak długo, jak mówisz. Wyślij, aby kontynuować konfigurację."
       },
       "test_result_plain_key": {
         "title": "Wynik testu pilota",
-        "description": "Pilot wysłał zwykłe klawisze, ale nie sygnał głosowy, więc jego przycisk głosowy może nie uruchamiać głosu przez Bluetooth. Wyślij, a następnie zaznacz Pokaż raport pilota, aby udostępnić zaobserwowane dane."
+        "description": "Pilot wysłał zwykłe naciśnięcia przycisków, ale nie sygnał głosowy, więc jego przycisk głosowy może nie działać przez Bluetooth. Wyślij, a następnie zaznacz Pokaż raport pilota, aby udostępnić to, co wykryto."
       },
       "test_result_nothing": {
         "title": "Wynik testu pilota",
         "description": "Z pilota nic nie otrzymano. Obudź go klawiszem strzałki, sprawdź, czy jest połączony z tym komputerem z Home Assistant, i przetestuj ponownie. Wyślij, aby kontynuować."
+      },
+      "test_clips": {
+        "title": "Klipy testowe",
+        "description": "Każde naciśnięcie przycisku głosowego zostało zapisane jako klip, abyś mógł usłyszeć, co wysłał pilot:\n\n{clips}\n\nKlipy znajdują się w Multimedia → Moje multimedia → Bluetooth Remote Voice. Linki działają przez 5 minut."
+      },
+      "test_clips_none": {
+        "title": "Nie zapisano klipu",
+        "description": "Przycisk głosowy zadziałał, ale nie zapisano klipu. Klipy są zapisywane w folderze multimediów Home Assistanta (Multimedia → Moje multimedia), więc sprawdź, czy ten Home Assistant ma folder multimediów, do którego może zapisywać, i spróbuj ponownie."
+      },
+      "test_hints": {
+        "title": "Co zauważył test",
+        "description": "Sygnały wczesnego zatrzymania: {early}. Utracone luki w dźwięku: {gaps}.\n\nSygnał wczesnego zatrzymania to zatrzymanie wysłane przez pilota tuż po starcie, gdy nadal trzymasz przycisk. Jeśli wartość jest większa niż 0, a Twoje żądania są ucinane, włącz Ignoruj wczesne zatrzymanie w Ustawienia integracji.\n\nUtracona luka w dźwięku to fragment dźwięku, który Bluetooth zgubił. Jeśli wartość jest większa niż 0, a żądania kończą się błędem luki w dźwięku, ustaw Wypełniaj krótkie luki w dźwięku w Ustawienia integracji."
       }
     },
     "progress": {
-      "observing": "Nasłuchiwanie przez 20 sekund. Obudź pilota klawiszem strzałki, następnie naciśnij i przytrzymaj jego przycisk głosowy, powiedz coś krótko i puść."
+      "observing": "Naciśnij teraz i przytrzymaj przycisk głosowy pilota, powiedz coś krótko i puść. Powtarzaj, ile razy chcesz: test trwa 20 sekund i nagrywa każde naciśnięcie, aby można było je potem odsłuchać. Jeśli wygląda na to, że nic się nie dzieje, najpierw wybudź pilota klawiszem strzałki."
     },
     "error": {
       "bluetooth_unavailable": "Lokalny Bluetooth jest niedostępny. Sprawdź, czy systemowa magistrala D-Bus jest dostępna.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Ten pilot jest już skonfigurowany.",
-      "no_pipelines": "Utwórz potok Assist przed dodaniem pilota."
+      "no_pipelines": "Utwórz potok Assist przed dodaniem pilota.",
+      "test_running": "Test tego pilota już trwa.",
+      "pause_failed": "Nie udało się wstrzymać pilota na czas testu. Spróbuj ponownie za chwilę."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opcje pilota",
+        "description": "Ustawienia zmieniają zachowanie tego pilota. Pilota i jego typu nie można tu zmienić: aby użyć innego pilota lub typu, usuń ten wpis i dodaj pilota ponownie.",
+        "menu_options": {
+          "settings": "Ustawienia",
+          "test": "Przetestuj mojego pilota",
+          "report": "Pokaż raport pilota"
+        }
+      },
+      "settings": {
         "title": "Ustawienia głosowe",
         "description": "Te ustawienia określają, jak są obsługiwane naciśnięcia i jak odczytywane są odpowiedzi. Zastąpienie żądania nie cofnie czynności, które już wykonało. Jednoczesny tryb full duplex jest niedostępny. Zatrzymanie po transkrypcji nie wyłącza narzędzi wbudowanych w dostawcę mowy na żywo; jeśli czynności muszą być wyłączone, użyj dostawcy wyłącznie do transkrypcji.\n\n**Warunek odpowiedzi:** aby odpowiedź została odczytana, wszystkie jego warunki muszą być spełnione. Są sprawdzane raz na początku każdego żądania; pozostaw pole puste, aby zawsze odczytywać odpowiedzi, a warunek, którego nie można ocenić, jest traktowany jako niespełniony. Warunki szablonowe mogą używać zmiennych `speaker`, `remote` i `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignoruj krótkie naciśnięcia",
           "max_request_seconds": "Maksymalna długość żądania",
           "max_conversation_seconds": "Maksymalna długość rozmowy",
-          "reply_condition": "Warunek odpowiedzi"
+          "reply_condition": "Warunek odpowiedzi",
+          "ignore_early_stop": "Ignoruj wczesne zatrzymanie",
+          "gap_tolerance_ms": "Wypełniaj krótkie luki w dźwięku"
         },
         "data_description": {
           "pipeline_id": "Potok Assist, który przetwarza mowę: zamianę mowy na tekst, agenta konwersacji i zamianę tekstu na mowę. Usunięty potok powoduje błąd zamiast przełączenia na inny.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignoruje krótkie dotknięcia przycisku głosowego, trwające krócej niż ta wartość, aby przypadkowe dotknięcie nie rozpoczynało żądania; prawdziwe przytrzymanie zaczyna się o tyle później. 0 wyłącza tę funkcję. Przydatne w pilocie Fire TV, który po wybudzeniu kończy się błędem „Brak dźwięku z mikrofonu”: ponownie wysyła klawisz, który go wybudził, jako natychmiastowe dotknięcie. Dobrym punktem wyjścia jest 0,1 s. Tylko piloty Fire TV.",
           "max_request_seconds": "Najdłuższy czas pojedynczego żądania na dowolnym pilocie: całe przytrzymanie w trybie jednego żądania oraz każda tura w rozmowie naprzemiennej. Osiągnięcie limitu kończy żądanie błędem limitu nagrywania. Zmniejsz, aby zatrzymać nagrywanie zablokowanego przycisku; zwiększ przy długim dyktowaniu. Piloty bez funkcji „przytrzymaj, aby mówić” kończą też po około 15 sekundach mowy lub po ciszy, zależnie od tego, co nastąpi pierwsze.",
           "max_conversation_seconds": "Najdłuższy czas całego przytrzymania przycisku w trybie rozmowy naprzemiennej. Jest ignorowany w trybie jednego żądania i nie może być krótszy niż maksymalna długość żądania.",
-          "reply_condition": "Warunki, które muszą być wszystkie spełnione, aby odpowiedź została odczytana. Sprawdzane raz na początku każdego żądania (oraz każdej tury w rozmowie naprzemiennej). Pozostaw puste, aby zawsze odczytywać. Warunek, który powoduje błąd, jest traktowany jako niespełniony. Warunki szablonowe mogą używać zmiennych speaker, remote i held."
+          "reply_condition": "Warunki, które muszą być wszystkie spełnione, aby odpowiedź została odczytana. Sprawdzane raz na początku każdego żądania (oraz każdej tury w rozmowie naprzemiennej). Pozostaw puste, aby zawsze odczytywać. Warunek, który powoduje błąd, jest traktowany jako niespełniony. Warunki szablonowe mogą używać zmiennych speaker, remote i held.",
+          "ignore_early_stop": "Włącz, jeśli żądania czasem kończą się po ułamku sekundy, mimo że przez cały czas trzymasz przycisk. Niektóre piloty Android TV wysyłają sygnał zatrzymania tuż po starcie, a potem nadal wysyłają dźwięk. Po włączeniu zatrzymanie w pierwszej sekundzie jest ignorowane, dopóki dźwięk nadal napływa, a żądanie kończy się, gdy dźwięk ucichnie lub nadejdzie drugie zatrzymanie. Używane tylko, gdy Działanie przycisku ma wartość Jedno żądanie na przytrzymanie.",
+          "gap_tolerance_ms": "Bluetooth może utracić chwilę dźwięku, co zwykle powoduje niepowodzenie żądania z błędem luki w dźwięku. Ustaw tutaj długość, do której utracony fragment jest zastępowany ciszą, aby żądanie było kontynuowane. Dłuższe luki nadal kończą się niepowodzeniem. Cisza w środku słowa może obniżyć dokładność rozpoznawania, więc użyj najniższej wartości, która działa. 0 wyłącza. Tylko dla pilotów Android TV."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Wynik testu pilota",
+        "description": "Twój pilot działa. Sam zaczyna nasłuchiwać, dopóki przytrzymujesz jego przycisk głosowy, więc przytrzymuj przycisk, gdy mówisz."
+      },
+      "test_result_atvv_tap": {
+        "title": "Wynik testu pilota",
+        "description": "Twój pilot działa. Dotknij jego przycisku głosowego, aby zacząć mówić; przestaje nasłuchiwać, gdy przestaniesz mówić."
+      },
+      "test_result_fire_voice": {
+        "title": "Wynik testu pilota",
+        "description": "Twój pilot działa. Przytrzymuj jego przycisk głosowy tak długo, jak mówisz."
+      },
+      "test_result_plain_key": {
+        "title": "Wynik testu pilota",
+        "description": "Pilot wysłał zwykłe naciśnięcia przycisków, ale nie sygnał głosowy, więc jego przycisk głosowy może nie działać przez Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Wynik testu pilota",
+        "description": "Z pilota nic nie otrzymano. Obudź go klawiszem strzałki, sprawdź, czy jest połączony z tym komputerem z Home Assistant, i przetestuj ponownie."
+      },
+      "report": {
+        "title": "Raport pilota",
+        "description": "Skopiuj ten tekst do zgłoszenia na GitHubie. Nie zawiera pełnego adresu Bluetooth, nazw, adresów internetowych ani dźwięku.",
+        "data": {
+          "report": "Raport pilota"
+        },
+        "data_description": {
+          "report": "Zaznacz wszystko i skopiuj."
+        }
+      },
+      "test_clips": {
+        "title": "Klipy testowe",
+        "description": "Każde naciśnięcie przycisku głosowego zostało zapisane jako klip, abyś mógł usłyszeć, co wysłał pilot:\n\n{clips}\n\nKlipy znajdują się w Multimedia → Moje multimedia → Bluetooth Remote Voice. Linki działają przez 5 minut."
+      },
+      "test_clips_none": {
+        "title": "Nie zapisano klipu",
+        "description": "Przycisk głosowy zadziałał, ale nie zapisano klipu. Klipy są zapisywane w folderze multimediów Home Assistanta (Multimedia → Moje multimedia), więc sprawdź, czy ten Home Assistant ma folder multimediów, do którego może zapisywać, i spróbuj ponownie."
+      },
+      "test_hints": {
+        "title": "Co zauważył test",
+        "description": "Sygnały wczesnego zatrzymania: {early}. Utracone luki w dźwięku: {gaps}.\n\nSygnał wczesnego zatrzymania to zatrzymanie wysłane przez pilota tuż po starcie, gdy nadal trzymasz przycisk. Jeśli wartość jest większa niż 0, a Twoje żądania są ucinane, włącz Ignoruj wczesne zatrzymanie w Ustawienia integracji.\n\nUtracona luka w dźwięku to fragment dźwięku, który Bluetooth zgubił. Jeśli wartość jest większa niż 0, a żądania kończą się błędem luki w dźwięku, ustaw Wypełniaj krótkie luki w dźwięku w Ustawienia integracji."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Zapisany głośnik odpowiedzi jest obecnie niedostępny, więc odpowiedzi nie będą odtwarzane, dopóki nie wróci. Zachowaj go lub wybierz inny."
     },
     "abort": {
-      "no_pipelines": "Najpierw utwórz potok Assist."
+      "no_pipelines": "Najpierw utwórz potok Assist.",
+      "test_running": "Test tego pilota już trwa.",
+      "pause_failed": "Nie udało się wstrzymać pilota na czas testu. Spróbuj ponownie za chwilę."
+    },
+    "progress": {
+      "observing": "Naciśnij teraz i przytrzymaj przycisk głosowy pilota, powiedz coś krótko i puść. Powtarzaj, ile razy chcesz: test trwa 20 sekund i nagrywa każde naciśnięcie, aby można było je potem odsłuchać. Jeśli wygląda na to, że nic się nie dzieje, najpierw wybudź pilota klawiszem strzałki. Pilot jest wstrzymany do normalnego użytku na czas trwania testu: jego encje są niedostępne przez około minutę, a trwające żądanie zostaje anulowane."
     }
   },
   "selector": {

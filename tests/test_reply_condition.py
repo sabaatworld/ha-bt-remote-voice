@@ -159,9 +159,17 @@ def _entry(hass, options=None):
     return entry
 
 
+async def _open_settings(hass, entry):
+    menu = await hass.config_entries.options.async_init(entry.entry_id)
+    assert menu["type"] == "menu" and menu["menu_options"] == ["settings", "test", "report"]
+    return await hass.config_entries.options.async_configure(
+        menu["flow_id"], {"next_step_id": "settings"}
+    )
+
+
 async def _submit(hass, entry, condition_value):
     with patch("custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "P"}):
-        form = await hass.config_entries.options.async_init(entry.entry_id)
+        form = await _open_settings(hass, entry)
         return form, await hass.config_entries.options.async_configure(
             form["flow_id"],
             {
@@ -176,7 +184,7 @@ async def _submit(hass, entry, condition_value):
 async def test_reply_condition_field_is_fourth(hass):
     entry = _entry(hass)
     with patch("custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "P"}):
-        form = await hass.config_entries.options.async_init(entry.entry_id)
+        form = await _open_settings(hass, entry)
     keys = [str(k) for k in form["data_schema"].schema]
     assert keys[:4] == ["pipeline_id", "mode", "speaker", "reply_condition"]
 

@@ -35,7 +35,7 @@
           "pipeline_id": "Die Assist-Pipeline, die die Sprache dieser Fernbedienung verarbeitet.",
           "remote_type": "Auf Automatisch lassen, außer die Fernbedienung wird nicht erkannt oder die Einrichtung schlägt fehl.",
           "show_report": "Aktivieren und absenden, um einen Bericht anzuzeigen, den Sie in ein GitHub-Issue kopieren können.",
-          "test_remote": "Aktivieren und absenden, dann die Sprachtaste der Fernbedienung gedrückt halten, um zu sehen, was die Fernbedienung tut."
+          "test_remote": "Aktivieren und absenden, dann die Sprachtaste der Fernbedienung gedrückt halten, während Sie sprechen. Jeder Tastendruck wird aufgezeichnet, damit Sie ihn danach anhören können."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Ergebnis des Fernbedienungstests",
-        "description": "Diese Fernbedienung startet die Sprache selbst, solange ihre Taste gehalten wird. Halten Sie diese Taste zum Sprechen. Absenden, um die Einrichtung fortzusetzen."
+        "description": "Ihre Fernbedienung funktioniert. Sie beginnt von selbst zuzuhören, solange Sie die Sprachtaste gedrückt halten. Halten Sie die Taste also gedrückt, während Sie sprechen. Absenden, um die Einrichtung fortzusetzen."
       },
       "test_result_atvv_tap": {
         "title": "Ergebnis des Fernbedienungstests",
-        "description": "Diese Fernbedienung startet die Sprache, wenn ihre Taste getippt wird, und hört zu, bis Sie aufhören zu sprechen. Tippen Sie zum Sprechen auf diese Taste. Absenden, um die Einrichtung fortzusetzen."
+        "description": "Ihre Fernbedienung funktioniert. Tippen Sie auf die Sprachtaste, um zu sprechen; sie hört auf zuzuhören, wenn Sie nicht mehr sprechen. Absenden, um die Einrichtung fortzusetzen."
       },
       "test_result_fire_voice": {
         "title": "Ergebnis des Fernbedienungstests",
-        "description": "Das ist die Sprachtaste einer Fire-TV-Fernbedienung. Halten Sie sie beim Sprechen gedrückt. Absenden, um die Einrichtung fortzusetzen."
+        "description": "Ihre Fernbedienung funktioniert. Halten Sie die Sprachtaste gedrückt, solange Sie sprechen. Absenden, um die Einrichtung fortzusetzen."
       },
       "test_result_plain_key": {
         "title": "Ergebnis des Fernbedienungstests",
-        "description": "Die Fernbedienung hat normale Tasten, aber kein Sprachsignal gesendet; ihre Sprachtaste startet die Sprache möglicherweise nicht über Bluetooth. Absenden und dann Fernbedienungsbericht anzeigen aktivieren, um das Gesehene zu teilen."
+        "description": "Die Fernbedienung hat gewöhnliche Tastendrücke gesendet, aber kein Sprachsignal, daher funktioniert ihre Sprachtaste möglicherweise nicht über Bluetooth. Absenden und dann Fernbedienungsbericht anzeigen aktivieren, um das Gesehene zu teilen."
       },
       "test_result_nothing": {
         "title": "Ergebnis des Fernbedienungstests",
         "description": "Von der Fernbedienung wurde nichts empfangen. Wecken Sie sie mit einer Pfeiltaste, prüfen Sie, ob sie mit diesem Home-Assistant-Rechner verbunden ist, und testen Sie erneut. Absenden, um fortzufahren."
+      },
+      "test_clips": {
+        "title": "Testclips",
+        "description": "Jeder Druck auf die Sprachtaste wurde als Clip gespeichert, damit Sie hören können, was die Fernbedienung gesendet hat:\n\n{clips}\n\nDie Clips liegen unter Medien → Meine Medien → Bluetooth Remote Voice. Die Links funktionieren 5 Minuten lang."
+      },
+      "test_clips_none": {
+        "title": "Kein Clip gespeichert",
+        "description": "Die Sprachtaste hat funktioniert, aber es wurde kein Clip gespeichert. Clips werden im Medienordner von Home Assistant gespeichert (Medien → Meine Medien). Prüfen Sie daher, ob dieser Home Assistant einen Medienordner hat, in den er schreiben kann, und testen Sie erneut."
+      },
+      "test_hints": {
+        "title": "Was der Test bemerkt hat",
+        "description": "Frühe Stoppsignale: {early}. Verlorene Audiolücken: {gaps}.\n\nEin frühes Stoppsignal ist ein Stopp der Fernbedienung direkt nach dem Start, während Sie die Taste noch gehalten haben. Wenn der Wert über 0 liegt und Ihre Anfragen zu früh abbrechen, aktivieren Sie Frühes Stoppsignal ignorieren in den Einstellungen der Integration.\n\nEine verlorene Audiolücke ist ein Stück Audio, das Bluetooth verworfen hat. Wenn der Wert über 0 liegt und Anfragen mit einem Audiolücken-Fehler fehlschlagen, stellen Sie Kurze Audiolücken füllen in den Einstellungen der Integration ein."
       }
     },
     "progress": {
-      "observing": "Es wird 20 Sekunden lang zugehört. Wecken Sie die Fernbedienung mit einer Pfeiltaste, halten Sie dann ihre Sprachtaste gedrückt, sprechen Sie kurz und lassen Sie los."
+      "observing": "Halten Sie jetzt die Sprachtaste der Fernbedienung gedrückt, sprechen Sie kurz und lassen Sie los. Wiederholen Sie das beliebig oft: Der Test läuft 20 Sekunden und zeichnet jeden Tastendruck auf, damit Sie ihn danach anhören können. Wenn nichts zu passieren scheint, wecken Sie die Fernbedienung zuerst mit einer Pfeiltaste."
     },
     "error": {
       "bluetooth_unavailable": "Lokales Bluetooth ist nicht verfügbar. Prüfen Sie, ob der System-D-Bus erreichbar ist.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Diese Fernbedienung ist bereits konfiguriert.",
-      "no_pipelines": "Erstellen Sie eine Assist-Pipeline, bevor Sie die Fernbedienung hinzufügen."
+      "no_pipelines": "Erstellen Sie eine Assist-Pipeline, bevor Sie die Fernbedienung hinzufügen.",
+      "test_running": "Ein Test dieser Fernbedienung läuft bereits.",
+      "pause_failed": "Die Fernbedienung konnte für den Test nicht pausiert werden. Versuchen Sie es gleich noch einmal."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Optionen der Fernbedienung",
+        "description": "Einstellungen ändern, wie sich diese Fernbedienung verhält. Die Fernbedienung und ihr Typ können hier nicht geändert werden: Um eine andere Fernbedienung oder einen anderen Typ zu verwenden, löschen Sie diesen Eintrag und fügen Sie die Fernbedienung erneut hinzu.",
+        "menu_options": {
+          "settings": "Einstellungen",
+          "test": "Meine Fernbedienung testen",
+          "report": "Fernbedienungsbericht anzeigen"
+        }
+      },
+      "settings": {
         "title": "Spracheinstellungen",
         "description": "Diese Einstellungen legen fest, wie Tastendrücke behandelt und wie Antworten gesprochen werden. Das Ersetzen einer Anfrage kann bereits ausgeführte Aktionen nicht rückgängig machen. Gleichzeitiger Vollduplexbetrieb ist nicht verfügbar. Das Beenden nach der Transkription deaktiviert keine Werkzeuge, die in einen Live-Sprachanbieter integriert sind; verwenden Sie einen reinen Transkriptionsanbieter, wenn Aktionen deaktiviert sein müssen.\n\n**Antwortbedingung:** Alle Bedingungen müssen erfüllt sein, damit eine Antwort gesprochen wird. Sie werden einmal zu Beginn jeder Anfrage geprüft; lassen Sie das Feld leer, damit immer gesprochen wird. Eine Bedingung, die nicht ausgewertet werden kann, gilt als nicht erfüllt. Template-Bedingungen können die Variablen `speaker`, `remote` und `held` verwenden.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Kurze Tastendrücke ignorieren",
           "max_request_seconds": "Maximale Anfragelänge",
           "max_conversation_seconds": "Maximale Konversationslänge",
-          "reply_condition": "Antwortbedingung"
+          "reply_condition": "Antwortbedingung",
+          "ignore_early_stop": "Frühes Stoppsignal ignorieren",
+          "gap_tolerance_ms": "Kurze Audiolücken füllen"
         },
         "data_description": {
           "pipeline_id": "Die Assist-Pipeline, die Sprache verarbeitet: Spracherkennung, Konversationsagent und Sprachausgabe. Eine entfernte Pipeline führt zu einem Fehler statt zu einem Rückfall auf eine andere.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignoriert kurze Antippen der Sprachtaste, die kürzer als dieser Wert sind, damit ein versehentliches Antippen keine Anfrage startet; ein echtes Halten beginnt entsprechend später. 0 schaltet die Funktion aus. Nützlich für eine Fire TV-Fernbedienung, die direkt nach dem Aufwecken mit „No microphone audio“ fehlschlägt: Sie sendet die Taste, die sie geweckt hat, erneut als kurzes Antippen. 0,1 s ist ein guter Startwert. Nur für Fire TV-Fernbedienungen.",
           "max_request_seconds": "Die längste Dauer einer einzelnen Anfrage bei jeder Fernbedienung: ein ganzes Halten im Modus „Eine Anfrage“ und jeder Durchgang bei „Wechselnde Konversation“. Wird sie erreicht, endet die Anfrage mit einem Aufnahmegrenzen-Fehler. Verringern Sie sie, um eine hängende Taste an der Aufnahme zu hindern; erhöhen Sie sie für lange Diktate. Fernbedienungen ohne Push-to-Talk enden außerdem nach etwa 15 Sekunden Sprache oder bei Stille, je nachdem, was zuerst eintritt.",
           "max_conversation_seconds": "Die längste Dauer eines gesamten Tastenhaltens im Modus „Wechselnde Konversation“. Im Modus „Eine Anfrage“ wird sie ignoriert und darf nicht kürzer als die maximale Anfragelänge sein.",
-          "reply_condition": "Bedingungen, die alle erfüllt sein müssen, damit eine Antwort gesprochen wird. Sie werden einmal zu Beginn jeder Anfrage geprüft (und bei jedem Durchgang in „Wechselnde Konversation“). Leer lassen, damit immer gesprochen wird. Eine Bedingung, die einen Fehler verursacht, gilt als nicht erfüllt. Template-Bedingungen können die Variablen speaker, remote und held verwenden."
+          "reply_condition": "Bedingungen, die alle erfüllt sein müssen, damit eine Antwort gesprochen wird. Sie werden einmal zu Beginn jeder Anfrage geprüft (und bei jedem Durchgang in „Wechselnde Konversation“). Leer lassen, damit immer gesprochen wird. Eine Bedingung, die einen Fehler verursacht, gilt als nicht erfüllt. Template-Bedingungen können die Variablen speaker, remote und held verwenden.",
+          "ignore_early_stop": "Aktivieren Sie dies, wenn Anfragen manchmal nach einem Sekundenbruchteil enden, obwohl Sie die Taste die ganze Zeit gehalten haben. Manche Android-TV-Fernbedienungen senden direkt nach dem Start ein Stoppsignal und senden dann weiter Audio. Wenn aktiviert, wird ein Stopp in der ersten Sekunde ignoriert, solange noch Audio ankommt; die Anfrage endet, wenn das Audio verstummt oder ein zweites Stoppsignal kommt. Wird nur verwendet, wenn Tastenverhalten auf Eine Anfrage pro Halten steht.",
+          "gap_tolerance_ms": "Bluetooth kann einen Moment Audio verlieren, wodurch die Anfrage normalerweise mit einem Audiolücken-Fehler fehlschlägt. Legen Sie hier eine Länge fest, bis zu der ein verlorenes Stück durch Stille ersetzt wird, damit die Anfrage weiterläuft. Längere Lücken schlagen weiterhin fehl. Stille mitten in einem Wort kann die Erkennungsgenauigkeit senken, verwenden Sie daher den niedrigsten Wert, der funktioniert. 0 schaltet die Funktion aus. Nur für Android-TV-Fernbedienungen."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Ergebnis des Fernbedienungstests",
+        "description": "Ihre Fernbedienung funktioniert. Sie beginnt von selbst zuzuhören, solange Sie die Sprachtaste gedrückt halten. Halten Sie die Taste also gedrückt, während Sie sprechen."
+      },
+      "test_result_atvv_tap": {
+        "title": "Ergebnis des Fernbedienungstests",
+        "description": "Ihre Fernbedienung funktioniert. Tippen Sie auf die Sprachtaste, um zu sprechen; sie hört auf zuzuhören, wenn Sie nicht mehr sprechen."
+      },
+      "test_result_fire_voice": {
+        "title": "Ergebnis des Fernbedienungstests",
+        "description": "Ihre Fernbedienung funktioniert. Halten Sie die Sprachtaste gedrückt, solange Sie sprechen."
+      },
+      "test_result_plain_key": {
+        "title": "Ergebnis des Fernbedienungstests",
+        "description": "Die Fernbedienung hat gewöhnliche Tastendrücke gesendet, aber kein Sprachsignal, daher funktioniert ihre Sprachtaste möglicherweise nicht über Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Ergebnis des Fernbedienungstests",
+        "description": "Von der Fernbedienung wurde nichts empfangen. Wecken Sie sie mit einer Pfeiltaste, prüfen Sie, ob sie mit diesem Home-Assistant-Rechner verbunden ist, und testen Sie erneut."
+      },
+      "report": {
+        "title": "Fernbedienungsbericht",
+        "description": "Kopieren Sie diesen Text in ein GitHub-Issue. Er enthält keine vollständige Bluetooth-Adresse, keine Namen, Webadressen oder Audiodaten.",
+        "data": {
+          "report": "Fernbedienungsbericht"
+        },
+        "data_description": {
+          "report": "Alles auswählen und kopieren."
+        }
+      },
+      "test_clips": {
+        "title": "Testclips",
+        "description": "Jeder Druck auf die Sprachtaste wurde als Clip gespeichert, damit Sie hören können, was die Fernbedienung gesendet hat:\n\n{clips}\n\nDie Clips liegen unter Medien → Meine Medien → Bluetooth Remote Voice. Die Links funktionieren 5 Minuten lang."
+      },
+      "test_clips_none": {
+        "title": "Kein Clip gespeichert",
+        "description": "Die Sprachtaste hat funktioniert, aber es wurde kein Clip gespeichert. Clips werden im Medienordner von Home Assistant gespeichert (Medien → Meine Medien). Prüfen Sie daher, ob dieser Home Assistant einen Medienordner hat, in den er schreiben kann, und testen Sie erneut."
+      },
+      "test_hints": {
+        "title": "Was der Test bemerkt hat",
+        "description": "Frühe Stoppsignale: {early}. Verlorene Audiolücken: {gaps}.\n\nEin frühes Stoppsignal ist ein Stopp der Fernbedienung direkt nach dem Start, während Sie die Taste noch gehalten haben. Wenn der Wert über 0 liegt und Ihre Anfragen zu früh abbrechen, aktivieren Sie Frühes Stoppsignal ignorieren in den Einstellungen der Integration.\n\nEine verlorene Audiolücke ist ein Stück Audio, das Bluetooth verworfen hat. Wenn der Wert über 0 liegt und Anfragen mit einem Audiolücken-Fehler fehlschlagen, stellen Sie Kurze Audiolücken füllen in den Einstellungen der Integration ein."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Der gespeicherte Antwort-Lautsprecher ist derzeit nicht verfügbar, daher werden Antworten erst wieder abgespielt, wenn er zurückkehrt. Behalten Sie ihn bei oder wählen Sie einen anderen."
     },
     "abort": {
-      "no_pipelines": "Erstellen Sie zuerst eine Assist-Pipeline."
+      "no_pipelines": "Erstellen Sie zuerst eine Assist-Pipeline.",
+      "test_running": "Ein Test dieser Fernbedienung läuft bereits.",
+      "pause_failed": "Die Fernbedienung konnte für den Test nicht pausiert werden. Versuchen Sie es gleich noch einmal."
+    },
+    "progress": {
+      "observing": "Halten Sie jetzt die Sprachtaste der Fernbedienung gedrückt, sprechen Sie kurz und lassen Sie los. Wiederholen Sie das beliebig oft: Der Test läuft 20 Sekunden und zeichnet jeden Tastendruck auf, damit Sie ihn danach anhören können. Wenn nichts zu passieren scheint, wecken Sie die Fernbedienung zuerst mit einer Pfeiltaste. Ihre Fernbedienung ist für die normale Nutzung pausiert, solange der Test läuft: Ihre Entitäten sind etwa eine Minute lang nicht verfügbar, und eine laufende Anfrage wird abgebrochen."
     }
   },
   "selector": {

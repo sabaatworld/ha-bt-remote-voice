@@ -18,7 +18,7 @@ from homeassistant.const import __version__ as CORE_VERSION
 from .hid_descriptor import find_voice_reports, voice_checks
 from .preferences import PIPELINE_PREFERRED
 
-SCHEMA = 1
+SCHEMA = 2
 MAX_CHARS = 19_000
 UNKNOWN = "unknown"
 

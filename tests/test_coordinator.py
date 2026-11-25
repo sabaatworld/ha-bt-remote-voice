@@ -304,3 +304,42 @@ async def test_sleep_after_input_eof_does_not_cancel_pending_intent_or_reply():
         await c.pipeline_task
         assert c.failures == 0
         await c.stop()
+
+
+async def test_an_early_stop_keeps_the_capture_open_when_the_setting_is_on():
+    class EarlyEntry(Entry):
+        options = {**Entry.options, "ignore_early_stop": True}
+
+    c = VoiceCoordinator(FakeHass(), EarlyEntry())
+    c.caps = Capabilities(128)
+
+    async def consume(session):
+        async for _ in session.stream():
+            pass
+
+    c.run_pipeline = consume
+    c.control(bytes.fromhex("04030201"))
+    c.audio(bytes(128))
+    c.control(bytes.fromhex("0002"))  # the remote's early STOP: the button is still held
+    assert c.mic_active is True and c.capture.closed is False  # keepalives keep going
+    assert c.session.stop_pending and not c.session.released
+    c.audio(bytes(128))
+    c.control(bytes.fromhex("0002"))  # the real release
+    assert c.mic_active is False and c.capture.closed is True and c.session.released
+    await c.pipeline_task
+
+
+async def test_an_early_stop_ends_the_capture_at_once_when_the_setting_is_off():
+    c = VoiceCoordinator(FakeHass(), Entry())
+    c.caps = Capabilities(128)
+
+    async def consume(session):
+        async for _ in session.stream():
+            pass
+
+    c.run_pipeline = consume
+    c.control(bytes.fromhex("04030201"))
+    c.audio(bytes(128))
+    c.control(bytes.fromhex("0002"))
+    assert c.mic_active is False and c.capture.closed is True and c.session.released
+    await c.pipeline_task

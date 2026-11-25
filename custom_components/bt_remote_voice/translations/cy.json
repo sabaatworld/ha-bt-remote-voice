@@ -35,7 +35,7 @@
           "pipeline_id": "Y biblinell Assist sy'n prosesu lleferydd o'r teclyn hwn.",
           "remote_type": "Gadewch ar Awtomatig oni bai nad yw'r teclyn rheoli'n cael ei adnabod neu fod y gosod yn methu.",
           "show_report": "Ticiwch a chyflwynwch i weld adroddiad y gallwch ei gopïo i fater GitHub.",
-          "test_remote": "Ticiwch a chyflwynwch, yna pwyswch a daliwch botwm llais y teclyn rheoli i weld beth mae'n ei wneud."
+          "test_remote": "Ticiwch a chyflwynwch, yna pwyswch a daliwch fotwm llais y teclyn rheoli wrth i chi siarad. Caiff pob gwasgiad ei recordio fel y gallwch wrando arno wedyn."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Canlyniad prawf y teclyn rheoli",
-        "description": "Mae'r teclyn rheoli hwn yn dechrau llais ei hun tra bod ei fotwm yn cael ei ddal. Daliwch y botwm hwnnw i siarad. Cyflwyno i barhau â'r gosod."
+        "description": "Mae eich teclyn rheoli yn gweithio. Mae'n dechrau gwrando ar ei ben ei hun tra byddwch yn dal ei fotwm llais, felly daliwch y botwm wrth i chi siarad. Cyflwynwch i barhau â'r gosod."
       },
       "test_result_atvv_tap": {
         "title": "Canlyniad prawf y teclyn rheoli",
-        "description": "Mae'r teclyn rheoli hwn yn dechrau llais pan gaiff ei fotwm ei dapio ac yn gwrando nes i chi stopio siarad. Tapiwch y botwm hwnnw i siarad. Cyflwyno i barhau â'r gosod."
+        "description": "Mae eich teclyn rheoli yn gweithio. Tapiwch ei fotwm llais i ddechrau siarad; mae'n rhoi'r gorau i wrando pan fyddwch yn stopio siarad. Cyflwynwch i barhau â'r gosod."
       },
       "test_result_fire_voice": {
         "title": "Canlyniad prawf y teclyn rheoli",
-        "description": "Dyma allwedd llais teclyn rheoli Fire TV. Daliwch hi wrth siarad. Cyflwyno i barhau â'r gosod."
+        "description": "Mae eich teclyn rheoli yn gweithio. Daliwch ei fotwm llais am gyhyd ag y byddwch yn siarad. Cyflwynwch i barhau â'r gosod."
       },
       "test_result_plain_key": {
         "title": "Canlyniad prawf y teclyn rheoli",
-        "description": "Anfonodd y teclyn rheoli allweddi cyffredin ond dim signal llais, felly efallai nad yw ei fotwm llais yn dechrau llais dros Bluetooth. Cyflwynwch, yna ticiwch Dangos adroddiad y teclyn rheoli i rannu'r hyn a welwyd."
+        "description": "Anfonodd y teclyn rheoli wasgiadau botwm cyffredin ond dim signal llais, felly efallai nad yw ei fotwm llais yn gweithio dros Bluetooth. Cyflwynwch, yna ticiwch Dangos adroddiad y teclyn rheoli i rannu'r hyn a welwyd."
       },
       "test_result_nothing": {
         "title": "Canlyniad prawf y teclyn rheoli",
         "description": "Ni dderbyniwyd dim gan y teclyn rheoli. Deffrowch ef gydag allwedd saeth, gwiriwch ei fod wedi'i gysylltu â'r peiriant Home Assistant hwn, a phrofwch eto. Cyflwyno i barhau."
+      },
+      "test_clips": {
+        "title": "Clipiau prawf",
+        "description": "Cafodd pob gwasgiad o'r botwm llais ei gadw fel clip, fel y gallwch glywed beth anfonodd y teclyn rheoli:\n\n{clips}\n\nMae'r clipiau yn Cyfryngau → Fy nghyfryngau → Bluetooth Remote Voice. Mae'r dolenni'n gweithio am 5 munud."
+      },
+      "test_clips_none": {
+        "title": "Dim clip wedi'i gadw",
+        "description": "Gweithiodd y botwm llais, ond ni chadwyd unrhyw glip. Caiff clipiau eu cadw yn ffolder cyfryngau Home Assistant (Cyfryngau → Fy nghyfryngau), felly gwiriwch fod gan yr Home Assistant hwn ffolder cyfryngau y gall ysgrifennu ato, yna profwch eto."
+      },
+      "test_hints": {
+        "title": "Beth a sylwodd y prawf",
+        "description": "Signalau stopio cynnar: {early}. Bylchau sain a gollwyd: {gaps}.\n\nSignal stopio cynnar yw stop gan y teclyn rheoli yn syth ar ôl i chi ddechrau, tra oeddech yn dal i ddal y botwm. Os yw'n uwch na 0 a'ch ceisiadau'n cael eu torri'n fyr, trowch Anwybyddu stopio cynnar ymlaen yn Gosodiadau y integreiddiad.\n\nBwlch sain a gollwyd yw darn o sain a ollyngodd Bluetooth. Os yw'n uwch na 0 a bod ceisiadau'n methu gyda gwall bwlch sain, gosodwch Llenwi bylchau sain byr yn Gosodiadau y integreiddiad."
       }
     },
     "progress": {
-      "observing": "Yn gwrando am 20 eiliad. Deffrowch y teclyn rheoli gydag allwedd saeth, yna pwyswch a daliwch ei fotwm llais, siaradwch yn fyr a rhyddhewch."
+      "observing": "Pwyswch a daliwch fotwm llais y teclyn rheoli nawr, siaradwch yn fyr, yna rhyddhewch. Ailadroddwch gymaint ag y mynnwch: mae'r prawf yn rhedeg am 20 eiliad ac yn recordio pob gwasgiad fel y gallwch wrando arno wedyn. Os nad yw'n ymddangos bod dim yn digwydd, deffrowch y teclyn rheoli gyda botwm saeth yn gyntaf."
     },
     "error": {
       "bluetooth_unavailable": "Nid yw Bluetooth lleol ar gael. Gwiriwch fod D-Bus y system yn hygyrch.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Mae'r teclyn hwn eisoes wedi'i ffurfweddu.",
-      "no_pipelines": "Crëwch biblinell Assist cyn ychwanegu'r teclyn."
+      "no_pipelines": "Crëwch biblinell Assist cyn ychwanegu'r teclyn.",
+      "test_running": "Mae prawf o'r teclyn rheoli hwn eisoes yn rhedeg.",
+      "pause_failed": "Nid oedd modd oedi'r teclyn rheoli ar gyfer y prawf. Ceisiwch eto mewn eiliad."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opsiynau'r teclyn rheoli",
+        "description": "Mae gosodiadau'n newid sut mae'r teclyn rheoli hwn yn ymddwyn. Ni ellir newid y teclyn rheoli na'i fath yma: i ddefnyddio teclyn neu fath gwahanol, dilëwch y cofnod hwn ac ychwanegwch y teclyn eto.",
+        "menu_options": {
+          "settings": "Gosodiadau",
+          "test": "Profi fy nheclyn rheoli",
+          "report": "Dangos adroddiad y teclyn rheoli"
+        }
+      },
+      "settings": {
         "title": "Gosodiadau llais",
         "description": "Mae'r gosodiadau hyn yn rheoli sut mae gwasgiadau'n cael eu trin a sut mae atebion yn cael eu llefaru. Ni all disodli cais ddadwneud camau a gyflawnwyd eisoes. Nid yw deublyg llawn ar yr un pryd ar gael. Nid yw stopio ar ôl trawsgrifio yn analluogi offer sydd wedi'u cynnwys mewn darparwr lleferydd byw; defnyddiwch ddarparwr trawsgrifio yn unig pan fo angen analluogi camau gweithredu.\n\n**Amod ateb:** rhaid i'w holl amodau fod yn wir er mwyn llefaru ateb. Cânt eu gwirio unwaith ar ddechrau pob cais; gadewch yn wag i lefaru bob tro, ac mae amod na ellir ei werthuso yn cyfrif fel un heb ei fodloni. Gall amodau templed ddefnyddio'r newidynnau `speaker`, `remote` a `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Anwybyddu gwasgiadau byr",
           "max_request_seconds": "Hyd uchaf cais",
           "max_conversation_seconds": "Hyd uchaf sgwrs",
-          "reply_condition": "Amod ateb"
+          "reply_condition": "Amod ateb",
+          "ignore_early_stop": "Anwybyddu stopio cynnar",
+          "gap_tolerance_ms": "Llenwi bylchau sain byr"
         },
         "data_description": {
           "pipeline_id": "Y biblinell Assist sy'n prosesu lleferydd: lleferydd-i-destun, asiant sgwrsio a thestun-i-leferydd. Mae piblinell sydd wedi'i thynnu yn methu â gwall yn hytrach na disgyn yn ôl i un arall.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Yn anwybyddu tapiau byrrach na hyn ar y botwm llais, fel na fydd tap ffug byth yn cychwyn cais; mae daliad go iawn yn cychwyn mor hwyr â hyn. Mae 0 yn ei ddiffodd. Defnyddiol ar gyfer teclyn Fire TV sy'n methu gyda \"No microphone audio\" yn syth ar ôl deffro: mae'n ailanfon yr allwedd a'i deffrodd fel tap ar unwaith. Mae 0.1 s yn fan cychwyn da. Teclynnau Fire TV yn unig.",
           "max_request_seconds": "Yr hiraf y gall un cais bara ar unrhyw declyn: daliad cyfan yn y modd Un cais, a phob tro yn y Sgwrs bob yn ail. Mae ei gyrraedd yn gorffen y cais â gwall terfyn dal. Gostyngwch ef i atal recordio botwm sy'n sownd; cynyddwch ef ar gyfer arddweud hir. Mae teclynnau nad ydynt yn dal-i-siarad hefyd yn gorffen ar ôl tua 15 eiliad o leferydd neu ar ddistawrwydd, pa un bynnag ddaw gyntaf.",
           "max_conversation_seconds": "Yr hiraf y gall daliad botwm cyfan bara yn y modd Sgwrs bob yn ail. Caiff ei anwybyddu yn y modd Un cais ac ni all fod yn fyrrach na hyd uchaf cais.",
-          "reply_condition": "Amodau y mae'n rhaid i bob un ohonynt fod yn wir er mwyn llefaru ateb. Cânt eu gwirio unwaith ar ddechrau pob cais (a phob tro yn y Sgwrs bob yn ail). Gadewch yn wag i lefaru bob tro. Mae amod sy'n rhoi gwall yn cyfrif fel un heb ei fodloni. Gall amodau templed ddefnyddio'r newidynnau speaker, remote a held."
+          "reply_condition": "Amodau y mae'n rhaid i bob un ohonynt fod yn wir er mwyn llefaru ateb. Cânt eu gwirio unwaith ar ddechrau pob cais (a phob tro yn y Sgwrs bob yn ail). Gadewch yn wag i lefaru bob tro. Mae amod sy'n rhoi gwall yn cyfrif fel un heb ei fodloni. Gall amodau templed ddefnyddio'r newidynnau speaker, remote a held.",
+          "ignore_early_stop": "Trowch hyn ymlaen os bydd ceisiadau weithiau'n dod i ben ar ôl rhan o eiliad er eich bod wedi dal y botwm drwy'r amser. Mae rhai teclynnau rheoli Android TV yn anfon signal stopio yn syth ar ôl i chi ddechrau ac yna'n parhau i anfon sain. Pan fydd ymlaen, anwybyddir stop yn yr eiliad gyntaf tra bo sain yn dal i gyrraedd, ac mae'r cais yn dod i ben pan fydd y sain yn tawelu neu pan ddaw ail stop. Dim ond pan fydd Ymddygiad botwm wedi'i osod i Un cais fesul daliad y defnyddir hyn.",
+          "gap_tolerance_ms": "Gall Bluetooth golli eiliad o sain, sydd fel arfer yn achosi i'r cais fethu gyda gwall bwlch sain. Gosodwch hyd yma i amnewid darn coll hyd at yr hyd hwnnw â thawelwch fel bod y cais yn parhau. Mae bylchau hirach yn dal i fethu. Gall tawelwch yng nghanol gair leihau cywirdeb adnabod, felly defnyddiwch y gwerth isaf sy'n gweithio. Mae 0 yn ei ddiffodd. Teclynnau rheoli Android TV yn unig."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Canlyniad prawf y teclyn rheoli",
+        "description": "Mae eich teclyn rheoli yn gweithio. Mae'n dechrau gwrando ar ei ben ei hun tra byddwch yn dal ei fotwm llais, felly daliwch y botwm wrth i chi siarad."
+      },
+      "test_result_atvv_tap": {
+        "title": "Canlyniad prawf y teclyn rheoli",
+        "description": "Mae eich teclyn rheoli yn gweithio. Tapiwch ei fotwm llais i ddechrau siarad; mae'n rhoi'r gorau i wrando pan fyddwch yn stopio siarad."
+      },
+      "test_result_fire_voice": {
+        "title": "Canlyniad prawf y teclyn rheoli",
+        "description": "Mae eich teclyn rheoli yn gweithio. Daliwch ei fotwm llais am gyhyd ag y byddwch yn siarad."
+      },
+      "test_result_plain_key": {
+        "title": "Canlyniad prawf y teclyn rheoli",
+        "description": "Anfonodd y teclyn rheoli wasgiadau botwm cyffredin ond dim signal llais, felly efallai nad yw ei fotwm llais yn gweithio dros Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Canlyniad prawf y teclyn rheoli",
+        "description": "Ni dderbyniwyd dim gan y teclyn rheoli. Deffrowch ef gydag allwedd saeth, gwiriwch ei fod wedi'i gysylltu â'r peiriant Home Assistant hwn, a phrofwch eto."
+      },
+      "report": {
+        "title": "Adroddiad teclyn rheoli",
+        "description": "Copïwch y testun hwn i fater GitHub. Nid yw'n cynnwys cyfeiriad Bluetooth llawn, enwau, cyfeiriadau gwe na sain.",
+        "data": {
+          "report": "Adroddiad teclyn rheoli"
+        },
+        "data_description": {
+          "report": "Dewiswch bopeth a chopïwch."
+        }
+      },
+      "test_clips": {
+        "title": "Clipiau prawf",
+        "description": "Cafodd pob gwasgiad o'r botwm llais ei gadw fel clip, fel y gallwch glywed beth anfonodd y teclyn rheoli:\n\n{clips}\n\nMae'r clipiau yn Cyfryngau → Fy nghyfryngau → Bluetooth Remote Voice. Mae'r dolenni'n gweithio am 5 munud."
+      },
+      "test_clips_none": {
+        "title": "Dim clip wedi'i gadw",
+        "description": "Gweithiodd y botwm llais, ond ni chadwyd unrhyw glip. Caiff clipiau eu cadw yn ffolder cyfryngau Home Assistant (Cyfryngau → Fy nghyfryngau), felly gwiriwch fod gan yr Home Assistant hwn ffolder cyfryngau y gall ysgrifennu ato, yna profwch eto."
+      },
+      "test_hints": {
+        "title": "Beth a sylwodd y prawf",
+        "description": "Signalau stopio cynnar: {early}. Bylchau sain a gollwyd: {gaps}.\n\nSignal stopio cynnar yw stop gan y teclyn rheoli yn syth ar ôl i chi ddechrau, tra oeddech yn dal i ddal y botwm. Os yw'n uwch na 0 a'ch ceisiadau'n cael eu torri'n fyr, trowch Anwybyddu stopio cynnar ymlaen yn Gosodiadau y integreiddiad.\n\nBwlch sain a gollwyd yw darn o sain a ollyngodd Bluetooth. Os yw'n uwch na 0 a bod ceisiadau'n methu gyda gwall bwlch sain, gosodwch Llenwi bylchau sain byr yn Gosodiadau y integreiddiad."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Nid yw'r uchelseinydd ateb a gadwyd ar gael ar hyn o bryd, felly ni fydd atebion yn chwarae nes iddo ddychwelyd. Cadwch ef, neu dewiswch un arall."
     },
     "abort": {
-      "no_pipelines": "Crëwch biblinell Assist yn gyntaf."
+      "no_pipelines": "Crëwch biblinell Assist yn gyntaf.",
+      "test_running": "Mae prawf o'r teclyn rheoli hwn eisoes yn rhedeg.",
+      "pause_failed": "Nid oedd modd oedi'r teclyn rheoli ar gyfer y prawf. Ceisiwch eto mewn eiliad."
+    },
+    "progress": {
+      "observing": "Pwyswch a daliwch fotwm llais y teclyn rheoli nawr, siaradwch yn fyr, yna rhyddhewch. Ailadroddwch gymaint ag y mynnwch: mae'r prawf yn rhedeg am 20 eiliad ac yn recordio pob gwasgiad fel y gallwch wrando arno wedyn. Os nad yw'n ymddangos bod dim yn digwydd, deffrowch y teclyn rheoli gyda botwm saeth yn gyntaf. Mae eich teclyn rheoli wedi'i oedi ar gyfer defnydd arferol tra bo hyn yn rhedeg: bydd ei endidau ddim ar gael am tua munud a chaiff cais sydd ar y gweill ei ganslo."
     }
   },
   "selector": {

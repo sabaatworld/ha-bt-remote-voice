@@ -35,7 +35,7 @@
           "pipeline_id": "Pipeline-ul Assist care procesează vocea de la această telecomandă.",
           "remote_type": "Lăsați pe Automat, cu excepția cazului în care telecomanda nu este recunoscută sau configurarea eșuează.",
           "show_report": "Bifați și trimiteți pentru a vedea un raport pe care îl puteți copia într-o problemă GitHub.",
-          "test_remote": "Bifați și trimiteți, apoi apăsați și mențineți butonul vocal al telecomenzii pentru a vedea ce face."
+          "test_remote": "Bifați și trimiteți, apoi țineți apăsat butonul vocal al telecomenzii în timp ce vorbiți. Fiecare apăsare este înregistrată, ca să o puteți asculta ulterior."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Rezultatul testului telecomenzii",
-        "description": "Această telecomandă pornește singură vocea cât timp butonul ei este ținut apăsat. Țineți apăsat acel buton pentru a vorbi. Trimite pentru a continua configurarea."
+        "description": "Telecomanda dvs. funcționează. Începe să asculte singură cât timp țineți apăsat butonul vocal, așa că țineți butonul apăsat cât vorbiți. Trimiteți pentru a continua configurarea."
       },
       "test_result_atvv_tap": {
         "title": "Rezultatul testului telecomenzii",
-        "description": "Această telecomandă pornește vocea când butonul ei este atins și ascultă până încetați să vorbiți. Atingeți acel buton pentru a vorbi. Trimite pentru a continua configurarea."
+        "description": "Telecomanda dvs. funcționează. Atingeți butonul vocal pentru a începe să vorbiți; încetează să asculte când nu mai vorbiți. Trimiteți pentru a continua configurarea."
       },
       "test_result_fire_voice": {
         "title": "Rezultatul testului telecomenzii",
-        "description": "Aceasta este tasta vocală a unei telecomenzi Fire TV. Țineți-o apăsată cât timp vorbiți. Trimite pentru a continua configurarea."
+        "description": "Telecomanda dvs. funcționează. Țineți apăsat butonul vocal cât timp vorbiți. Trimiteți pentru a continua configurarea."
       },
       "test_result_plain_key": {
         "title": "Rezultatul testului telecomenzii",
-        "description": "Telecomanda a trimis taste obișnuite, dar niciun semnal vocal, deci butonul ei vocal poate să nu pornească vocea prin Bluetooth. Trimiteți, apoi bifați Afișează raportul telecomenzii pentru a partaja ce s-a observat."
+        "description": "Telecomanda a trimis apăsări obișnuite de butoane, dar niciun semnal vocal, așa că butonul ei vocal poate să nu funcționeze prin Bluetooth. Trimiteți, apoi bifați Afișează raportul telecomenzii pentru a partaja ce s-a observat."
       },
       "test_result_nothing": {
         "title": "Rezultatul testului telecomenzii",
         "description": "Nu s-a primit nimic de la telecomandă. Treziți-o cu o tastă săgeată, verificați dacă este conectată la acest computer cu Home Assistant și testați din nou. Trimite pentru a continua."
+      },
+      "test_clips": {
+        "title": "Clipuri de test",
+        "description": "Fiecare apăsare a butonului vocal a fost salvată ca clip, ca să auziți ce a trimis telecomanda:\n\n{clips}\n\nClipurile se află în Media → Media mea → Bluetooth Remote Voice. Linkurile funcționează 5 minute."
+      },
+      "test_clips_none": {
+        "title": "Niciun clip salvat",
+        "description": "Butonul vocal a funcționat, dar nu a fost salvat niciun clip. Clipurile se salvează în folderul media din Home Assistant (Media → Media mea), așa că verificați dacă acest Home Assistant are un folder media în care poate scrie și testați din nou."
+      },
+      "test_hints": {
+        "title": "Ce a observat testul",
+        "description": "Semnale de oprire timpurie: {early}. Goluri de sunet pierdute: {gaps}.\n\nUn semnal de oprire timpurie este o oprire trimisă de telecomandă imediat după ce ați început, în timp ce țineați încă butonul apăsat. Dacă este peste 0 și solicitările dvs. se întrerup prea devreme, activați Ignoră oprirea timpurie în Setări ale integrării.\n\nUn gol de sunet pierdut este o porțiune de sunet pe care Bluetooth a pierdut-o. Dacă este peste 0 și solicitările eșuează cu o eroare de gol de sunet, setați Umple golurile scurte de sunet în Setări ale integrării."
       }
     },
     "progress": {
-      "observing": "Se ascultă timp de 20 de secunde. Treziți telecomanda cu o tastă săgeată, apoi apăsați și mențineți butonul ei vocal, vorbiți scurt și eliberați."
+      "observing": "Țineți acum apăsat butonul vocal al telecomenzii, vorbiți scurt și eliberați. Repetați de câte ori doriți: testul durează 20 de secunde și înregistrează fiecare apăsare, ca să o puteți asculta ulterior. Dacă pare că nu se întâmplă nimic, treziți mai întâi telecomanda cu o tastă săgeată."
     },
     "error": {
       "bluetooth_unavailable": "Bluetooth-ul local nu este disponibil. Verificați dacă D-Bus-ul sistemului este accesibil.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Această telecomandă este deja configurată.",
-      "no_pipelines": "Creați un pipeline Assist înainte de a adăuga telecomanda."
+      "no_pipelines": "Creați un pipeline Assist înainte de a adăuga telecomanda.",
+      "test_running": "Un test al acestei telecomenzi rulează deja.",
+      "pause_failed": "Telecomanda nu a putut fi pusă în pauză pentru test. Încercați din nou peste un moment."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opțiunile telecomenzii",
+        "description": "Setările schimbă comportamentul acestei telecomenzi. Telecomanda și tipul ei nu pot fi schimbate aici: pentru a folosi altă telecomandă sau alt tip, ștergeți această intrare și adăugați din nou telecomanda.",
+        "menu_options": {
+          "settings": "Setări",
+          "test": "Testează telecomanda mea",
+          "report": "Afișează raportul telecomenzii"
+        }
+      },
+      "settings": {
         "title": "Setări vocale",
         "description": "Aceste setări controlează modul în care sunt tratate apăsările și modul în care sunt rostite răspunsurile. Înlocuirea unei cereri nu poate anula acțiunile deja efectuate. Duplexul complet simultan nu este disponibil. Oprirea după transcriere nu dezactivează instrumentele integrate într-un furnizor de voce live; utilizați un furnizor doar pentru transcriere când acțiunile trebuie dezactivate.\n\n**Condiție de răspuns:** toate condițiile sale trebuie îndeplinite pentru ca un răspuns să fie rostit. Sunt verificate o singură dată la începutul fiecărei cereri; lăsați-o goală pentru a rosti întotdeauna răspunsul, iar o condiție care nu poate fi evaluată se consideră neîndeplinită. Condițiile de tip șablon pot folosi variabilele `speaker`, `remote` și `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignoră apăsările scurte",
           "max_request_seconds": "Durata maximă a cererii",
           "max_conversation_seconds": "Durata maximă a conversației",
-          "reply_condition": "Condiție de răspuns"
+          "reply_condition": "Condiție de răspuns",
+          "ignore_early_stop": "Ignoră oprirea timpurie",
+          "gap_tolerance_ms": "Umple golurile scurte de sunet"
         },
         "data_description": {
           "pipeline_id": "Pipeline-ul Assist care procesează vocea: conversia vorbirii în text, agentul de conversație și conversia textului în vorbire. Un pipeline eliminat generează o eroare în loc să se treacă la altul.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignoră atingerile butonului vocal mai scurte decât această valoare, astfel încât o atingere accidentală să nu pornească niciodată o cerere; o apăsare reală pornește cu această întârziere. 0 dezactivează funcția. Util pentru o telecomandă Fire TV care eșuează cu „Niciun sunet de la microfon” imediat după activare: retrimite tasta care a activat-o ca o atingere instantanee. 0,1 s este un bun punct de plecare. Doar pentru telecomenzile Fire TV.",
           "max_request_seconds": "Durata maximă a unei singure cereri pe orice telecomandă: o apăsare întreagă în modul O cerere și fiecare tură în conversația alternativă. La atingerea ei, cererea se încheie cu o eroare de limită de captură. Micșorați-o pentru a opri înregistrarea cu butonul blocat; măriți-o pentru dictare lungă. Telecomenzile fără apăsare pentru vorbit se încheie și după aproximativ 15 secunde de vorbire sau la tăcere, oricare survine prima.",
           "max_conversation_seconds": "Durata maximă a unei apăsări întregi a butonului în modul conversație alternativă. Este ignorată în modul O cerere și nu trebuie să fie mai scurtă decât durata maximă a cererii.",
-          "reply_condition": "Condiții care trebuie să fie toate îndeplinite pentru ca un răspuns să fie rostit. Verificate o singură dată la începutul fiecărei cereri (și al fiecărei ture în conversația alternativă). Lăsați gol pentru a rosti întotdeauna răspunsul. O condiție care generează o eroare se consideră neîndeplinită. Condițiile de tip șablon pot folosi variabilele speaker, remote și held."
+          "reply_condition": "Condiții care trebuie să fie toate îndeplinite pentru ca un răspuns să fie rostit. Verificate o singură dată la începutul fiecărei cereri (și al fiecărei ture în conversația alternativă). Lăsați gol pentru a rosti întotdeauna răspunsul. O condiție care generează o eroare se consideră neîndeplinită. Condițiile de tip șablon pot folosi variabilele speaker, remote și held.",
+          "ignore_early_stop": "Activați dacă solicitările se termină uneori după o fracțiune de secundă, deși ați ținut butonul apăsat tot timpul. Unele telecomenzi Android TV trimit un semnal de oprire imediat după start și apoi continuă să trimită sunet. Când este activat, o oprire în prima secundă este ignorată cât timp mai sosește sunet, iar solicitarea se termină când sunetul devine liniștit sau sosește a doua oprire. Se folosește doar când Comportamentul butonului este setat la O cerere per apăsare.",
+          "gap_tolerance_ms": "Bluetooth poate pierde o clipă de sunet, ceea ce face de obicei ca solicitarea să eșueze cu o eroare de gol de sunet. Setați aici o lungime pentru a înlocui cu liniște o porțiune pierdută de până la acea lungime, astfel încât solicitarea să continue. Golurile mai lungi tot eșuează. Liniștea în mijlocul unui cuvânt poate scădea precizia recunoașterii, așa că folosiți cea mai mică valoare care funcționează. 0 dezactivează. Doar pentru telecomenzi Android TV."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Rezultatul testului telecomenzii",
+        "description": "Telecomanda dvs. funcționează. Începe să asculte singură cât timp țineți apăsat butonul vocal, așa că țineți butonul apăsat cât vorbiți."
+      },
+      "test_result_atvv_tap": {
+        "title": "Rezultatul testului telecomenzii",
+        "description": "Telecomanda dvs. funcționează. Atingeți butonul vocal pentru a începe să vorbiți; încetează să asculte când nu mai vorbiți."
+      },
+      "test_result_fire_voice": {
+        "title": "Rezultatul testului telecomenzii",
+        "description": "Telecomanda dvs. funcționează. Țineți apăsat butonul vocal cât timp vorbiți."
+      },
+      "test_result_plain_key": {
+        "title": "Rezultatul testului telecomenzii",
+        "description": "Telecomanda a trimis apăsări obișnuite de butoane, dar niciun semnal vocal, așa că butonul ei vocal poate să nu funcționeze prin Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Rezultatul testului telecomenzii",
+        "description": "Nu s-a primit nimic de la telecomandă. Treziți-o cu o tastă săgeată, verificați dacă este conectată la acest computer cu Home Assistant și testați din nou."
+      },
+      "report": {
+        "title": "Raportul telecomenzii",
+        "description": "Copiați acest text într-o problemă GitHub. Nu conține adresa Bluetooth completă, nume, adrese web sau audio.",
+        "data": {
+          "report": "Raportul telecomenzii"
+        },
+        "data_description": {
+          "report": "Selectați tot și copiați."
+        }
+      },
+      "test_clips": {
+        "title": "Clipuri de test",
+        "description": "Fiecare apăsare a butonului vocal a fost salvată ca clip, ca să auziți ce a trimis telecomanda:\n\n{clips}\n\nClipurile se află în Media → Media mea → Bluetooth Remote Voice. Linkurile funcționează 5 minute."
+      },
+      "test_clips_none": {
+        "title": "Niciun clip salvat",
+        "description": "Butonul vocal a funcționat, dar nu a fost salvat niciun clip. Clipurile se salvează în folderul media din Home Assistant (Media → Media mea), așa că verificați dacă acest Home Assistant are un folder media în care poate scrie și testați din nou."
+      },
+      "test_hints": {
+        "title": "Ce a observat testul",
+        "description": "Semnale de oprire timpurie: {early}. Goluri de sunet pierdute: {gaps}.\n\nUn semnal de oprire timpurie este o oprire trimisă de telecomandă imediat după ce ați început, în timp ce țineați încă butonul apăsat. Dacă este peste 0 și solicitările dvs. se întrerup prea devreme, activați Ignoră oprirea timpurie în Setări ale integrării.\n\nUn gol de sunet pierdut este o porțiune de sunet pe care Bluetooth a pierdut-o. Dacă este peste 0 și solicitările eșuează cu o eroare de gol de sunet, setați Umple golurile scurte de sunet în Setări ale integrării."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Difuzorul de răspuns salvat nu este disponibil momentan, deci răspunsurile nu vor fi redate până când revine. Păstrați-l sau alegeți altul."
     },
     "abort": {
-      "no_pipelines": "Creați mai întâi un pipeline Assist."
+      "no_pipelines": "Creați mai întâi un pipeline Assist.",
+      "test_running": "Un test al acestei telecomenzi rulează deja.",
+      "pause_failed": "Telecomanda nu a putut fi pusă în pauză pentru test. Încercați din nou peste un moment."
+    },
+    "progress": {
+      "observing": "Țineți acum apăsat butonul vocal al telecomenzii, vorbiți scurt și eliberați. Repetați de câte ori doriți: testul durează 20 de secunde și înregistrează fiecare apăsare, ca să o puteți asculta ulterior. Dacă pare că nu se întâmplă nimic, treziți mai întâi telecomanda cu o tastă săgeată. Telecomanda dvs. este pusă în pauză pentru utilizarea obișnuită cât timp rulează acest test: entitățile ei sunt indisponibile aproximativ un minut, iar o solicitare în curs este anulată."
     }
   },
   "selector": {

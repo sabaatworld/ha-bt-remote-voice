@@ -35,7 +35,7 @@
           "pipeline_id": "Pipeline Assist, která zpracovává řeč z tohoto ovladače.",
           "remote_type": "Nechte Automaticky, pokud ovladač není rozpoznán nebo se nastavení nezdaří.",
           "show_report": "Zaškrtněte a odešlete, zobrazí se zpráva, kterou můžete zkopírovat do hlášení na GitHubu.",
-          "test_remote": "Zaškrtněte a odešlete, potom stiskněte a podržte hlasové tlačítko ovladače a uvidíte, co ovladač dělá."
+          "test_remote": "Zaškrtněte a odešlete, poté stiskněte a podržte hlasové tlačítko dálkového ovladače, zatímco mluvíte. Každé stisknutí se nahraje, takže si ho potom můžete poslechnout."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Výsledek testu ovladače",
-        "description": "Tento ovladač spouští hlas sám, dokud je jeho tlačítko podrženo. Podržte toto tlačítko a mluvte. Odeslat pro pokračování nastavení."
+        "description": "Váš dálkový ovladač funguje. Začne poslouchat sám, dokud držíte jeho hlasové tlačítko, takže ho držte, zatímco mluvíte. Odesláním pokračujte v nastavení."
       },
       "test_result_atvv_tap": {
         "title": "Výsledek testu ovladače",
-        "description": "Tento ovladač spouští hlas klepnutím na tlačítko a naslouchá, dokud nepřestanete mluvit. Klepněte na toto tlačítko a mluvte. Odeslat pro pokračování nastavení."
+        "description": "Váš dálkový ovladač funguje. Klepnutím na jeho hlasové tlačítko začnete mluvit; poslech skončí, když přestanete mluvit. Odesláním pokračujte v nastavení."
       },
       "test_result_fire_voice": {
         "title": "Výsledek testu ovladače",
-        "description": "Toto je hlasová klávesa ovladače Fire TV. Podržte ji při mluvení. Odeslat pro pokračování nastavení."
+        "description": "Váš dálkový ovladač funguje. Držte jeho hlasové tlačítko, dokud mluvíte. Odesláním pokračujte v nastavení."
       },
       "test_result_plain_key": {
         "title": "Výsledek testu ovladače",
-        "description": "Ovladač poslal běžné klávesy, ale žádný hlasový signál, takže jeho hlasové tlačítko možná nespouští hlas přes Bluetooth. Odešlete a poté zaškrtněte Zobrazit zprávu o ovladači, abyste sdíleli, co bylo zjištěno."
+        "description": "Dálkový ovladač poslal běžná stisknutí tlačítek, ale žádný hlasový signál, takže jeho hlasové tlačítko přes Bluetooth možná nefunguje. Odešlete a zaškrtněte Zobrazit zprávu o ovladači, abyste sdíleli, co bylo zjištěno."
       },
       "test_result_nothing": {
         "title": "Výsledek testu ovladače",
         "description": "Z ovladače nic nepřišlo. Probuďte ho šipkou, zkontrolujte, zda je připojen k tomuto počítači s Home Assistant, a otestujte znovu. Odeslat pro pokračování."
+      },
+      "test_clips": {
+        "title": "Zkušební nahrávky",
+        "description": "Každé stisknutí hlasového tlačítka bylo uloženo jako nahrávka, takže uslyšíte, co dálkový ovladač poslal:\n\n{clips}\n\nNahrávky jsou v Média → Moje média → Bluetooth Remote Voice. Odkazy fungují 5 minut."
+      },
+      "test_clips_none": {
+        "title": "Nahrávka nebyla uložena",
+        "description": "Hlasové tlačítko fungovalo, ale žádná nahrávka nebyla uložena. Nahrávky se ukládají do složky médií Home Assistantu (Média → Moje média), takže zkontrolujte, zda má tento Home Assistant složku médií, do které může zapisovat, a zkuste test znovu."
+      },
+      "test_hints": {
+        "title": "Co test zjistil",
+        "description": "Signály předčasného zastavení: {early}. Ztracené mezery ve zvuku: {gaps}.\n\nSignál předčasného zastavení je zastavení z ovladače hned po začátku, zatímco jste tlačítko ještě drželi. Pokud je vyšší než 0 a vaše požadavky se předčasně ukončují, zapněte Ignorovat předčasné zastavení v části Nastavení integrace.\n\nZtracená mezera ve zvuku je úsek zvuku, který Bluetooth zahodil. Pokud je vyšší než 0 a požadavky selhávají s chybou mezery ve zvuku, nastavte Vyplnit krátké mezery ve zvuku v části Nastavení integrace."
       }
     },
     "progress": {
-      "observing": "Naslouchání 20 sekund. Probuďte ovladač šipkou, potom stiskněte a podržte jeho hlasové tlačítko, krátce promluvte a pusťte."
+      "observing": "Teď stiskněte a podržte hlasové tlačítko dálkového ovladače, krátce promluvte a pusťte. Opakujte, kolikrát chcete: test trvá 20 sekund a nahrává každé stisknutí, takže si ho potom můžete poslechnout. Pokud se zdá, že se nic neděje, nejdřív ovladač probuďte šipkou."
     },
     "error": {
       "bluetooth_unavailable": "Místní Bluetooth není k dispozici. Zkontrolujte, zda je přístupná systémová sběrnice D-Bus.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Tento ovladač je již nakonfigurován.",
-      "no_pipelines": "Před přidáním ovladače vytvořte pipeline Assist."
+      "no_pipelines": "Před přidáním ovladače vytvořte pipeline Assist.",
+      "test_running": "Test tohoto dálkového ovladače už běží.",
+      "pause_failed": "Dálkový ovladač se nepodařilo pro test pozastavit. Zkuste to za chvíli znovu."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Možnosti dálkového ovladače",
+        "description": "Nastavení mění chování tohoto dálkového ovladače. Dálkový ovladač a jeho typ se zde změnit nedají: chcete-li použít jiný ovladač nebo typ, odstraňte tuto položku a ovladač přidejte znovu.",
+        "menu_options": {
+          "settings": "Nastavení",
+          "test": "Otestovat můj ovladač",
+          "report": "Zobrazit zprávu o ovladači"
+        }
+      },
+      "settings": {
         "title": "Hlasová nastavení",
         "description": "Tato nastavení určují, jak se zpracovávají stisky a jak se vyslovují odpovědi. Nahrazení požadavku nemůže vrátit zpět akce, které již provedl. Současný plný duplex není k dispozici. Zastavení po přepisu nevypíná nástroje zabudované v poskytovateli živé řeči; pokud je nutné akce zakázat, použijte poskytovatele pouze pro přepis.\n\n**Podmínka odpovědi:** aby byla odpověď vyslovena, musí být splněny všechny její podmínky. Kontrolují se jednou na začátku každého požadavku; ponechte prázdné, aby se odpovědi vyslovovaly vždy, a podmínka, kterou nelze vyhodnotit, se považuje za nesplněnou. Podmínky šablony mohou používat proměnné `speaker`, `remote` a `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignorovat krátké stisky",
           "max_request_seconds": "Maximální délka požadavku",
           "max_conversation_seconds": "Maximální délka konverzace",
-          "reply_condition": "Podmínka odpovědi"
+          "reply_condition": "Podmínka odpovědi",
+          "ignore_early_stop": "Ignorovat předčasné zastavení",
+          "gap_tolerance_ms": "Vyplnit krátké mezery ve zvuku"
         },
         "data_description": {
           "pipeline_id": "Pipeline Assist, která zpracovává řeč: převod řeči na text, konverzačního agenta a převod textu na řeč. Odebraná pipeline skončí chybou a nepřepne se na jinou.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignoruje klepnutí na hlasové tlačítko kratší než tato hodnota, aby falešné klepnutí nikdy nezahájilo požadavek; skutečné podržení začne o tolik později. 0 to vypne. Užitečné pro ovladač Fire TV, který po probuzení selže s chybou „Žádný zvuk z mikrofonu“: znovu odešle klávesu, která ho probudila, jako okamžité klepnutí. Dobrým začátkem je 0,1 s. Pouze ovladače Fire TV.",
           "max_request_seconds": "Nejdelší doba jednoho požadavku na libovolném ovladači: celé podržení v režimu jednoho požadavku a každé kolo ve střídavé konverzaci. Dosažení limitu ukončí požadavek chybou limitu záznamu. Snižte, aby se zastavilo nahrávání zaseknutého tlačítka; zvyšte pro dlouhé diktování. Ovladače bez funkce „podrž a mluv“ také končí po zhruba 15 sekundách řeči nebo při tichu, podle toho, co nastane dříve.",
           "max_conversation_seconds": "Nejdelší doba celého podržení tlačítka v režimu střídavé konverzace. V režimu jednoho požadavku se ignoruje a nesmí být kratší než maximální délka požadavku.",
-          "reply_condition": "Podmínky, které musí být všechny splněny, aby byla odpověď vyslovena. Kontrolují se jednou na začátku každého požadavku (a každého kola ve střídavé konverzaci). Ponechte prázdné, aby se vyslovovalo vždy. Podmínka, která skončí chybou, se považuje za nesplněnou. Podmínky šablony mohou používat proměnné speaker, remote a held."
+          "reply_condition": "Podmínky, které musí být všechny splněny, aby byla odpověď vyslovena. Kontrolují se jednou na začátku každého požadavku (a každého kola ve střídavé konverzaci). Ponechte prázdné, aby se vyslovovalo vždy. Podmínka, která skončí chybou, se považuje za nesplněnou. Podmínky šablony mohou používat proměnné speaker, remote a held.",
+          "ignore_early_stop": "Zapněte, pokud se požadavky občas ukončí po zlomku sekundy, i když jste tlačítko drželi celou dobu. Některé ovladače Android TV pošlou signál zastavení hned po začátku a pak dál posílají zvuk. Když je zapnuto, zastavení v první sekundě se ignoruje, dokud zvuk stále přichází, a požadavek skončí, když zvuk ztichne nebo přijde druhé zastavení. Používá se jen tehdy, když je Chování tlačítka nastaveno na Jeden požadavek na podržení.",
+          "gap_tolerance_ms": "Bluetooth může ztratit chvilku zvuku, což obvykle způsobí selhání požadavku s chybou mezery ve zvuku. Zde nastavte délku, do níž se ztracený úsek nahradí tichem a požadavek bude pokračovat. Delší mezery stále selžou. Ticho uprostřed slova může snížit přesnost rozpoznávání, proto použijte nejnižší hodnotu, která funguje. 0 funkci vypne. Pouze pro ovladače Android TV."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Výsledek testu ovladače",
+        "description": "Váš dálkový ovladač funguje. Začne poslouchat sám, dokud držíte jeho hlasové tlačítko, takže ho držte, zatímco mluvíte."
+      },
+      "test_result_atvv_tap": {
+        "title": "Výsledek testu ovladače",
+        "description": "Váš dálkový ovladač funguje. Klepnutím na jeho hlasové tlačítko začnete mluvit; poslech skončí, když přestanete mluvit."
+      },
+      "test_result_fire_voice": {
+        "title": "Výsledek testu ovladače",
+        "description": "Váš dálkový ovladač funguje. Držte jeho hlasové tlačítko, dokud mluvíte."
+      },
+      "test_result_plain_key": {
+        "title": "Výsledek testu ovladače",
+        "description": "Dálkový ovladač poslal běžná stisknutí tlačítek, ale žádný hlasový signál, takže jeho hlasové tlačítko přes Bluetooth možná nefunguje."
+      },
+      "test_result_nothing": {
+        "title": "Výsledek testu ovladače",
+        "description": "Z ovladače nic nepřišlo. Probuďte ho šipkou, zkontrolujte, zda je připojen k tomuto počítači s Home Assistant, a otestujte znovu."
+      },
+      "report": {
+        "title": "Zpráva o ovladači",
+        "description": "Zkopírujte tento text do hlášení na GitHubu. Neobsahuje úplnou adresu Bluetooth, jména, webové adresy ani zvuk.",
+        "data": {
+          "report": "Zpráva o ovladači"
+        },
+        "data_description": {
+          "report": "Vyberte vše a zkopírujte."
+        }
+      },
+      "test_clips": {
+        "title": "Zkušební nahrávky",
+        "description": "Každé stisknutí hlasového tlačítka bylo uloženo jako nahrávka, takže uslyšíte, co dálkový ovladač poslal:\n\n{clips}\n\nNahrávky jsou v Média → Moje média → Bluetooth Remote Voice. Odkazy fungují 5 minut."
+      },
+      "test_clips_none": {
+        "title": "Nahrávka nebyla uložena",
+        "description": "Hlasové tlačítko fungovalo, ale žádná nahrávka nebyla uložena. Nahrávky se ukládají do složky médií Home Assistantu (Média → Moje média), takže zkontrolujte, zda má tento Home Assistant složku médií, do které může zapisovat, a zkuste test znovu."
+      },
+      "test_hints": {
+        "title": "Co test zjistil",
+        "description": "Signály předčasného zastavení: {early}. Ztracené mezery ve zvuku: {gaps}.\n\nSignál předčasného zastavení je zastavení z ovladače hned po začátku, zatímco jste tlačítko ještě drželi. Pokud je vyšší než 0 a vaše požadavky se předčasně ukončují, zapněte Ignorovat předčasné zastavení v části Nastavení integrace.\n\nZtracená mezera ve zvuku je úsek zvuku, který Bluetooth zahodil. Pokud je vyšší než 0 a požadavky selhávají s chybou mezery ve zvuku, nastavte Vyplnit krátké mezery ve zvuku v části Nastavení integrace."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Uložený reproduktor odpovědí není právě dostupný, takže se odpovědi nepřehrají, dokud se nevrátí. Ponechte ho, nebo vyberte jiný."
     },
     "abort": {
-      "no_pipelines": "Nejprve vytvořte pipeline Assist."
+      "no_pipelines": "Nejprve vytvořte pipeline Assist.",
+      "test_running": "Test tohoto dálkového ovladače už běží.",
+      "pause_failed": "Dálkový ovladač se nepodařilo pro test pozastavit. Zkuste to za chvíli znovu."
+    },
+    "progress": {
+      "observing": "Teď stiskněte a podržte hlasové tlačítko dálkového ovladače, krátce promluvte a pusťte. Opakujte, kolikrát chcete: test trvá 20 sekund a nahrává každé stisknutí, takže si ho potom můžete poslechnout. Pokud se zdá, že se nic neděje, nejdřív ovladač probuďte šipkou. Váš dálkový ovladač je během tohoto testu pozastaven pro běžné používání: jeho entity jsou asi minutu nedostupné a probíhající požadavek se zruší."
     }
   },
   "selector": {

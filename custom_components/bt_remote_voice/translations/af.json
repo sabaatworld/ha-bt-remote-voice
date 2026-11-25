@@ -35,7 +35,7 @@
           "pipeline_id": "Die Assist-pyplyn wat spraak van hierdie afstandsbeheer verwerk.",
           "remote_type": "Los op Outomaties tensy die afstandbeheer nie herken word nie of opstelling misluk.",
           "show_report": "Merk en dien in om 'n verslag te sien wat jy in 'n GitHub-kwessie kan kopieer.",
-          "test_remote": "Merk en dien in, druk en hou dan die afstandbeheer se stemknoppie om te sien wat die afstandbeheer doen."
+          "test_remote": "Merk af en dien in, druk dan die afstandbeheer se stemknoppie en hou dit vas terwyl jy praat. Elke druk word opgeneem sodat jy daarna kan luister."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Afstandbeheertoets-resultaat",
-        "description": "Hierdie afstandbeheer begin stem self terwyl sy knoppie gehou word. Hou daardie knoppie om te praat. Dien in om met die opstelling voort te gaan."
+        "description": "Jou afstandbeheer werk. Dit begin self luister solank jy sy stemknoppie vashou, so hou die knoppie vas terwyl jy praat. Dien in om met die opstelling voort te gaan."
       },
       "test_result_atvv_tap": {
         "title": "Afstandbeheertoets-resultaat",
-        "description": "Hierdie afstandbeheer begin stem wanneer sy knoppie getik word en luister totdat jy ophou praat. Tik daardie knoppie om te praat. Dien in om met die opstelling voort te gaan."
+        "description": "Jou afstandbeheer werk. Tik sy stemknoppie om te begin praat; dit hou op luister wanneer jy ophou praat. Dien in om met die opstelling voort te gaan."
       },
       "test_result_fire_voice": {
         "title": "Afstandbeheertoets-resultaat",
-        "description": "Dit is die stemsleutel van 'n Fire TV-afstandbeheer. Hou dit terwyl jy praat. Dien in om met die opstelling voort te gaan."
+        "description": "Jou afstandbeheer werk. Hou sy stemknoppie vas solank jy praat. Dien in om met die opstelling voort te gaan."
       },
       "test_result_plain_key": {
         "title": "Afstandbeheertoets-resultaat",
-        "description": "Die afstandbeheer het gewone sleutels gestuur maar geen stemsein nie, so sy stemknoppie begin dalk nie stem oor Bluetooth nie. Dien in, merk dan Wys afstandbeheerverslag om te deel wat gesien is."
+        "description": "Die afstandbeheer het gewone knoppiedrukke gestuur maar geen stemsein nie, so sy stemknoppie werk dalk nie oor Bluetooth nie. Dien in en merk dan Wys afstandbeheerverslag af om te deel wat gesien is."
       },
       "test_result_nothing": {
         "title": "Afstandbeheertoets-resultaat",
         "description": "Niks is van die afstandbeheer ontvang nie. Maak dit met 'n pyltjie-sleutel wakker, kontroleer dat dit aan hierdie Home Assistant-masjien gekoppel is, en toets weer. Dien in om voort te gaan."
+      },
+      "test_clips": {
+        "title": "Toetssnitte",
+        "description": "Elke druk van die stemknoppie is as 'n snit gestoor, sodat jy kan hoor wat die afstandbeheer gestuur het:\n\n{clips}\n\nDie snitte is in Media → My media → Bluetooth Remote Voice. Die skakels werk vir 5 minute."
+      },
+      "test_clips_none": {
+        "title": "Geen snit gestoor nie",
+        "description": "Die stemknoppie het gewerk, maar geen snit is gestoor nie. Snitte word in Home Assistant se mediagids gestoor (Media → My media), so kyk of hierdie Home Assistant 'n mediagids het waarin dit kan skryf, en toets dan weer."
+      },
+      "test_hints": {
+        "title": "Wat die toets opgemerk het",
+        "description": "Vroeë stopseine: {early}. Verlore oudiogapings: {gaps}.\n\n'n Vroeë stopsein is 'n stop van die afstandbeheer kort nadat jy begin het, terwyl jy die knoppie nog vashou. As dit bo 0 is en jou versoeke kort afgesny word, skakel Ignoreer vroeë stop aan in die integrasie se Instellings.\n\n'n Verlore oudiogaping is 'n stuk oudio wat Bluetooth laat val het. As dit bo 0 is en versoeke met 'n oudiogapingsfout misluk, stel Vul kort oudiogapings in in die integrasie se Instellings."
       }
     },
     "progress": {
-      "observing": "Luister 20 sekondes lank. Maak die afstandbeheer met 'n pyltjie-sleutel wakker, druk en hou dan sy stemknoppie, praat kortliks en los dit."
+      "observing": "Druk en hou die afstandbeheer se stemknoppie nou vas, praat kortliks en laat dan los. Herhaal soveel keer as jy wil: die toets duur 20 sekondes en neem elke druk op sodat jy daarna kan luister. As dit lyk of niks gebeur nie, maak die afstandbeheer eers met 'n pyltjieknoppie wakker."
     },
     "error": {
       "bluetooth_unavailable": "Plaaslike Bluetooth is nie beskikbaar nie. Kontroleer dat die stelsel-D-Bus toeganklik is.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Hierdie afstandsbeheer is reeds gekonfigureer.",
-      "no_pipelines": "Skep 'n Assist-pyplyn voordat jy die afstandsbeheer byvoeg."
+      "no_pipelines": "Skep 'n Assist-pyplyn voordat jy die afstandsbeheer byvoeg.",
+      "test_running": "'n Toets van hierdie afstandbeheer loop reeds.",
+      "pause_failed": "Die afstandbeheer kon nie vir die toets gepouseer word nie. Probeer oor 'n oomblik weer."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Afstandbeheeropsies",
+        "description": "Instellings verander hoe hierdie afstandbeheer optree. Die afstandbeheer en sy tipe kan nie hier verander word nie: om 'n ander afstandbeheer of tipe te gebruik, vee hierdie inskrywing uit en voeg die afstandbeheer weer by.",
+        "menu_options": {
+          "settings": "Instellings",
+          "test": "Toets my afstandbeheer",
+          "report": "Wys afstandbeheerverslag"
+        }
+      },
+      "settings": {
         "title": "Stemverstellings",
         "description": "Hierdie verstellings bepaal hoe drukke hanteer word en hoe antwoorde gesê word. Om 'n versoek te vervang, kan nie aksies ongedaan maak wat reeds uitgevoer is nie. Gelyktydige volle dupleks is nie beskikbaar nie. Om ná transkripsie te stop, skakel nie nutsgoed af wat in 'n regstreekse spraakverskaffer ingebou is nie; gebruik 'n net-transkripsie-verskaffer wanneer aksies afgeskakel moet word.\n\n**Antwoordvoorwaarde:** al sy voorwaardes moet slaag vir 'n antwoord om gesê te word. Hulle word een keer aan die begin van elke versoek nagegaan; laat dit leeg om altyd te praat, en 'n voorwaarde wat nie geëvalueer kan word nie, tel as nie nagekom nie. Sjabloonvoorwaardes kan die veranderlikes `speaker`, `remote` en `held` gebruik.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignoreer kort drukke",
           "max_request_seconds": "Maksimum versoeklengte",
           "max_conversation_seconds": "Maksimum gesprekslengte",
-          "reply_condition": "Antwoordvoorwaarde"
+          "reply_condition": "Antwoordvoorwaarde",
+          "ignore_early_stop": "Ignoreer vroeë stop",
+          "gap_tolerance_ms": "Vul kort oudiogapings in"
         },
         "data_description": {
           "pipeline_id": "Die Assist-pyplyn wat spraak verwerk: spraak-na-teks, gespreksagent en teks-na-spraak. 'n Verwyderde pyplyn misluk met 'n fout in plaas daarvan om na 'n ander terug te val.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignoreer tikke op die stemknoppie wat korter as dit is, sodat 'n valse tik nooit 'n versoek begin nie; 'n ware hou begin soveel later. 0 skakel dit af. Nuttig vir 'n Fire TV-afstandsbeheer wat net ná wakker word misluk met \"No microphone audio\": dit stuur die sleutel wat dit wakker gemaak het weer as 'n kitstik. 0,1 s is 'n goeie beginpunt. Slegs vir Fire TV-afstandsbeheerders.",
           "max_request_seconds": "Die langste wat 'n enkele versoek op enige afstandsbeheer kan duur: 'n hele hou in Een-versoek-modus, en elke beurt in Wisselende gesprek. As dit bereik word, eindig die versoek met 'n opnamelimiet-fout. Verlaag dit om 'n vasgeklemde knoppie se opname te stop; verhoog dit vir lang dikteer. Afstandsbeheerders wat nie hou-om-te-praat is nie, eindig ook ná ongeveer 15 sekondes spraak of by stilte, wat ook al eerste kom.",
           "max_conversation_seconds": "Die langste wat 'n hele knoppie-hou kan duur in Wisselende gesprek-modus. Dit word geïgnoreer in Een-versoek-modus en mag nie korter as die maksimum versoeklengte wees nie.",
-          "reply_condition": "Voorwaardes wat almal moet slaag vir 'n antwoord om gesê te word. Een keer aan die begin van elke versoek nagegaan (en elke beurt in Wisselende gesprek). Laat leeg om altyd te praat. 'n Voorwaarde wat 'n fout gee, tel as nie nagekom nie. Sjabloonvoorwaardes kan die veranderlikes speaker, remote en held gebruik."
+          "reply_condition": "Voorwaardes wat almal moet slaag vir 'n antwoord om gesê te word. Een keer aan die begin van elke versoek nagegaan (en elke beurt in Wisselende gesprek). Laat leeg om altyd te praat. 'n Voorwaarde wat 'n fout gee, tel as nie nagekom nie. Sjabloonvoorwaardes kan die veranderlikes speaker, remote en held gebruik.",
+          "ignore_early_stop": "Skakel dit aan as versoeke soms na 'n breukdeel van 'n sekonde eindig al het jy die knoppie heeltyd vasgehou. Sommige Android TV-afstandbeheerders stuur 'n stopsein net nadat jy begin het en stuur dan steeds oudio. Wanneer aan, word 'n stop in die eerste sekonde geïgnoreer solank oudio nog aankom, en die versoek eindig wanneer die oudio stil raak of 'n tweede stop kom. Word slegs gebruik wanneer Knoppie-gedrag op Een versoek per hou gestel is.",
+          "gap_tolerance_ms": "Bluetooth kan 'n oomblik oudio verloor, wat gewoonlik veroorsaak dat die versoek met 'n oudiogapingsfout misluk. Stel hier 'n lengte om 'n verlore stuk tot daardie lengte met stilte te vervang sodat die versoek voortgaan. Langer gapings misluk steeds. Stilte in die middel van 'n woord kan herkenningsakkuraatheid verlaag, so gebruik die laagste waarde wat werk. 0 skakel dit af. Slegs Android TV-afstandbeheerders."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Afstandbeheertoets-resultaat",
+        "description": "Jou afstandbeheer werk. Dit begin self luister solank jy sy stemknoppie vashou, so hou die knoppie vas terwyl jy praat."
+      },
+      "test_result_atvv_tap": {
+        "title": "Afstandbeheertoets-resultaat",
+        "description": "Jou afstandbeheer werk. Tik sy stemknoppie om te begin praat; dit hou op luister wanneer jy ophou praat."
+      },
+      "test_result_fire_voice": {
+        "title": "Afstandbeheertoets-resultaat",
+        "description": "Jou afstandbeheer werk. Hou sy stemknoppie vas solank jy praat."
+      },
+      "test_result_plain_key": {
+        "title": "Afstandbeheertoets-resultaat",
+        "description": "Die afstandbeheer het gewone knoppiedrukke gestuur maar geen stemsein nie, so sy stemknoppie werk dalk nie oor Bluetooth nie."
+      },
+      "test_result_nothing": {
+        "title": "Afstandbeheertoets-resultaat",
+        "description": "Niks is van die afstandbeheer ontvang nie. Maak dit met 'n pyltjie-sleutel wakker, kontroleer dat dit aan hierdie Home Assistant-masjien gekoppel is, en toets weer."
+      },
+      "report": {
+        "title": "Afstandbeheerverslag",
+        "description": "Kopieer hierdie teks na 'n GitHub-kwessie. Dit bevat geen volledige Bluetooth-adres, name, webadresse of oudio nie.",
+        "data": {
+          "report": "Afstandbeheerverslag"
+        },
+        "data_description": {
+          "report": "Kies alles en kopieer."
+        }
+      },
+      "test_clips": {
+        "title": "Toetssnitte",
+        "description": "Elke druk van die stemknoppie is as 'n snit gestoor, sodat jy kan hoor wat die afstandbeheer gestuur het:\n\n{clips}\n\nDie snitte is in Media → My media → Bluetooth Remote Voice. Die skakels werk vir 5 minute."
+      },
+      "test_clips_none": {
+        "title": "Geen snit gestoor nie",
+        "description": "Die stemknoppie het gewerk, maar geen snit is gestoor nie. Snitte word in Home Assistant se mediagids gestoor (Media → My media), so kyk of hierdie Home Assistant 'n mediagids het waarin dit kan skryf, en toets dan weer."
+      },
+      "test_hints": {
+        "title": "Wat die toets opgemerk het",
+        "description": "Vroeë stopseine: {early}. Verlore oudiogapings: {gaps}.\n\n'n Vroeë stopsein is 'n stop van die afstandbeheer kort nadat jy begin het, terwyl jy die knoppie nog vashou. As dit bo 0 is en jou versoeke kort afgesny word, skakel Ignoreer vroeë stop aan in die integrasie se Instellings.\n\n'n Verlore oudiogaping is 'n stuk oudio wat Bluetooth laat val het. As dit bo 0 is en versoeke met 'n oudiogapingsfout misluk, stel Vul kort oudiogapings in in die integrasie se Instellings."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Die gestoorde antwoordluidspreker is nou nie beskikbaar nie, so antwoorde sal nie speel totdat dit terugkeer nie. Hou dit, of kies 'n ander."
     },
     "abort": {
-      "no_pipelines": "Skep eers 'n Assist-pyplyn."
+      "no_pipelines": "Skep eers 'n Assist-pyplyn.",
+      "test_running": "'n Toets van hierdie afstandbeheer loop reeds.",
+      "pause_failed": "Die afstandbeheer kon nie vir die toets gepouseer word nie. Probeer oor 'n oomblik weer."
+    },
+    "progress": {
+      "observing": "Druk en hou die afstandbeheer se stemknoppie nou vas, praat kortliks en laat dan los. Herhaal soveel keer as jy wil: die toets duur 20 sekondes en neem elke druk op sodat jy daarna kan luister. As dit lyk of niks gebeur nie, maak die afstandbeheer eers met 'n pyltjieknoppie wakker. Jou afstandbeheer is gepouseer vir normale gebruik terwyl dit loop: sy entiteite is vir ongeveer 'n minuut onbeskikbaar en 'n versoek wat besig is, word gekanselleer."
     }
   },
   "selector": {

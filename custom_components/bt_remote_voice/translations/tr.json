@@ -35,7 +35,7 @@
           "pipeline_id": "Bu uzaktan kumandadan gelen konuşmayı işleyen Assist ardışık düzeni.",
           "remote_type": "Kumanda tanınmıyorsa veya kurulum başarısız olursa dışında Otomatik olarak bırakın.",
           "show_report": "İşaretleyip gönderin; bir GitHub sorununa kopyalayabileceğiniz bir rapor görünür.",
-          "test_remote": "İşaretleyip gönderin, ardından kumandanın ses düğmesini basılı tutarak kumandanın ne yaptığını görün."
+          "test_remote": "İşaretleyip gönderin, ardından konuşurken uzaktan kumandanın ses düğmesine basılı tutun. Her basış kaydedilir, böylece sonradan dinleyebilirsiniz."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Kumanda testi sonucu",
-        "description": "Bu kumanda, düğmesi basılı tutulduğu sürece sesi kendisi başlatır. Konuşmak için o düğmeyi basılı tutun. Kuruluma devam etmek için Gönder'e basın."
+        "description": "Uzaktan kumandanız çalışıyor. Ses düğmesine basılı tuttuğunuz sürece kendiliğinden dinlemeye başlar, bu yüzden konuşurken düğmeyi basılı tutun. Kuruluma devam etmek için Gönder'e basın."
       },
       "test_result_atvv_tap": {
         "title": "Kumanda testi sonucu",
-        "description": "Bu kumanda, düğmesine dokunulduğunda sesi başlatır ve konuşmayı bırakana kadar dinler. Konuşmak için o düğmeye dokunun. Kuruluma devam etmek için Gönder'e basın."
+        "description": "Uzaktan kumandanız çalışıyor. Konuşmaya başlamak için ses düğmesine dokunun; konuşmayı bıraktığınızda dinlemeyi bırakır. Kuruluma devam etmek için Gönder'e basın."
       },
       "test_result_fire_voice": {
         "title": "Kumanda testi sonucu",
-        "description": "Bu, bir Fire TV kumandasının ses tuşudur. Konuşurken basılı tutun. Kuruluma devam etmek için Gönder'e basın."
+        "description": "Uzaktan kumandanız çalışıyor. Konuştuğunuz sürece ses düğmesini basılı tutun. Kuruluma devam etmek için Gönder'e basın."
       },
       "test_result_plain_key": {
         "title": "Kumanda testi sonucu",
-        "description": "Kumanda normal tuşlar gönderdi ancak ses sinyali göndermedi; bu nedenle ses düğmesi Bluetooth üzerinden sesi başlatmayabilir. Gönderin, ardından görülenleri paylaşmak için Kumanda raporunu göster seçeneğini işaretleyin."
+        "description": "Kumanda sıradan düğme basışları gönderdi ancak ses sinyali göndermedi; bu yüzden ses düğmesi Bluetooth üzerinden çalışmıyor olabilir. Gönder'e basın, ardından görülenleri paylaşmak için Kumanda raporunu göster seçeneğini işaretleyin."
       },
       "test_result_nothing": {
         "title": "Kumanda testi sonucu",
         "description": "Kumandadan hiçbir şey alınmadı. Bir ok tuşuyla uyandırın, bu Home Assistant makinesine bağlı olduğunu kontrol edin ve yeniden test edin. Devam etmek için Gönder'e basın."
+      },
+      "test_clips": {
+        "title": "Test klipleri",
+        "description": "Ses düğmesine her basış bir klip olarak kaydedildi, böylece uzaktan kumandanın ne gönderdiğini duyabilirsiniz:\n\n{clips}\n\nKlipler Ortam → Ortamım → Bluetooth Remote Voice konumundadır. Bağlantılar 5 dakika çalışır."
+      },
+      "test_clips_none": {
+        "title": "Klip kaydedilmedi",
+        "description": "Ses düğmesi çalıştı, ancak klip kaydedilmedi. Klipler Home Assistant'ın medya klasörüne (Ortam → Ortamım) kaydedilir; bu nedenle bu Home Assistant'ın yazabileceği bir medya klasörü olup olmadığını kontrol edin ve testi yeniden yapın."
+      },
+      "test_hints": {
+        "title": "Testin fark ettikleri",
+        "description": "Erken durdurma sinyalleri: {early}. Kaybolan ses boşlukları: {gaps}.\n\nErken durdurma sinyali, siz düğmeyi hâlâ basılı tutarken başladıktan hemen sonra kumandadan gelen bir durdurmadır. Değer 0'ın üzerindeyse ve istekleriniz erken kesiliyorsa, entegrasyonun Ayarlar bölümünde Erken durdurmayı yoksay seçeneğini açın.\n\nKaybolan ses boşluğu, Bluetooth'un düşürdüğü bir ses bölümüdür. Değer 0'ın üzerindeyse ve istekler ses boşluğu hatasıyla başarısız oluyorsa, entegrasyonun Ayarlar bölümünde Kısa ses boşluklarını doldur değerini ayarlayın."
       }
     },
     "progress": {
-      "observing": "20 saniye dinleniyor. Kumandayı bir ok tuşuyla uyandırın, ardından ses düğmesini basılı tutun, kısaca konuşun ve bırakın."
+      "observing": "Şimdi uzaktan kumandanın ses düğmesine basılı tutun, kısaca konuşun ve bırakın. İstediğiniz kadar tekrarlayın: test 20 saniye sürer ve her basışı kaydeder, böylece sonradan dinleyebilirsiniz. Hiçbir şey olmuyor gibi görünüyorsa önce kumandayı bir ok tuşuyla uyandırın."
     },
     "error": {
       "bluetooth_unavailable": "Yerel Bluetooth kullanılamıyor. Sistem D-Bus'ına erişilebildiğini kontrol edin.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Bu uzaktan kumanda zaten yapılandırılmış.",
-      "no_pipelines": "Uzaktan kumandayı eklemeden önce bir Assist ardışık düzeni oluşturun."
+      "no_pipelines": "Uzaktan kumandayı eklemeden önce bir Assist ardışık düzeni oluşturun.",
+      "test_running": "Bu uzaktan kumandanın bir testi zaten çalışıyor.",
+      "pause_failed": "Uzaktan kumanda test için duraklatılamadı. Biraz sonra yeniden deneyin."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Uzaktan kumanda seçenekleri",
+        "description": "Ayarlar bu uzaktan kumandanın davranışını değiştirir. Uzaktan kumanda ve türü burada değiştirilemez: başka bir kumanda veya tür kullanmak için bu girişi silin ve kumandayı yeniden ekleyin.",
+        "menu_options": {
+          "settings": "Ayarlar",
+          "test": "Kumandamı test et",
+          "report": "Kumanda raporunu göster"
+        }
+      },
+      "settings": {
         "title": "Ses ayarları",
         "description": "Bu ayarlar, basışların nasıl işleneceğini ve yanıtların nasıl sesli okunacağını belirler. Bir isteği değiştirmek, zaten gerçekleştirdiği eylemleri geri alamaz. Eşzamanlı tam çift yönlü (full duplex) kullanılamıyor. Yazıya dökmeden sonra durmak, canlı konuşma sağlayıcısında yerleşik araçları devre dışı bırakmaz; eylemlerin devre dışı bırakılması gerekiyorsa yalnızca yazıya döken bir sağlayıcı kullanın.\n\n**Yanıt koşulu:** bir yanıtın sesli okunması için tüm koşullarının sağlanması gerekir. Her isteğin başında bir kez denetlenirler; her zaman sesli okumak için boş bırakın, değerlendirilemeyen bir koşul sağlanmamış sayılır. Şablon koşulları `speaker`, `remote` ve `held` değişkenlerini kullanabilir.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Kısa basışları yoksay",
           "max_request_seconds": "Maksimum istek uzunluğu",
           "max_conversation_seconds": "Maksimum konuşma uzunluğu",
-          "reply_condition": "Yanıt koşulu"
+          "reply_condition": "Yanıt koşulu",
+          "ignore_early_stop": "Erken durdurmayı yoksay",
+          "gap_tolerance_ms": "Kısa ses boşluklarını doldur"
         },
         "data_description": {
           "pipeline_id": "Konuşmayı işleyen Assist ardışık düzeni: konuşmayı metne çevirme, konuşma aracısı ve metni konuşmaya çevirme. Kaldırılan bir ardışık düzen, başka birine geçmek yerine hata verir.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Bundan kısa ses düğmesi dokunuşlarını yoksayar; böylece sahte bir dokunuş asla istek başlatmaz; gerçek bir basılı tutma bu kadar geç başlar. 0 bunu kapatır. Uyandıktan hemen sonra “Mikrofon sesi yok” hatasıyla başarısız olan Fire TV uzaktan kumandası için yararlıdır: onu uyandıran tuşu anlık bir dokunuş olarak yeniden gönderir. 0,1 s iyi bir başlangıç noktasıdır. Yalnızca Fire TV uzaktan kumandaları için.",
           "max_request_seconds": "Herhangi bir uzaktan kumandada tek bir isteğin sürebileceği en uzun süre: Tek istek modunda basılı tutmanın tamamı ve Dönüşümlü konuşmada her tur. Buna ulaşmak, isteği yakalama sınırı hatasıyla sonlandırır. Takılı kalmış bir düğmenin kaydını durdurmak için düşürün; uzun dikte için artırın. Basılı tutarak konuşma özelliği olmayan uzaktan kumandalar ayrıca yaklaşık 15 saniyelik konuşmada veya sessizlikte, hangisi önce gerçekleşirse, sonlanır.",
           "max_conversation_seconds": "Dönüşümlü konuşma modunda tüm bir düğme basılı tutmanın sürebileceği en uzun süre. Tek istek modunda yoksayılır ve maksimum istek uzunluğundan kısa olmamalıdır.",
-          "reply_condition": "Bir yanıtın sesli okunması için hepsinin sağlanması gereken koşullar. Her isteğin başında (ve Dönüşümlü konuşmada her turda) bir kez denetlenir. Her zaman sesli okumak için boş bırakın. Hata veren bir koşul sağlanmamış sayılır. Şablon koşulları speaker, remote ve held değişkenlerini kullanabilir."
+          "reply_condition": "Bir yanıtın sesli okunması için hepsinin sağlanması gereken koşullar. Her isteğin başında (ve Dönüşümlü konuşmada her turda) bir kez denetlenir. Her zaman sesli okumak için boş bırakın. Hata veren bir koşul sağlanmamış sayılır. Şablon koşulları speaker, remote ve held değişkenlerini kullanabilir.",
+          "ignore_early_stop": "Düğmeyi baştan sona basılı tuttuğunuz hâlde istekler bazen saniyenin kesri kadar sürede bitiyorsa bunu açın. Bazı Android TV kumandaları başladıktan hemen sonra bir durdurma sinyali gönderir ve sonra ses göndermeye devam eder. Açıkken, ilk saniyedeki durdurma, ses hâlâ geldiği sürece yok sayılır ve istek, ses sessizleştiğinde ya da ikinci bir durdurma geldiğinde biter. Yalnızca Düğme davranışı Basılı tutma başına tek istek olarak ayarlıyken kullanılır.",
+          "gap_tolerance_ms": "Bluetooth bir anlık sesi kaybedebilir; bu da isteğin genellikle ses boşluğu hatasıyla başarısız olmasına yol açar. Kaybolan bir bölümü bu uzunluğa kadar sessizlikle değiştirip isteğin devam etmesi için burada bir uzunluk belirleyin. Daha uzun boşluklar yine başarısız olur. Kelimenin ortasındaki sessizlik tanıma doğruluğunu düşürebilir, bu yüzden çalışan en düşük değeri kullanın. 0 kapatır. Yalnızca Android TV kumandaları için."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Kumanda testi sonucu",
+        "description": "Uzaktan kumandanız çalışıyor. Ses düğmesine basılı tuttuğunuz sürece kendiliğinden dinlemeye başlar, bu yüzden konuşurken düğmeyi basılı tutun."
+      },
+      "test_result_atvv_tap": {
+        "title": "Kumanda testi sonucu",
+        "description": "Uzaktan kumandanız çalışıyor. Konuşmaya başlamak için ses düğmesine dokunun; konuşmayı bıraktığınızda dinlemeyi bırakır."
+      },
+      "test_result_fire_voice": {
+        "title": "Kumanda testi sonucu",
+        "description": "Uzaktan kumandanız çalışıyor. Konuştuğunuz sürece ses düğmesini basılı tutun."
+      },
+      "test_result_plain_key": {
+        "title": "Kumanda testi sonucu",
+        "description": "Kumanda sıradan düğme basışları gönderdi ancak ses sinyali göndermedi; bu yüzden ses düğmesi Bluetooth üzerinden çalışmıyor olabilir."
+      },
+      "test_result_nothing": {
+        "title": "Kumanda testi sonucu",
+        "description": "Kumandadan hiçbir şey alınmadı. Bir ok tuşuyla uyandırın, bu Home Assistant makinesine bağlı olduğunu kontrol edin ve yeniden test edin."
+      },
+      "report": {
+        "title": "Kumanda raporu",
+        "description": "Bu metni bir GitHub sorununa kopyalayın. Tam Bluetooth adresi, ad, web adresi veya ses içermez.",
+        "data": {
+          "report": "Kumanda raporu"
+        },
+        "data_description": {
+          "report": "Tümünü seçin ve kopyalayın."
+        }
+      },
+      "test_clips": {
+        "title": "Test klipleri",
+        "description": "Ses düğmesine her basış bir klip olarak kaydedildi, böylece uzaktan kumandanın ne gönderdiğini duyabilirsiniz:\n\n{clips}\n\nKlipler Ortam → Ortamım → Bluetooth Remote Voice konumundadır. Bağlantılar 5 dakika çalışır."
+      },
+      "test_clips_none": {
+        "title": "Klip kaydedilmedi",
+        "description": "Ses düğmesi çalıştı, ancak klip kaydedilmedi. Klipler Home Assistant'ın medya klasörüne (Ortam → Ortamım) kaydedilir; bu nedenle bu Home Assistant'ın yazabileceği bir medya klasörü olup olmadığını kontrol edin ve testi yeniden yapın."
+      },
+      "test_hints": {
+        "title": "Testin fark ettikleri",
+        "description": "Erken durdurma sinyalleri: {early}. Kaybolan ses boşlukları: {gaps}.\n\nErken durdurma sinyali, siz düğmeyi hâlâ basılı tutarken başladıktan hemen sonra kumandadan gelen bir durdurmadır. Değer 0'ın üzerindeyse ve istekleriniz erken kesiliyorsa, entegrasyonun Ayarlar bölümünde Erken durdurmayı yoksay seçeneğini açın.\n\nKaybolan ses boşluğu, Bluetooth'un düşürdüğü bir ses bölümüdür. Değer 0'ın üzerindeyse ve istekler ses boşluğu hatasıyla başarısız oluyorsa, entegrasyonun Ayarlar bölümünde Kısa ses boşluklarını doldur değerini ayarlayın."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Kaydedilen yanıt hoparlörü şu anda kullanılamıyor, bu nedenle geri dönene kadar yanıtlar oynatılmayacak. Koruyun veya başka birini seçin."
     },
     "abort": {
-      "no_pipelines": "Önce bir Assist ardışık düzeni oluşturun."
+      "no_pipelines": "Önce bir Assist ardışık düzeni oluşturun.",
+      "test_running": "Bu uzaktan kumandanın bir testi zaten çalışıyor.",
+      "pause_failed": "Uzaktan kumanda test için duraklatılamadı. Biraz sonra yeniden deneyin."
+    },
+    "progress": {
+      "observing": "Şimdi uzaktan kumandanın ses düğmesine basılı tutun, kısaca konuşun ve bırakın. İstediğiniz kadar tekrarlayın: test 20 saniye sürer ve her basışı kaydeder, böylece sonradan dinleyebilirsiniz. Hiçbir şey olmuyor gibi görünüyorsa önce kumandayı bir ok tuşuyla uyandırın. Bu çalışırken uzaktan kumandanız normal kullanım için duraklatılır: varlıkları yaklaşık bir dakika kullanılamaz ve devam eden istek iptal edilir."
     }
   },
   "selector": {

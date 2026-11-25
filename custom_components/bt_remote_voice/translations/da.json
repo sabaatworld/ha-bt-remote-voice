@@ -35,7 +35,7 @@
           "pipeline_id": "Den Assist-pipeline, der behandler tale fra denne fjernbetjening.",
           "remote_type": "Lad stå på Automatisk, medmindre fjernbetjeningen ikke genkendes, eller opsætningen mislykkes.",
           "show_report": "Markér og send for at se en rapport, du kan kopiere ind i en GitHub-sag.",
-          "test_remote": "Markér og send, og tryk og hold derefter fjernbetjeningens stemmeknap for at se, hvad fjernbetjeningen gør."
+          "test_remote": "Markér og send, tryk derefter på fjernbetjeningens stemmeknap og hold den nede, mens du taler. Hvert tryk optages, så du kan lytte til det bagefter."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Resultat af fjernbetjeningstest",
-        "description": "Denne fjernbetjening starter selv stemme, mens knappen holdes nede. Hold knappen nede for at tale. Send for at fortsætte opsætningen."
+        "description": "Din fjernbetjening virker. Den begynder selv at lytte, mens du holder stemmeknappen nede, så hold knappen nede, mens du taler. Send for at fortsætte opsætningen."
       },
       "test_result_atvv_tap": {
         "title": "Resultat af fjernbetjeningstest",
-        "description": "Denne fjernbetjening starter stemme, når der trykkes på knappen, og lytter, til du holder op med at tale. Tryk på knappen for at tale. Send for at fortsætte opsætningen."
+        "description": "Din fjernbetjening virker. Tryk kort på stemmeknappen for at begynde at tale; den holder op med at lytte, når du holder op med at tale. Send for at fortsætte opsætningen."
       },
       "test_result_fire_voice": {
         "title": "Resultat af fjernbetjeningstest",
-        "description": "Dette er stemmetasten på en Fire TV-fjernbetjening. Hold den nede, mens du taler. Send for at fortsætte opsætningen."
+        "description": "Din fjernbetjening virker. Hold stemmeknappen nede, så længe du taler. Send for at fortsætte opsætningen."
       },
       "test_result_plain_key": {
         "title": "Resultat af fjernbetjeningstest",
-        "description": "Fjernbetjeningen sendte almindelige taster, men intet stemmesignal, så dens stemmeknap starter måske ikke stemme via Bluetooth. Send, og markér derefter Vis fjernbetjeningsrapport for at dele, hvad der blev set."
+        "description": "Fjernbetjeningen sendte almindelige knaptryk, men intet stemmesignal, så dens stemmeknap virker måske ikke via Bluetooth. Send, og markér derefter Vis fjernbetjeningsrapport for at dele, hvad der blev set."
       },
       "test_result_nothing": {
         "title": "Resultat af fjernbetjeningstest",
         "description": "Der blev ikke modtaget noget fra fjernbetjeningen. Væk den med en piletast, kontrollér, at den er forbundet til denne Home Assistant-maskine, og test igen. Send for at fortsætte."
+      },
+      "test_clips": {
+        "title": "Testklip",
+        "description": "Hvert tryk på stemmeknappen blev gemt som et klip, så du kan høre, hvad fjernbetjeningen sendte:\n\n{clips}\n\nKlippene ligger i Medier → Mine medier → Bluetooth Remote Voice. Linkene virker i 5 minutter."
+      },
+      "test_clips_none": {
+        "title": "Intet klip gemt",
+        "description": "Stemmeknappen virkede, men der blev ikke gemt noget klip. Klip gemmes i Home Assistants mediemappe (Medier → Mine medier), så tjek, at denne Home Assistant har en mediemappe, den kan skrive til, og test igen."
+      },
+      "test_hints": {
+        "title": "Hvad testen bemærkede",
+        "description": "Tidlige stopsignaler: {early}. Tabte lydhuller: {gaps}.\n\nEt tidligt stopsignal er et stop fra fjernbetjeningen lige efter, du er startet, mens du stadig holdt knappen nede. Hvis det er over 0, og dine anmodninger bliver afbrudt for tidligt, så slå Ignorer tidligt stop til i integrationens Indstillinger.\n\nEt tabt lydhul er et stykke lyd, som Bluetooth har tabt. Hvis det er over 0, og anmodninger fejler med en lydhulsfejl, så indstil Udfyld korte lydhuller i integrationens Indstillinger."
       }
     },
     "progress": {
-      "observing": "Lytter i 20 sekunder. Væk fjernbetjeningen med en piletast, tryk og hold derefter dens stemmeknap, sig noget kort, og slip."
+      "observing": "Tryk på fjernbetjeningens stemmeknap og hold den nede nu, tal kort, og slip. Gentag så mange gange, du vil: testen kører i 20 sekunder og optager hvert tryk, så du kan lytte til det bagefter. Hvis det ser ud til, at der ikke sker noget, så væk først fjernbetjeningen med en piltast."
     },
     "error": {
       "bluetooth_unavailable": "Lokal Bluetooth er ikke tilgængelig. Kontroller, at systemets D-Bus er tilgængelig.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Denne fjernbetjening er allerede konfigureret.",
-      "no_pipelines": "Opret en Assist-pipeline, før du tilføjer fjernbetjeningen."
+      "no_pipelines": "Opret en Assist-pipeline, før du tilføjer fjernbetjeningen.",
+      "test_running": "En test af denne fjernbetjening kører allerede.",
+      "pause_failed": "Fjernbetjeningen kunne ikke sættes på pause til testen. Prøv igen om lidt."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Indstillinger for fjernbetjening",
+        "description": "Indstillinger ændrer, hvordan denne fjernbetjening opfører sig. Fjernbetjeningen og dens type kan ikke ændres her: for at bruge en anden fjernbetjening eller type skal du slette denne post og tilføje fjernbetjeningen igen.",
+        "menu_options": {
+          "settings": "Indstillinger",
+          "test": "Test min fjernbetjening",
+          "report": "Vis fjernbetjeningsrapport"
+        }
+      },
+      "settings": {
         "title": "Stemmeindstillinger",
         "description": "Disse indstillinger styrer, hvordan tryk håndteres, og hvordan svar oplæses. Hvis du erstatter en anmodning, kan allerede udførte handlinger ikke fortrydes. Samtidig fuld duplex er ikke tilgængelig. Hvis du stopper efter transskribering, deaktiveres værktøjer indbygget i en live-taleudbyder ikke; brug en udbyder, der kun transskriberer, når handlinger skal deaktiveres.\n\n**Svarbetingelse:** alle dens betingelser skal være opfyldt, for at et svar oplæses. De kontrolleres én gang ved starten af hver anmodning; lad den være tom for altid at tale, og en betingelse, der ikke kan evalueres, regnes som ikke opfyldt. Skabelonbetingelser kan bruge variablerne `speaker`, `remote` og `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignorer korte tryk",
           "max_request_seconds": "Maksimal anmodningslængde",
           "max_conversation_seconds": "Maksimal samtalelængde",
-          "reply_condition": "Svarbetingelse"
+          "reply_condition": "Svarbetingelse",
+          "ignore_early_stop": "Ignorer tidligt stop",
+          "gap_tolerance_ms": "Udfyld korte lydhuller"
         },
         "data_description": {
           "pipeline_id": "Den Assist-pipeline, der behandler tale: tale til tekst, samtaleagent og tekst til tale. En fjernet pipeline giver en fejl i stedet for at falde tilbage på en anden.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignorerer tryk på stemmeknappen, der er kortere end dette, så et utilsigtet tryk aldrig starter en anmodning; et rigtigt hold starter så meget senere. 0 slår det fra. Nyttigt til en Fire TV-fjernbetjening, der fejler med \"Ingen mikrofonlyd\" lige efter opvågning: den gensender den tast, der vækkede den, som et øjeblikkeligt tryk. 0,1 s er et godt udgangspunkt. Kun til Fire TV-fjernbetjeninger.",
           "max_request_seconds": "Den længste tid, en enkelt anmodning kan vare på en fjernbetjening: et helt hold i tilstanden Én anmodning og hver tur i skiftevis samtale. Når grænsen nås, slutter anmodningen med en fejl om optagegrænse. Sænk den for at stoppe optagelse med hængende knap; hæv den til lange diktater. Fjernbetjeninger uden hold-for-at-tale slutter også efter ca. 15 sekunders tale eller ved stilhed, alt efter hvad der kommer først.",
           "max_conversation_seconds": "Den længste tid, et helt knaphold kan vare i tilstanden skiftevis samtale. Ignoreres i tilstanden Én anmodning og må ikke være kortere end den maksimale anmodningslængde.",
-          "reply_condition": "Betingelser, der alle skal være opfyldt, for at et svar oplæses. Kontrolleres én gang ved starten af hver anmodning (og hver tur i skiftevis samtale). Lad den være tom for altid at tale. En betingelse, der giver en fejl, regnes som ikke opfyldt. Skabelonbetingelser kan bruge variablerne speaker, remote og held."
+          "reply_condition": "Betingelser, der alle skal være opfyldt, for at et svar oplæses. Kontrolleres én gang ved starten af hver anmodning (og hver tur i skiftevis samtale). Lad den være tom for altid at tale. En betingelse, der giver en fejl, regnes som ikke opfyldt. Skabelonbetingelser kan bruge variablerne speaker, remote og held.",
+          "ignore_early_stop": "Slå dette til, hvis anmodninger nogle gange slutter efter et splitsekund, selvom du holdt knappen nede hele tiden. Nogle Android TV-fjernbetjeninger sender et stopsignal lige efter, du starter, og sender derefter stadig lyd. Når det er slået til, ignoreres et stop inden for det første sekund, så længe der stadig kommer lyd, og anmodningen slutter, når lyden bliver stille, eller et andet stop kommer. Bruges kun, når Knapadfærd er sat til Én anmodning pr. hold.",
+          "gap_tolerance_ms": "Bluetooth kan miste et øjeblik af lyden, hvilket normalt får anmodningen til at fejle med en lydhulsfejl. Angiv her en længde, så et tabt stykke op til den længde erstattes med stilhed, og anmodningen fortsætter. Længere huller fejler stadig. Stilhed midt i et ord kan nedsætte genkendelsens nøjagtighed, så brug den laveste værdi, der virker. 0 slår det fra. Kun til Android TV-fjernbetjeninger."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultat af fjernbetjeningstest",
+        "description": "Din fjernbetjening virker. Den begynder selv at lytte, mens du holder stemmeknappen nede, så hold knappen nede, mens du taler."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultat af fjernbetjeningstest",
+        "description": "Din fjernbetjening virker. Tryk kort på stemmeknappen for at begynde at tale; den holder op med at lytte, når du holder op med at tale."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultat af fjernbetjeningstest",
+        "description": "Din fjernbetjening virker. Hold stemmeknappen nede, så længe du taler."
+      },
+      "test_result_plain_key": {
+        "title": "Resultat af fjernbetjeningstest",
+        "description": "Fjernbetjeningen sendte almindelige knaptryk, men intet stemmesignal, så dens stemmeknap virker måske ikke via Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Resultat af fjernbetjeningstest",
+        "description": "Der blev ikke modtaget noget fra fjernbetjeningen. Væk den med en piletast, kontrollér, at den er forbundet til denne Home Assistant-maskine, og test igen."
+      },
+      "report": {
+        "title": "Fjernbetjeningsrapport",
+        "description": "Kopiér denne tekst ind i en GitHub-sag. Den indeholder ingen fuld Bluetooth-adresse, navne, webadresser eller lyd.",
+        "data": {
+          "report": "Fjernbetjeningsrapport"
+        },
+        "data_description": {
+          "report": "Markér alt, og kopiér."
+        }
+      },
+      "test_clips": {
+        "title": "Testklip",
+        "description": "Hvert tryk på stemmeknappen blev gemt som et klip, så du kan høre, hvad fjernbetjeningen sendte:\n\n{clips}\n\nKlippene ligger i Medier → Mine medier → Bluetooth Remote Voice. Linkene virker i 5 minutter."
+      },
+      "test_clips_none": {
+        "title": "Intet klip gemt",
+        "description": "Stemmeknappen virkede, men der blev ikke gemt noget klip. Klip gemmes i Home Assistants mediemappe (Medier → Mine medier), så tjek, at denne Home Assistant har en mediemappe, den kan skrive til, og test igen."
+      },
+      "test_hints": {
+        "title": "Hvad testen bemærkede",
+        "description": "Tidlige stopsignaler: {early}. Tabte lydhuller: {gaps}.\n\nEt tidligt stopsignal er et stop fra fjernbetjeningen lige efter, du er startet, mens du stadig holdt knappen nede. Hvis det er over 0, og dine anmodninger bliver afbrudt for tidligt, så slå Ignorer tidligt stop til i integrationens Indstillinger.\n\nEt tabt lydhul er et stykke lyd, som Bluetooth har tabt. Hvis det er over 0, og anmodninger fejler med en lydhulsfejl, så indstil Udfyld korte lydhuller i integrationens Indstillinger."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Den gemte svarhøjttaler er ikke tilgængelig lige nu, så svar afspilles ikke, før den vender tilbage. Behold den, eller vælg en anden."
     },
     "abort": {
-      "no_pipelines": "Opret først en Assist-pipeline."
+      "no_pipelines": "Opret først en Assist-pipeline.",
+      "test_running": "En test af denne fjernbetjening kører allerede.",
+      "pause_failed": "Fjernbetjeningen kunne ikke sættes på pause til testen. Prøv igen om lidt."
+    },
+    "progress": {
+      "observing": "Tryk på fjernbetjeningens stemmeknap og hold den nede nu, tal kort, og slip. Gentag så mange gange, du vil: testen kører i 20 sekunder og optager hvert tryk, så du kan lytte til det bagefter. Hvis det ser ud til, at der ikke sker noget, så væk først fjernbetjeningen med en piltast. Din fjernbetjening er sat på pause til normal brug, mens dette kører: dens entiteter er utilgængelige i omkring et minut, og en igangværende anmodning annulleres."
     }
   },
   "selector": {

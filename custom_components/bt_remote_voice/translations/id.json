@@ -35,7 +35,7 @@
           "pipeline_id": "Pipeline Assist yang memproses ucapan dari remote ini.",
           "remote_type": "Biarkan pada Otomatis kecuali remote tidak dikenali atau penyiapan gagal.",
           "show_report": "Centang lalu kirim untuk melihat laporan yang dapat Anda salin ke isu GitHub.",
-          "test_remote": "Centang lalu kirim, kemudian tekan dan tahan tombol suara remote untuk melihat apa yang dilakukan remote."
+          "test_remote": "Centang dan kirim, lalu tekan dan tahan tombol suara remote saat Anda berbicara. Setiap penekanan direkam agar Anda dapat mendengarkannya setelahnya."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Hasil uji remote",
-        "description": "Remote ini memulai suara sendiri selama tombolnya ditahan. Tahan tombol itu untuk berbicara. Kirim untuk melanjutkan penyiapan."
+        "description": "Remote Anda berfungsi. Remote mulai mendengarkan sendiri selama Anda menahan tombol suaranya, jadi tahan tombol itu saat Anda berbicara. Kirim untuk melanjutkan penyiapan."
       },
       "test_result_atvv_tap": {
         "title": "Hasil uji remote",
-        "description": "Remote ini memulai suara saat tombolnya diketuk dan mendengarkan sampai Anda berhenti berbicara. Ketuk tombol itu untuk berbicara. Kirim untuk melanjutkan penyiapan."
+        "description": "Remote Anda berfungsi. Ketuk tombol suaranya untuk mulai berbicara; remote berhenti mendengarkan saat Anda berhenti berbicara. Kirim untuk melanjutkan penyiapan."
       },
       "test_result_fire_voice": {
         "title": "Hasil uji remote",
-        "description": "Ini adalah tombol suara remote Fire TV. Tahan saat Anda berbicara. Kirim untuk melanjutkan penyiapan."
+        "description": "Remote Anda berfungsi. Tahan tombol suaranya selama Anda berbicara. Kirim untuk melanjutkan penyiapan."
       },
       "test_result_plain_key": {
         "title": "Hasil uji remote",
-        "description": "Remote mengirim tombol biasa tetapi tidak ada sinyal suara, sehingga tombol suaranya mungkin tidak memulai suara lewat Bluetooth. Kirim, lalu centang Tampilkan laporan remote untuk membagikan apa yang terlihat."
+        "description": "Remote mengirim penekanan tombol biasa tetapi tidak ada sinyal suara, jadi tombol suaranya mungkin tidak berfungsi melalui Bluetooth. Kirim, lalu centang Tampilkan laporan remote untuk membagikan apa yang terlihat."
       },
       "test_result_nothing": {
         "title": "Hasil uji remote",
         "description": "Tidak ada yang diterima dari remote. Bangunkan dengan tombol panah, pastikan terhubung ke mesin Home Assistant ini, lalu uji lagi. Kirim untuk melanjutkan."
+      },
+      "test_clips": {
+        "title": "Klip uji",
+        "description": "Setiap penekanan tombol suara disimpan sebagai klip, sehingga Anda dapat mendengar apa yang dikirim remote:\n\n{clips}\n\nKlip ada di Media → Media saya → Bluetooth Remote Voice. Tautan berfungsi selama 5 menit."
+      },
+      "test_clips_none": {
+        "title": "Tidak ada klip yang disimpan",
+        "description": "Tombol suara berfungsi, tetapi tidak ada klip yang disimpan. Klip disimpan di folder media Home Assistant (Media → Media saya), jadi periksa apakah Home Assistant ini memiliki folder media yang dapat ditulisi, lalu uji lagi."
+      },
+      "test_hints": {
+        "title": "Yang diperhatikan pengujian",
+        "description": "Sinyal berhenti dini: {early}. Celah audio yang hilang: {gaps}.\n\nSinyal berhenti dini adalah penghentian dari remote segera setelah Anda mulai, saat Anda masih menahan tombol. Jika nilainya di atas 0 dan permintaan Anda terpotong, aktifkan Abaikan penghentian dini di Pengaturan integrasi.\n\nCelah audio yang hilang adalah bagian audio yang dibuang Bluetooth. Jika nilainya di atas 0 dan permintaan gagal dengan kesalahan celah audio, atur Isi celah audio pendek di Pengaturan integrasi."
       }
     },
     "progress": {
-      "observing": "Mendengarkan selama 20 detik. Bangunkan remote dengan tombol panah, lalu tekan dan tahan tombol suaranya, berbicaralah singkat, dan lepaskan."
+      "observing": "Tekan dan tahan tombol suara remote sekarang, bicara singkat, lalu lepaskan. Ulangi sesering yang Anda mau: pengujian berlangsung 20 detik dan merekam setiap penekanan agar Anda dapat mendengarkannya setelahnya. Jika tampaknya tidak ada yang terjadi, bangunkan remote dengan tombol panah terlebih dahulu."
     },
     "error": {
       "bluetooth_unavailable": "Bluetooth lokal tidak tersedia. Periksa apakah D-Bus sistem dapat diakses.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Remote ini sudah dikonfigurasi.",
-      "no_pipelines": "Buat pipeline Assist sebelum menambahkan remote."
+      "no_pipelines": "Buat pipeline Assist sebelum menambahkan remote.",
+      "test_running": "Pengujian remote ini sudah berjalan.",
+      "pause_failed": "Remote tidak dapat dijeda untuk pengujian. Coba lagi sebentar lagi."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opsi remote",
+        "description": "Pengaturan mengubah cara remote ini berperilaku. Remote dan jenisnya tidak dapat diubah di sini: untuk memakai remote atau jenis lain, hapus entri ini dan tambahkan remote lagi.",
+        "menu_options": {
+          "settings": "Pengaturan",
+          "test": "Uji remote saya",
+          "report": "Tampilkan laporan remote"
+        }
+      },
+      "settings": {
         "title": "Pengaturan suara",
         "description": "Pengaturan ini mengontrol cara penekanan tombol ditangani dan cara balasan diucapkan. Mengganti permintaan tidak dapat membatalkan tindakan yang sudah dilakukan. Dupleks penuh simultan tidak tersedia. Berhenti setelah transkripsi tidak menonaktifkan alat bawaan penyedia suara langsung; gunakan penyedia hanya transkripsi jika tindakan harus dinonaktifkan.\n\n**Kondisi balasan:** semua kondisinya harus terpenuhi agar balasan diucapkan. Kondisi diperiksa sekali di awal setiap permintaan; biarkan kosong agar selalu diucapkan, dan kondisi yang tidak dapat dievaluasi dianggap tidak terpenuhi. Kondisi template dapat menggunakan variabel `speaker`, `remote` dan `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Abaikan penekanan singkat",
           "max_request_seconds": "Durasi permintaan maksimum",
           "max_conversation_seconds": "Durasi percakapan maksimum",
-          "reply_condition": "Kondisi balasan"
+          "reply_condition": "Kondisi balasan",
+          "ignore_early_stop": "Abaikan penghentian dini",
+          "gap_tolerance_ms": "Isi celah audio pendek"
         },
         "data_description": {
           "pipeline_id": "Pipeline Assist yang memproses ucapan: ucapan-ke-teks, agen percakapan, dan teks-ke-ucapan. Pipeline yang dihapus menghasilkan error, bukan beralih ke pipeline lain.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Mengabaikan ketukan tombol suara yang lebih singkat dari ini, sehingga ketukan palsu tidak memulai permintaan; tahan yang sebenarnya dimulai selambat ini. 0 menonaktifkan. Berguna untuk remote Fire TV yang gagal dengan «Tidak ada audio mikrofon» tepat setelah dibangunkan: remote mengirim ulang tombol yang membangunkannya sebagai ketukan instan. 0,1 s adalah titik awal yang baik. Hanya untuk remote Fire TV.",
           "max_request_seconds": "Durasi terlama satu permintaan pada remote mana pun: seluruh tahan dalam mode Satu permintaan, dan setiap giliran dalam Percakapan bergantian. Mencapainya mengakhiri permintaan dengan error batas perekaman. Turunkan untuk menghentikan perekaman tombol yang macet; naikkan untuk dikte panjang. Remote yang bukan tahan-untuk-bicara juga berakhir pada sekitar 15 detik ucapan atau saat hening, mana yang lebih dulu.",
           "max_conversation_seconds": "Durasi terlama seluruh tahan tombol dalam mode Percakapan bergantian. Diabaikan dalam mode Satu permintaan dan tidak boleh lebih pendek dari durasi permintaan maksimum.",
-          "reply_condition": "Kondisi yang semuanya harus terpenuhi agar balasan diucapkan. Diperiksa sekali di awal setiap permintaan (dan setiap giliran dalam Percakapan bergantian). Biarkan kosong agar selalu diucapkan. Kondisi yang error dianggap tidak terpenuhi. Kondisi template dapat menggunakan variabel speaker, remote dan held."
+          "reply_condition": "Kondisi yang semuanya harus terpenuhi agar balasan diucapkan. Diperiksa sekali di awal setiap permintaan (dan setiap giliran dalam Percakapan bergantian). Biarkan kosong agar selalu diucapkan. Kondisi yang error dianggap tidak terpenuhi. Kondisi template dapat menggunakan variabel speaker, remote dan held.",
+          "ignore_early_stop": "Aktifkan ini jika permintaan terkadang berakhir setelah sepersekian detik padahal Anda menahan tombol sepanjang waktu. Beberapa remote Android TV mengirim sinyal berhenti segera setelah Anda mulai, lalu terus mengirim audio. Saat aktif, penghentian pada detik pertama diabaikan selama audio masih datang, dan permintaan berakhir saat audio menjadi hening atau penghentian kedua tiba. Hanya digunakan jika Perilaku tombol diatur ke Satu permintaan per tahan.",
+          "gap_tolerance_ms": "Bluetooth dapat kehilangan sesaat audio, yang biasanya membuat permintaan gagal dengan kesalahan celah audio. Atur panjang di sini untuk mengganti bagian yang hilang hingga panjang tersebut dengan keheningan agar permintaan berlanjut. Celah yang lebih panjang tetap gagal. Keheningan di tengah kata dapat menurunkan akurasi pengenalan, jadi gunakan nilai terendah yang berfungsi. 0 menonaktifkannya. Hanya untuk remote Android TV."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Hasil uji remote",
+        "description": "Remote Anda berfungsi. Remote mulai mendengarkan sendiri selama Anda menahan tombol suaranya, jadi tahan tombol itu saat Anda berbicara."
+      },
+      "test_result_atvv_tap": {
+        "title": "Hasil uji remote",
+        "description": "Remote Anda berfungsi. Ketuk tombol suaranya untuk mulai berbicara; remote berhenti mendengarkan saat Anda berhenti berbicara."
+      },
+      "test_result_fire_voice": {
+        "title": "Hasil uji remote",
+        "description": "Remote Anda berfungsi. Tahan tombol suaranya selama Anda berbicara."
+      },
+      "test_result_plain_key": {
+        "title": "Hasil uji remote",
+        "description": "Remote mengirim penekanan tombol biasa tetapi tidak ada sinyal suara, jadi tombol suaranya mungkin tidak berfungsi melalui Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Hasil uji remote",
+        "description": "Tidak ada yang diterima dari remote. Bangunkan dengan tombol panah, pastikan terhubung ke mesin Home Assistant ini, lalu uji lagi."
+      },
+      "report": {
+        "title": "Laporan remote",
+        "description": "Salin teks ini ke isu GitHub. Teks ini tidak berisi alamat Bluetooth lengkap, nama, alamat web, atau audio.",
+        "data": {
+          "report": "Laporan remote"
+        },
+        "data_description": {
+          "report": "Pilih semua lalu salin."
+        }
+      },
+      "test_clips": {
+        "title": "Klip uji",
+        "description": "Setiap penekanan tombol suara disimpan sebagai klip, sehingga Anda dapat mendengar apa yang dikirim remote:\n\n{clips}\n\nKlip ada di Media → Media saya → Bluetooth Remote Voice. Tautan berfungsi selama 5 menit."
+      },
+      "test_clips_none": {
+        "title": "Tidak ada klip yang disimpan",
+        "description": "Tombol suara berfungsi, tetapi tidak ada klip yang disimpan. Klip disimpan di folder media Home Assistant (Media → Media saya), jadi periksa apakah Home Assistant ini memiliki folder media yang dapat ditulisi, lalu uji lagi."
+      },
+      "test_hints": {
+        "title": "Yang diperhatikan pengujian",
+        "description": "Sinyal berhenti dini: {early}. Celah audio yang hilang: {gaps}.\n\nSinyal berhenti dini adalah penghentian dari remote segera setelah Anda mulai, saat Anda masih menahan tombol. Jika nilainya di atas 0 dan permintaan Anda terpotong, aktifkan Abaikan penghentian dini di Pengaturan integrasi.\n\nCelah audio yang hilang adalah bagian audio yang dibuang Bluetooth. Jika nilainya di atas 0 dan permintaan gagal dengan kesalahan celah audio, atur Isi celah audio pendek di Pengaturan integrasi."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Speaker balasan yang disimpan saat ini tidak tersedia, sehingga balasan tidak akan diputar sampai tersedia kembali. Pertahankan, atau pilih yang lain."
     },
     "abort": {
-      "no_pipelines": "Buat pipeline Assist terlebih dahulu."
+      "no_pipelines": "Buat pipeline Assist terlebih dahulu.",
+      "test_running": "Pengujian remote ini sudah berjalan.",
+      "pause_failed": "Remote tidak dapat dijeda untuk pengujian. Coba lagi sebentar lagi."
+    },
+    "progress": {
+      "observing": "Tekan dan tahan tombol suara remote sekarang, bicara singkat, lalu lepaskan. Ulangi sesering yang Anda mau: pengujian berlangsung 20 detik dan merekam setiap penekanan agar Anda dapat mendengarkannya setelahnya. Jika tampaknya tidak ada yang terjadi, bangunkan remote dengan tombol panah terlebih dahulu. Remote Anda dijeda dari penggunaan normal selama ini berjalan: entitasnya tidak tersedia sekitar satu menit dan permintaan yang sedang berjalan dibatalkan."
     }
   },
   "selector": {

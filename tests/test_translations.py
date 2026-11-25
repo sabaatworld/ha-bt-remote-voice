@@ -72,10 +72,10 @@ async def _forms(hass):
         entry = SimpleNamespace(data={"pipeline_id": "p"}, options={})
         options_flow = OptionsFlow(entry)
         options_flow.hass = hass
-        options = await options_flow.async_step_init()
+        options = await options_flow.async_step_settings()
     return {
         "config": {"user": user, "manual": manual, "configure": configure, "report": report},
-        "options": {"init": options},
+        "options": {"settings": options},
     }
 
 
@@ -95,15 +95,15 @@ async def test_choice_fields_use_translated_selectors(hass):
     from custom_components.bt_remote_voice.preferences import CHOICES
 
     forms = await _forms(hass)
-    options = selectors(forms["options"]["init"])
+    options = selectors(forms["options"]["settings"])
     for key, values in CHOICES.items():
         assert key in options, f"{key} must be a SelectSelector"
         config = options[key].config
         assert config["translation_key"] in STRINGS["selector"]
         translated = STRINGS["selector"][config["translation_key"]]["options"]
         assert {_value(o) for o in config["options"]} == set(values) == set(translated)
-    assert selectors(forms["options"]["init"])["mode"].config["translation_key"] == "voice_mode"
-    speaker = selectors(forms["options"]["init"])["speaker"].config
+    assert selectors(forms["options"]["settings"])["mode"].config["translation_key"] == "voice_mode"
+    speaker = selectors(forms["options"]["settings"])["speaker"].config
     assert "none" in {_value(o) for o in speaker["options"]}
     assert speaker["translation_key"] in STRINGS["selector"]
     device = selectors(forms["config"]["user"])["device"].config
@@ -268,7 +268,7 @@ def test_every_emitted_failure_code_has_a_translated_state():
 
 def test_step_description_explains_the_reply_condition_because_its_editor_shows_no_help():
     """HA's condition selector renders only a label, so the dialog intro carries the help."""
-    text = STRINGS["options"]["step"]["init"]["description"].lower()
+    text = STRINGS["options"]["step"]["settings"]["description"].lower()
     for needle in (
         "reply condition",
         "empty",

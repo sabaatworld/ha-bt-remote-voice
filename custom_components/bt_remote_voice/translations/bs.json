@@ -35,7 +35,7 @@
           "pipeline_id": "Assist cjevovod koji obrađuje govor s ovog daljinskog upravljača.",
           "remote_type": "Ostavite na Automatski osim ako daljinski nije prepoznat ili postavljanje ne uspije.",
           "show_report": "Označite i pošaljite da vidite izvještaj koji možete kopirati u GitHub prijavu.",
-          "test_remote": "Označite i pošaljite, zatim pritisnite i držite glasovno dugme daljinskog da vidite šta radi."
+          "test_remote": "Označite i pošaljite, zatim pritisnite i držite glasovno dugme daljinskog dok govorite. Svaki pritisak se snima kako biste ga kasnije mogli poslušati."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Rezultat testa daljinskog",
-        "description": "Ovaj daljinski sam pokreće glas dok se njegovo dugme drži. Držite to dugme da govorite. Pošalji za nastavak postavljanja."
+        "description": "Vaš daljinski radi. Počinje slušati sam dok držite njegovo glasovno dugme, zato držite dugme dok govorite. Pošaljite za nastavak postavljanja."
       },
       "test_result_atvv_tap": {
         "title": "Rezultat testa daljinskog",
-        "description": "Ovaj daljinski pokreće glas kad se njegovo dugme dodirne i sluša dok ne prestanete govoriti. Dodirnite to dugme da govorite. Pošalji za nastavak postavljanja."
+        "description": "Vaš daljinski radi. Dodirnite njegovo glasovno dugme da počnete govoriti; prestaje slušati kada prestanete govoriti. Pošaljite za nastavak postavljanja."
       },
       "test_result_fire_voice": {
         "title": "Rezultat testa daljinskog",
-        "description": "Ovo je glasovni taster Fire TV daljinskog. Držite ga dok govorite. Pošalji za nastavak postavljanja."
+        "description": "Vaš daljinski radi. Držite njegovo glasovno dugme dokle god govorite. Pošaljite za nastavak postavljanja."
       },
       "test_result_plain_key": {
         "title": "Rezultat testa daljinskog",
-        "description": "Daljinski je poslao obične tastere ali ne i glasovni signal, pa njegovo glasovno dugme možda ne pokreće glas preko Bluetooth-a. Pošalji, zatim označite Prikaži izvještaj o daljinskom da podijelite šta je viđeno."
+        "description": "Daljinski je poslao obične pritiske dugmadi, ali nikakav glasovni signal, pa njegovo glasovno dugme možda ne radi preko Bluetootha. Pošaljite, zatim označite Prikaži izvještaj o daljinskom da podijelite šta je viđeno."
       },
       "test_result_nothing": {
         "title": "Rezultat testa daljinskog",
         "description": "Ništa nije primljeno od daljinskog. Probudite ga tasterom sa strelicom, provjerite je li povezan s ovom Home Assistant mašinom i testirajte ponovo. Pošalji za nastavak."
+      },
+      "test_clips": {
+        "title": "Probni snimci",
+        "description": "Svaki pritisak glasovnog dugmeta spremljen je kao snimak da možete čuti šta je daljinski poslao:\n\n{clips}\n\nSnimci su u Medij → Moji mediji → Bluetooth Remote Voice. Linkovi rade 5 minuta."
+      },
+      "test_clips_none": {
+        "title": "Snimak nije spremljen",
+        "description": "Glasovno dugme je radilo, ali snimak nije spremljen. Snimci se spremaju u medijsku mapu Home Assistanta (Medij → Moji mediji), pa provjerite ima li ovaj Home Assistant medijsku mapu u koju može pisati, a zatim ponovo testirajte."
+      },
+      "test_hints": {
+        "title": "Šta je test primijetio",
+        "description": "Signali ranog prekida: {early}. Izgubljene audio praznine: {gaps}.\n\nSignal ranog prekida je zaustavljanje od daljinskog odmah nakon što ste počeli, dok ste još držali dugme. Ako je iznad 0 i vaši zahtjevi se prerano prekidaju, uključite Ignoriši rani prekid u Postavke integracije.\n\nIzgubljena audio praznina je dio zvuka koji je Bluetooth izgubio. Ako je iznad 0 i zahtjevi ne uspijevaju s greškom audio praznine, postavite Popuni kratke audio praznine u Postavke integracije."
       }
     },
     "progress": {
-      "observing": "Slušanje 20 sekundi. Probudite daljinski tasterom sa strelicom, zatim pritisnite i držite njegovo glasovno dugme, kratko govorite i pustite."
+      "observing": "Sada pritisnite i držite glasovno dugme daljinskog, kratko govorite, pa otpustite. Ponavljajte koliko želite: test traje 20 sekundi i snima svaki pritisak kako biste ga kasnije mogli poslušati. Ako se čini da se ništa ne događa, prvo probudite daljinski strelicom."
     },
     "error": {
       "bluetooth_unavailable": "Lokalni Bluetooth nije dostupan. Provjerite je li sistemski D-Bus dostupan.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Ovaj daljinski upravljač već je konfiguriran.",
-      "no_pipelines": "Prije dodavanja daljinskog upravljača kreirajte Assist cjevovod."
+      "no_pipelines": "Prije dodavanja daljinskog upravljača kreirajte Assist cjevovod.",
+      "test_running": "Test ovog daljinskog je već u toku.",
+      "pause_failed": "Daljinski se nije mogao pauzirati za test. Pokušajte ponovo za trenutak."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opcije daljinskog",
+        "description": "Postavke mijenjaju ponašanje ovog daljinskog. Daljinski i njegov tip se ovdje ne mogu mijenjati: da biste koristili drugi daljinski ili tip, obrišite ovaj unos i ponovo dodajte daljinski.",
+        "menu_options": {
+          "settings": "Postavke",
+          "test": "Testiraj moj daljinski",
+          "report": "Prikaži izvještaj o daljinskom"
+        }
+      },
+      "settings": {
         "title": "Glasovne postavke",
         "description": "Ove postavke određuju kako se obrađuju pritisci i kako se izgovaraju odgovori. Zamjena zahtjeva ne može poništiti radnje koje je već izvršio. Istodobni puni dupleks nije dostupan. Zaustavljanje nakon transkripcije ne onemogućuje alate ugrađene u pružalaca govora uživo; kada radnje moraju biti onemogućene, koristite pružalaca samo za transkripciju.\n\n**Uslov odgovora:** da bi se odgovor izgovorio, svi njegovi uslovi moraju biti ispunjeni. Provjeravaju se jednom na početku svakog zahtjeva; ostavite prazno da se uvijek govori, a uslov koji se ne može procijeniti smatra se neispunjenim. Uslovi šablona mogu koristiti varijable `speaker`, `remote` i `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Zanemari kratke pritiske",
           "max_request_seconds": "Najveća duljina zahtjeva",
           "max_conversation_seconds": "Najveća duljina razgovora",
-          "reply_condition": "Uslov odgovora"
+          "reply_condition": "Uslov odgovora",
+          "ignore_early_stop": "Ignoriši rani prekid",
+          "gap_tolerance_ms": "Popuni kratke audio praznine"
         },
         "data_description": {
           "pipeline_id": "Assist cjevovod koji obrađuje govor: pretvorbu govora u tekst, razgovornog agenta i pretvorbu teksta u govor. Uklonjeni cjevovod završava greškom umjesto prelaska na drugi.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Zanemaruje dodire glasovne tipke kraće od ove vrijednosti kako lažan dodir nikada ne bi pokrenuo zahtjev; pravo držanje počinje toliko kasnije. 0 to isključuje. Korisno za Fire TV daljinski upravljač koji nakon buđenja ne uspijeva s greškom „Nema zvuka s mikrofona“: ponovo šalje tipku koja ga je probudila kao trenutni dodir. Dobra početna vrijednost je 0,1 s. Samo za Fire TV daljinske upravljače.",
           "max_request_seconds": "Najdulje trajanje jednog zahtjeva na bilo kojem daljinskom upravljaču: cijelo držanje u načinu jednog zahtjeva i svaki krug u naizmjeničnom razgovoru. Dosezanjem ograničenja zahtjev završava greškom ograničenja snimanja. Smanjite da zaustavite snimanje zaglavljene tipke; povećajte za dugo diktiranje. Daljinski upravljači bez funkcije „drži za govor“ također završavaju nakon otprilike 15 sekundi govora ili na tišini, što god nastupi prije.",
           "max_conversation_seconds": "Najdulje trajanje cijelog držanja tipke u načinu naizmjeničnog razgovora. U načinu jednog zahtjeva se zanemaruje i ne smije biti kraće od najveće duljine zahtjeva.",
-          "reply_condition": "Uslovi koji svi moraju biti ispunjeni da bi se odgovor izgovorio. Provjeravaju se jednom na početku svakog zahtjeva (i svakog kruga u naizmjeničnom razgovoru). Ostavite prazno da se uvijek govori. Uslov koji uzrokuje grešku smatra se neispunjenim. Uslovi šablona mogu koristiti varijable speaker, remote i held."
+          "reply_condition": "Uslovi koji svi moraju biti ispunjeni da bi se odgovor izgovorio. Provjeravaju se jednom na početku svakog zahtjeva (i svakog kruga u naizmjeničnom razgovoru). Ostavite prazno da se uvijek govori. Uslov koji uzrokuje grešku smatra se neispunjenim. Uslovi šablona mogu koristiti varijable speaker, remote i held.",
+          "ignore_early_stop": "Uključite ovo ako se zahtjevi ponekad završe nakon djelića sekunde iako ste cijelo vrijeme držali dugme. Neki Android TV daljinski šalju signal za zaustavljanje odmah nakon početka, a zatim nastave slati zvuk. Kada je uključeno, zaustavljanje u prvoj sekundi se ignoriše dok zvuk još stiže, a zahtjev se završava kada zvuk utihne ili stigne drugo zaustavljanje. Koristi se samo kada je Ponašanje tipke postavljeno na Jedan zahtjev po držanju.",
+          "gap_tolerance_ms": "Bluetooth može izgubiti trenutak zvuka, zbog čega zahtjev obično ne uspije s greškom audio praznine. Ovdje postavite dužinu do koje se izgubljeni dio zamjenjuje tišinom kako bi zahtjev nastavio. Duže praznine i dalje uzrokuju neuspjeh. Tišina usred riječi može smanjiti tačnost prepoznavanja, zato koristite najnižu vrijednost koja radi. 0 isključuje. Samo za Android TV daljinske."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Rezultat testa daljinskog",
+        "description": "Vaš daljinski radi. Počinje slušati sam dok držite njegovo glasovno dugme, zato držite dugme dok govorite."
+      },
+      "test_result_atvv_tap": {
+        "title": "Rezultat testa daljinskog",
+        "description": "Vaš daljinski radi. Dodirnite njegovo glasovno dugme da počnete govoriti; prestaje slušati kada prestanete govoriti."
+      },
+      "test_result_fire_voice": {
+        "title": "Rezultat testa daljinskog",
+        "description": "Vaš daljinski radi. Držite njegovo glasovno dugme dokle god govorite."
+      },
+      "test_result_plain_key": {
+        "title": "Rezultat testa daljinskog",
+        "description": "Daljinski je poslao obične pritiske dugmadi, ali nikakav glasovni signal, pa njegovo glasovno dugme možda ne radi preko Bluetootha."
+      },
+      "test_result_nothing": {
+        "title": "Rezultat testa daljinskog",
+        "description": "Ništa nije primljeno od daljinskog. Probudite ga tasterom sa strelicom, provjerite je li povezan s ovom Home Assistant mašinom i testirajte ponovo."
+      },
+      "report": {
+        "title": "Izvještaj o daljinskom",
+        "description": "Kopirajte ovaj tekst u GitHub prijavu. Ne sadrži cijelu Bluetooth adresu, imena, web adrese ni zvuk.",
+        "data": {
+          "report": "Izvještaj o daljinskom"
+        },
+        "data_description": {
+          "report": "Odaberite sve i kopirajte."
+        }
+      },
+      "test_clips": {
+        "title": "Probni snimci",
+        "description": "Svaki pritisak glasovnog dugmeta spremljen je kao snimak da možete čuti šta je daljinski poslao:\n\n{clips}\n\nSnimci su u Medij → Moji mediji → Bluetooth Remote Voice. Linkovi rade 5 minuta."
+      },
+      "test_clips_none": {
+        "title": "Snimak nije spremljen",
+        "description": "Glasovno dugme je radilo, ali snimak nije spremljen. Snimci se spremaju u medijsku mapu Home Assistanta (Medij → Moji mediji), pa provjerite ima li ovaj Home Assistant medijsku mapu u koju može pisati, a zatim ponovo testirajte."
+      },
+      "test_hints": {
+        "title": "Šta je test primijetio",
+        "description": "Signali ranog prekida: {early}. Izgubljene audio praznine: {gaps}.\n\nSignal ranog prekida je zaustavljanje od daljinskog odmah nakon što ste počeli, dok ste još držali dugme. Ako je iznad 0 i vaši zahtjevi se prerano prekidaju, uključite Ignoriši rani prekid u Postavke integracije.\n\nIzgubljena audio praznina je dio zvuka koji je Bluetooth izgubio. Ako je iznad 0 i zahtjevi ne uspijevaju s greškom audio praznine, postavite Popuni kratke audio praznine u Postavke integracije."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Spremljeni zvučnik za odgovore trenutačno nije dostupan pa se odgovori neće reproducirati dok se ne vrati. Zadržite ga ili odaberite drugi."
     },
     "abort": {
-      "no_pipelines": "Najprije kreirajte Assist cjevovod."
+      "no_pipelines": "Najprije kreirajte Assist cjevovod.",
+      "test_running": "Test ovog daljinskog je već u toku.",
+      "pause_failed": "Daljinski se nije mogao pauzirati za test. Pokušajte ponovo za trenutak."
+    },
+    "progress": {
+      "observing": "Sada pritisnite i držite glasovno dugme daljinskog, kratko govorite, pa otpustite. Ponavljajte koliko želite: test traje 20 sekundi i snima svaki pritisak kako biste ga kasnije mogli poslušati. Ako se čini da se ništa ne događa, prvo probudite daljinski strelicom. Vaš daljinski je pauziran za uobičajenu upotrebu dok ovo traje: njegovi entiteti su nedostupni oko minut, a zahtjev u toku se otkazuje."
     }
   },
   "selector": {

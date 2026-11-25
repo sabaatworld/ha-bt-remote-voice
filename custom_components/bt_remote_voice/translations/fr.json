@@ -35,7 +35,7 @@
           "pipeline_id": "Le pipeline Assist qui traite la voix de cette télécommande.",
           "remote_type": "Laissez sur Automatique, sauf si la télécommande n’est pas reconnue ou si la configuration échoue.",
           "show_report": "Cochez et validez pour afficher un rapport que vous pouvez copier dans un ticket GitHub.",
-          "test_remote": "Cochez et validez, puis maintenez le bouton vocal de la télécommande pour voir ce qu’elle fait."
+          "test_remote": "Cochez et validez, puis maintenez appuyé le bouton vocal de la télécommande pendant que vous parlez. Chaque appui est enregistré pour que vous puissiez l'écouter ensuite."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Résultat du test de la télécommande",
-        "description": "Cette télécommande démarre la voix d’elle-même tant que son bouton est maintenu. Maintenez ce bouton pour parler. Validez pour continuer la configuration."
+        "description": "Votre télécommande fonctionne. Elle se met à écouter toute seule tant que vous maintenez son bouton vocal appuyé ; maintenez donc le bouton pendant que vous parlez. Validez pour poursuivre la configuration."
       },
       "test_result_atvv_tap": {
         "title": "Résultat du test de la télécommande",
-        "description": "Cette télécommande démarre la voix lorsqu’on appuie brièvement sur son bouton et écoute jusqu’à ce que vous cessiez de parler. Appuyez brièvement sur ce bouton pour parler. Validez pour continuer la configuration."
+        "description": "Votre télécommande fonctionne. Appuyez brièvement sur son bouton vocal pour commencer à parler ; elle cesse d'écouter quand vous arrêtez de parler. Validez pour poursuivre la configuration."
       },
       "test_result_fire_voice": {
         "title": "Résultat du test de la télécommande",
-        "description": "Il s’agit de la touche vocale d’une télécommande Fire TV. Maintenez-la pendant que vous parlez. Validez pour continuer la configuration."
+        "description": "Votre télécommande fonctionne. Maintenez son bouton vocal appuyé aussi longtemps que vous parlez. Validez pour poursuivre la configuration."
       },
       "test_result_plain_key": {
         "title": "Résultat du test de la télécommande",
-        "description": "La télécommande a envoyé des touches ordinaires mais aucun signal vocal ; son bouton vocal ne démarre peut-être pas la voix par Bluetooth. Validez, puis cochez Afficher le rapport de la télécommande pour partager ce qui a été observé."
+        "description": "La télécommande a envoyé des appuis de boutons ordinaires mais aucun signal vocal ; son bouton vocal ne fonctionne donc peut-être pas en Bluetooth. Validez, puis cochez Afficher le rapport de la télécommande pour partager ce qui a été constaté."
       },
       "test_result_nothing": {
         "title": "Résultat du test de la télécommande",
         "description": "Rien n’a été reçu de la télécommande. Réveillez-la avec une touche fléchée, vérifiez qu’elle est connectée à cette machine Home Assistant et testez à nouveau. Validez pour continuer."
+      },
+      "test_clips": {
+        "title": "Extraits de test",
+        "description": "Chaque appui sur le bouton vocal a été enregistré comme un extrait, pour que vous entendiez ce que la télécommande a envoyé :\n\n{clips}\n\nLes extraits se trouvent dans Média → Mes médias → Bluetooth Remote Voice. Les liens fonctionnent pendant 5 minutes."
+      },
+      "test_clips_none": {
+        "title": "Aucun extrait enregistré",
+        "description": "Le bouton vocal a fonctionné, mais aucun extrait n'a été enregistré. Les extraits sont enregistrés dans le dossier média de Home Assistant (Média → Mes médias) ; vérifiez donc que ce Home Assistant dispose d'un dossier média dans lequel il peut écrire, puis refaites le test."
+      },
+      "test_hints": {
+        "title": "Ce que le test a remarqué",
+        "description": "Signaux d'arrêt prématuré : {early}. Lacunes audio perdues : {gaps}.\n\nUn signal d'arrêt prématuré est un arrêt envoyé par la télécommande juste après le début, alors que vous mainteniez encore le bouton. S'il est supérieur à 0 et que vos requêtes sont coupées, activez Ignorer l'arrêt prématuré dans les Paramètres de l'intégration.\n\nUne lacune audio perdue est un morceau d'audio que le Bluetooth a abandonné. Si elle est supérieure à 0 et que les requêtes échouent avec une erreur de lacune audio, réglez Combler les courtes lacunes audio dans les Paramètres de l'intégration."
       }
     },
     "progress": {
-      "observing": "Écoute pendant 20 secondes. Réveillez la télécommande avec une touche fléchée, puis maintenez son bouton vocal, parlez brièvement et relâchez."
+      "observing": "Maintenez maintenant appuyé le bouton vocal de la télécommande, parlez brièvement, puis relâchez. Répétez autant de fois que vous voulez : le test dure 20 secondes et enregistre chaque appui pour que vous puissiez l'écouter ensuite. Si rien ne semble se passer, réveillez d'abord la télécommande avec une touche fléchée."
     },
     "error": {
       "bluetooth_unavailable": "Le Bluetooth local n’est pas disponible. Vérifiez que le D-Bus du système est accessible.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Cette télécommande est déjà configurée.",
-      "no_pipelines": "Créez un pipeline Assist avant d’ajouter la télécommande."
+      "no_pipelines": "Créez un pipeline Assist avant d’ajouter la télécommande.",
+      "test_running": "Un test de cette télécommande est déjà en cours.",
+      "pause_failed": "La télécommande n'a pas pu être mise en pause pour le test. Réessayez dans un instant."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Options de la télécommande",
+        "description": "Les paramètres modifient le comportement de cette télécommande. La télécommande et son type ne peuvent pas être modifiés ici : pour utiliser une autre télécommande ou un autre type, supprimez cette entrée et ajoutez à nouveau la télécommande.",
+        "menu_options": {
+          "settings": "Paramètres",
+          "test": "Tester ma télécommande",
+          "report": "Afficher le rapport de la télécommande"
+        }
+      },
+      "settings": {
         "title": "Paramètres vocaux",
         "description": "Ces paramètres déterminent la gestion des appuis et la lecture vocale des réponses. Remplacer une requête ne peut pas annuler les actions déjà effectuées. Le mode duplex intégral simultané n’est pas disponible. S’arrêter après la transcription ne désactive pas les outils intégrés à un fournisseur vocal en direct ; utilisez un fournisseur de transcription seule lorsque les actions doivent être désactivées.\n\n**Condition de réponse :** toutes ses conditions doivent être remplies pour qu’une réponse soit prononcée. Elles sont vérifiées une fois au début de chaque requête ; laissez-la vide pour toujours répondre à voix haute ; une condition qui ne peut pas être évaluée est considérée comme non remplie. Les conditions de modèle peuvent utiliser les variables `speaker`, `remote` et `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignorer les appuis courts",
           "max_request_seconds": "Durée maximale d’une requête",
           "max_conversation_seconds": "Durée maximale d’une conversation",
-          "reply_condition": "Condition de réponse"
+          "reply_condition": "Condition de réponse",
+          "ignore_early_stop": "Ignorer l'arrêt prématuré",
+          "gap_tolerance_ms": "Combler les courtes lacunes audio"
         },
         "data_description": {
           "pipeline_id": "Le pipeline Assist qui traite la voix : reconnaissance vocale, agent de conversation et synthèse vocale. Un pipeline supprimé provoque une erreur au lieu d’un repli.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignore les appuis brefs sur le bouton vocal plus courts que cette durée, afin qu’un appui parasite ne lance jamais de requête ; un vrai appui maintenu démarre d’autant plus tard. 0 désactive la fonction. Utile pour une télécommande Fire TV qui échoue avec « Aucun audio du microphone n’a été reçu. » juste après le réveil : elle renvoie la touche qui l’a réveillée comme un appui instantané. 0,1 s est un bon point de départ. Télécommandes Fire TV uniquement.",
           "max_request_seconds": "La durée maximale d’une requête sur n’importe quelle télécommande : un appui maintenu entier en mode Une requête, et chaque tour en conversation alternée. Une fois atteinte, la requête se termine par une erreur de limite de capture. Réduisez-la pour arrêter l’enregistrement d’un bouton bloqué ; augmentez-la pour une longue dictée. Les télécommandes sans maintien pour parler s’arrêtent aussi après environ 15 secondes de parole ou au silence, selon ce qui survient en premier.",
           "max_conversation_seconds": "La durée maximale d’un appui maintenu entier en mode de conversation alternée. Elle est ignorée en mode Une requête et ne doit pas être inférieure à la durée maximale d’une requête.",
-          "reply_condition": "Conditions qui doivent toutes être remplies pour qu’une réponse soit prononcée. Vérifiées une fois au début de chaque requête (et de chaque tour en conversation alternée). Laissez vide pour toujours répondre à voix haute. Une condition en erreur est considérée comme non remplie. Les conditions de modèle peuvent utiliser les variables speaker, remote et held."
+          "reply_condition": "Conditions qui doivent toutes être remplies pour qu’une réponse soit prononcée. Vérifiées une fois au début de chaque requête (et de chaque tour en conversation alternée). Laissez vide pour toujours répondre à voix haute. Une condition en erreur est considérée comme non remplie. Les conditions de modèle peuvent utiliser les variables speaker, remote et held.",
+          "ignore_early_stop": "Activez ceci si les requêtes se terminent parfois après une fraction de seconde alors que vous avez maintenu le bouton tout le temps. Certaines télécommandes Android TV envoient un signal d'arrêt juste après le début, puis continuent d'envoyer de l'audio. Une fois activé, un arrêt survenant dans la première seconde est ignoré tant que de l'audio arrive encore, et la requête se termine quand l'audio devient silencieux ou qu'un second arrêt arrive. Utilisé uniquement lorsque Comportement du bouton est réglé sur Une requête par appui maintenu.",
+          "gap_tolerance_ms": "Le Bluetooth peut perdre un instant d'audio, ce qui fait normalement échouer la requête avec une erreur de lacune audio. Définissez ici une durée pour remplacer par du silence une portion perdue allant jusqu'à cette durée afin que la requête continue. Les lacunes plus longues échouent toujours. Un silence au milieu d'un mot peut réduire la précision de la reconnaissance : utilisez donc la plus petite valeur qui fonctionne. 0 désactive la fonction. Télécommandes Android TV uniquement."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Résultat du test de la télécommande",
+        "description": "Votre télécommande fonctionne. Elle se met à écouter toute seule tant que vous maintenez son bouton vocal appuyé ; maintenez donc le bouton pendant que vous parlez."
+      },
+      "test_result_atvv_tap": {
+        "title": "Résultat du test de la télécommande",
+        "description": "Votre télécommande fonctionne. Appuyez brièvement sur son bouton vocal pour commencer à parler ; elle cesse d'écouter quand vous arrêtez de parler."
+      },
+      "test_result_fire_voice": {
+        "title": "Résultat du test de la télécommande",
+        "description": "Votre télécommande fonctionne. Maintenez son bouton vocal appuyé aussi longtemps que vous parlez."
+      },
+      "test_result_plain_key": {
+        "title": "Résultat du test de la télécommande",
+        "description": "La télécommande a envoyé des appuis de boutons ordinaires mais aucun signal vocal ; son bouton vocal ne fonctionne donc peut-être pas en Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Résultat du test de la télécommande",
+        "description": "Rien n’a été reçu de la télécommande. Réveillez-la avec une touche fléchée, vérifiez qu’elle est connectée à cette machine Home Assistant et testez à nouveau."
+      },
+      "report": {
+        "title": "Rapport de la télécommande",
+        "description": "Copiez ce texte dans un ticket GitHub. Il ne contient aucune adresse Bluetooth complète, aucun nom, aucune adresse web ni aucun son.",
+        "data": {
+          "report": "Rapport de la télécommande"
+        },
+        "data_description": {
+          "report": "Tout sélectionner et copier."
+        }
+      },
+      "test_clips": {
+        "title": "Extraits de test",
+        "description": "Chaque appui sur le bouton vocal a été enregistré comme un extrait, pour que vous entendiez ce que la télécommande a envoyé :\n\n{clips}\n\nLes extraits se trouvent dans Média → Mes médias → Bluetooth Remote Voice. Les liens fonctionnent pendant 5 minutes."
+      },
+      "test_clips_none": {
+        "title": "Aucun extrait enregistré",
+        "description": "Le bouton vocal a fonctionné, mais aucun extrait n'a été enregistré. Les extraits sont enregistrés dans le dossier média de Home Assistant (Média → Mes médias) ; vérifiez donc que ce Home Assistant dispose d'un dossier média dans lequel il peut écrire, puis refaites le test."
+      },
+      "test_hints": {
+        "title": "Ce que le test a remarqué",
+        "description": "Signaux d'arrêt prématuré : {early}. Lacunes audio perdues : {gaps}.\n\nUn signal d'arrêt prématuré est un arrêt envoyé par la télécommande juste après le début, alors que vous mainteniez encore le bouton. S'il est supérieur à 0 et que vos requêtes sont coupées, activez Ignorer l'arrêt prématuré dans les Paramètres de l'intégration.\n\nUne lacune audio perdue est un morceau d'audio que le Bluetooth a abandonné. Si elle est supérieure à 0 et que les requêtes échouent avec une erreur de lacune audio, réglez Combler les courtes lacunes audio dans les Paramètres de l'intégration."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Le haut-parleur de réponse enregistré n’est pas disponible pour le moment ; les réponses ne seront donc pas lues tant qu’il ne sera pas revenu. Conservez-le ou choisissez-en un autre."
     },
     "abort": {
-      "no_pipelines": "Créez d’abord un pipeline Assist."
+      "no_pipelines": "Créez d’abord un pipeline Assist.",
+      "test_running": "Un test de cette télécommande est déjà en cours.",
+      "pause_failed": "La télécommande n'a pas pu être mise en pause pour le test. Réessayez dans un instant."
+    },
+    "progress": {
+      "observing": "Maintenez maintenant appuyé le bouton vocal de la télécommande, parlez brièvement, puis relâchez. Répétez autant de fois que vous voulez : le test dure 20 secondes et enregistre chaque appui pour que vous puissiez l'écouter ensuite. Si rien ne semble se passer, réveillez d'abord la télécommande avec une touche fléchée. Votre télécommande est mise en pause pour l'usage normal pendant ce test : ses entités sont indisponibles pendant environ une minute et une requête en cours est annulée."
     }
   },
   "selector": {

@@ -35,7 +35,7 @@
           "pipeline_id": "Assist-putki, joka käsittelee tämän kaukosäätimen puheen.",
           "remote_type": "Jätä asetukseksi Automaattinen, ellei kaukosäädintä tunnisteta tai asennus epäonnistu.",
           "show_report": "Valitse ja lähetä nähdäksesi raportin, jonka voit kopioida GitHub-ongelmaan.",
-          "test_remote": "Valitse ja lähetä, paina sitten kaukosäätimen puhepainiketta pohjassa nähdäksesi, mitä kaukosäädin tekee."
+          "test_remote": "Rastita ja lähetä, paina sitten kaukosäätimen ääninäppäintä ja pidä sitä painettuna puhuessasi. Jokainen painallus tallennetaan, jotta voit kuunnella sen jälkeenpäin."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Kaukosäätimen testin tulos",
-        "description": "Tämä kaukosäädin aloittaa puheen itse, kun sen painiketta pidetään painettuna. Pidä painiketta painettuna puhuaksesi. Lähetä jatkaaksesi asennusta."
+        "description": "Kaukosäätimesi toimii. Se alkaa kuunnella itse, kun pidät ääninäppäintä painettuna, joten pidä näppäintä painettuna puhuessasi. Lähetä jatkaaksesi asennusta."
       },
       "test_result_atvv_tap": {
         "title": "Kaukosäätimen testin tulos",
-        "description": "Tämä kaukosäädin aloittaa puheen, kun sen painiketta napautetaan, ja kuuntelee, kunnes lopetat puhumisen. Napauta painiketta puhuaksesi. Lähetä jatkaaksesi asennusta."
+        "description": "Kaukosäätimesi toimii. Napauta ääninäppäintä aloittaaksesi puhumisen; se lopettaa kuuntelun, kun lopetat puhumisen. Lähetä jatkaaksesi asennusta."
       },
       "test_result_fire_voice": {
         "title": "Kaukosäätimen testin tulos",
-        "description": "Tämä on Fire TV -kaukosäätimen puhenäppäin. Pidä sitä painettuna puhuessasi. Lähetä jatkaaksesi asennusta."
+        "description": "Kaukosäätimesi toimii. Pidä ääninäppäintä painettuna niin kauan kuin puhut. Lähetä jatkaaksesi asennusta."
       },
       "test_result_plain_key": {
         "title": "Kaukosäätimen testin tulos",
-        "description": "Kaukosäädin lähetti tavallisia näppäimiä mutta ei puhesignaalia, joten sen puhepainike ei ehkä käynnistä puhetta Bluetoothin kautta. Lähetä ja valitse sitten Näytä kaukosäätimen raportti jakaaksesi havaitun."
+        "description": "Kaukosäädin lähetti tavallisia näppäinpainalluksia mutta ei äänisignaalia, joten sen ääninäppäin ei ehkä toimi Bluetoothin kautta. Lähetä ja valitse sitten Näytä kaukosäätimen raportti jakaaksesi havaitun."
       },
       "test_result_nothing": {
         "title": "Kaukosäätimen testin tulos",
         "description": "Kaukosäätimeltä ei vastaanotettu mitään. Herätä se nuolinäppäimellä, tarkista että se on yhdistetty tähän Home Assistant -koneeseen ja testaa uudelleen. Lähetä jatkaaksesi."
+      },
+      "test_clips": {
+        "title": "Testiklipit",
+        "description": "Jokainen ääninäppäimen painallus tallennettiin klipiksi, jotta voit kuulla, mitä kaukosäädin lähetti:\n\n{clips}\n\nKlipit ovat kohdassa Media → Oma media → Bluetooth Remote Voice. Linkit toimivat 5 minuuttia."
+      },
+      "test_clips_none": {
+        "title": "Klippiä ei tallennettu",
+        "description": "Ääninäppäin toimi, mutta klippiä ei tallennettu. Klipit tallennetaan Home Assistantin mediakansioon (Media → Oma media), joten tarkista, että tällä Home Assistantilla on mediakansio, johon se voi kirjoittaa, ja testaa uudelleen."
+      },
+      "test_hints": {
+        "title": "Mitä testi huomasi",
+        "description": "Ennenaikaiset pysäytyssignaalit: {early}. Hukatut ääniaukot: {gaps}.\n\nEnnenaikainen pysäytyssignaali on kaukosäätimen lähettämä pysäytys heti alun jälkeen, kun pidit näppäintä vielä painettuna. Jos luku on yli 0 ja pyyntösi katkeavat liian aikaisin, ota Ohita ennenaikainen pysäytys käyttöön integraation kohdassa Asetukset.\n\nHukattu ääniaukko on äänijakso, jonka Bluetooth pudotti. Jos luku on yli 0 ja pyynnöt epäonnistuvat ääniaukkovirheeseen, aseta Täytä lyhyet ääniaukot integraation kohdassa Asetukset."
       }
     },
     "progress": {
-      "observing": "Kuunnellaan 20 sekuntia. Herätä kaukosäädin nuolinäppäimellä, paina sitten sen puhepainiketta pohjassa, puhu lyhyesti ja vapauta."
+      "observing": "Paina ja pidä kaukosäätimen ääninäppäintä nyt painettuna, puhu lyhyesti ja vapauta. Toista niin monta kertaa kuin haluat: testi kestää 20 sekuntia ja tallentaa jokaisen painalluksen, jotta voit kuunnella sen jälkeenpäin. Jos vaikuttaa siltä, ettei mitään tapahdu, herätä kaukosäädin ensin nuolinäppäimellä."
     },
     "error": {
       "bluetooth_unavailable": "Paikallinen Bluetooth ei ole käytettävissä. Tarkista, että järjestelmän D-Bus on käytettävissä.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Tämä kaukosäädin on jo määritetty.",
-      "no_pipelines": "Luo Assist-putki ennen kaukosäätimen lisäämistä."
+      "no_pipelines": "Luo Assist-putki ennen kaukosäätimen lisäämistä.",
+      "test_running": "Tämän kaukosäätimen testi on jo käynnissä.",
+      "pause_failed": "Kaukosäädintä ei voitu keskeyttää testin ajaksi. Yritä hetken kuluttua uudelleen."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Kaukosäätimen asetukset",
+        "description": "Asetukset muuttavat tämän kaukosäätimen toimintaa. Kaukosäädintä ja sen tyyppiä ei voi muuttaa täällä: jos haluat käyttää toista kaukosäädintä tai tyyppiä, poista tämä kohde ja lisää kaukosäädin uudelleen.",
+        "menu_options": {
+          "settings": "Asetukset",
+          "test": "Testaa kaukosäätimeni",
+          "report": "Näytä kaukosäätimen raportti"
+        }
+      },
+      "settings": {
         "title": "Ääniasetukset",
         "description": "Nämä asetukset määrittävät, miten painallukset käsitellään ja miten vastaukset puhutaan. Pyynnön korvaaminen ei voi kumota jo suoritettuja toimintoja. Samanaikainen full duplex ei ole käytettävissä. Pysähtyminen litteroinnin jälkeen ei poista käytöstä live-puhepalveluntarjoajan sisäänrakennettuja työkaluja; käytä vain litterointia tukevaa palveluntarjoajaa, kun toiminnot on poistettava käytöstä.\n\n**Vastausehto:** kaikkien sen ehtojen on täytyttävä, jotta vastaus puhutaan. Ne tarkistetaan kerran jokaisen pyynnön alussa; jätä tyhjäksi, jos haluat aina puhua, ja ehto, jota ei voi arvioida, lasketaan täyttymättömäksi. Mallipohjaehdoissa voi käyttää muuttujia `speaker`, `remote` ja `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ohita lyhyet painallukset",
           "max_request_seconds": "Pyynnön enimmäispituus",
           "max_conversation_seconds": "Keskustelun enimmäispituus",
-          "reply_condition": "Vastausehto"
+          "reply_condition": "Vastausehto",
+          "ignore_early_stop": "Ohita ennenaikainen pysäytys",
+          "gap_tolerance_ms": "Täytä lyhyet ääniaukot"
         },
         "data_description": {
           "pipeline_id": "Assist-putki, joka käsittelee puheen: puheentunnistus, keskusteluagentti ja tekstistä puheeksi. Poistettu putki aiheuttaa virheen sen sijaan, että palattaisiin toiseen.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ohittaa tätä lyhyemmät äänipainikkeen napautukset, jotta virheellinen napautus ei koskaan aloita pyyntöä; todellinen pitkä painallus alkaa tämän verran myöhemmin. 0 poistaa toiminnon käytöstä. Hyödyllinen Fire TV -kaukosäätimelle, joka epäonnistuu virheeseen ”Ei mikrofonin ääntä” heti herättämisen jälkeen: se lähettää herättäneen näppäimen uudelleen välittömänä napautuksena. 0,1 s on hyvä lähtökohta. Vain Fire TV -kaukosäätimille.",
           "max_request_seconds": "Pisin aika, jonka yksittäinen pyyntö voi kestää millä tahansa kaukosäätimellä: koko painallus Yksi pyyntö -tilassa ja jokainen vuoro vuorottelevassa keskustelussa. Rajan saavuttaminen päättää pyynnön tallennusrajavirheeseen. Pienennä, jos haluat estää jumittuneen painikkeen tallennuksen; suurenna pitkää sanelua varten. Kaukosäätimet, jotka eivät ole pidä-puhuaksesi-tyyppisiä, päättyvät myös noin 15 sekunnin puheen tai hiljaisuuden jälkeen sen mukaan, kumpi tulee ensin.",
           "max_conversation_seconds": "Pisin aika, jonka koko painikkeen painallus voi kestää vuorottelevan keskustelun tilassa. Se ohitetaan Yksi pyyntö -tilassa, eikä sen saa olla lyhyempi kuin pyynnön enimmäispituus.",
-          "reply_condition": "Ehdot, joiden kaikkien on täytyttävä, jotta vastaus puhutaan. Tarkistetaan kerran jokaisen pyynnön alussa (ja jokaisessa vuorossa vuorottelevassa keskustelussa). Jätä tyhjäksi, jos haluat aina puhua. Ehto, joka aiheuttaa virheen, lasketaan täyttymättömäksi. Mallipohjaehdoissa voi käyttää muuttujia speaker, remote ja held."
+          "reply_condition": "Ehdot, joiden kaikkien on täytyttävä, jotta vastaus puhutaan. Tarkistetaan kerran jokaisen pyynnön alussa (ja jokaisessa vuorossa vuorottelevassa keskustelussa). Jätä tyhjäksi, jos haluat aina puhua. Ehto, joka aiheuttaa virheen, lasketaan täyttymättömäksi. Mallipohjaehdoissa voi käyttää muuttujia speaker, remote ja held.",
+          "ignore_early_stop": "Ota tämä käyttöön, jos pyynnöt päättyvät joskus sekunnin murto-osan jälkeen, vaikka pidit näppäintä painettuna koko ajan. Jotkin Android TV -kaukosäätimet lähettävät pysäytyssignaalin heti alun jälkeen ja lähettävät sitten edelleen ääntä. Kun asetus on päällä, ensimmäisen sekunnin aikana tullut pysäytys ohitetaan niin kauan kuin ääntä vielä tulee, ja pyyntö päättyy, kun ääni hiljenee tai toinen pysäytys saapuu. Käytössä vain, kun Painikkeen toiminta on asetettu arvoon Yksi pyyntö per painallus.",
+          "gap_tolerance_ms": "Bluetooth voi hukata hetken ääntä, minkä vuoksi pyyntö yleensä epäonnistuu ääniaukkovirheeseen. Aseta tähän pituus, jonka mittainen hukkunut jakso korvataan hiljaisuudella, jotta pyyntö jatkuu. Pidemmät aukot epäonnistuvat edelleen. Hiljaisuus sanan keskellä voi heikentää tunnistuksen tarkkuutta, joten käytä pienintä toimivaa arvoa. 0 poistaa toiminnon käytöstä. Vain Android TV -kaukosäätimille."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Kaukosäätimen testin tulos",
+        "description": "Kaukosäätimesi toimii. Se alkaa kuunnella itse, kun pidät ääninäppäintä painettuna, joten pidä näppäintä painettuna puhuessasi."
+      },
+      "test_result_atvv_tap": {
+        "title": "Kaukosäätimen testin tulos",
+        "description": "Kaukosäätimesi toimii. Napauta ääninäppäintä aloittaaksesi puhumisen; se lopettaa kuuntelun, kun lopetat puhumisen."
+      },
+      "test_result_fire_voice": {
+        "title": "Kaukosäätimen testin tulos",
+        "description": "Kaukosäätimesi toimii. Pidä ääninäppäintä painettuna niin kauan kuin puhut."
+      },
+      "test_result_plain_key": {
+        "title": "Kaukosäätimen testin tulos",
+        "description": "Kaukosäädin lähetti tavallisia näppäinpainalluksia mutta ei äänisignaalia, joten sen ääninäppäin ei ehkä toimi Bluetoothin kautta."
+      },
+      "test_result_nothing": {
+        "title": "Kaukosäätimen testin tulos",
+        "description": "Kaukosäätimeltä ei vastaanotettu mitään. Herätä se nuolinäppäimellä, tarkista että se on yhdistetty tähän Home Assistant -koneeseen ja testaa uudelleen."
+      },
+      "report": {
+        "title": "Kaukosäätimen raportti",
+        "description": "Kopioi tämä teksti GitHub-ongelmaan. Se ei sisällä täyttä Bluetooth-osoitetta, nimiä, verkko-osoitteita tai ääntä.",
+        "data": {
+          "report": "Kaukosäätimen raportti"
+        },
+        "data_description": {
+          "report": "Valitse kaikki ja kopioi."
+        }
+      },
+      "test_clips": {
+        "title": "Testiklipit",
+        "description": "Jokainen ääninäppäimen painallus tallennettiin klipiksi, jotta voit kuulla, mitä kaukosäädin lähetti:\n\n{clips}\n\nKlipit ovat kohdassa Media → Oma media → Bluetooth Remote Voice. Linkit toimivat 5 minuuttia."
+      },
+      "test_clips_none": {
+        "title": "Klippiä ei tallennettu",
+        "description": "Ääninäppäin toimi, mutta klippiä ei tallennettu. Klipit tallennetaan Home Assistantin mediakansioon (Media → Oma media), joten tarkista, että tällä Home Assistantilla on mediakansio, johon se voi kirjoittaa, ja testaa uudelleen."
+      },
+      "test_hints": {
+        "title": "Mitä testi huomasi",
+        "description": "Ennenaikaiset pysäytyssignaalit: {early}. Hukatut ääniaukot: {gaps}.\n\nEnnenaikainen pysäytyssignaali on kaukosäätimen lähettämä pysäytys heti alun jälkeen, kun pidit näppäintä vielä painettuna. Jos luku on yli 0 ja pyyntösi katkeavat liian aikaisin, ota Ohita ennenaikainen pysäytys käyttöön integraation kohdassa Asetukset.\n\nHukattu ääniaukko on äänijakso, jonka Bluetooth pudotti. Jos luku on yli 0 ja pyynnöt epäonnistuvat ääniaukkovirheeseen, aseta Täytä lyhyet ääniaukot integraation kohdassa Asetukset."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Tallennettu vastauskaiutin ei ole tällä hetkellä käytettävissä, joten vastauksia ei toisteta ennen kuin se palaa. Säilytä se tai valitse toinen."
     },
     "abort": {
-      "no_pipelines": "Luo ensin Assist-putki."
+      "no_pipelines": "Luo ensin Assist-putki.",
+      "test_running": "Tämän kaukosäätimen testi on jo käynnissä.",
+      "pause_failed": "Kaukosäädintä ei voitu keskeyttää testin ajaksi. Yritä hetken kuluttua uudelleen."
+    },
+    "progress": {
+      "observing": "Paina ja pidä kaukosäätimen ääninäppäintä nyt painettuna, puhu lyhyesti ja vapauta. Toista niin monta kertaa kuin haluat: testi kestää 20 sekuntia ja tallentaa jokaisen painalluksen, jotta voit kuunnella sen jälkeenpäin. Jos vaikuttaa siltä, ettei mitään tapahdu, herätä kaukosäädin ensin nuolinäppäimellä. Kaukosäätimesi on keskeytetty normaalikäytöstä tämän ajan: sen entiteetit ovat pois käytöstä noin minuutin ja käynnissä oleva pyyntö perutaan."
     }
   },
   "selector": {

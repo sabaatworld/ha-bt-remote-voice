@@ -365,3 +365,27 @@ async def test_a_late_disconnect_is_kept_even_when_the_timeline_is_full():
     obs = await run("fire", node=FloodsThenDrops(flood))
     assert obs.timeline[-1]["event"] == "disconnected" and len(obs.timeline) <= 41
     assert obs.errors == ["remote_disconnected"]
+
+
+def test_to_dict_reports_only_whether_a_clip_was_saved():
+    assert Observation().to_dict()["clip_saved"] is False
+    assert Observation(clip_saved=True).to_dict()["clip_saved"] is True
+
+
+def test_merge_recording_adds_events_errors_frames_and_clip_summaries():
+    import time
+    from datetime import datetime
+
+    from custom_components.bt_remote_voice.clips import Clip
+    from custom_components.bt_remote_voice.observe import merge_recording
+
+    obs = Observation(family="atvv", started=time.monotonic())
+    merge_recording(
+        obs,
+        [(obs.started + 1.0, "search", None, 2), (obs.started + 1.2, "start", 3, 2)],
+        ["wake_remote"],
+        [Clip(datetime(2026, 11, 25, 14, 30, 7), b"\x01\x00" * 16000, 50, "released", 3)],
+    )
+    assert obs.result == "atvv_hold" and obs.audio_frames == 50 and obs.errors == ["wake_remote"]
+    assert obs.clips == [{"seconds": 1.0, "frames": 50, "ended": "released", "reason": 3}]
+    assert [e["event"] for e in obs.timeline] == ["atvv_search", "atvv_start"]

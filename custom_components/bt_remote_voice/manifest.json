@@ -12,6 +12,7 @@
   "dependencies": [
     "assist_pipeline",
     "assist_satellite",
+    "http",
     "media_player"
   ],
   "documentation": "https://github.com/sabaatworld/ha-bt-remote-voice",

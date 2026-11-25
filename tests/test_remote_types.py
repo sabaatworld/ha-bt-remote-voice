@@ -147,7 +147,7 @@ async def test_options_show_remote_type_defaulting_to_auto_and_keep_a_saved_valu
         with patch(
             "custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p1": "P"}
         ):
-            result = await flow.async_step_init()
+            result = await flow.async_step_settings()
         key = next(k for k in result["data_schema"].schema if k == "remote_type")
         assert key.default() == expected
 
@@ -155,7 +155,7 @@ async def test_options_show_remote_type_defaulting_to_auto_and_keep_a_saved_valu
 async def test_options_merge_does_not_overwrite_a_saved_remote_type_with_the_default(hass):
     flow = _options(hass, {"remote_type": "fire_press_to_talk"})
     with patch("custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p1": "P"}):
-        result = await flow.async_step_init({"pipeline_id": "p1", "mode": "commands"})
+        result = await flow.async_step_settings({"pipeline_id": "p1", "mode": "commands"})
     assert result["data"]["remote_type"] == "fire_press_to_talk"
 
 

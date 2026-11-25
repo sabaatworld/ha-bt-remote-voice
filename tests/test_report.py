@@ -119,16 +119,16 @@ def test_report_for_issue_1_facts_classifies_the_remote():
     assert "A8:42:A7:xx:xx:xx" in text and "manufacturer_0171" in text
 
 
-def test_report_json_block_parses_with_schema_1():
+def test_report_json_block_parses_with_schema_2():
     block = json_block(build_report(ReportInput(remote=issue_1_remote().signals())))
-    assert block["schema"] == 1
+    assert block["schema"] == 2
     assert {"integration", "core", "python", "remote", "hid", "config", "outcome"} <= set(block)
 
 
 def test_report_with_nothing_known_is_valid_explicit_and_bounded():
     text = build_report(ReportInput())
     block = json_block(text)
-    assert block["schema"] == 1 and "unknown" in text and len(text) < 20_000
+    assert block["schema"] == 2 and "unknown" in text and len(text) < 20_000
 
 
 def test_report_includes_descriptor_hex_and_parsed_reports_for_the_0413_fixture():
@@ -155,14 +155,14 @@ def test_report_is_bounded_even_for_hostile_sizes():
         "reports": [{"id": i, "kind": "input", "size_bytes": 1} for i in range(400)],
     }
     text = build_report(ReportInput(remote=signals, hid=hid))
-    assert len(text) < 20_000 and json_block(text)["schema"] == 1
+    assert len(text) < 20_000 and json_block(text)["schema"] == 2
 
 
 def test_report_building_never_raises_on_odd_input():
     odd = ReportInput(
         remote={"uuids": None, "manufacturer": 5}, hid={"reports": "x"}, config={"a": object()}
     )
-    assert json_block(build_report(odd))["schema"] == 1
+    assert json_block(build_report(odd))["schema"] == 2
 
 
 # ---- flow and diagnostics integration ----

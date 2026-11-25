@@ -72,6 +72,8 @@ def test_form_order_names_every_known_option():
         "input_mode",
         "remote_type",
         "min_press_seconds",
+        "ignore_early_stop",
+        "gap_tolerance_ms",
         "max_request_seconds",
         "max_conversation_seconds",
     )
@@ -179,7 +181,7 @@ async def _options_form(hass, options=None):
     with patch(
         "custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "Pipeline"}
     ):
-        return flow, await flow.async_step_init()
+        return flow, await flow.async_step_settings()
 
 
 async def test_options_form_field_order(hass):
@@ -206,7 +208,7 @@ async def test_conversation_shorter_than_request_is_an_options_error(hass):
     with patch(
         "custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "Pipeline"}
     ):
-        result = await flow.async_step_init(
+        result = await flow.async_step_settings(
             {
                 "pipeline_id": "p",
                 "mode": "commands",
@@ -226,7 +228,7 @@ def test_readme_options_table_follows_form_order():
     root = Path(__file__).parents[1]
     labels = json.loads(
         (root / "custom_components/bt_remote_voice/translations/en.json").read_text()
-    )["options"]["step"]["init"]["data"]
+    )["options"]["step"]["settings"]["data"]
     readme = (root / "README.md").read_text()
     table = readme.split("### Options")[1].split("\n\n")[1]
     rows = [re.match(r"\| ([^|]+) \|", line).group(1).strip() for line in table.splitlines()[2:]]
@@ -268,3 +270,28 @@ def test_min_press_seconds_default_range_and_rejections():
     for bad in (-0.05, 0.55, True, "0.1", None):
         with pytest.raises(ValueError):
             preferences({"min_press_seconds": bad})
+
+
+def test_early_stop_and_gap_options_default_off_and_are_validated():
+    from custom_components.bt_remote_voice.preferences import capture_settings, preferences
+
+    assert DEFAULTS["ignore_early_stop"] is False and DEFAULTS["gap_tolerance_ms"] == 0
+    assert preferences({"ignore_early_stop": True, "gap_tolerance_ms": 500})
+    for bad in ({"ignore_early_stop": 1}, {"gap_tolerance_ms": 501}, {"gap_tolerance_ms": True}):
+        with pytest.raises(ValueError):
+            preferences(bad)
+    assert capture_settings({}) == {
+        "ignore_early_stop": False,
+        "early_stop_applies": True,
+        "max_gap_ms": 0,
+    }
+    assert capture_settings({"ignore_early_stop": True, "gap_tolerance_ms": 100}) == {
+        "ignore_early_stop": True,
+        "early_stop_applies": True,
+        "max_gap_ms": 100,
+    }
+    # One rule for requests and the test: never for Fire, never in Alternating conversation.
+    on = {"ignore_early_stop": True}
+    assert capture_settings(on, "fire")["ignore_early_stop"] is False
+    assert capture_settings({**on, "input_mode": "conversation"})["early_stop_applies"] is False
+    assert capture_settings(on, "atvv")["ignore_early_stop"] is True

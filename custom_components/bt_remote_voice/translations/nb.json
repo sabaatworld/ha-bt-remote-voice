@@ -35,7 +35,7 @@
           "pipeline_id": "Assist-pipelinen som behandler tale fra denne fjernkontrollen.",
           "remote_type": "La stå på Automatisk, med mindre fjernkontrollen ikke gjenkjennes eller oppsettet mislykkes.",
           "show_report": "Merk av og send for å se en rapport du kan kopiere inn i en GitHub-sak.",
-          "test_remote": "Merk av og send, trykk og hold deretter fjernkontrollens talekapp for å se hva fjernkontrollen gjør."
+          "test_remote": "Merk av og send inn, trykk deretter på fjernkontrollens stemmeknapp og hold den inne mens du snakker. Hvert trykk blir tatt opp, slik at du kan lytte til det etterpå."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Resultat av fjernkontrolltest",
-        "description": "Denne fjernkontrollen starter tale selv mens knappen holdes inne. Hold knappen inne for å snakke. Send for å fortsette oppsettet."
+        "description": "Fjernkontrollen fungerer. Den begynner å lytte av seg selv mens du holder stemmeknappen inne, så hold knappen inne mens du snakker. Send inn for å fortsette oppsettet."
       },
       "test_result_atvv_tap": {
         "title": "Resultat av fjernkontrolltest",
-        "description": "Denne fjernkontrollen starter tale når knappen trykkes kort og lytter til du slutter å snakke. Trykk kort på knappen for å snakke. Send for å fortsette oppsettet."
+        "description": "Fjernkontrollen fungerer. Trykk kort på stemmeknappen for å begynne å snakke; den slutter å lytte når du slutter å snakke. Send inn for å fortsette oppsettet."
       },
       "test_result_fire_voice": {
         "title": "Resultat av fjernkontrolltest",
-        "description": "Dette er talentasten på en Fire TV-fjernkontroll. Hold den inne mens du snakker. Send for å fortsette oppsettet."
+        "description": "Fjernkontrollen fungerer. Hold stemmeknappen inne så lenge du snakker. Send inn for å fortsette oppsettet."
       },
       "test_result_plain_key": {
         "title": "Resultat av fjernkontrolltest",
-        "description": "Fjernkontrollen sendte vanlige taster, men ikke noe talesignal, så talekappen starter kanskje ikke tale over Bluetooth. Send, og merk deretter av for Vis fjernkontrollrapport for å dele det som ble sett."
+        "description": "Fjernkontrollen sendte vanlige knappetrykk, men ikke noe stemmesignal, så stemmeknappen fungerer kanskje ikke over Bluetooth. Send inn, og kryss deretter av for Vis fjernkontrollrapport for å dele det som ble sett."
       },
       "test_result_nothing": {
         "title": "Resultat av fjernkontrolltest",
         "description": "Det ble ikke mottatt noe fra fjernkontrollen. Vekk den med en piltast, kontroller at den er koblet til denne Home Assistant-maskinen, og test på nytt. Send for å fortsette."
+      },
+      "test_clips": {
+        "title": "Testklipp",
+        "description": "Hvert trykk på stemmeknappen ble lagret som et klipp, slik at du kan høre hva fjernkontrollen sendte:\n\n{clips}\n\nKlippene ligger i Medier → Mine medier → Bluetooth Remote Voice. Lenkene fungerer i 5 minutter."
+      },
+      "test_clips_none": {
+        "title": "Ingen klipp lagret",
+        "description": "Stemmeknappen fungerte, men det ble ikke lagret noe klipp. Klipp lagres i Home Assistants mediemappe (Medier → Mine medier), så sjekk at denne Home Assistant har en mediemappe den kan skrive til, og test på nytt."
+      },
+      "test_hints": {
+        "title": "Hva testen la merke til",
+        "description": "Tidlige stoppsignaler: {early}. Tapte lydhull: {gaps}.\n\nEt tidlig stoppsignal er et stopp fra fjernkontrollen rett etter at du startet, mens du fortsatt holdt knappen inne. Hvis det er over 0 og forespørslene dine blir avbrutt, slår du på Ignorer tidlig stopp i integrasjonens Innstillinger.\n\nEt tapt lydhull er et stykke lyd som Bluetooth mistet. Hvis det er over 0 og forespørsler mislykkes med en lydhullsfeil, angir du Fyll korte lydhull i integrasjonens Innstillinger."
       }
     },
     "progress": {
-      "observing": "Lytter i 20 sekunder. Vekk fjernkontrollen med en piltast, trykk og hold deretter talekappen, si noe kort og slipp."
+      "observing": "Trykk på fjernkontrollens stemmeknapp og hold den inne nå, snakk kort og slipp. Gjenta så mange ganger du vil: testen varer i 20 sekunder og tar opp hvert trykk, slik at du kan lytte til det etterpå. Hvis det ser ut til at ingenting skjer, må du først vekke fjernkontrollen med en piltast."
     },
     "error": {
       "bluetooth_unavailable": "Lokal Bluetooth er ikke tilgjengelig. Kontroller at systemets D-Bus er tilgjengelig.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Denne fjernkontrollen er allerede konfigurert.",
-      "no_pipelines": "Opprett en Assist-pipeline før du legger til fjernkontrollen."
+      "no_pipelines": "Opprett en Assist-pipeline før du legger til fjernkontrollen.",
+      "test_running": "En test av denne fjernkontrollen kjører allerede.",
+      "pause_failed": "Fjernkontrollen kunne ikke settes på pause for testen. Prøv igjen om litt."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Alternativer for fjernkontroll",
+        "description": "Innstillinger endrer hvordan denne fjernkontrollen oppfører seg. Fjernkontrollen og typen kan ikke endres her: for å bruke en annen fjernkontroll eller type må du slette denne oppføringen og legge til fjernkontrollen på nytt.",
+        "menu_options": {
+          "settings": "Innstillinger",
+          "test": "Test fjernkontrollen min",
+          "report": "Vis fjernkontrollrapport"
+        }
+      },
+      "settings": {
         "title": "Stemmeinnstillinger",
         "description": "Disse innstillingene styrer hvordan trykk håndteres og hvordan svar leses opp. Å erstatte en forespørsel kan ikke angre handlinger som allerede er utført. Samtidig full dupleks er ikke tilgjengelig. Å stoppe etter transkribering deaktiverer ikke verktøy som er innebygd i en live-taleleverandør; bruk en leverandør som kun transkriberer når handlinger må være deaktivert.\n\n**Svarbetingelse:** alle betingelsene må være oppfylt for at et svar skal leses opp. De kontrolleres én gang ved starten av hver forespørsel; la den stå tom for alltid å tale, og en betingelse som ikke kan evalueres regnes som ikke oppfylt. Malbetingelser kan bruke variablene `speaker`, `remote` og `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignorer korte trykk",
           "max_request_seconds": "Maksimal forespørselslengde",
           "max_conversation_seconds": "Maksimal samtalelengde",
-          "reply_condition": "Svarbetingelse"
+          "reply_condition": "Svarbetingelse",
+          "ignore_early_stop": "Ignorer tidlig stopp",
+          "gap_tolerance_ms": "Fyll korte lydhull"
         },
         "data_description": {
           "pipeline_id": "Assist-pipelinen som behandler tale: tale til tekst, samtaleagent og tekst til tale. En fjernet pipeline gir en feil i stedet for å falle tilbake til en annen.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignorerer trykk på stemmeknappen som er kortere enn dette, slik at et utilsiktet trykk aldri starter en forespørsel; et ekte hold starter så mye senere. 0 slår det av. Nyttig for en Fire TV-fjernkontroll som feiler med «Ingen mikrofonlyd» rett etter oppvåkning: den sender tasten som vekket den på nytt som et øyeblikkelig trykk. 0,1 s er et godt utgangspunkt. Kun for Fire TV-fjernkontroller.",
           "max_request_seconds": "Den lengste tiden én enkelt forespørsel kan vare på en fjernkontroll: et helt hold i modusen Én forespørsel og hver tur i vekslende samtale. Når grensen nås, avsluttes forespørselen med en feil om opptaksgrense. Senk den for å stoppe opptak med hengende knapp; øk den for lang diktering. Fjernkontroller uten hold-for-å-snakke avsluttes også etter omtrent 15 sekunder tale eller ved stillhet, avhengig av hva som kommer først.",
           "max_conversation_seconds": "Den lengste tiden et helt knapphold kan vare i modusen vekslende samtale. Ignoreres i modusen Én forespørsel og må ikke være kortere enn maksimal forespørselslengde.",
-          "reply_condition": "Betingelser som alle må være oppfylt for at et svar skal leses opp. Kontrolleres én gang ved starten av hver forespørsel (og hver tur i vekslende samtale). La den stå tom for alltid å tale. En betingelse som gir feil regnes som ikke oppfylt. Malbetingelser kan bruke variablene speaker, remote og held."
+          "reply_condition": "Betingelser som alle må være oppfylt for at et svar skal leses opp. Kontrolleres én gang ved starten av hver forespørsel (og hver tur i vekslende samtale). La den stå tom for alltid å tale. En betingelse som gir feil regnes som ikke oppfylt. Malbetingelser kan bruke variablene speaker, remote og held.",
+          "ignore_early_stop": "Slå dette på hvis forespørsler noen ganger avsluttes etter et brøkdels sekund, selv om du holdt knappen inne hele tiden. Noen Android TV-fjernkontroller sender et stoppsignal rett etter at du starter, og sender deretter fortsatt lyd. Når det er på, ignoreres et stopp i det første sekundet så lenge det fortsatt kommer lyd, og forespørselen avsluttes når lyden blir stille eller et andre stopp kommer. Brukes bare når Knappeoppførsel er satt til Én forespørsel per hold.",
+          "gap_tolerance_ms": "Bluetooth kan miste et øyeblikk av lyden, noe som vanligvis får forespørselen til å mislykkes med en lydhullsfeil. Angi en lengde her for å erstatte et tapt stykke opp til den lengden med stillhet slik at forespørselen fortsetter. Lengre hull mislykkes fortsatt. Stillhet midt i et ord kan redusere gjenkjenningsnøyaktigheten, så bruk den laveste verdien som fungerer. 0 slår det av. Bare for Android TV-fjernkontroller."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultat av fjernkontrolltest",
+        "description": "Fjernkontrollen fungerer. Den begynner å lytte av seg selv mens du holder stemmeknappen inne, så hold knappen inne mens du snakker."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultat av fjernkontrolltest",
+        "description": "Fjernkontrollen fungerer. Trykk kort på stemmeknappen for å begynne å snakke; den slutter å lytte når du slutter å snakke."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultat av fjernkontrolltest",
+        "description": "Fjernkontrollen fungerer. Hold stemmeknappen inne så lenge du snakker."
+      },
+      "test_result_plain_key": {
+        "title": "Resultat av fjernkontrolltest",
+        "description": "Fjernkontrollen sendte vanlige knappetrykk, men ikke noe stemmesignal, så stemmeknappen fungerer kanskje ikke over Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Resultat av fjernkontrolltest",
+        "description": "Det ble ikke mottatt noe fra fjernkontrollen. Vekk den med en piltast, kontroller at den er koblet til denne Home Assistant-maskinen, og test på nytt."
+      },
+      "report": {
+        "title": "Fjernkontrollrapport",
+        "description": "Kopier denne teksten inn i en GitHub-sak. Den inneholder ingen full Bluetooth-adresse, ingen navn, nettadresser eller lyd.",
+        "data": {
+          "report": "Fjernkontrollrapport"
+        },
+        "data_description": {
+          "report": "Velg alt og kopier."
+        }
+      },
+      "test_clips": {
+        "title": "Testklipp",
+        "description": "Hvert trykk på stemmeknappen ble lagret som et klipp, slik at du kan høre hva fjernkontrollen sendte:\n\n{clips}\n\nKlippene ligger i Medier → Mine medier → Bluetooth Remote Voice. Lenkene fungerer i 5 minutter."
+      },
+      "test_clips_none": {
+        "title": "Ingen klipp lagret",
+        "description": "Stemmeknappen fungerte, men det ble ikke lagret noe klipp. Klipp lagres i Home Assistants mediemappe (Medier → Mine medier), så sjekk at denne Home Assistant har en mediemappe den kan skrive til, og test på nytt."
+      },
+      "test_hints": {
+        "title": "Hva testen la merke til",
+        "description": "Tidlige stoppsignaler: {early}. Tapte lydhull: {gaps}.\n\nEt tidlig stoppsignal er et stopp fra fjernkontrollen rett etter at du startet, mens du fortsatt holdt knappen inne. Hvis det er over 0 og forespørslene dine blir avbrutt, slår du på Ignorer tidlig stopp i integrasjonens Innstillinger.\n\nEt tapt lydhull er et stykke lyd som Bluetooth mistet. Hvis det er over 0 og forespørsler mislykkes med en lydhullsfeil, angir du Fyll korte lydhull i integrasjonens Innstillinger."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Den lagrede svarhøyttaleren er ikke tilgjengelig akkurat nå, så svar spilles ikke av før den er tilbake. Behold den, eller velg en annen."
     },
     "abort": {
-      "no_pipelines": "Opprett en Assist-pipeline først."
+      "no_pipelines": "Opprett en Assist-pipeline først.",
+      "test_running": "En test av denne fjernkontrollen kjører allerede.",
+      "pause_failed": "Fjernkontrollen kunne ikke settes på pause for testen. Prøv igjen om litt."
+    },
+    "progress": {
+      "observing": "Trykk på fjernkontrollens stemmeknapp og hold den inne nå, snakk kort og slipp. Gjenta så mange ganger du vil: testen varer i 20 sekunder og tar opp hvert trykk, slik at du kan lytte til det etterpå. Hvis det ser ut til at ingenting skjer, må du først vekke fjernkontrollen med en piltast. Fjernkontrollen er satt på pause for vanlig bruk mens dette kjører: enhetene er utilgjengelige i omtrent ett minutt, og en pågående forespørsel avbrytes."
     }
   },
   "selector": {

@@ -1,6 +1,5 @@
 """Configure an already-paired remote; this flow never creates Bluetooth bonds."""
 
-import asyncio
 import re
 
 import voluptuous as vol
@@ -16,14 +15,12 @@ from homeassistant.helpers.selector import (
     SelectSelector,
     SelectSelectorConfig,
     SelectSelectorMode,
-    TextSelector,
-    TextSelectorConfig,
 )
 
 from .bluez import BlueZTransport
 from .fire import FireTransport
+from .flow_steps import FlowStepsMixin, RemoteChoice, configured_report
 from .hid_descriptor import parse_reports
-from .observe import OBSERVE_SECONDS, Observation, observe
 from .playback import speaker_choices
 from .preferences import (
     CHOICES,
@@ -31,10 +28,12 @@ from .preferences import (
     DEFAULTS,
     DOMAIN,
     FORM_ORDER,
+    GAP_RANGE,
     MAX_HEAD_START,
     PIPELINE_PREFERRED,
     PRESS_RANGE,
     REQUEST_RANGE,
+    capture_settings,
     preferences,
 )
 from .remote_types import DEFAULT_REMOTE_TYPE, REMOTE_TYPES, transport_family
@@ -105,7 +104,7 @@ def pipelines(hass):
         return {}
 
 
-class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class ConfigFlow(FlowStepsMixin, config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     def __init__(self):
@@ -307,71 +306,65 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
         )
 
-    async def _observe(self):
+    # ---- hooks for FlowStepsMixin (the test and report screens) ----
+    def test_target(self):
         remote_type = self.form.get("remote_type", DEFAULT_REMOTE_TYPE)
         family = transport_family({"remote_type": remote_type}, {"family": self.selected.family})
-        self.observation = await observe(self.selected.address, family, OBSERVE_SECONDS)
-        return self.observation
+        return RemoteChoice(self.selected.address, family, remote_type, self.selected.name)
 
-    async def async_step_test(self, user_input=None):
-        """Listen to the remote while the user presses its voice button (read-only)."""
-        if self.observe_task is None:
-            self.observe_task = self.hass.async_create_task(self._observe())
-        if not self.observe_task.done():
-            return self.async_show_progress(
-                step_id="test", progress_action="observing", progress_task=self.observe_task
-            )
-        task, self.observe_task = self.observe_task, None
-        try:
-            observation = task.result()
-        except asyncio.CancelledError, Exception:  # noqa: BLE001 - a failed listen is a result
-            observation = Observation(errors=["bluetooth_unavailable"])
-        self.observation = observation
-        return self.async_show_progress_done(next_step_id=f"test_result_{observation.result}")
+    def recording_settings(self):
+        # A remote being set up has no saved settings: the test records like the defaults.
+        return {
+            "min_press_seconds": DEFAULTS["min_press_seconds"],
+            **capture_settings({}, self.test_target().family),
+        }
 
-    async def _result_form(self, kind, user_input):
-        if user_input is not None:
-            return await self.async_step_configure()
-        return self.async_show_form(step_id=f"test_result_{kind}", data_schema=vol.Schema({}))
+    def test_entry(self):
+        return None  # a remote being set up has no running entry to pause
 
-    async def async_step_test_result_atvv_hold(self, user_input=None):
-        return await self._result_form("atvv_hold", user_input)
-
-    async def async_step_test_result_atvv_tap(self, user_input=None):
-        return await self._result_form("atvv_tap", user_input)
-
-    async def async_step_test_result_fire_voice(self, user_input=None):
-        return await self._result_form("fire_voice", user_input)
-
-    async def async_step_test_result_plain_key(self, user_input=None):
-        return await self._result_form("plain_key", user_input)
-
-    async def async_step_test_result_nothing(self, user_input=None):
-        return await self._result_form("nothing", user_input)
-
-    @callback
-    def async_remove(self):
-        if self.observe_task and not self.observe_task.done():
-            self.observe_task.cancel()
-
-    async def async_step_report(self, user_input=None):
-        """Show the report to copy into an issue; edits are ignored; Submit goes back."""
-        if user_input is not None:
-            return await self.async_step_configure()
-        schema = vol.Schema(
-            {vol.Optional("report"): TextSelector(TextSelectorConfig(multiline=True))}
-        )
-        return self.async_show_form(
-            step_id="report",
-            data_schema=self.add_suggested_values_to_schema(
-                schema, {"report": self.remote_report()}
-            ),
-        )
+    async def back_step(self):
+        return await self.async_step_configure()
 
 
-class OptionsFlow(config_entries.OptionsFlow):
+class OptionsFlow(FlowStepsMixin, config_entries.OptionsFlow):
     def __init__(self, entry):
         self.entry = entry
+
+    # ---- hooks for FlowStepsMixin (test and report for a remote that is already set up) ----
+    def test_target(self):
+        data, options = self.entry.data, self.entry.options
+        return RemoteChoice(
+            data["address"],
+            transport_family(options, data),
+            options.get("remote_type", DEFAULT_REMOTE_TYPE),
+            data.get("name", ""),
+        )
+
+    def recording_settings(self):
+        """The saved settings, so the test records the way a real request would."""
+        value = self.entry.options.get("min_press_seconds", DEFAULTS["min_press_seconds"])
+        usable = (
+            isinstance(value, (int, float))
+            and not isinstance(value, bool)
+            and 0 <= value <= PRESS_RANGE[1]
+        )
+        return {
+            "min_press_seconds": value if usable else DEFAULTS["min_press_seconds"],
+            **capture_settings(self.entry.options, self.test_target().family),
+        }
+
+    def test_entry(self):
+        return self.entry
+
+    async def back_step(self):
+        return await self.async_step_init()
+
+    def remote_report(self):
+        return configured_report(self.entry, self.observation)
+
+    async def async_step_init(self, user_input=None):
+        """What to do with this remote. The remote and its type are fixed once it is set up."""
+        return self.async_show_menu(step_id="init", menu_options=["settings", "test", "report"])
 
     async def _condition_is_valid(self, raw):
         if not raw:
@@ -382,7 +375,7 @@ class OptionsFlow(config_entries.OptionsFlow):
             return False
         return True
 
-    async def async_step_init(self, user_input=None):
+    async def async_step_settings(self, user_input=None):
         choices = pipelines(self.hass)
         speakers = speaker_choices(self.hass)
         if not choices:
@@ -503,12 +496,34 @@ class OptionsFlow(config_entries.OptionsFlow):
                 ),
             ),
             "min_press_seconds": seconds("min_press_seconds", *PRESS_RANGE),
+            "ignore_early_stop": (
+                vol.Optional(
+                    "ignore_early_stop",
+                    default=options.get("ignore_early_stop", DEFAULTS["ignore_early_stop"]),
+                ),
+                bool,
+            ),
+            "gap_tolerance_ms": (
+                vol.Optional(
+                    "gap_tolerance_ms",
+                    default=options.get("gap_tolerance_ms", DEFAULTS["gap_tolerance_ms"]),
+                ),
+                NumberSelector(
+                    NumberSelectorConfig(
+                        min=GAP_RANGE[0],
+                        max=GAP_RANGE[1],
+                        step=GAP_RANGE[2],
+                        unit_of_measurement="ms",
+                        mode=NumberSelectorMode.SLIDER,
+                    )
+                ),
+            ),
             "max_request_seconds": seconds("max_request_seconds", *REQUEST_RANGE),
             "max_conversation_seconds": seconds("max_conversation_seconds", *CONVERSATION_RANGE),
         }
         # Field order is presentation: FORM_ORDER is the single source (see preferences.py).
         return self.async_show_form(
-            step_id="init",
+            step_id="settings",
             data_schema=vol.Schema({fields[k][0]: fields[k][1] for k in FORM_ORDER if k in fields}),
             errors=errors,
         )

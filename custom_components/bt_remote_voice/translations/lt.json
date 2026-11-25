@@ -35,7 +35,7 @@
           "pipeline_id": "Assist srautas, apdorojantis šio pulto kalbą.",
           "remote_type": "Palikite Automatinis, nebent pultelis neatpažįstamas arba nustatymas nepavyksta.",
           "show_report": "Pažymėkite ir pateikite, kad pamatytumėte ataskaitą, kurią galite nukopijuoti į „GitHub“ problemą.",
-          "test_remote": "Pažymėkite ir pateikite, tada paspauskite ir palaikykite pultelio balso mygtuką, kad pamatytumėte, ką jis daro."
+          "test_remote": "Pažymėkite ir pateikite, tada kalbėdami paspauskite ir laikykite nuotolinio valdymo pulto balso mygtuką. Kiekvienas paspaudimas įrašomas, kad vėliau galėtumėte jį išklausyti."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Pultelio bandymo rezultatas",
-        "description": "Šis pultelis pats pradeda balsą, kol laikomas jo mygtukas. Norėdami kalbėti, laikykite tą mygtuką. Pateikti, kad tęstumėte nustatymą."
+        "description": "Jūsų pultas veikia. Jis pats pradeda klausytis, kol laikote nuspaudę balso mygtuką, todėl kalbėdami laikykite mygtuką. Pateikite, kad tęstumėte sąranką."
       },
       "test_result_atvv_tap": {
         "title": "Pultelio bandymo rezultatas",
-        "description": "Šis pultelis pradeda balsą palietus jo mygtuką ir klauso, kol nustosite kalbėti. Norėdami kalbėti, palieskite tą mygtuką. Pateikti, kad tęstumėte nustatymą."
+        "description": "Jūsų pultas veikia. Bakstelėkite jo balso mygtuką, kad pradėtumėte kalbėti; nustoja klausytis, kai nustojate kalbėti. Pateikite, kad tęstumėte sąranką."
       },
       "test_result_fire_voice": {
         "title": "Pultelio bandymo rezultatas",
-        "description": "Tai „Fire TV“ pultelio balso klavišas. Laikykite jį kalbėdami. Pateikti, kad tęstumėte nustatymą."
+        "description": "Jūsų pultas veikia. Laikykite balso mygtuką nuspaudę, kol kalbate. Pateikite, kad tęstumėte sąranką."
       },
       "test_result_plain_key": {
         "title": "Pultelio bandymo rezultatas",
-        "description": "Pultelis atsiuntė įprastus klavišus, bet ne balso signalą, todėl jo balso mygtukas gali nepradėti balso per „Bluetooth“. Pateikite, tada pažymėkite Rodyti pultelio ataskaitą, kad pasidalytumėte matytu rezultatu."
+        "description": "Pultas atsiuntė įprastus mygtukų paspaudimus, bet ne balso signalą, todėl jo balso mygtukas gali neveikti per Bluetooth. Pateikite, tada pažymėkite Rodyti pulto ataskaitą, kad pasidalytumėte pamatytu."
       },
       "test_result_nothing": {
         "title": "Pultelio bandymo rezultatas",
         "description": "Iš pultelio nieko negauta. Pažadinkite jį rodyklės klavišu, patikrinkite, ar jis prijungtas prie šio „Home Assistant“ kompiuterio, ir išbandykite dar kartą. Pateikti, kad tęstumėte."
+      },
+      "test_clips": {
+        "title": "Bandomieji įrašai",
+        "description": "Kiekvienas balso mygtuko paspaudimas išsaugotas kaip įrašas, kad išgirstumėte, ką pultas atsiuntė:\n\n{clips}\n\nĮrašai yra skiltyje Medija → Mano medija → Bluetooth Remote Voice. Nuorodos veikia 5 minutes."
+      },
+      "test_clips_none": {
+        "title": "Įrašas neišsaugotas",
+        "description": "Balso mygtukas veikė, bet įrašas neišsaugotas. Įrašai saugomi „Home Assistant“ medijos aplanke (Medija → Mano medija), todėl patikrinkite, ar šis „Home Assistant“ turi medijos aplanką, į kurį gali rašyti, ir bandykite dar kartą."
+      },
+      "test_hints": {
+        "title": "Ką pastebėjo testas",
+        "description": "Ankstyvo sustabdymo signalai: {early}. Prarastos garso spragos: {gaps}.\n\nAnkstyvo sustabdymo signalas yra pulto sustabdymas iškart po pradžios, kai dar laikėte mygtuką. Jei jis didesnis nei 0 ir jūsų užklausos nutrūksta per anksti, įjunkite Ignoruoti ankstyvą sustabdymą integracijos Nustatymai.\n\nPrarasta garso spraga yra garso ruožas, kurį Bluetooth numetė. Jei ji didesnė nei 0 ir užklausos nepavyksta su garso spragos klaida, nustatykite Užpildyti trumpas garso spragas integracijos Nustatymai."
       }
     },
     "progress": {
-      "observing": "Klausoma 20 sekundžių. Pažadinkite pultelį rodyklės klavišu, tada paspauskite ir palaikykite jo balso mygtuką, trumpai kalbėkite ir atleiskite."
+      "observing": "Dabar paspauskite ir laikykite nuotolinio valdymo pulto balso mygtuką, trumpai pakalbėkite ir atleiskite. Kartokite, kiek norite: testas trunka 20 sekundžių ir įrašo kiekvieną paspaudimą, kad vėliau galėtumėte jį išklausyti. Jei atrodo, kad nieko nevyksta, pirmiausia pažadinkite pultą rodyklės mygtuku."
     },
     "error": {
       "bluetooth_unavailable": "Vietinis Bluetooth nepasiekiamas. Patikrinkite, ar sistemos D-Bus yra pasiekiama.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Šis pultas jau sukonfigūruotas.",
-      "no_pipelines": "Prieš pridėdami pultą, sukurkite Assist srautą."
+      "no_pipelines": "Prieš pridėdami pultą, sukurkite Assist srautą.",
+      "test_running": "Šio pulto bandymas jau vykdomas.",
+      "pause_failed": "Nepavyko pristabdyti pulto bandymui. Pabandykite dar kartą po akimirkos."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Pulto parinktys",
+        "description": "Nustatymai keičia šio pulto veikimą. Pulto ir jo tipo čia pakeisti negalima: norėdami naudoti kitą pultą ar tipą, ištrinkite šį įrašą ir iš naujo pridėkite pultą.",
+        "menu_options": {
+          "settings": "Nustatymai",
+          "test": "Išbandyti mano pultelį",
+          "report": "Rodyti pultelio ataskaitą"
+        }
+      },
+      "settings": {
         "title": "Balso nustatymai",
         "description": "Šie nustatymai valdo, kaip tvarkomi paspaudimai ir kaip tariami atsakymai. Užklausos pakeitimas negali atšaukti veiksmų, kuriuos ji jau atliko. Vienu metu veikiantis pilnas dvipusis režimas nepasiekiamas. Sustojimas po transkripcijos neišjungia įrankių, įtaisytų tiesioginės kalbos teikėjuose; kai veiksmai turi būti išjungti, naudokite tik transkripcijos teikėją.\n\n**Atsakymo sąlyga:** kad atsakymas būtų ištartas, turi būti įvykdytos visos jos sąlygos. Jos tikrinamos vieną kartą kiekvienos užklausos pradžioje; palikite tuščią, kad visada būtų kalbama, o sąlyga, kurios neįmanoma įvertinti, laikoma neįvykdyta. Šablonų sąlygos gali naudoti kintamuosius `speaker`, `remote` ir `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignoruoti trumpus paspaudimus",
           "max_request_seconds": "Didžiausias užklausos ilgis",
           "max_conversation_seconds": "Didžiausias pokalbio ilgis",
-          "reply_condition": "Atsakymo sąlyga"
+          "reply_condition": "Atsakymo sąlyga",
+          "ignore_early_stop": "Ignoruoti ankstyvą sustabdymą",
+          "gap_tolerance_ms": "Užpildyti trumpas garso spragas"
         },
         "data_description": {
           "pipeline_id": "Assist srautas, apdorojantis kalbą: kalbos pavertimas tekstu, pokalbio agentas ir teksto pavertimas kalba. Pašalintas srautas sukelia klaidą, o ne pereina prie kito.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignoruoja balso mygtuko palietimus, trumpesnius nei ši reikšmė, kad klaidingas palietimas niekada nepradėtų užklausos; tikras laikymas prasideda tiek vėliau. 0 išjungia. Naudinga Fire TV pultui, kuris iškart po pažadinimo klysta su „Negauta mikrofono garso“: jis pakartotinai siunčia jį pažadinusį klavišą kaip momentinį palietimą. 0,1 s yra geras pradinis taškas. Tik Fire TV pultams.",
           "max_request_seconds": "Ilgiausia vienos užklausos trukmė bet kuriame pulte: visas laikymas vienos užklausos režimu ir kiekviena eilė pokalbyje pakaitomis. Pasiekus ribą užklausa baigiasi įrašymo ribos klaida. Sumažinkite, kad sustabdytumėte užstrigusio mygtuko įrašymą; padidinkite ilgam diktavimui. Pultai be kalbėjimo laikant taip pat baigia po maždaug 15 sekundžių kalbos arba tylos, atsižvelgiant į tai, kas įvyksta pirma.",
           "max_conversation_seconds": "Ilgiausia viso mygtuko laikymo trukmė pokalbio pakaitomis režimu. Ignoruojama vienos užklausos režimu ir negali būti trumpesnė nei didžiausias užklausos ilgis.",
-          "reply_condition": "Sąlygos, kurios visos turi būti įvykdytos, kad atsakymas būtų ištartas. Tikrinamos vieną kartą kiekvienos užklausos pradžioje (ir kiekvienos eilės pokalbyje pakaitomis). Palikite tuščią, kad visada būtų kalbama. Sąlyga su klaida laikoma neįvykdyta. Šablonų sąlygos gali naudoti kintamuosius speaker, remote ir held."
+          "reply_condition": "Sąlygos, kurios visos turi būti įvykdytos, kad atsakymas būtų ištartas. Tikrinamos vieną kartą kiekvienos užklausos pradžioje (ir kiekvienos eilės pokalbyje pakaitomis). Palikite tuščią, kad visada būtų kalbama. Sąlyga su klaida laikoma neįvykdyta. Šablonų sąlygos gali naudoti kintamuosius speaker, remote ir held.",
+          "ignore_early_stop": "Įjunkite, jei užklausos kartais baigiasi po sekundės dalies, nors visą laiką laikėte mygtuką nuspaudę. Kai kurie Android TV pultai iškart po pradžios siunčia sustabdymo signalą, o paskui toliau siunčia garsą. Kai įjungta, sustabdymas per pirmąją sekundę ignoruojamas, kol garsas dar ateina, o užklausa baigiasi, kai garsas nutyla arba ateina antrasis sustabdymas. Naudojama tik tada, kai Mygtuko elgsena nustatyta į Viena užklausa laikant.",
+          "gap_tolerance_ms": "Bluetooth gali prarasti garso akimirką, todėl užklausa paprastai nepavyksta su garso spragos klaida. Čia nustatykite ilgį, iki kurio prarastas ruožas pakeičiamas tyla, kad užklausa tęstųsi. Ilgesnės spragos vis tiek nepavyksta. Tyla žodžio viduryje gali sumažinti atpažinimo tikslumą, todėl naudokite mažiausią veikiančią reikšmę. 0 išjungia. Tik Android TV pultams."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Pultelio bandymo rezultatas",
+        "description": "Jūsų pultas veikia. Jis pats pradeda klausytis, kol laikote nuspaudę balso mygtuką, todėl kalbėdami laikykite mygtuką."
+      },
+      "test_result_atvv_tap": {
+        "title": "Pultelio bandymo rezultatas",
+        "description": "Jūsų pultas veikia. Bakstelėkite jo balso mygtuką, kad pradėtumėte kalbėti; nustoja klausytis, kai nustojate kalbėti."
+      },
+      "test_result_fire_voice": {
+        "title": "Pultelio bandymo rezultatas",
+        "description": "Jūsų pultas veikia. Laikykite balso mygtuką nuspaudę, kol kalbate."
+      },
+      "test_result_plain_key": {
+        "title": "Pultelio bandymo rezultatas",
+        "description": "Pultas atsiuntė įprastus mygtukų paspaudimus, bet ne balso signalą, todėl jo balso mygtukas gali neveikti per Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Pultelio bandymo rezultatas",
+        "description": "Iš pultelio nieko negauta. Pažadinkite jį rodyklės klavišu, patikrinkite, ar jis prijungtas prie šio „Home Assistant“ kompiuterio, ir išbandykite dar kartą."
+      },
+      "report": {
+        "title": "Pultelio ataskaita",
+        "description": "Nukopijuokite šį tekstą į „GitHub“ problemą. Jame nėra viso „Bluetooth“ adreso, pavadinimų, interneto adresų ar garso.",
+        "data": {
+          "report": "Pultelio ataskaita"
+        },
+        "data_description": {
+          "report": "Pasirinkite viską ir nukopijuokite."
+        }
+      },
+      "test_clips": {
+        "title": "Bandomieji įrašai",
+        "description": "Kiekvienas balso mygtuko paspaudimas išsaugotas kaip įrašas, kad išgirstumėte, ką pultas atsiuntė:\n\n{clips}\n\nĮrašai yra skiltyje Medija → Mano medija → Bluetooth Remote Voice. Nuorodos veikia 5 minutes."
+      },
+      "test_clips_none": {
+        "title": "Įrašas neišsaugotas",
+        "description": "Balso mygtukas veikė, bet įrašas neišsaugotas. Įrašai saugomi „Home Assistant“ medijos aplanke (Medija → Mano medija), todėl patikrinkite, ar šis „Home Assistant“ turi medijos aplanką, į kurį gali rašyti, ir bandykite dar kartą."
+      },
+      "test_hints": {
+        "title": "Ką pastebėjo testas",
+        "description": "Ankstyvo sustabdymo signalai: {early}. Prarastos garso spragos: {gaps}.\n\nAnkstyvo sustabdymo signalas yra pulto sustabdymas iškart po pradžios, kai dar laikėte mygtuką. Jei jis didesnis nei 0 ir jūsų užklausos nutrūksta per anksti, įjunkite Ignoruoti ankstyvą sustabdymą integracijos Nustatymai.\n\nPrarasta garso spraga yra garso ruožas, kurį Bluetooth numetė. Jei ji didesnė nei 0 ir užklausos nepavyksta su garso spragos klaida, nustatykite Užpildyti trumpas garso spragas integracijos Nustatymai."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Išsaugotas atsakymų garsiakalbis šiuo metu nepasiekiamas, todėl atsakymai nebus atkuriami, kol jis negrįš. Palikite jį arba pasirinkite kitą."
     },
     "abort": {
-      "no_pipelines": "Pirmiausia sukurkite Assist srautą."
+      "no_pipelines": "Pirmiausia sukurkite Assist srautą.",
+      "test_running": "Šio pulto bandymas jau vykdomas.",
+      "pause_failed": "Nepavyko pristabdyti pulto bandymui. Pabandykite dar kartą po akimirkos."
+    },
+    "progress": {
+      "observing": "Dabar paspauskite ir laikykite nuotolinio valdymo pulto balso mygtuką, trumpai pakalbėkite ir atleiskite. Kartokite, kiek norite: testas trunka 20 sekundžių ir įrašo kiekvieną paspaudimą, kad vėliau galėtumėte jį išklausyti. Jei atrodo, kad nieko nevyksta, pirmiausia pažadinkite pultą rodyklės mygtuku. Jūsų pultas pristabdytas įprastam naudojimui, kol tai vykdoma: jo objektai bus nepasiekiami maždaug minutę, o vykdoma užklausa bus atšaukta."
     }
   },
   "selector": {

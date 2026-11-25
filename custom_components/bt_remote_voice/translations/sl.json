@@ -35,7 +35,7 @@
           "pipeline_id": "Cevovod Assist, ki obdeluje govor s tega daljinca.",
           "remote_type": "Pustite na Samodejno, razen če daljinec ni prepoznan ali nastavitev ne uspe.",
           "show_report": "Označite in pošljite, da vidite poročilo, ki ga lahko kopirate v prijavo na GitHubu.",
-          "test_remote": "Označite in pošljite, nato pritisnite in držite glasovni gumb daljinca, da vidite, kaj počne."
+          "test_remote": "Označite in pošljite, nato pritisnite in držite glasovni gumb daljinca, medtem ko govorite. Vsak pritisk se posname, da ga lahko pozneje poslušate."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Rezultat preizkusa daljinca",
-        "description": "Ta daljinec sam zažene glas, dokler držite njegov gumb. Držite ta gumb za govor. Pošlji za nadaljevanje nastavitve."
+        "description": "Vaš daljinec deluje. Sam začne poslušati, dokler držite njegov glasovni gumb, zato gumb držite, ko govorite. Pošljite za nadaljevanje nastavitve."
       },
       "test_result_atvv_tap": {
         "title": "Rezultat preizkusa daljinca",
-        "description": "Ta daljinec zažene glas, ko se dotaknete njegovega gumba, in posluša, dokler ne nehate govoriti. Dotaknite se tega gumba za govor. Pošlji za nadaljevanje nastavitve."
+        "description": "Vaš daljinec deluje. Tapnite njegov glasovni gumb, da začnete govoriti; poslušanje preneha, ko nehate govoriti. Pošljite za nadaljevanje nastavitve."
       },
       "test_result_fire_voice": {
         "title": "Rezultat preizkusa daljinca",
-        "description": "To je glasovna tipka daljinca Fire TV. Držite jo med govorjenjem. Pošlji za nadaljevanje nastavitve."
+        "description": "Vaš daljinec deluje. Glasovni gumb držite, dokler govorite. Pošljite za nadaljevanje nastavitve."
       },
       "test_result_plain_key": {
         "title": "Rezultat preizkusa daljinca",
-        "description": "Daljinec je poslal navadne tipke, ne pa glasovnega signala, zato njegov glasovni gumb morda ne zažene glasu prek Bluetootha. Pošljite in nato označite Pokaži poročilo o daljincu, da delite, kaj je bilo zaznano."
+        "description": "Daljinec je poslal običajne pritiske gumbov, ne pa glasovnega signala, zato njegov glasovni gumb morda ne deluje prek Bluetootha. Pošljite in nato označite Pokaži poročilo o daljincu, da delite, kaj je bilo opaženo."
       },
       "test_result_nothing": {
         "title": "Rezultat preizkusa daljinca",
         "description": "Od daljinca ni bilo prejeto nič. Prebudite ga s tipko s puščico, preverite, ali je povezan s tem računalnikom z Home Assistant, in poskusite znova. Pošlji za nadaljevanje."
+      },
+      "test_clips": {
+        "title": "Preskusni posnetki",
+        "description": "Vsak pritisk glasovnega gumba je shranjen kot posnetek, da lahko slišite, kaj je daljinec poslal:\n\n{clips}\n\nPosnetki so v Predstavnost → Moja predstavnost → Bluetooth Remote Voice. Povezave delujejo 5 minut."
+      },
+      "test_clips_none": {
+        "title": "Posnetek ni shranjen",
+        "description": "Glasovni gumb je deloval, vendar posnetek ni bil shranjen. Posnetki se shranjujejo v predstavnostno mapo Home Assistanta (Predstavnost → Moja predstavnost), zato preverite, ali ima ta Home Assistant predstavnostno mapo, v katero lahko piše, in znova preizkusite."
+      },
+      "test_hints": {
+        "title": "Kaj je opazil preizkus",
+        "description": "Signali zgodnje ustavitve: {early}. Izgubljene zvočne vrzeli: {gaps}.\n\nSignal zgodnje ustavitve je ustavitev daljinca takoj po začetku, medtem ko ste gumb še držali. Če je nad 0 in se vaše zahteve prekinjajo, vklopite Prezri zgodnjo ustavitev v Nastavitve integracije.\n\nIzgubljena zvočna vrzel je odsek zvoka, ki ga je Bluetooth izgubil. Če je nad 0 in zahteve ne uspejo z napako zvočne vrzeli, nastavite Zapolni kratke zvočne vrzeli v Nastavitve integracije."
       }
     },
     "progress": {
-      "observing": "Poslušanje 20 sekund. Prebudite daljinec s tipko s puščico, nato pritisnite in držite njegov glasovni gumb, na kratko spregovorite in spustite."
+      "observing": "Zdaj pritisnite in držite glasovni gumb daljinca, na kratko spregovorite in spustite. Ponavljajte, kolikor želite: preizkus traja 20 sekund in posname vsak pritisk, da ga lahko pozneje poslušate. Če se zdi, da se nič ne dogaja, najprej prebudite daljinca s tipko s puščico."
     },
     "error": {
       "bluetooth_unavailable": "Lokalni Bluetooth ni na voljo. Preverite, ali je sistemski vodil D-Bus dostopen.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Ta daljinec je že konfiguriran.",
-      "no_pipelines": "Pred dodajanjem daljinca ustvarite cevovod Assist."
+      "no_pipelines": "Pred dodajanjem daljinca ustvarite cevovod Assist.",
+      "test_running": "Preizkus tega daljinca že poteka.",
+      "pause_failed": "Daljinca ni bilo mogoče začasno ustaviti za preizkus. Poskusite znova čez trenutek."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Možnosti daljinca",
+        "description": "Nastavitve spreminjajo delovanje tega daljinca. Daljinca in njegove vrste tukaj ni mogoče spremeniti: če želite uporabiti drug daljinec ali vrsto, izbrišite ta vnos in daljinec znova dodajte.",
+        "menu_options": {
+          "settings": "Nastavitve",
+          "test": "Preizkusi moj daljinec",
+          "report": "Pokaži poročilo o daljincu"
+        }
+      },
+      "settings": {
         "title": "Glasovne nastavitve",
         "description": "Te nastavitve določajo, kako se obravnavajo pritiski in kako se izgovarjajo odgovori. Zamenjava zahteve ne more razveljaviti dejanj, ki jih je že izvedla. Hkratni polni dupleks ni na voljo. Ustavitev po prepisu ne onemogoči orodij, vgrajenih v ponudnika govora v živo; kadar je treba dejanja onemogočiti, uporabite ponudnika samo za prepis.\n\n**Pogoj za odgovor:** da se odgovor izgovori, morajo biti izpolnjeni vsi njegovi pogoji. Preverijo se enkrat na začetku vsake zahteve; če ga pustite praznega, se odgovor izgovori vedno, pogoj, ki ga ni mogoče ovrednotiti, pa se šteje za neizpolnjenega. Pogoji s predlogo lahko uporabljajo spremenljivke `speaker`, `remote` in `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Prezri kratke pritiske",
           "max_request_seconds": "Največja dolžina zahteve",
           "max_conversation_seconds": "Največja dolžina pogovora",
-          "reply_condition": "Pogoj za odgovor"
+          "reply_condition": "Pogoj za odgovor",
+          "ignore_early_stop": "Prezri zgodnjo ustavitev",
+          "gap_tolerance_ms": "Zapolni kratke zvočne vrzeli"
         },
         "data_description": {
           "pipeline_id": "Cevovod Assist, ki obdeluje govor: pretvorbo govora v besedilo, pogovornega agenta in pretvorbo besedila v govor. Odstranjen cevovod se konča z napako in ne preklopi na drugega.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Prezre dotike glasovne tipke, krajše od te vrednosti, da lažen dotik nikoli ne sproži zahteve; pravo držanje se začne toliko pozneje. 0 to izklopi. Uporabno za daljinec Fire TV, ki po prebujanju odpove z napako »Ni zvoka iz mikrofona«: ponovno pošlje tipko, ki ga je prebudila, kot trenuten dotik. Dobro izhodišče je 0,1 s. Samo daljinci Fire TV.",
           "max_request_seconds": "Najdaljši čas ene zahteve na kateremkoli daljincu: celotno držanje v načinu ene zahteve in vsak krog v izmeničnem pogovoru. Ob doseženi omejitvi se zahteva konča z napako omejitve zajema. Zmanjšajte, da ustavite snemanje zataknjene tipke; povečajte za dolgo narekovanje. Daljinci brez funkcije »drži za govor« se končajo tudi po približno 15 sekundah govora ali ob tišini, kar nastopi prej.",
           "max_conversation_seconds": "Najdaljši čas celotnega držanja tipke v načinu izmeničnega pogovora. V načinu ene zahteve je prezrt in ne sme biti krajši od največje dolžine zahteve.",
-          "reply_condition": "Pogoji, ki morajo biti vsi izpolnjeni, da se odgovor izgovori. Preverijo se enkrat na začetku vsake zahteve (in vsakega kroga v izmeničnem pogovoru). Pustite prazno, če želite vedno govoriti. Pogoj, ki povzroči napako, se šteje za neizpolnjenega. Pogoji s predlogo lahko uporabljajo spremenljivke speaker, remote in held."
+          "reply_condition": "Pogoji, ki morajo biti vsi izpolnjeni, da se odgovor izgovori. Preverijo se enkrat na začetku vsake zahteve (in vsakega kroga v izmeničnem pogovoru). Pustite prazno, če želite vedno govoriti. Pogoj, ki povzroči napako, se šteje za neizpolnjenega. Pogoji s predlogo lahko uporabljajo spremenljivke speaker, remote in held.",
+          "ignore_early_stop": "Vklopite, če se zahteve včasih končajo po delčku sekunde, čeprav ste ves čas držali gumb. Nekateri daljinci Android TV takoj po začetku pošljejo signal za ustavitev in nato še naprej pošiljajo zvok. Ko je vklopljeno, se ustavitev v prvi sekundi prezre, dokler zvok še prihaja, zahteva pa se konča, ko zvok utihne ali pride druga ustavitev. Uporablja se samo, ko je Delovanje tipke nastavljeno na Ena zahteva na držanje.",
+          "gap_tolerance_ms": "Bluetooth lahko izgubi trenutek zvoka, zaradi česar zahteva običajno ne uspe z napako zvočne vrzeli. Tu nastavite dolžino, do katere se izgubljen odsek nadomesti s tišino, da se zahteva nadaljuje. Daljše vrzeli še vedno ne uspejo. Tišina sredi besede lahko zmanjša natančnost razpoznavanja, zato uporabite najnižjo vrednost, ki deluje. 0 funkcijo izklopi. Samo za daljince Android TV."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Rezultat preizkusa daljinca",
+        "description": "Vaš daljinec deluje. Sam začne poslušati, dokler držite njegov glasovni gumb, zato gumb držite, ko govorite."
+      },
+      "test_result_atvv_tap": {
+        "title": "Rezultat preizkusa daljinca",
+        "description": "Vaš daljinec deluje. Tapnite njegov glasovni gumb, da začnete govoriti; poslušanje preneha, ko nehate govoriti."
+      },
+      "test_result_fire_voice": {
+        "title": "Rezultat preizkusa daljinca",
+        "description": "Vaš daljinec deluje. Glasovni gumb držite, dokler govorite."
+      },
+      "test_result_plain_key": {
+        "title": "Rezultat preizkusa daljinca",
+        "description": "Daljinec je poslal običajne pritiske gumbov, ne pa glasovnega signala, zato njegov glasovni gumb morda ne deluje prek Bluetootha."
+      },
+      "test_result_nothing": {
+        "title": "Rezultat preizkusa daljinca",
+        "description": "Od daljinca ni bilo prejeto nič. Prebudite ga s tipko s puščico, preverite, ali je povezan s tem računalnikom z Home Assistant, in poskusite znova."
+      },
+      "report": {
+        "title": "Poročilo o daljincu",
+        "description": "Kopirajte to besedilo v prijavo na GitHubu. Ne vsebuje popolnega naslova Bluetooth, imen, spletnih naslovov ali zvoka.",
+        "data": {
+          "report": "Poročilo o daljincu"
+        },
+        "data_description": {
+          "report": "Izberite vse in kopirajte."
+        }
+      },
+      "test_clips": {
+        "title": "Preskusni posnetki",
+        "description": "Vsak pritisk glasovnega gumba je shranjen kot posnetek, da lahko slišite, kaj je daljinec poslal:\n\n{clips}\n\nPosnetki so v Predstavnost → Moja predstavnost → Bluetooth Remote Voice. Povezave delujejo 5 minut."
+      },
+      "test_clips_none": {
+        "title": "Posnetek ni shranjen",
+        "description": "Glasovni gumb je deloval, vendar posnetek ni bil shranjen. Posnetki se shranjujejo v predstavnostno mapo Home Assistanta (Predstavnost → Moja predstavnost), zato preverite, ali ima ta Home Assistant predstavnostno mapo, v katero lahko piše, in znova preizkusite."
+      },
+      "test_hints": {
+        "title": "Kaj je opazil preizkus",
+        "description": "Signali zgodnje ustavitve: {early}. Izgubljene zvočne vrzeli: {gaps}.\n\nSignal zgodnje ustavitve je ustavitev daljinca takoj po začetku, medtem ko ste gumb še držali. Če je nad 0 in se vaše zahteve prekinjajo, vklopite Prezri zgodnjo ustavitev v Nastavitve integracije.\n\nIzgubljena zvočna vrzel je odsek zvoka, ki ga je Bluetooth izgubil. Če je nad 0 in zahteve ne uspejo z napako zvočne vrzeli, nastavite Zapolni kratke zvočne vrzeli v Nastavitve integracije."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Shranjeni zvočnik za odgovore trenutno ni na voljo, zato se odgovori ne bodo predvajali, dokler se ne vrne. Obdržite ga ali izberite drugega."
     },
     "abort": {
-      "no_pipelines": "Najprej ustvarite cevovod Assist."
+      "no_pipelines": "Najprej ustvarite cevovod Assist.",
+      "test_running": "Preizkus tega daljinca že poteka.",
+      "pause_failed": "Daljinca ni bilo mogoče začasno ustaviti za preizkus. Poskusite znova čez trenutek."
+    },
+    "progress": {
+      "observing": "Zdaj pritisnite in držite glasovni gumb daljinca, na kratko spregovorite in spustite. Ponavljajte, kolikor želite: preizkus traja 20 sekund in posname vsak pritisk, da ga lahko pozneje poslušate. Če se zdi, da se nič ne dogaja, najprej prebudite daljinca s tipko s puščico. Vaš daljinec je med tem preizkusom začasno ustavljen za običajno uporabo: njegove entitete so približno eno minuto nedosegljive, zahteva v teku pa se prekliče."
     }
   },
   "selector": {

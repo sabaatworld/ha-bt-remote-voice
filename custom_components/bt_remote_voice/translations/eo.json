@@ -35,7 +35,7 @@
           "pipeline_id": "La Assist-duktubo, kiu prilaboras paroladon de ĉi tiu teleregilo.",
           "remote_type": "Lasu je Aŭtomata, krom se la teleregilo ne estas rekonata aŭ la agordo malsukcesas.",
           "show_report": "Markobu kaj sendu por vidi raporton, kiun vi povas kopii en GitHub-problemon.",
-          "test_remote": "Markobu kaj sendu, poste premu kaj tenu la voĉan butonon de la teleregilo por vidi kion ĝi faras."
+          "test_remote": "Markku kaj sendu, poste premu kaj tenu la voĉan butonon de la teleregilo dum vi parolas. Ĉiu premo estas registrata, por ke vi povu aŭskulti ĝin poste."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Rezulto de la teleregila testo",
-        "description": "Ĉi tiu teleregilo mem komencas voĉon dum ĝia butono estas tenata. Tenu tiun butonon por paroli. Sendi por daŭrigi la agordon."
+        "description": "Via teleregilo funkcias. Ĝi komencas aŭskulti mem dum vi tenas ĝian voĉan butonon, do tenu la butonon dum vi parolas. Sendu por daŭrigi la agordon."
       },
       "test_result_atvv_tap": {
         "title": "Rezulto de la teleregila testo",
-        "description": "Ĉi tiu teleregilo komencas voĉon kiam ĝia butono estas tuŝeta kaj aŭskultas ĝis vi ĉesas paroli. Tuŝetu tiun butonon por paroli. Sendi por daŭrigi la agordon."
+        "description": "Via teleregilo funkcias. Tuŝetu ĝian voĉan butonon por komenci paroli; ĝi ĉesas aŭskulti kiam vi ĉesas paroli. Sendu por daŭrigi la agordon."
       },
       "test_result_fire_voice": {
         "title": "Rezulto de la teleregila testo",
-        "description": "Ĉi tio estas la voĉa klavo de Fire TV-teleregilo. Tenu ĝin dum vi parolas. Sendi por daŭrigi la agordon."
+        "description": "Via teleregilo funkcias. Tenu ĝian voĉan butonon tiel longe kiel vi parolas. Sendu por daŭrigi la agordon."
       },
       "test_result_plain_key": {
         "title": "Rezulto de la teleregila testo",
-        "description": "La teleregilo sendis ordinarajn klavojn sed neniun voĉan signalon, do ĝia voĉa butono eble ne komencas voĉon per Bluetooth. Sendu, poste markobu Montri raporton pri teleregilo por kundividi tion, kio estis vidita."
+        "description": "La teleregilo sendis ordinarajn butonpremojn sed neniun voĉan signalon, do ĝia voĉa butono eble ne funkcias per Bluetooth. Sendu, poste markolu Montri raporton pri teleregilo por kunhavigi kion oni vidis."
       },
       "test_result_nothing": {
         "title": "Rezulto de la teleregila testo",
         "description": "Nenio estis ricevita de la teleregilo. Vekiĝu ĝin per sagoklavo, kontrolu ke ĝi estas konektita al ĉi tiu Home Assistant-maŝino kaj testu denove. Sendi por daŭrigi."
+      },
+      "test_clips": {
+        "title": "Provaj klipoj",
+        "description": "Ĉiu premo de la voĉa butono estis konservita kiel klipo, por ke vi aŭdu kion la teleregilo sendis:\n\n{clips}\n\nLa klipoj estas en Aŭdvidaĵoj → Miaj aŭdvidaĵoj → Bluetooth Remote Voice. La ligiloj funkcias dum 5 minutoj."
+      },
+      "test_clips_none": {
+        "title": "Neniu klipo konservita",
+        "description": "La voĉa butono funkciis, sed neniu klipo estis konservita. Klipoj estas konservataj en la aŭdvidaĵa dosierujo de Home Assistant (Aŭdvidaĵoj → Miaj aŭdvidaĵoj), do kontrolu ĉu ĉi tiu Home Assistant havas aŭdvidaĵan dosierujon, en kiu ĝi povas skribi, kaj testu denove."
+      },
+      "test_hints": {
+        "title": "Kion la testo rimarkis",
+        "description": "Fruaj haltsignaloj: {early}. Perditaj sonaj truoj: {gaps}.\n\nFrua haltsignalo estas halto de la teleregilo tuj post kiam vi komencis, dum vi ankoraŭ tenis la butonon. Se ĝi estas pli ol 0 kaj viaj petoj estas fortranĉataj, ŝaltu Ignori fruan haltigon en la Agordoj de la integriĝo.\n\nPerdita sona truo estas peco de sono kiun Bluetooth faligis. Se ĝi estas pli ol 0 kaj petoj malsukcesas per eraro pri sona truo, agordu Plenigi mallongajn sonajn truojn en la Agordoj de la integriĝo."
       }
     },
     "progress": {
-      "observing": "Aŭskultado dum 20 sekundoj. Vekiĝu la teleregilon per sagoklavo, poste premu kaj tenu ĝian voĉan butonon, parolu mallonge kaj liberigu."
+      "observing": "Premu kaj tenu nun la voĉan butonon de la teleregilo, parolu mallonge, poste liberigu. Ripetu kiom vi volas: la testo daŭras 20 sekundojn kaj registras ĉiun premon, por ke vi povu aŭskulti ĝin poste. Se ŝajnas ke nenio okazas, unue veku la teleregilon per sago-klavo."
     },
     "error": {
       "bluetooth_unavailable": "Loka Bluetooth ne disponeblas. Kontrolu, ke la sistema D-Bus estas alirebla.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Ĉi tiu teleregilo jam estas agordita.",
-      "no_pipelines": "Kreu Assist-duktubon antaŭ ol aldoni la teleregilon."
+      "no_pipelines": "Kreu Assist-duktubon antaŭ ol aldoni la teleregilon.",
+      "test_running": "Testo de ĉi tiu teleregilo jam funkcias.",
+      "pause_failed": "La teleregilo ne povis esti paŭzigita por la testo. Provu denove post momento."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opcioj de la teleregilo",
+        "description": "Agordoj ŝanĝas kiel ĉi tiu teleregilo kondutas. La teleregilo kaj ĝia tipo ne povas esti ŝanĝitaj ĉi tie: por uzi alian teleregilon aŭ tipon, forigu ĉi tiun enskribon kaj aldonu la teleregilon denove.",
+        "menu_options": {
+          "settings": "Agordoj",
+          "test": "Testi mian teleregilon",
+          "report": "Montri raporton pri teleregilo"
+        }
+      },
+      "settings": {
         "title": "Voĉaj agordoj",
         "description": "Ĉi tiuj agordoj regas kiel premoj estas traktataj kaj kiel respondoj estas parolataj. Anstataŭigo de peto ne povas malfari agojn jam faritajn. Samtempa plena duplekso ne disponeblas. Halto post transskribo ne malŝaltas ilojn enkonstruitajn en viva voĉa provizanto; uzu provizanton nur por transskribo kiam agoj devas esti malŝaltitaj.\n\n**Respondkondiĉo:** ĉiuj ĝiaj kondiĉoj devas plenumiĝi por ke respondo estu parolata. Ili estas kontrolataj unufoje je la komenco de ĉiu peto; lasu ĝin malplena por ĉiam paroli, kaj kondiĉo, kiu ne povas esti taksata, validas kiel neplenumita. Ŝablonaj kondiĉoj povas uzi la variablojn `speaker`, `remote` kaj `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignori mallongajn premojn",
           "max_request_seconds": "Maksimuma daŭro de peto",
           "max_conversation_seconds": "Maksimuma daŭro de konversacio",
-          "reply_condition": "Respondkondiĉo"
+          "reply_condition": "Respondkondiĉo",
+          "ignore_early_stop": "Ignori fruan haltigon",
+          "gap_tolerance_ms": "Plenigi mallongajn sonajn truojn"
         },
         "data_description": {
           "pipeline_id": "La Assist-duktubo, kiu prilaboras paroladon: parolo-al-teksto, konversacia agento kaj teksto-al-parolo. Forigita duktubo kaŭzas eraron anstataŭ rezervi alian.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignoras tuŝetojn de la voĉa butono pli mallongajn ol ĉi tio, por ke falsa tuŝeto neniam komencu peton; vera tenado komenciĝas tiom pli malfrue. 0 malŝaltas ĝin. Utila por Fire TV-teleregilo, kiu malsukcesas kun «Neniu mikrofona sono» tuj post vekiĝo: ĝi resendas la klavon, kiu vekis ĝin, kiel tuj-tuŝeton. 0.1 s estas bona komenca valoro. Nur por Fire TV-teleregiloj.",
           "max_request_seconds": "La plej longa daŭro de unuopa peto ĉe iu ajn teleregilo: tuta tenado en reĝimo de Unu peto, kaj ĉiu vico en Alterna konversacio. Atingo de ĝi finas la peton per eraro de kaptolimo. Malpliigu ĝin por haltigi blokitan butonon, kiu daŭre registras; pliigu ĝin por longa dikto. Teleregiloj, kiuj ne estas tenado-por-paroli, ankaŭ finiĝas post ĉirkaŭ 15 sekundoj da parolo aŭ ĉe silento, kiu ajn venas unue.",
           "max_conversation_seconds": "La plej longa daŭro de tuta butontenado en reĝimo de Alterna konversacio. Ĝi estas ignorata en reĝimo de Unu peto kaj ne devas esti pli mallonga ol la maksimuma daŭro de peto.",
-          "reply_condition": "Kondiĉoj, kiuj ĉiuj devas plenumiĝi por ke respondo estu parolata. Kontrolataj unufoje je la komenco de ĉiu peto (kaj de ĉiu vico en Alterna konversacio). Lasu malplena por ĉiam paroli. Kondiĉo, kiu eraras, validas kiel neplenumita. Ŝablonaj kondiĉoj povas uzi la variablojn speaker, remote kaj held."
+          "reply_condition": "Kondiĉoj, kiuj ĉiuj devas plenumiĝi por ke respondo estu parolata. Kontrolataj unufoje je la komenco de ĉiu peto (kaj de ĉiu vico en Alterna konversacio). Lasu malplena por ĉiam paroli. Kondiĉo, kiu eraras, validas kiel neplenumita. Ŝablonaj kondiĉoj povas uzi la variablojn speaker, remote kaj held.",
+          "ignore_early_stop": "Ŝaltu ĉi tion se petoj foje finiĝas post frakcio de sekundo kvankam vi tenis la butonon la tutan tempon. Kelkaj Android TV-teleregiloj sendas haltsignalon tuj post la komenco kaj poste daŭre sendas sonon. Kiam ŝaltita, halto en la unua sekundo estas ignorata dum sono ankoraŭ alvenas, kaj la peto finiĝas kiam la sono silentiĝas aŭ alvenas dua halto. Uzata nur kiam Konduto de butono estas agordita al Unu peto per tenado.",
+          "gap_tolerance_ms": "Bluetooth povas perdi momenton de sono, kio kutime kaŭzas ke la peto malsukcesas per eraro pri sona truo. Agordu ĉi tie longon por anstataŭigi perditan pecon ĝis tiu longo per silento, por ke la peto daŭru. Pli longaj truoj ankoraŭ malsukcesas. Silento meze de vorto povas malaltigi la precizecon de rekono, do uzu la plej malaltan valoron kiu funkcias. 0 malŝaltas ĝin. Nur por Android TV-teleregiloj."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Rezulto de la teleregila testo",
+        "description": "Via teleregilo funkcias. Ĝi komencas aŭskulti mem dum vi tenas ĝian voĉan butonon, do tenu la butonon dum vi parolas."
+      },
+      "test_result_atvv_tap": {
+        "title": "Rezulto de la teleregila testo",
+        "description": "Via teleregilo funkcias. Tuŝetu ĝian voĉan butonon por komenci paroli; ĝi ĉesas aŭskulti kiam vi ĉesas paroli."
+      },
+      "test_result_fire_voice": {
+        "title": "Rezulto de la teleregila testo",
+        "description": "Via teleregilo funkcias. Tenu ĝian voĉan butonon tiel longe kiel vi parolas."
+      },
+      "test_result_plain_key": {
+        "title": "Rezulto de la teleregila testo",
+        "description": "La teleregilo sendis ordinarajn butonpremojn sed neniun voĉan signalon, do ĝia voĉa butono eble ne funkcias per Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Rezulto de la teleregila testo",
+        "description": "Nenio estis ricevita de la teleregilo. Vekiĝu ĝin per sagoklavo, kontrolu ke ĝi estas konektita al ĉi tiu Home Assistant-maŝino kaj testu denove."
+      },
+      "report": {
+        "title": "Raporto pri teleregilo",
+        "description": "Kopiu ĉi tiun tekston en GitHub-problemon. Ĝi enhavas neniun plenan Bluetooth-adreson, nomojn, retadresojn aŭ sonon.",
+        "data": {
+          "report": "Raporto pri teleregilo"
+        },
+        "data_description": {
+          "report": "Elektu ĉion kaj kopiu."
+        }
+      },
+      "test_clips": {
+        "title": "Provaj klipoj",
+        "description": "Ĉiu premo de la voĉa butono estis konservita kiel klipo, por ke vi aŭdu kion la teleregilo sendis:\n\n{clips}\n\nLa klipoj estas en Aŭdvidaĵoj → Miaj aŭdvidaĵoj → Bluetooth Remote Voice. La ligiloj funkcias dum 5 minutoj."
+      },
+      "test_clips_none": {
+        "title": "Neniu klipo konservita",
+        "description": "La voĉa butono funkciis, sed neniu klipo estis konservita. Klipoj estas konservataj en la aŭdvidaĵa dosierujo de Home Assistant (Aŭdvidaĵoj → Miaj aŭdvidaĵoj), do kontrolu ĉu ĉi tiu Home Assistant havas aŭdvidaĵan dosierujon, en kiu ĝi povas skribi, kaj testu denove."
+      },
+      "test_hints": {
+        "title": "Kion la testo rimarkis",
+        "description": "Fruaj haltsignaloj: {early}. Perditaj sonaj truoj: {gaps}.\n\nFrua haltsignalo estas halto de la teleregilo tuj post kiam vi komencis, dum vi ankoraŭ tenis la butonon. Se ĝi estas pli ol 0 kaj viaj petoj estas fortranĉataj, ŝaltu Ignori fruan haltigon en la Agordoj de la integriĝo.\n\nPerdita sona truo estas peco de sono kiun Bluetooth faligis. Se ĝi estas pli ol 0 kaj petoj malsukcesas per eraro pri sona truo, agordu Plenigi mallongajn sonajn truojn en la Agordoj de la integriĝo."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "La konservita parolilo de respondoj nun ne disponeblas, do respondoj ne ludiĝos ĝis ĝi revenos. Konservu ĝin, aŭ elektu alian."
     },
     "abort": {
-      "no_pipelines": "Unue kreu Assist-duktubon."
+      "no_pipelines": "Unue kreu Assist-duktubon.",
+      "test_running": "Testo de ĉi tiu teleregilo jam funkcias.",
+      "pause_failed": "La teleregilo ne povis esti paŭzigita por la testo. Provu denove post momento."
+    },
+    "progress": {
+      "observing": "Premu kaj tenu nun la voĉan butonon de la teleregilo, parolu mallonge, poste liberigu. Ripetu kiom vi volas: la testo daŭras 20 sekundojn kaj registras ĉiun premon, por ke vi povu aŭskulti ĝin poste. Se ŝajnas ke nenio okazas, unue veku la teleregilon per sago-klavo. Via teleregilo estas paŭzigita por normala uzo dum ĉi tio funkcias: ĝiaj entoj estas nehaveblaj dum ĉirkaŭ unu minuto kaj petoj en progreso estas nuligataj."
     }
   },
   "selector": {

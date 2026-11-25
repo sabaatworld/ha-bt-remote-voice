@@ -35,7 +35,7 @@
           "pipeline_id": "De Assist-pipeline die de spraak van deze afstandsbediening verwerkt.",
           "remote_type": "Laat op Automatisch staan, tenzij de afstandsbediening niet wordt herkend of het instellen mislukt.",
           "show_report": "Vink aan en verstuur om een rapport te zien dat je in een GitHub-issue kunt kopiëren.",
-          "test_remote": "Vink aan en verstuur, houd daarna de spraakknop van de afstandsbediening ingedrukt om te zien wat hij doet."
+          "test_remote": "Vink aan en verstuur, houd daarna de spraakknop van de afstandsbediening ingedrukt terwijl je praat. Elke druk wordt opgenomen, zodat je er daarna naar kunt luisteren."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Resultaat van de afstandsbedieningstest",
-        "description": "Deze afstandsbediening start zelf spraak zolang zijn knop wordt ingedrukt. Houd die knop ingedrukt om te praten. Verzenden om door te gaan met instellen."
+        "description": "Je afstandsbediening werkt. Hij begint zelf te luisteren zolang je de spraakknop ingedrukt houdt, dus houd de knop ingedrukt terwijl je praat. Verstuur om door te gaan met de installatie."
       },
       "test_result_atvv_tap": {
         "title": "Resultaat van de afstandsbedieningstest",
-        "description": "Deze afstandsbediening start spraak wanneer zijn knop wordt aangetikt en luistert tot je stopt met praten. Tik op die knop om te praten. Verzenden om door te gaan met instellen."
+        "description": "Je afstandsbediening werkt. Tik op de spraakknop om te beginnen met praten; hij stopt met luisteren wanneer je stopt met praten. Verstuur om door te gaan met de installatie."
       },
       "test_result_fire_voice": {
         "title": "Resultaat van de afstandsbedieningstest",
-        "description": "Dit is de spraaktoets van een Fire TV-afstandsbediening. Houd hem ingedrukt terwijl je praat. Verzenden om door te gaan met instellen."
+        "description": "Je afstandsbediening werkt. Houd de spraakknop ingedrukt zolang je praat. Verstuur om door te gaan met de installatie."
       },
       "test_result_plain_key": {
         "title": "Resultaat van de afstandsbedieningstest",
-        "description": "De afstandsbediening stuurde gewone toetsen maar geen spraaksignaal, dus zijn spraakknop start mogelijk geen spraak via Bluetooth. Verstuur en vink dan Afstandsbedieningsrapport tonen aan om te delen wat is gezien."
+        "description": "De afstandsbediening stuurde gewone toetsaanslagen maar geen spraaksignaal, dus de spraakknop werkt mogelijk niet via Bluetooth. Verstuur en vink daarna Afstandsbedieningsrapport tonen aan om te delen wat is gezien."
       },
       "test_result_nothing": {
         "title": "Resultaat van de afstandsbedieningstest",
         "description": "Er is niets ontvangen van de afstandsbediening. Maak hem wakker met een pijltoets, controleer of hij verbonden is met deze Home Assistant-machine en test opnieuw. Verzenden om door te gaan."
+      },
+      "test_clips": {
+        "title": "Testclips",
+        "description": "Elke druk op de spraakknop is opgeslagen als clip, zodat je kunt horen wat de afstandsbediening heeft verstuurd:\n\n{clips}\n\nDe clips staan in Media → Mijn media → Bluetooth Remote Voice. De links werken 5 minuten."
+      },
+      "test_clips_none": {
+        "title": "Geen clip opgeslagen",
+        "description": "De spraakknop werkte, maar er is geen clip opgeslagen. Clips worden opgeslagen in de mediamap van Home Assistant (Media → Mijn media), dus controleer of deze Home Assistant een mediamap heeft waarin hij kan schrijven en test opnieuw."
+      },
+      "test_hints": {
+        "title": "Wat de test opmerkte",
+        "description": "Vroege stopsignalen: {early}. Verloren audiogaten: {gaps}.\n\nEen vroeg stopsignaal is een stop van de afstandsbediening direct na de start, terwijl je de knop nog ingedrukt hield. Als dit boven 0 is en je verzoeken te vroeg worden afgekapt, zet dan Vroege stop negeren aan in de Instellingen van de integratie.\n\nEen verloren audiogat is een stuk audio dat Bluetooth heeft laten vallen. Als dit boven 0 is en verzoeken mislukken met een audiogatfout, stel dan Korte audiogaten opvullen in bij de Instellingen van de integratie."
       }
     },
     "progress": {
-      "observing": "20 seconden luisteren. Maak de afstandsbediening wakker met een pijltoets, houd daarna zijn spraakknop ingedrukt, spreek kort en laat los."
+      "observing": "Houd nu de spraakknop van de afstandsbediening ingedrukt, spreek kort en laat los. Herhaal dit zo vaak je wilt: de test duurt 20 seconden en neemt elke druk op, zodat je er daarna naar kunt luisteren. Als het lijkt alsof er niets gebeurt, maak de afstandsbediening dan eerst wakker met een pijltoets."
     },
     "error": {
       "bluetooth_unavailable": "Lokale Bluetooth is niet beschikbaar. Controleer of de systeem-D-Bus toegankelijk is.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Deze afstandsbediening is al geconfigureerd.",
-      "no_pipelines": "Maak een Assist-pipeline aan voordat je de afstandsbediening toevoegt."
+      "no_pipelines": "Maak een Assist-pipeline aan voordat je de afstandsbediening toevoegt.",
+      "test_running": "Er loopt al een test van deze afstandsbediening.",
+      "pause_failed": "De afstandsbediening kon niet worden gepauzeerd voor de test. Probeer het zo meteen opnieuw."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opties van de afstandsbediening",
+        "description": "Instellingen wijzigen hoe deze afstandsbediening zich gedraagt. De afstandsbediening en het type kunnen hier niet worden gewijzigd: verwijder deze invoer en voeg de afstandsbediening opnieuw toe om een andere afstandsbediening of een ander type te gebruiken.",
+        "menu_options": {
+          "settings": "Instellingen",
+          "test": "Mijn afstandsbediening testen",
+          "report": "Afstandsbedieningsrapport tonen"
+        }
+      },
+      "settings": {
         "title": "Spraakinstellingen",
         "description": "Deze instellingen bepalen hoe toetsdrukken worden afgehandeld en hoe antwoorden worden uitgesproken. Het vervangen van een verzoek kan al uitgevoerde acties niet ongedaan maken. Gelijktijdig volledig duplex is niet beschikbaar. Stoppen na transcriptie schakelt tools die in een live-spraakprovider zijn ingebouwd niet uit; gebruik een provider met alleen transcriptie wanneer acties moeten worden uitgeschakeld.\n\n**Antwoordvoorwaarde:** alle voorwaarden moeten slagen om een antwoord uit te spreken. Ze worden één keer gecontroleerd aan het begin van elk verzoek; laat het leeg om altijd te spreken, en een voorwaarde die niet kan worden geëvalueerd telt als niet voldaan. Sjabloonvoorwaarden kunnen de variabelen `speaker`, `remote` en `held` gebruiken.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Korte drukken negeren",
           "max_request_seconds": "Maximale verzoeklengte",
           "max_conversation_seconds": "Maximale gesprekslengte",
-          "reply_condition": "Antwoordvoorwaarde"
+          "reply_condition": "Antwoordvoorwaarde",
+          "ignore_early_stop": "Vroege stop negeren",
+          "gap_tolerance_ms": "Korte audiogaten opvullen"
         },
         "data_description": {
           "pipeline_id": "De Assist-pipeline die spraak verwerkt: spraak-naar-tekst, gespreksagent en tekst-naar-spraak. Een verwijderde pipeline geeft een fout in plaats van terug te vallen op een andere.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Negeert tikken op de spraakknop die korter zijn dan dit, zodat een onbedoelde tik nooit een verzoek start; een echte druk begint even later. 0 schakelt het uit. Handig voor een Fire TV-afstandsbediening die direct na het wakker worden mislukt met \"No microphone audio\": hij stuurt de toets die hem wakker maakte opnieuw als directe tik. 0,1 s is een goed beginpunt. Alleen voor Fire TV-afstandsbedieningen.",
           "max_request_seconds": "De langste duur van één verzoek op elke afstandsbediening: een hele druk in de modus Eén verzoek en elke beurt in Wisselend gesprek. Als de limiet wordt bereikt, eindigt het verzoek met een opnamelimietfout. Verlaag dit om een vastzittende knop niet eindeloos te laten opnemen; verhoog het voor lange dictaten. Afstandsbedieningen zonder push-to-talk eindigen ook na ongeveer 15 seconden spraak of bij stilte, wat het eerst komt.",
           "max_conversation_seconds": "De langste duur van een hele knopdruk in de modus Wisselend gesprek. Wordt genegeerd in de modus Eén verzoek en mag niet korter zijn dan de maximale verzoeklengte.",
-          "reply_condition": "Voorwaarden die allemaal moeten slagen om een antwoord uit te spreken. Eén keer gecontroleerd aan het begin van elk verzoek (en elke beurt in Wisselend gesprek). Laat leeg om altijd te spreken. Een voorwaarde die een fout geeft, telt als niet voldaan. Sjabloonvoorwaarden kunnen de variabelen speaker, remote en held gebruiken."
+          "reply_condition": "Voorwaarden die allemaal moeten slagen om een antwoord uit te spreken. Eén keer gecontroleerd aan het begin van elk verzoek (en elke beurt in Wisselend gesprek). Laat leeg om altijd te spreken. Een voorwaarde die een fout geeft, telt als niet voldaan. Sjabloonvoorwaarden kunnen de variabelen speaker, remote en held gebruiken.",
+          "ignore_early_stop": "Zet dit aan als verzoeken soms na een fractie van een seconde eindigen, ook al hield je de knop de hele tijd ingedrukt. Sommige Android TV-afstandsbedieningen sturen direct na de start een stopsignaal en sturen daarna nog steeds audio. Wanneer aan, wordt een stop in de eerste seconde genegeerd zolang er nog audio binnenkomt, en het verzoek eindigt wanneer de audio stil wordt of een tweede stop binnenkomt. Wordt alleen gebruikt als Knopgedrag op Eén verzoek per indrukken staat.",
+          "gap_tolerance_ms": "Bluetooth kan een moment audio verliezen, waardoor het verzoek normaal mislukt met een audiogatfout. Stel hier een lengte in om een verloren stuk tot die lengte te vervangen door stilte, zodat het verzoek doorgaat. Langere gaten mislukken nog steeds. Stilte midden in een woord kan de herkenningsnauwkeurigheid verlagen, gebruik dus de laagste waarde die werkt. 0 zet het uit. Alleen voor Android TV-afstandsbedieningen."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultaat van de afstandsbedieningstest",
+        "description": "Je afstandsbediening werkt. Hij begint zelf te luisteren zolang je de spraakknop ingedrukt houdt, dus houd de knop ingedrukt terwijl je praat."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultaat van de afstandsbedieningstest",
+        "description": "Je afstandsbediening werkt. Tik op de spraakknop om te beginnen met praten; hij stopt met luisteren wanneer je stopt met praten."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultaat van de afstandsbedieningstest",
+        "description": "Je afstandsbediening werkt. Houd de spraakknop ingedrukt zolang je praat."
+      },
+      "test_result_plain_key": {
+        "title": "Resultaat van de afstandsbedieningstest",
+        "description": "De afstandsbediening stuurde gewone toetsaanslagen maar geen spraaksignaal, dus de spraakknop werkt mogelijk niet via Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Resultaat van de afstandsbedieningstest",
+        "description": "Er is niets ontvangen van de afstandsbediening. Maak hem wakker met een pijltoets, controleer of hij verbonden is met deze Home Assistant-machine en test opnieuw."
+      },
+      "report": {
+        "title": "Afstandsbedieningsrapport",
+        "description": "Kopieer deze tekst in een GitHub-issue. Hij bevat geen volledig Bluetooth-adres, namen, webadressen of audio.",
+        "data": {
+          "report": "Afstandsbedieningsrapport"
+        },
+        "data_description": {
+          "report": "Selecteer alles en kopieer."
+        }
+      },
+      "test_clips": {
+        "title": "Testclips",
+        "description": "Elke druk op de spraakknop is opgeslagen als clip, zodat je kunt horen wat de afstandsbediening heeft verstuurd:\n\n{clips}\n\nDe clips staan in Media → Mijn media → Bluetooth Remote Voice. De links werken 5 minuten."
+      },
+      "test_clips_none": {
+        "title": "Geen clip opgeslagen",
+        "description": "De spraakknop werkte, maar er is geen clip opgeslagen. Clips worden opgeslagen in de mediamap van Home Assistant (Media → Mijn media), dus controleer of deze Home Assistant een mediamap heeft waarin hij kan schrijven en test opnieuw."
+      },
+      "test_hints": {
+        "title": "Wat de test opmerkte",
+        "description": "Vroege stopsignalen: {early}. Verloren audiogaten: {gaps}.\n\nEen vroeg stopsignaal is een stop van de afstandsbediening direct na de start, terwijl je de knop nog ingedrukt hield. Als dit boven 0 is en je verzoeken te vroeg worden afgekapt, zet dan Vroege stop negeren aan in de Instellingen van de integratie.\n\nEen verloren audiogat is een stuk audio dat Bluetooth heeft laten vallen. Als dit boven 0 is en verzoeken mislukken met een audiogatfout, stel dan Korte audiogaten opvullen in bij de Instellingen van de integratie."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "De opgeslagen antwoordluidspreker is op dit moment niet beschikbaar, dus antwoorden worden pas weer afgespeeld zodra hij terug is. Behoud hem of kies een andere."
     },
     "abort": {
-      "no_pipelines": "Maak eerst een Assist-pipeline aan."
+      "no_pipelines": "Maak eerst een Assist-pipeline aan.",
+      "test_running": "Er loopt al een test van deze afstandsbediening.",
+      "pause_failed": "De afstandsbediening kon niet worden gepauzeerd voor de test. Probeer het zo meteen opnieuw."
+    },
+    "progress": {
+      "observing": "Houd nu de spraakknop van de afstandsbediening ingedrukt, spreek kort en laat los. Herhaal dit zo vaak je wilt: de test duurt 20 seconden en neemt elke druk op, zodat je er daarna naar kunt luisteren. Als het lijkt alsof er niets gebeurt, maak de afstandsbediening dan eerst wakker met een pijltoets. Je afstandsbediening is gepauzeerd voor normaal gebruik zolang dit loopt: de entiteiten zijn ongeveer een minuut niet beschikbaar en een lopend verzoek wordt geannuleerd."
     }
   },
   "selector": {

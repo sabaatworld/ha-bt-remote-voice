@@ -35,7 +35,7 @@
           "pipeline_id": "Pipeline Assist xử lý giọng nói từ điều khiển từ xa này.",
           "remote_type": "Hãy để ở Tự động, trừ khi điều khiển không được nhận dạng hoặc thiết lập thất bại.",
           "show_report": "Chọn rồi gửi để xem báo cáo mà bạn có thể sao chép vào một vấn đề trên GitHub.",
-          "test_remote": "Chọn rồi gửi, sau đó nhấn và giữ nút giọng nói của điều khiển để xem điều khiển làm gì."
+          "test_remote": "Chọn và gửi, sau đó nhấn giữ nút giọng nói trên điều khiển từ xa khi bạn nói. Mỗi lần nhấn đều được ghi lại để bạn nghe lại sau."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Kết quả kiểm tra điều khiển",
-        "description": "Điều khiển này tự bắt đầu giọng nói khi nút của nó được giữ. Hãy giữ nút đó để nói. Gửi để tiếp tục thiết lập."
+        "description": "Điều khiển từ xa của bạn hoạt động. Nó tự bắt đầu nghe khi bạn giữ nút giọng nói, vì vậy hãy giữ nút trong lúc nói. Gửi để tiếp tục thiết lập."
       },
       "test_result_atvv_tap": {
         "title": "Kết quả kiểm tra điều khiển",
-        "description": "Điều khiển này bắt đầu giọng nói khi chạm vào nút của nó và lắng nghe cho đến khi bạn ngừng nói. Hãy chạm vào nút đó để nói. Gửi để tiếp tục thiết lập."
+        "description": "Điều khiển từ xa của bạn hoạt động. Chạm vào nút giọng nói để bắt đầu nói; nó ngừng nghe khi bạn ngừng nói. Gửi để tiếp tục thiết lập."
       },
       "test_result_fire_voice": {
         "title": "Kết quả kiểm tra điều khiển",
-        "description": "Đây là phím giọng nói của điều khiển Fire TV. Hãy giữ nó khi bạn nói. Gửi để tiếp tục thiết lập."
+        "description": "Điều khiển từ xa của bạn hoạt động. Hãy giữ nút giọng nói trong suốt thời gian bạn nói. Gửi để tiếp tục thiết lập."
       },
       "test_result_plain_key": {
         "title": "Kết quả kiểm tra điều khiển",
-        "description": "Điều khiển đã gửi các phím thông thường nhưng không có tín hiệu giọng nói, nên nút giọng nói của nó có thể không bắt đầu giọng nói qua Bluetooth. Gửi, sau đó chọn Hiển thị báo cáo điều khiển để chia sẻ những gì đã thấy."
+        "description": "Điều khiển từ xa đã gửi các lần nhấn nút thông thường nhưng không có tín hiệu giọng nói, nên nút giọng nói của nó có thể không hoạt động qua Bluetooth. Gửi, sau đó chọn Hiển thị báo cáo điều khiển từ xa để chia sẻ những gì đã thấy."
       },
       "test_result_nothing": {
         "title": "Kết quả kiểm tra điều khiển",
         "description": "Không nhận được gì từ điều khiển. Hãy đánh thức nó bằng một phím mũi tên, kiểm tra xem nó đã kết nối với máy Home Assistant này chưa, rồi kiểm tra lại. Gửi để tiếp tục."
+      },
+      "test_clips": {
+        "title": "Đoạn thử nghiệm",
+        "description": "Mỗi lần nhấn nút giọng nói đã được lưu thành một đoạn, để bạn nghe được điều khiển từ xa đã gửi gì:\n\n{clips}\n\nCác đoạn nằm trong Phương tiện → Phương tiện của tôi → Bluetooth Remote Voice. Liên kết có hiệu lực trong 5 phút."
+      },
+      "test_clips_none": {
+        "title": "Không có đoạn nào được lưu",
+        "description": "Nút giọng nói đã hoạt động, nhưng không có đoạn nào được lưu. Các đoạn được lưu trong thư mục phương tiện của Home Assistant (Phương tiện → Phương tiện của tôi), vì vậy hãy kiểm tra xem Home Assistant này có thư mục phương tiện có thể ghi hay không rồi thử lại."
+      },
+      "test_hints": {
+        "title": "Những gì bài kiểm tra phát hiện",
+        "description": "Tín hiệu dừng sớm: {early}. Khoảng trống âm thanh bị mất: {gaps}.\n\nTín hiệu dừng sớm là lệnh dừng từ điều khiển từ xa ngay sau khi bạn bắt đầu, trong lúc bạn vẫn đang giữ nút. Nếu giá trị lớn hơn 0 và yêu cầu của bạn bị cắt ngắn, hãy bật Bỏ qua dừng sớm trong Cài đặt của tích hợp.\n\nKhoảng trống âm thanh bị mất là đoạn âm thanh mà Bluetooth đã làm rơi. Nếu giá trị lớn hơn 0 và yêu cầu thất bại với lỗi khoảng trống âm thanh, hãy đặt Lấp khoảng trống âm thanh ngắn trong Cài đặt của tích hợp."
       }
     },
     "progress": {
-      "observing": "Đang lắng nghe trong 20 giây. Đánh thức điều khiển bằng một phím mũi tên, sau đó nhấn và giữ nút giọng nói của nó, nói ngắn gọn rồi thả ra."
+      "observing": "Bây giờ hãy nhấn giữ nút giọng nói trên điều khiển từ xa, nói ngắn gọn rồi thả ra. Lặp lại bao nhiêu lần tùy ý: bài kiểm tra kéo dài 20 giây và ghi lại mỗi lần nhấn để bạn nghe lại sau. Nếu có vẻ như không có gì xảy ra, trước tiên hãy đánh thức điều khiển từ xa bằng một phím mũi tên."
     },
     "error": {
       "bluetooth_unavailable": "Bluetooth cục bộ không khả dụng. Hãy kiểm tra xem có thể truy cập D-Bus của hệ thống hay không.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Điều khiển từ xa này đã được cấu hình.",
-      "no_pipelines": "Hãy tạo một pipeline Assist trước khi thêm điều khiển từ xa."
+      "no_pipelines": "Hãy tạo một pipeline Assist trước khi thêm điều khiển từ xa.",
+      "test_running": "Một bài kiểm tra của điều khiển từ xa này đang chạy.",
+      "pause_failed": "Không thể tạm dừng điều khiển từ xa để kiểm tra. Hãy thử lại sau giây lát."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Tùy chọn điều khiển từ xa",
+        "description": "Cài đặt thay đổi cách điều khiển từ xa này hoạt động. Không thể đổi điều khiển từ xa và loại của nó tại đây: để dùng điều khiển hoặc loại khác, hãy xóa mục này và thêm lại điều khiển từ xa.",
+        "menu_options": {
+          "settings": "Cài đặt",
+          "test": "Kiểm tra điều khiển của tôi",
+          "report": "Hiển thị báo cáo điều khiển"
+        }
+      },
+      "settings": {
         "title": "Cài đặt giọng nói",
         "description": "Các cài đặt này điều khiển cách xử lý lần nhấn và cách đọc phản hồi. Thay thế một yêu cầu không thể hoàn tác các hành động đã thực hiện. Không hỗ trợ song công toàn phần đồng thời. Dừng sau khi chép lời không vô hiệu hóa các công cụ tích hợp sẵn của nhà cung cấp giọng nói trực tiếp; hãy dùng nhà cung cấp chỉ chép lời khi cần tắt các hành động.\n\n**Điều kiện phản hồi:** tất cả điều kiện phải thỏa mãn thì phản hồi mới được đọc. Chúng được kiểm tra một lần khi bắt đầu mỗi yêu cầu; để trống để luôn đọc, và điều kiện không thể đánh giá được coi là không thỏa mãn. Điều kiện mẫu có thể dùng các biến `speaker`, `remote` và `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Bỏ qua lần nhấn ngắn",
           "max_request_seconds": "Độ dài yêu cầu tối đa",
           "max_conversation_seconds": "Độ dài hội thoại tối đa",
-          "reply_condition": "Điều kiện phản hồi"
+          "reply_condition": "Điều kiện phản hồi",
+          "ignore_early_stop": "Bỏ qua dừng sớm",
+          "gap_tolerance_ms": "Lấp khoảng trống âm thanh ngắn"
         },
         "data_description": {
           "pipeline_id": "Pipeline Assist xử lý giọng nói: chuyển giọng nói thành văn bản, tác nhân hội thoại và chuyển văn bản thành giọng nói. Pipeline đã bị xóa sẽ báo lỗi thay vì chuyển sang pipeline khác.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Bỏ qua các lần chạm nút giọng nói ngắn hơn giá trị này, để lần chạm nhầm không bắt đầu yêu cầu; lần giữ thật sẽ bắt đầu muộn hơn chừng đó. 0 là tắt. Hữu ích cho điều khiển Fire TV bị lỗi \"Không có âm thanh micrô\" ngay sau khi đánh thức: nó gửi lại phím đã đánh thức dưới dạng một lần chạm tức thì. 0.1 s là điểm khởi đầu tốt. Chỉ dành cho điều khiển Fire TV.",
           "max_request_seconds": "Thời gian dài nhất của một yêu cầu trên mọi điều khiển từ xa: toàn bộ lần giữ ở chế độ một yêu cầu, và mỗi lượt trong hội thoại luân phiên. Khi đạt giới hạn, yêu cầu kết thúc với lỗi giới hạn thu âm. Giảm để ngăn nút bị kẹt tiếp tục ghi âm; tăng cho việc đọc chính tả dài. Điều khiển không phải kiểu nhấn giữ để nói cũng kết thúc sau khoảng 15 giây giọng nói hoặc khi im lặng, tùy điều nào đến trước.",
           "max_conversation_seconds": "Thời gian dài nhất của một lần giữ nút ở chế độ hội thoại luân phiên. Bị bỏ qua ở chế độ một yêu cầu và không được ngắn hơn độ dài yêu cầu tối đa.",
-          "reply_condition": "Các điều kiện phải thỏa mãn hết thì phản hồi mới được đọc. Kiểm tra một lần khi bắt đầu mỗi yêu cầu (và mỗi lượt trong hội thoại luân phiên). Để trống để luôn đọc. Điều kiện bị lỗi được coi là không thỏa mãn. Điều kiện mẫu có thể dùng các biến speaker, remote và held."
+          "reply_condition": "Các điều kiện phải thỏa mãn hết thì phản hồi mới được đọc. Kiểm tra một lần khi bắt đầu mỗi yêu cầu (và mỗi lượt trong hội thoại luân phiên). Để trống để luôn đọc. Điều kiện bị lỗi được coi là không thỏa mãn. Điều kiện mẫu có thể dùng các biến speaker, remote và held.",
+          "ignore_early_stop": "Bật tính năng này nếu các yêu cầu đôi khi kết thúc sau một phần giây dù bạn đã giữ nút suốt thời gian. Một số điều khiển từ xa Android TV gửi tín hiệu dừng ngay sau khi bạn bắt đầu rồi vẫn tiếp tục gửi âm thanh. Khi bật, tín hiệu dừng trong giây đầu tiên bị bỏ qua chừng nào âm thanh còn đến, và yêu cầu kết thúc khi âm thanh im lặng hoặc có tín hiệu dừng thứ hai. Chỉ dùng khi Hành vi nút được đặt là Một yêu cầu cho mỗi lần giữ.",
+          "gap_tolerance_ms": "Bluetooth có thể mất một khoảnh khắc âm thanh, thường khiến yêu cầu thất bại với lỗi khoảng trống âm thanh. Đặt độ dài ở đây để thay đoạn bị mất dài tối đa bằng đó bằng khoảng lặng, giúp yêu cầu tiếp tục. Các khoảng trống dài hơn vẫn thất bại. Khoảng lặng giữa một từ có thể làm giảm độ chính xác nhận dạng, vì vậy hãy dùng giá trị thấp nhất mà vẫn hoạt động. 0 là tắt. Chỉ dành cho điều khiển từ xa Android TV."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Kết quả kiểm tra điều khiển",
+        "description": "Điều khiển từ xa của bạn hoạt động. Nó tự bắt đầu nghe khi bạn giữ nút giọng nói, vì vậy hãy giữ nút trong lúc nói."
+      },
+      "test_result_atvv_tap": {
+        "title": "Kết quả kiểm tra điều khiển",
+        "description": "Điều khiển từ xa của bạn hoạt động. Chạm vào nút giọng nói để bắt đầu nói; nó ngừng nghe khi bạn ngừng nói."
+      },
+      "test_result_fire_voice": {
+        "title": "Kết quả kiểm tra điều khiển",
+        "description": "Điều khiển từ xa của bạn hoạt động. Hãy giữ nút giọng nói trong suốt thời gian bạn nói."
+      },
+      "test_result_plain_key": {
+        "title": "Kết quả kiểm tra điều khiển",
+        "description": "Điều khiển từ xa đã gửi các lần nhấn nút thông thường nhưng không có tín hiệu giọng nói, nên nút giọng nói của nó có thể không hoạt động qua Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Kết quả kiểm tra điều khiển",
+        "description": "Không nhận được gì từ điều khiển. Hãy đánh thức nó bằng một phím mũi tên, kiểm tra xem nó đã kết nối với máy Home Assistant này chưa, rồi kiểm tra lại."
+      },
+      "report": {
+        "title": "Báo cáo điều khiển",
+        "description": "Hãy sao chép văn bản này vào một vấn đề trên GitHub. Văn bản không chứa địa chỉ Bluetooth đầy đủ, tên, địa chỉ web hay âm thanh.",
+        "data": {
+          "report": "Báo cáo điều khiển"
+        },
+        "data_description": {
+          "report": "Chọn tất cả và sao chép."
+        }
+      },
+      "test_clips": {
+        "title": "Đoạn thử nghiệm",
+        "description": "Mỗi lần nhấn nút giọng nói đã được lưu thành một đoạn, để bạn nghe được điều khiển từ xa đã gửi gì:\n\n{clips}\n\nCác đoạn nằm trong Phương tiện → Phương tiện của tôi → Bluetooth Remote Voice. Liên kết có hiệu lực trong 5 phút."
+      },
+      "test_clips_none": {
+        "title": "Không có đoạn nào được lưu",
+        "description": "Nút giọng nói đã hoạt động, nhưng không có đoạn nào được lưu. Các đoạn được lưu trong thư mục phương tiện của Home Assistant (Phương tiện → Phương tiện của tôi), vì vậy hãy kiểm tra xem Home Assistant này có thư mục phương tiện có thể ghi hay không rồi thử lại."
+      },
+      "test_hints": {
+        "title": "Những gì bài kiểm tra phát hiện",
+        "description": "Tín hiệu dừng sớm: {early}. Khoảng trống âm thanh bị mất: {gaps}.\n\nTín hiệu dừng sớm là lệnh dừng từ điều khiển từ xa ngay sau khi bạn bắt đầu, trong lúc bạn vẫn đang giữ nút. Nếu giá trị lớn hơn 0 và yêu cầu của bạn bị cắt ngắn, hãy bật Bỏ qua dừng sớm trong Cài đặt của tích hợp.\n\nKhoảng trống âm thanh bị mất là đoạn âm thanh mà Bluetooth đã làm rơi. Nếu giá trị lớn hơn 0 và yêu cầu thất bại với lỗi khoảng trống âm thanh, hãy đặt Lấp khoảng trống âm thanh ngắn trong Cài đặt của tích hợp."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Loa phản hồi đã lưu hiện không khả dụng, nên phản hồi sẽ không phát cho đến khi nó trở lại. Hãy giữ nguyên hoặc chọn loa khác."
     },
     "abort": {
-      "no_pipelines": "Hãy tạo một pipeline Assist trước."
+      "no_pipelines": "Hãy tạo một pipeline Assist trước.",
+      "test_running": "Một bài kiểm tra của điều khiển từ xa này đang chạy.",
+      "pause_failed": "Không thể tạm dừng điều khiển từ xa để kiểm tra. Hãy thử lại sau giây lát."
+    },
+    "progress": {
+      "observing": "Bây giờ hãy nhấn giữ nút giọng nói trên điều khiển từ xa, nói ngắn gọn rồi thả ra. Lặp lại bao nhiêu lần tùy ý: bài kiểm tra kéo dài 20 giây và ghi lại mỗi lần nhấn để bạn nghe lại sau. Nếu có vẻ như không có gì xảy ra, trước tiên hãy đánh thức điều khiển từ xa bằng một phím mũi tên. Điều khiển từ xa của bạn bị tạm dừng sử dụng thông thường trong khi việc này chạy: các thực thể của nó không khả dụng trong khoảng một phút và yêu cầu đang xử lý sẽ bị hủy."
     }
   },
   "selector": {

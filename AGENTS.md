@@ -138,7 +138,8 @@ the HA audio dependencies; mount the repo read-only and set
   release candidate (full tests, CI on `main`, the built zip) before pushing its tag. The `hacs/default` listing pull request needs the
   maintainer's go-ahead. Spec: https://contributors.home-assistant.io/marketplace/guides/integrations/
 - **Hardware safety.** Never press or script a remote's power buttons. Do not
-  open a microphone without a physical voice notification.
+  open a microphone without a physical voice notification ("Test my remote" records only the
+  presses the user makes during the test, and always closes the microphone afterwards).
 - **Image resolution.** Generate and use `@3x` raster variants wherever supported,
   including the README. Retain editable SVG sources. Where Home Assistant requires
   specific image sizes or filenames, supply its prescribed variants instead.

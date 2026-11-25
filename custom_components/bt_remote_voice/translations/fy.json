@@ -35,7 +35,7 @@
           "pipeline_id": "De Assist-pipeline dy't de spraak fan dizze ôfstânsbetsjinning ferwurket.",
           "remote_type": "Lit op Automatysk stean, útsein as de ôfstânsbetsjinning net werkend wurdt of ynstellen mislearret.",
           "show_report": "Markearje en ferstjoer om in rapport te sjen dat jo yn in GitHub-probleem kopiearje kinne.",
-          "test_remote": "Markearje en ferstjoer, hâld dan de spraakknop fan de ôfstânsbetsjinning yndrukt om te sjen wat er dien wurdt."
+          "test_remote": "Vink oan en ferstjoer, druk dan op de sprektoets fan de ôfstânsbetsjinning en hâld him yndrukt wylst jo prate. Elke druk wurdt opnommen, sadat jo der letter nei harkje kinne."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Resultaat fan de ôfstânsbetsjinningstest",
-        "description": "Dizze ôfstânsbetsjinning begjint sels spraak sa lang as syn knop yndrukt wurdt. Hâld dy knop yndrukt om te praten. Ferstjoere om troch te gean mei ynstellen."
+        "description": "Jo ôfstânsbetsjinning wurket. Hy begjint sels te harkjen salang't jo de spreektoets yndrukt hâlde, dus hâld de toets yndrukt wylst jo prate. Ferstjoer om troch te gean mei ynstellen."
       },
       "test_result_atvv_tap": {
         "title": "Resultaat fan de ôfstânsbetsjinningstest",
-        "description": "Dizze ôfstânsbetsjinning begjint spraak as syn knop oantikke wurdt en harket oant jo ophâlde mei praten. Tik dy knop oan om te praten. Ferstjoere om troch te gean mei ynstellen."
+        "description": "Jo ôfstânsbetsjinning wurket. Tip koart op de spreektoets om te begjinnen mei praten; hy hâldt op mei harkjen as jo ophâlde mei praten. Ferstjoer om troch te gean mei ynstellen."
       },
       "test_result_fire_voice": {
         "title": "Resultaat fan de ôfstânsbetsjinningstest",
-        "description": "Dit is de spraaktoets fan in Fire TV-ôfstânsbetsjinning. Hâld him yndrukt wylst jo prate. Ferstjoere om troch te gean mei ynstellen."
+        "description": "Jo ôfstânsbetsjinning wurket. Hâld de spreektoets yndrukt salang't jo prate. Ferstjoer om troch te gean mei ynstellen."
       },
       "test_result_plain_key": {
         "title": "Resultaat fan de ôfstânsbetsjinningstest",
-        "description": "De ôfstânsbetsjinning stjoerde gewoane toetsen mar gjin spraaksinjaal, dus syn spraakknop begjint miskien gjin spraak fia Bluetooth. Ferstjoer en markearje dan Ôfstânsbetsjinningsrapport toane om te dielen wat sjoen is."
+        "description": "De ôfstânsbetsjinning stjoerde gewoane toetsdrukken, mar gjin spraaksinjaal, dus de spreektoets wurket miskien net oer Bluetooth. Ferstjoer en fink dan Ôfstânsbetsjinningsrapport sjen litte oan om te dielen wat sjoen is."
       },
       "test_result_nothing": {
         "title": "Resultaat fan de ôfstânsbetsjinningstest",
         "description": "Der is neat fan de ôfstânsbetsjinning ûntfongen. Wekker him mei in pylktoets, kontrolearje dat er ferbûn is mei dizze Home Assistant-masine en test opnij. Ferstjoere om troch te gean."
+      },
+      "test_clips": {
+        "title": "Testclips",
+        "description": "Elke druk op de sprektoets is as clip bewarre, sadat jo hearre kinne wat de ôfstânsbetsjinning stjoerd hat:\n\n{clips}\n\nDe clips steane yn Media → Myn media → Bluetooth Remote Voice. De keppelingen wurkje 5 minuten."
+      },
+      "test_clips_none": {
+        "title": "Gjin clip bewarre",
+        "description": "De sprektoets wurke, mar der is gjin clip bewarre. Clips wurde bewarre yn de mediamap fan Home Assistant (Media → Myn media), dus kontrolearje oft dizze Home Assistant in mediamap hat dêr't it yn skriuwe kin, en test opnij."
+      },
+      "test_hints": {
+        "title": "Wat de test opmurken hat",
+        "description": "Betide stopsinjalen: {early}. Ferlerne audiogatten: {gaps}.\n\nEn betid stopsinjaal is in stop fan de ôfstânsbetsjinning fuortendaliks nei it begjin, wylst jo de knop noch yndrukt hâlden. As dit boppe 0 is en jo fersiken te betiid ôfsnien wurde, set dan Betide stop negearje oan yn de Ynstellingen fan de yntegraasje.\n\nEn ferlern audiogat is in stik audio dat Bluetooth fallen litten hat. As dit boppe 0 is en fersiken mislearje mei in audiogatflater, stel dan Koarte audiogatten opfolje yn yn de Ynstellingen fan de yntegraasje."
       }
     },
     "progress": {
-      "observing": "20 sekonden harkje. Wekker de ôfstânsbetsjinning mei in pylktoets, hâld dan syn spraakknop yndrukt, sprek koart en lit los."
+      "observing": "Druk no op de spreektoets fan de ôfstânsbetsjinning en hâld him yndrukt, praat koart en lit los. Werhelje safolle kearen as jo wolle: de test duorret 20 sekonden en nimt elke druk op, sadat jo der letter nei harkje kinne. As it liket dat der neat bart, wekker de ôfstânsbetsjinning dan earst mei in pylktoets."
     },
     "error": {
       "bluetooth_unavailable": "Lokale Bluetooth is net beskikber. Kontrolearje oft de systeem-D-Bus tagonklik is.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Dizze ôfstânsbetsjinning is al konfigurearre.",
-      "no_pipelines": "Meitsje in Assist-pipeline oan foardat jo de ôfstânsbetsjinning tafoegje."
+      "no_pipelines": "Meitsje in Assist-pipeline oan foardat jo de ôfstânsbetsjinning tafoegje.",
+      "test_running": "Der rint al in test fan dizze ôfstânsbetsjinning.",
+      "pause_failed": "De ôfstânsbetsjinning koe net foar de test pausearre wurde. Probearje it oer in momint opnij."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opsjes fan de ôfstânsbetsjinning",
+        "description": "Ynstellingen feroarje hoe't dizze ôfstânsbetsjinning him gedraacht. De ôfstânsbetsjinning en syn type kinne hjir net wizige wurde: wis dizze yngong en foegje de ôfstânsbetsjinning opnij ta om in oare ôfstânsbetsjinning of in oar type te brûken.",
+        "menu_options": {
+          "settings": "Ynstellingen",
+          "test": "Myn ôfstânsbetsjinning testje",
+          "report": "Ôfstânsbetsjinningsrapport toane"
+        }
+      },
+      "settings": {
         "title": "Spraakynstellingen",
         "description": "Dizze ynstellingen bepale hoe't toetsdrukken ôfhannele wurde en hoe't antwurden útsprutsen wurde. It ferfangen fan in fersyk kin al útfierde aksjes net ûngedien meitsje. Tagelyk folslein duplex is net beskikber. Stopje nei transkripsje skeakelet gjin ark út dat yn in live-spraakprovider ynboud is; brûk in provider foar allinnich transkripsje as aksjes útskeakele wurde moatte.\n\n**Antwurdbetingst:** alle betingsten moatte slagje om in antwurd út te sprekken. Se wurde ien kear oan it begjin fan elts fersyk kontrolearre; lit it leech om altyd te sprekken, en in betingst dy't net evaluearre wurde kin telt as net foldien. Sjabloanbetingsten kinne de fariabelen `speaker`, `remote` en `held` brûke.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Koarte drukken negearje",
           "max_request_seconds": "Maksimale fersykleangte",
           "max_conversation_seconds": "Maksimale petearleangte",
-          "reply_condition": "Antwurdbetingst"
+          "reply_condition": "Antwurdbetingst",
+          "ignore_early_stop": "Betide stop negearje",
+          "gap_tolerance_ms": "Koarte audiogatten opfolje"
         },
         "data_description": {
           "pipeline_id": "De Assist-pipeline dy't spraak ferwurket: spraak-nei-tekst, petearagint en tekst-nei-spraak. In fuortsmiten pipeline jout in flater yn plak fan werom te fallen op in oare.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Negearret tikken op de spraakknop dy't koarter binne as dit, sadat in ûnbedoelde tik nea in fersyk start; in echte druk begjint safolle letter. 0 skeakelet it út. Nuttich foar in Fire TV-ôfstânsbetsjinning dy't direkt nei it wekker wurden mislearret mei \"No microphone audio\": hy stjoert de toets dy't him wekker makke opnij as direkte tik. 0,1 s is in goed útgongspunt. Allinnich foar Fire TV-ôfstânsbetsjinnings.",
           "max_request_seconds": "De langste tiid dat ien fersyk duorje kin op elke ôfstânsbetsjinning: in hiele druk yn de modus Ien fersyk, en elke beurt yn Wikseljend petear. As it berikt wurdt, einiget it fersyk mei in opnamelimytflater. Ferleegje it om in fêstsitten knop net einleas opnimme te litten; ferhooch it foar lang dikteren. Ôfstânsbetsjinnings sûnder push-to-talk einigje ek nei likernôch 15 sekonden spraak of by stilte, wat it earst komt.",
           "max_conversation_seconds": "De langste tiid dat in hiele knopdruk duorje kin yn de modus Wikseljend petear. Wurdt negearre yn de modus Ien fersyk en mei net koarter wêze as de maksimale fersykleangte.",
-          "reply_condition": "Betingsten dy't allegear slagje moatte om in antwurd út te sprekken. Ien kear oan it begjin fan elts fersyk kontrolearre (en elke beurt yn Wikseljend petear). Lit leech om altyd te sprekken. In betingst dy't in flater jout, telt as net foldien. Sjabloanbetingsten kinne de fariabelen speaker, remote en held brûke."
+          "reply_condition": "Betingsten dy't allegear slagje moatte om in antwurd út te sprekken. Ien kear oan it begjin fan elts fersyk kontrolearre (en elke beurt yn Wikseljend petear). Lit leech om altyd te sprekken. In betingst dy't in flater jout, telt as net foldien. Sjabloanbetingsten kinne de fariabelen speaker, remote en held brûke.",
+          "ignore_early_stop": "Set dit oan as fersiken soms nei in fraksje fan in sekonde einigje, ek al hâlden jo de knop de hiele tiid yn. Guon Android TV-ôfstânsbetsjinningen stjoere in stopsinjaal fuortendaliks nei it begjin en stjoere dan noch audio. As it oan stiet, wurdt in stop yn de earste sekonde negearre salang't der noch audio oankomt, en it fersyk einiget as de audio stil wurdt of in twadde stop oankomt. Wurdt allinnich brûkt as Knopgedrach op Ien fersyk per yndrukke stiet.",
+          "gap_tolerance_ms": "Bluetooth kin in momint audio ferlieze, wêrtroch it fersyk gewoanwei mislearret mei in audiogatflater. Stel hjir in lingte yn om in ferlern stik oant dy lingte mei stilte te ferfangen, sadat it fersyk trochgiet. Langere gatten mislearje noch altyd. Stilte midden yn in wurd kin de werkenningsakkuraatheid ferlege, brûk dus de leechste wearde dy't wurket. 0 set it út. Allinnich foar Android TV-ôfstânsbetsjinningen."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultaat fan de ôfstânsbetsjinningstest",
+        "description": "Jo ôfstânsbetsjinning wurket. Hy begjint sels te harkjen salang't jo de spreektoets yndrukt hâlde, dus hâld de toets yndrukt wylst jo prate."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultaat fan de ôfstânsbetsjinningstest",
+        "description": "Jo ôfstânsbetsjinning wurket. Tip koart op de spreektoets om te begjinnen mei praten; hy hâldt op mei harkjen as jo ophâlde mei praten."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultaat fan de ôfstânsbetsjinningstest",
+        "description": "Jo ôfstânsbetsjinning wurket. Hâld de spreektoets yndrukt salang't jo prate."
+      },
+      "test_result_plain_key": {
+        "title": "Resultaat fan de ôfstânsbetsjinningstest",
+        "description": "De ôfstânsbetsjinning stjoerde gewoane toetsdrukken, mar gjin spraaksinjaal, dus de spreektoets wurket miskien net oer Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Resultaat fan de ôfstânsbetsjinningstest",
+        "description": "Der is neat fan de ôfstânsbetsjinning ûntfongen. Wekker him mei in pylktoets, kontrolearje dat er ferbûn is mei dizze Home Assistant-masine en test opnij."
+      },
+      "report": {
+        "title": "Ôfstânsbetsjinningsrapport",
+        "description": "Kopiearje dizze tekst yn in GitHub-probleem. It befettet gjin folsleine Bluetooth-adres, nammen, webadressen of lûd.",
+        "data": {
+          "report": "Ôfstânsbetsjinningsrapport"
+        },
+        "data_description": {
+          "report": "Selektearje alles en kopiearje."
+        }
+      },
+      "test_clips": {
+        "title": "Testclips",
+        "description": "Elke druk op de sprektoets is as clip bewarre, sadat jo hearre kinne wat de ôfstânsbetsjinning stjoerd hat:\n\n{clips}\n\nDe clips steane yn Media → Myn media → Bluetooth Remote Voice. De keppelingen wurkje 5 minuten."
+      },
+      "test_clips_none": {
+        "title": "Gjin clip bewarre",
+        "description": "De sprektoets wurke, mar der is gjin clip bewarre. Clips wurde bewarre yn de mediamap fan Home Assistant (Media → Myn media), dus kontrolearje oft dizze Home Assistant in mediamap hat dêr't it yn skriuwe kin, en test opnij."
+      },
+      "test_hints": {
+        "title": "Wat de test opmurken hat",
+        "description": "Betide stopsinjalen: {early}. Ferlerne audiogatten: {gaps}.\n\nEn betid stopsinjaal is in stop fan de ôfstânsbetsjinning fuortendaliks nei it begjin, wylst jo de knop noch yndrukt hâlden. As dit boppe 0 is en jo fersiken te betiid ôfsnien wurde, set dan Betide stop negearje oan yn de Ynstellingen fan de yntegraasje.\n\nEn ferlern audiogat is in stik audio dat Bluetooth fallen litten hat. As dit boppe 0 is en fersiken mislearje mei in audiogatflater, stel dan Koarte audiogatten opfolje yn yn de Ynstellingen fan de yntegraasje."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "De bewarre antwurdluidspreker is op it stuit net beskikber, dus antwurden wurde pas wer ôfspile as er werom is. Hâld him of kies in oare."
     },
     "abort": {
-      "no_pipelines": "Meitsje earst in Assist-pipeline oan."
+      "no_pipelines": "Meitsje earst in Assist-pipeline oan.",
+      "test_running": "Der rint al in test fan dizze ôfstânsbetsjinning.",
+      "pause_failed": "De ôfstânsbetsjinning koe net foar de test pausearre wurde. Probearje it oer in momint opnij."
+    },
+    "progress": {
+      "observing": "Druk no op de spreektoets fan de ôfstânsbetsjinning en hâld him yndrukt, praat koart en lit los. Werhelje safolle kearen as jo wolle: de test duorret 20 sekonden en nimt elke druk op, sadat jo der letter nei harkje kinne. As it liket dat der neat bart, wekker de ôfstânsbetsjinning dan earst mei in pylktoets. Jo ôfstânsbetsjinning is pausearre foar normaal gebrûk wylst dit rint: syn entiteiten binne sawat in minút net beskikber en in oanfraach dy't dwaande is wurdt annulearre."
     }
   },
   "selector": {

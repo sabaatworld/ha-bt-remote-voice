@@ -35,7 +35,7 @@
           "pipeline_id": "O pipeline do Assist que processa a voz deste telecomando.",
           "remote_type": "Deixe em Automático, a menos que o telecomando não seja reconhecido ou a configuração falhe.",
           "show_report": "Selecione e envie para ver um relatório que pode copiar para um problema do GitHub.",
-          "test_remote": "Selecione e envie, depois mantenha premido o botão de voz do telecomando para ver o que ele faz."
+          "test_remote": "Assinale e envie e, em seguida, mantenha premido o botão de voz do telecomando enquanto fala. Cada pressão é gravada para que possa ouvi-la depois."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Resultado do teste do telecomando",
-        "description": "Este telecomando inicia a voz sozinho enquanto o botão é mantido premido. Mantenha esse botão premido para falar. Envie para continuar a configuração."
+        "description": "O seu telecomando funciona. Começa a ouvir sozinho enquanto mantém o botão de voz premido, por isso mantenha o botão premido enquanto fala. Envie para continuar a configuração."
       },
       "test_result_atvv_tap": {
         "title": "Resultado do teste do telecomando",
-        "description": "Este telecomando inicia a voz quando o botão é tocado e ouve até parar de falar. Toque nesse botão para falar. Envie para continuar a configuração."
+        "description": "O seu telecomando funciona. Toque no botão de voz para começar a falar; pára de ouvir quando deixar de falar. Envie para continuar a configuração."
       },
       "test_result_fire_voice": {
         "title": "Resultado do teste do telecomando",
-        "description": "Esta é a tecla de voz de um telecomando Fire TV. Mantenha-a premida enquanto fala. Envie para continuar a configuração."
+        "description": "O seu telecomando funciona. Mantenha o botão de voz premido enquanto fala. Envie para continuar a configuração."
       },
       "test_result_plain_key": {
         "title": "Resultado do teste do telecomando",
-        "description": "O telecomando enviou teclas normais, mas nenhum sinal de voz, pelo que o botão de voz pode não iniciar a voz por Bluetooth. Envie e depois selecione Mostrar relatório do telecomando para partilhar o que foi visto."
+        "description": "O telecomando enviou pressões de botões normais, mas nenhum sinal de voz, por isso o botão de voz pode não funcionar por Bluetooth. Envie e depois assinale Mostrar relatório do telecomando para partilhar o que foi detetado."
       },
       "test_result_nothing": {
         "title": "Resultado do teste do telecomando",
         "description": "Não foi recebido nada do telecomando. Acorde-o com uma tecla de seta, verifique se está ligado a esta máquina com Home Assistant e teste novamente. Envie para continuar."
+      },
+      "test_clips": {
+        "title": "Clipes de teste",
+        "description": "Cada pressão do botão de voz foi guardada como um clipe, para que possa ouvir o que o telecomando enviou:\n\n{clips}\n\nOs clipes estão em Multimédia → Os meus conteúdos → Bluetooth Remote Voice. As ligações funcionam durante 5 minutos."
+      },
+      "test_clips_none": {
+        "title": "Nenhum clipe guardado",
+        "description": "O botão de voz funcionou, mas nenhum clipe foi guardado. Os clipes são guardados na pasta multimédia do Home Assistant (Multimédia → Os meus conteúdos); verifique se este Home Assistant tem uma pasta multimédia na qual possa escrever e teste novamente."
+      },
+      "test_hints": {
+        "title": "O que o teste detetou",
+        "description": "Sinais de paragem antecipada: {early}. Lacunas de áudio perdidas: {gaps}.\n\nUm sinal de paragem antecipada é uma paragem enviada pelo telecomando logo depois de começar, enquanto ainda mantinha o botão premido. Se for superior a 0 e os seus pedidos forem cortados, ative Ignorar paragem antecipada em Definições da integração.\n\nUma lacuna de áudio perdida é um troço de áudio que o Bluetooth descartou. Se for superior a 0 e os pedidos falharem com um erro de lacuna de áudio, defina Preencher lacunas curtas de áudio em Definições da integração."
       }
     },
     "progress": {
-      "observing": "A ouvir durante 20 segundos. Acorde o telecomando com uma tecla de seta, depois mantenha premido o botão de voz, fale brevemente e solte."
+      "observing": "Mantenha premido agora o botão de voz do telecomando, fale brevemente e solte. Repita as vezes que quiser: o teste dura 20 segundos e grava cada pressão para que possa ouvi-la depois. Se parecer que nada acontece, acorde primeiro o telecomando com uma tecla de seta."
     },
     "error": {
       "bluetooth_unavailable": "O Bluetooth local não está disponível. Verifique se o D-Bus do sistema está acessível.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Este telecomando já está configurado.",
-      "no_pipelines": "Crie um pipeline do Assist antes de adicionar o telecomando."
+      "no_pipelines": "Crie um pipeline do Assist antes de adicionar o telecomando.",
+      "test_running": "Já está em curso um teste deste telecomando.",
+      "pause_failed": "Não foi possível colocar o telecomando em pausa para o teste. Tente novamente dentro de instantes."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opções do telecomando",
+        "description": "As definições alteram o comportamento deste telecomando. O telecomando e o seu tipo não podem ser alterados aqui: para utilizar outro telecomando ou tipo, elimine esta entrada e adicione novamente o telecomando.",
+        "menu_options": {
+          "settings": "Definições",
+          "test": "Testar o meu telecomando",
+          "report": "Mostrar relatório do telecomando"
+        }
+      },
+      "settings": {
         "title": "Definições de voz",
         "description": "Estas definições controlam como as pressões são tratadas e como as respostas são faladas. Substituir um pedido não pode anular as ações que já realizou. O duplex integral simultâneo não está disponível. Parar após a transcrição não desativa as ferramentas integradas num fornecedor de voz em direto; utilize um fornecedor apenas de transcrição quando for necessário desativar as ações.\n\n**Condição de resposta:** todas as suas condições têm de ser cumpridas para que uma resposta seja falada. São verificadas uma vez no início de cada pedido; deixe-a vazia para falar sempre, e uma condição que não possa ser avaliada conta como não cumprida. As condições de modelo podem usar as variáveis `speaker`, `remote` e `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignorar pressões curtas",
           "max_request_seconds": "Duração máxima do pedido",
           "max_conversation_seconds": "Duração máxima da conversa",
-          "reply_condition": "Condição de resposta"
+          "reply_condition": "Condição de resposta",
+          "ignore_early_stop": "Ignorar paragem antecipada",
+          "gap_tolerance_ms": "Preencher lacunas curtas de áudio"
         },
         "data_description": {
           "pipeline_id": "O pipeline do Assist que processa a voz: voz para texto, agente de conversação e texto para voz. Um pipeline removido falha com um erro em vez de recorrer a outro.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignora os toques no botão de voz mais curtos do que este valor, para que um toque espúrio nunca inicie um pedido; uma pressão contínua real começa essa duração mais tarde. 0 desativa. Útil para um telecomando Fire TV que falha com «Não foi recebido áudio do microfone» logo após ser ativado: reenvia a tecla que o ativou como um toque instantâneo. 0,1 s é um bom ponto de partida. Apenas para telecomandos Fire TV.",
           "max_request_seconds": "A duração máxima de um único pedido em qualquer telecomando: toda a pressão contínua no modo Um pedido, e cada turno na Conversa alternada. Ao atingi-la, o pedido termina com um erro de limite de captura. Reduza-a para parar a gravação de um botão preso; aumente-a para ditados longos. Os telecomandos que não são de premir para falar também terminam após cerca de 15 segundos de fala ou no silêncio, o que ocorrer primeiro.",
           "max_conversation_seconds": "A duração máxima de toda uma pressão contínua no modo de conversa alternada. É ignorada no modo Um pedido e não pode ser inferior à duração máxima do pedido.",
-          "reply_condition": "Condições que têm de ser todas cumpridas para que uma resposta seja falada. Verificadas uma vez no início de cada pedido (e de cada turno na Conversa alternada). Deixe vazio para falar sempre. Uma condição com erro conta como não cumprida. As condições de modelo podem usar as variáveis speaker, remote e held."
+          "reply_condition": "Condições que têm de ser todas cumpridas para que uma resposta seja falada. Verificadas uma vez no início de cada pedido (e de cada turno na Conversa alternada). Deixe vazio para falar sempre. Uma condição com erro conta como não cumprida. As condições de modelo podem usar as variáveis speaker, remote e held.",
+          "ignore_early_stop": "Ative se os pedidos por vezes terminarem numa fração de segundo mesmo tendo mantido o botão premido o tempo todo. Alguns telecomandos Android TV enviam um sinal de paragem logo depois de começar e continuam a enviar áudio. Quando ativado, uma paragem no primeiro segundo é ignorada enquanto ainda chega áudio, e o pedido termina quando o áudio fica silencioso ou chega uma segunda paragem. Utilizado apenas quando Comportamento do botão está definido como Um pedido por pressão contínua.",
+          "gap_tolerance_ms": "O Bluetooth pode perder um instante de áudio, o que normalmente faz o pedido falhar com um erro de lacuna de áudio. Defina aqui uma duração para substituir por silêncio um troço perdido até essa duração, para o pedido continuar. As lacunas maiores continuam a falhar. O silêncio a meio de uma palavra pode reduzir a precisão do reconhecimento, por isso utilize o menor valor que funcione. 0 desativa. Apenas para telecomandos Android TV."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultado do teste do telecomando",
+        "description": "O seu telecomando funciona. Começa a ouvir sozinho enquanto mantém o botão de voz premido, por isso mantenha o botão premido enquanto fala."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultado do teste do telecomando",
+        "description": "O seu telecomando funciona. Toque no botão de voz para começar a falar; pára de ouvir quando deixar de falar."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultado do teste do telecomando",
+        "description": "O seu telecomando funciona. Mantenha o botão de voz premido enquanto fala."
+      },
+      "test_result_plain_key": {
+        "title": "Resultado do teste do telecomando",
+        "description": "O telecomando enviou pressões de botões normais, mas nenhum sinal de voz, por isso o botão de voz pode não funcionar por Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Resultado do teste do telecomando",
+        "description": "Não foi recebido nada do telecomando. Acorde-o com uma tecla de seta, verifique se está ligado a esta máquina com Home Assistant e teste novamente."
+      },
+      "report": {
+        "title": "Relatório do telecomando",
+        "description": "Copie este texto para um problema do GitHub. Não contém endereço Bluetooth completo, nomes, endereços Web nem áudio.",
+        "data": {
+          "report": "Relatório do telecomando"
+        },
+        "data_description": {
+          "report": "Selecione tudo e copie."
+        }
+      },
+      "test_clips": {
+        "title": "Clipes de teste",
+        "description": "Cada pressão do botão de voz foi guardada como um clipe, para que possa ouvir o que o telecomando enviou:\n\n{clips}\n\nOs clipes estão em Multimédia → Os meus conteúdos → Bluetooth Remote Voice. As ligações funcionam durante 5 minutos."
+      },
+      "test_clips_none": {
+        "title": "Nenhum clipe guardado",
+        "description": "O botão de voz funcionou, mas nenhum clipe foi guardado. Os clipes são guardados na pasta multimédia do Home Assistant (Multimédia → Os meus conteúdos); verifique se este Home Assistant tem uma pasta multimédia na qual possa escrever e teste novamente."
+      },
+      "test_hints": {
+        "title": "O que o teste detetou",
+        "description": "Sinais de paragem antecipada: {early}. Lacunas de áudio perdidas: {gaps}.\n\nUm sinal de paragem antecipada é uma paragem enviada pelo telecomando logo depois de começar, enquanto ainda mantinha o botão premido. Se for superior a 0 e os seus pedidos forem cortados, ative Ignorar paragem antecipada em Definições da integração.\n\nUma lacuna de áudio perdida é um troço de áudio que o Bluetooth descartou. Se for superior a 0 e os pedidos falharem com um erro de lacuna de áudio, defina Preencher lacunas curtas de áudio em Definições da integração."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "O altifalante de resposta guardado não está disponível neste momento, pelo que as respostas não serão reproduzidas até voltar. Mantenha-o ou escolha outro."
     },
     "abort": {
-      "no_pipelines": "Crie primeiro um pipeline do Assist."
+      "no_pipelines": "Crie primeiro um pipeline do Assist.",
+      "test_running": "Já está em curso um teste deste telecomando.",
+      "pause_failed": "Não foi possível colocar o telecomando em pausa para o teste. Tente novamente dentro de instantes."
+    },
+    "progress": {
+      "observing": "Mantenha premido agora o botão de voz do telecomando, fale brevemente e solte. Repita as vezes que quiser: o teste dura 20 segundos e grava cada pressão para que possa ouvi-la depois. Se parecer que nada acontece, acorde primeiro o telecomando com uma tecla de seta. O seu telecomando fica em pausa para utilização normal enquanto isto decorre: as suas entidades ficam indisponíveis durante cerca de um minuto e um pedido em curso é cancelado."
     }
   },
   "selector": {

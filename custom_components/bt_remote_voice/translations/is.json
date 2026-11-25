@@ -35,7 +35,7 @@
           "pipeline_id": "Assist-ferlið sem vinnur úr tali frá þessari fjarstýringu.",
           "remote_type": "Hafðu á Sjálfvirkt nema fjarstýringin þekkist ekki eða uppsetning mistekst.",
           "show_report": "Hakaðu við og sendu til að sjá skýrslu sem þú getur afritað í GitHub-vandamál.",
-          "test_remote": "Hakaðu við og sendu, haltu síðan raddhnappi fjarstýringarinnar inni til að sjá hvað hún gerir."
+          "test_remote": "Hakaðu í reitinn og sendu, haltu síðan raddhnappi fjarstýringarinnar inni á meðan þú talar. Hver ýting er tekin upp svo þú getir hlustað á hana á eftir."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Niðurstaða prófs á fjarstýringu",
-        "description": "Þessi fjarstýring ræsir rödd sjálf meðan hnappinum er haldið inni. Haltu hnappinum inni til að tala. Senda til að halda uppsetningu áfram."
+        "description": "Fjarstýringin þín virkar. Hún byrjar að hlusta sjálf á meðan þú heldur raddhnappnum inni, svo haltu hnappnum inni á meðan þú talar. Sendu til að halda áfram með uppsetninguna."
       },
       "test_result_atvv_tap": {
         "title": "Niðurstaða prófs á fjarstýringu",
-        "description": "Þessi fjarstýring ræsir rödd þegar ýtt er stutt á hnappinn og hlustar þar til þú hættir að tala. Ýttu stutt á hnappinn til að tala. Senda til að halda uppsetningu áfram."
+        "description": "Fjarstýringin þín virkar. Ýttu snöggt á raddhnappinn til að byrja að tala; hún hættir að hlusta þegar þú hættir að tala. Sendu til að halda áfram með uppsetninguna."
       },
       "test_result_fire_voice": {
         "title": "Niðurstaða prófs á fjarstýringu",
-        "description": "Þetta er raddtakki Fire TV fjarstýringar. Haltu honum inni meðan þú talar. Senda til að halda uppsetningu áfram."
+        "description": "Fjarstýringin þín virkar. Haltu raddhnappnum inni á meðan þú talar. Sendu til að halda áfram með uppsetninguna."
       },
       "test_result_plain_key": {
         "title": "Niðurstaða prófs á fjarstýringu",
-        "description": "Fjarstýringin sendi venjulega takka en ekkert raddmerki, svo raddhnappur hennar ræsir kannski ekki rödd yfir Bluetooth. Sendu og hakaðu síðan við Sýna skýrslu fjarstýringar til að deila því sem sást."
+        "description": "Fjarstýringin sendi venjulegar hnappaýtingar en ekkert raddmerki, svo raddhnappurinn virkar kannski ekki yfir Bluetooth. Sendu og hakaðu síðan við Sýna skýrslu fjarstýringar til að deila því sem sást."
       },
       "test_result_nothing": {
         "title": "Niðurstaða prófs á fjarstýringu",
         "description": "Ekkert barst frá fjarstýringunni. Vektu hana með örvatakka, athugaðu að hún sé tengd þessari Home Assistant tölvu og prófaðu aftur. Senda til að halda áfram."
+      },
+      "test_clips": {
+        "title": "Prufuklippur",
+        "description": "Hver ýting á raddhnappinn var vistuð sem klippa svo þú heyrir hvað fjarstýringin sendi:\n\n{clips}\n\nKlippurnar eru í Miðlar → Mínir miðlar → Bluetooth Remote Voice. Tenglarnir virka í 5 mínútur."
+      },
+      "test_clips_none": {
+        "title": "Engin klippa vistuð",
+        "description": "Raddhnappurinn virkaði en engin klippa var vistuð. Klippur eru vistaðar í miðlamöppu Home Assistant (Miðlar → Mínir miðlar), svo athugaðu hvort þessi Home Assistant hafi miðlamöppu sem hann getur skrifað í og prófaðu aftur."
+      },
+      "test_hints": {
+        "title": "Hvað prófið tók eftir",
+        "description": "Snemmbúin stöðvunarmerki: {early}. Týnd hljóðgöt: {gaps}.\n\nSnemmbúið stöðvunarmerki er stopp frá fjarstýringunni rétt eftir að þú byrjaðir, á meðan þú hélst enn hnappnum inni. Ef talan er yfir 0 og beiðnir þínar eru stuttar skaltu kveikja á Hunsa snemmbært stopp í Stillingar samþættingarinnar.\n\nTýnt hljóðgat er hljóðkafli sem Bluetooth missti. Ef talan er yfir 0 og beiðnir mistakast með hljóðgatsvillu skaltu stilla Fylla í stutt hljóðgöt í Stillingar samþættingarinnar."
       }
     },
     "progress": {
-      "observing": "Hlustar í 20 sekúndur. Vektu fjarstýringuna með örvatakka, haltu síðan raddhnappi hennar inni, talaðu stuttlega og slepptu."
+      "observing": "Haltu raddhnappi fjarstýringarinnar inni núna, talaðu stutt og slepptu. Endurtaktu eins oft og þú vilt: prófunin tekur 20 sekúndur og tekur upp hverja ýtingu svo þú getir hlustað á hana á eftir. Ef ekkert virðist gerast skaltu fyrst vekja fjarstýringuna með örvatakka."
     },
     "error": {
       "bluetooth_unavailable": "Staðbundið Bluetooth er ekki tiltækt. Athugaðu hvort D-Bus kerfisins sé aðgengilegt.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Þessi fjarstýring hefur þegar verið stillt.",
-      "no_pipelines": "Búðu til Assist-ferli áður en þú bætir fjarstýringunni við."
+      "no_pipelines": "Búðu til Assist-ferli áður en þú bætir fjarstýringunni við.",
+      "test_running": "Prófun á þessari fjarstýringu er þegar í gangi.",
+      "pause_failed": "Ekki tókst að gera hlé á fjarstýringunni fyrir prófunina. Reyndu aftur eftir augnablik."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Valkostir fjarstýringar",
+        "description": "Stillingar breyta hegðun þessarar fjarstýringar. Ekki er hægt að breyta fjarstýringunni eða gerð hennar hér: til að nota aðra fjarstýringu eða gerð skaltu eyða þessari færslu og bæta fjarstýringunni við aftur.",
+        "menu_options": {
+          "settings": "Stillingar",
+          "test": "Prófa fjarstýringuna mína",
+          "report": "Sýna skýrslu fjarstýringar"
+        }
+      },
+      "settings": {
         "title": "Raddstillingar",
         "description": "Þessar stillingar stýra því hvernig ýtt er á takka og hvernig svör eru töluð. Að skipta út beiðni getur ekki afturkallað aðgerðir sem þegar hafa verið framkvæmdar. Samtímis fulltvíhliða samskipti eru ekki tiltæk. Að stöðva eftir umritun gerir ekki óvirk verkfæri sem eru innbyggð í lifandi talþjónustu; notaðu þjónustu sem aðeins umritar þegar slökkva þarf á aðgerðum.\n\n**Svarskilyrði:** öll skilyrði þess verða að standast til að svar sé talað. Þau eru athuguð einu sinni í upphafi hverrar beiðni; hafðu það tómt til að tala alltaf, og skilyrði sem ekki er hægt að meta telst ekki uppfyllt. Sniðmátsskilyrði geta notað breyturnar `speaker`, `remote` og `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Hunsa stuttar ýtingar",
           "max_request_seconds": "Hámarkslengd beiðni",
           "max_conversation_seconds": "Hámarkslengd samtals",
-          "reply_condition": "Svarskilyrði"
+          "reply_condition": "Svarskilyrði",
+          "ignore_early_stop": "Hunsa snemmbært stopp",
+          "gap_tolerance_ms": "Fylla í stutt hljóðgöt"
         },
         "data_description": {
           "pipeline_id": "Assist-ferlið sem vinnur úr tali: tal í texta, samtalsfulltrúi og texti í tal. Fjarlægt ferli veldur villu í stað þess að falla aftur á annað.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Hunsar snertingar á raddtakkanum sem eru styttri en þetta, svo óviljandi snerting hefji aldrei beiðni; raunveruleg haldning byrjar svo miklu síðar. 0 slekkur á þessu. Gagnlegt fyrir Fire TV fjarstýringu sem bilar með „Ekkert hljóð frá hljóðnema“ strax eftir að hún er vakin: hún sendir aftur takkann sem vakti hana sem augnabliks snertingu. 0,1 s er góður upphafspunktur. Aðeins fyrir Fire TV fjarstýringar.",
           "max_request_seconds": "Lengsti tími sem ein beiðni getur varað á hvaða fjarstýringu sem er: heil haldning í hamnum Ein beiðni og hver umferð í víxlsamtali. Þegar því er náð lýkur beiðninni með villu um upptökumörk. Lækkaðu það til að stöðva upptöku þegar takki festist; hækkaðu það fyrir langa upptöku. Fjarstýringar án halda-til-að-tala ljúka einnig eftir um 15 sekúndna tal eða við þögn, hvort sem gerist fyrr.",
           "max_conversation_seconds": "Lengsti tími sem heil takkahaldning getur varað í víxlsamtalshamnum. Er hunsað í hamnum Ein beiðni og má ekki vera styttra en hámarkslengd beiðni.",
-          "reply_condition": "Skilyrði sem öll verða að standast til að svar sé talað. Athuguð einu sinni í upphafi hverrar beiðni (og hverrar umferðar í víxlsamtali). Hafðu tómt til að tala alltaf. Skilyrði sem veldur villu telst ekki uppfyllt. Sniðmátsskilyrði geta notað breyturnar speaker, remote og held."
+          "reply_condition": "Skilyrði sem öll verða að standast til að svar sé talað. Athuguð einu sinni í upphafi hverrar beiðni (og hverrar umferðar í víxlsamtali). Hafðu tómt til að tala alltaf. Skilyrði sem veldur villu telst ekki uppfyllt. Sniðmátsskilyrði geta notað breyturnar speaker, remote og held.",
+          "ignore_early_stop": "Kveiktu á þessu ef beiðnir enda stundum eftir sekúndubrot þótt þú hafir haldið hnappnum inni allan tímann. Sumar Android TV fjarstýringar senda stöðvunarmerki rétt eftir að þú byrjar og senda svo áfram hljóð. Þegar kveikt er á því er stopp á fyrstu sekúndunni hunsað á meðan hljóð berst enn, og beiðnin endar þegar hljóðið þagnar eða annað stopp berst. Aðeins notað þegar Hegðun takka er stillt á Ein beiðni á hverja haldningu.",
+          "gap_tolerance_ms": "Bluetooth getur tapað augnabliki af hljóði, sem veldur venjulega að beiðnin mistekst með hljóðgatsvillu. Stilltu hér lengd til að skipta út týndum kafla allt að þeirri lengd fyrir þögn svo beiðnin haldi áfram. Lengri göt mistakast enn. Þögn í miðju orði getur dregið úr nákvæmni greiningar, svo notaðu lægsta gildi sem virkar. 0 slekkur á þessu. Aðeins fyrir Android TV fjarstýringar."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Niðurstaða prófs á fjarstýringu",
+        "description": "Fjarstýringin þín virkar. Hún byrjar að hlusta sjálf á meðan þú heldur raddhnappnum inni, svo haltu hnappnum inni á meðan þú talar."
+      },
+      "test_result_atvv_tap": {
+        "title": "Niðurstaða prófs á fjarstýringu",
+        "description": "Fjarstýringin þín virkar. Ýttu snöggt á raddhnappinn til að byrja að tala; hún hættir að hlusta þegar þú hættir að tala."
+      },
+      "test_result_fire_voice": {
+        "title": "Niðurstaða prófs á fjarstýringu",
+        "description": "Fjarstýringin þín virkar. Haltu raddhnappnum inni á meðan þú talar."
+      },
+      "test_result_plain_key": {
+        "title": "Niðurstaða prófs á fjarstýringu",
+        "description": "Fjarstýringin sendi venjulegar hnappaýtingar en ekkert raddmerki, svo raddhnappurinn virkar kannski ekki yfir Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Niðurstaða prófs á fjarstýringu",
+        "description": "Ekkert barst frá fjarstýringunni. Vektu hana með örvatakka, athugaðu að hún sé tengd þessari Home Assistant tölvu og prófaðu aftur."
+      },
+      "report": {
+        "title": "Skýrsla fjarstýringar",
+        "description": "Afritaðu þennan texta í GitHub-vandamál. Hann inniheldur ekki fullt Bluetooth-vistfang, nöfn, vefslóðir eða hljóð.",
+        "data": {
+          "report": "Skýrsla fjarstýringar"
+        },
+        "data_description": {
+          "report": "Veldu allt og afritaðu."
+        }
+      },
+      "test_clips": {
+        "title": "Prufuklippur",
+        "description": "Hver ýting á raddhnappinn var vistuð sem klippa svo þú heyrir hvað fjarstýringin sendi:\n\n{clips}\n\nKlippurnar eru í Miðlar → Mínir miðlar → Bluetooth Remote Voice. Tenglarnir virka í 5 mínútur."
+      },
+      "test_clips_none": {
+        "title": "Engin klippa vistuð",
+        "description": "Raddhnappurinn virkaði en engin klippa var vistuð. Klippur eru vistaðar í miðlamöppu Home Assistant (Miðlar → Mínir miðlar), svo athugaðu hvort þessi Home Assistant hafi miðlamöppu sem hann getur skrifað í og prófaðu aftur."
+      },
+      "test_hints": {
+        "title": "Hvað prófið tók eftir",
+        "description": "Snemmbúin stöðvunarmerki: {early}. Týnd hljóðgöt: {gaps}.\n\nSnemmbúið stöðvunarmerki er stopp frá fjarstýringunni rétt eftir að þú byrjaðir, á meðan þú hélst enn hnappnum inni. Ef talan er yfir 0 og beiðnir þínar eru stuttar skaltu kveikja á Hunsa snemmbært stopp í Stillingar samþættingarinnar.\n\nTýnt hljóðgat er hljóðkafli sem Bluetooth missti. Ef talan er yfir 0 og beiðnir mistakast með hljóðgatsvillu skaltu stilla Fylla í stutt hljóðgöt í Stillingar samþættingarinnar."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Vistaði svarhátalarinn er ekki tiltækur núna, svo svör verða ekki spiluð fyrr en hann kemur aftur. Haltu honum eða veldu annan."
     },
     "abort": {
-      "no_pipelines": "Búðu fyrst til Assist-ferli."
+      "no_pipelines": "Búðu fyrst til Assist-ferli.",
+      "test_running": "Prófun á þessari fjarstýringu er þegar í gangi.",
+      "pause_failed": "Ekki tókst að gera hlé á fjarstýringunni fyrir prófunina. Reyndu aftur eftir augnablik."
+    },
+    "progress": {
+      "observing": "Haltu raddhnappi fjarstýringarinnar inni núna, talaðu stutt og slepptu. Endurtaktu eins oft og þú vilt: prófunin tekur 20 sekúndur og tekur upp hverja ýtingu svo þú getir hlustað á hana á eftir. Ef ekkert virðist gerast skaltu fyrst vekja fjarstýringuna með örvatakka. Fjarstýringin er í hléi fyrir venjulega notkun á meðan þetta keyrir: einingar hennar eru ekki tiltækar í um það bil eina mínútu og beiðni í vinnslu er afturkölluð."
     }
   },
   "selector": {

@@ -35,7 +35,7 @@
           "pipeline_id": "An phíblíne Assist a phróiseálann caint ón gcianrialtán seo.",
           "remote_type": "Fág ar Uathoibríoch mura n-aithnítear an cianrialtán nó mura n-éiríonn leis an socrú.",
           "show_report": "Cuir tic leis agus seol chun tuarascáil a fheiceáil ar féidir leat a chóipeáil i gcás GitHub.",
-          "test_remote": "Cuir tic leis agus seol, ansin brúigh agus coinnigh cnaipe gutha an chianrialtáin chun a fheiceáil cad a dhéanann sé."
+          "test_remote": "Cuir tic leis agus cuir isteach, ansin brúigh agus coinnigh síos cnaipe gutha an chianrialaithe agus tú ag labhairt. Déantar gach brú a thaifead ionas gur féidir leat éisteacht leis ina dhiaidh sin."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Toradh thástáil an chianrialtáin",
-        "description": "Cuireann an cianrialtán seo guth ar siúl leis féin cé go gcoinnítear a chnaipe. Coinnigh an cnaipe sin chun labhairt. Seol chun leanúint leis an socrú."
+        "description": "Oibríonn do chianrialtán. Tosaíonn sé ag éisteacht leis féin fad is a choinníonn tú a chnaipe gutha síos, mar sin coinnigh an cnaipe síos agus tú ag labhairt. Cuir isteach chun leanúint leis an socrú."
       },
       "test_result_atvv_tap": {
         "title": "Toradh thástáil an chianrialtáin",
-        "description": "Cuireann an cianrialtán seo guth ar siúl nuair a thapáiltear a chnaipe agus éisteann sé go stopann tú ag labhairt. Tapáil an cnaipe sin chun labhairt. Seol chun leanúint leis an socrú."
+        "description": "Oibríonn do chianrialtán. Tapáil a chnaipe gutha chun tosú ag labhairt; stopann sé ag éisteacht nuair a stopann tú ag labhairt. Cuir isteach chun leanúint leis an socrú."
       },
       "test_result_fire_voice": {
         "title": "Toradh thástáil an chianrialtáin",
-        "description": "Seo eochair ghutha cianrialtáin Fire TV. Coinnigh í agus tú ag labhairt. Seol chun leanúint leis an socrú."
+        "description": "Oibríonn do chianrialtán. Coinnigh a chnaipe gutha síos chomh fada agus a labhraíonn tú. Cuir isteach chun leanúint leis an socrú."
       },
       "test_result_plain_key": {
         "title": "Toradh thástáil an chianrialtáin",
-        "description": "Sheol an cianrialtán eochracha ghnácha ach gan comhartha gutha, mar sin b'fhéidir nach gcuireann a chnaipe gutha guth ar siúl thar Bluetooth. Seol, ansin cuir tic le Taispeáin tuarascáil an chianrialtáin chun an méid a chonacthas a roinnt."
+        "description": "Sheol an cianrialtán gnáthbhrúnna cnaipe ach gan comhartha gutha, mar sin b'fhéidir nach n-oibríonn a chnaipe gutha thar Bluetooth. Cuir isteach, ansin cuir tic le Taispeáin tuarascáil an chianrialaithe chun an méid a chonacthas a roinnt."
       },
       "test_result_nothing": {
         "title": "Toradh thástáil an chianrialtáin",
         "description": "Ní bhfuarthas aon rud ón gcianrialtán. Músclaigh é le heochair saighde, seiceáil go bhfuil sé ceangailte leis an meaisín Home Assistant seo agus tástáil arís. Seol chun leanúint ar aghaidh."
+      },
+      "test_clips": {
+        "title": "Gearrthaí tástála",
+        "description": "Sábháladh gach brú ar an gcnaipe gutha mar ghearrthóg, ionas gur féidir leat éisteacht leis an méid a sheol an cianrialtán:\n\n{clips}\n\nTá na gearrthóga i Meán → Mo mheáin → Bluetooth Remote Voice. Oibríonn na naisc ar feadh 5 nóiméad."
+      },
+      "test_clips_none": {
+        "title": "Níor sábháladh gearrthóg",
+        "description": "D'oibrigh an cnaipe gutha, ach níor sábháladh gearrthóg. Sábháiltear gearrthóga i bhfillteán meán Home Assistant (Meán → Mo mheáin), mar sin seiceáil go bhfuil fillteán meán ag an Home Assistant seo ar féidir leis scríobh ann, agus déan tástáil arís."
+      },
+      "test_hints": {
+        "title": "An méid a thug an tástáil faoi deara",
+        "description": "Comharthaí stad luath: {early}. Bearnaí fuaime caillte: {gaps}.\n\nIs comhartha stad luath é stad ón gcianrialtán díreach tar éis duit tosú, agus tú fós ag coinneáil an chnaipe síos. Má tá sé os cionn 0 agus go bhfuil do chuid iarratas á ngearradh gearr, cuir Déan neamhaird ar stad luath ar siúl i Socruithe na comhtháthaithe.\n\nIs éard is bearna fuaime caillte ann ná síneadh fuaime a thit Bluetooth. Má tá sé os cionn 0 agus go dteipeann ar iarratais le earráid bhearna fuaime, socraigh Líon bearnaí gearra fuaime i Socruithe na comhtháthaithe."
       }
     },
     "progress": {
-      "observing": "Ag éisteacht ar feadh 20 soicind. Músclaigh an cianrialtán le heochair saighde, ansin brúigh agus coinnigh a chnaipe gutha, labhair go hachomair agus lig dó imeacht."
+      "observing": "Brúigh agus coinnigh síos cnaipe gutha an chianrialaithe anois, labhair go hachomair, ansin lig as. Déan arís é chomh minic agus is mian leat: ritheann an tástáil ar feadh 20 soicind agus taifeadann sí gach brú ionas gur féidir leat éisteacht leis ina dhiaidh sin. Mura dtarlaíonn aon rud, dúisigh an cianrialtán le heochair saighde ar dtús."
     },
     "error": {
       "bluetooth_unavailable": "Níl Bluetooth áitiúil ar fáil. Seiceáil go bhfuil rochtain ar D-Bus an chórais.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Tá an cianrialtán seo cumraithe cheana.",
-      "no_pipelines": "Cruthaigh píblíne Assist sula gcuireann tú an cianrialtán leis."
+      "no_pipelines": "Cruthaigh píblíne Assist sula gcuireann tú an cianrialtán leis.",
+      "test_running": "Tá tástáil ar an gcianrialtán seo ag rith cheana féin.",
+      "pause_failed": "Níorbh fhéidir an cianrialtán a chur ar sos don tástáil. Bain triail eile as i gceann nóiméid."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Roghanna an chianrialaithe",
+        "description": "Athraíonn socruithe an chaoi a n-iompraíonn an cianrialtán seo. Ní féidir an cianrialtán ná a chineál a athrú anseo: chun cianrialtán nó cineál eile a úsáid, scrios an iontráil seo agus cuir an cianrialtán leis arís.",
+        "menu_options": {
+          "settings": "Socruithe",
+          "test": "Tástáil mo chianrialtán",
+          "report": "Taispeáin tuarascáil an chianrialtáin"
+        }
+      },
+      "settings": {
         "title": "Socruithe gutha",
         "description": "Rialaíonn na socruithe seo conas a láimhseáiltear brúnna agus conas a labhraítear freagraí. Ní féidir le hathsholáthar iarratais gníomhartha a rinneadh cheana a chealú. Níl lán-duplex comhuaineach ar fáil. Ní dhíchumasaíonn stopadh tar éis trascríbhinne uirlisí atá ionsuite i soláthraí gutha beo; úsáid soláthraí trascríbhinne amháin nuair is gá gníomhartha a dhíchumasú.\n\n**Coinníoll freagra:** caithfidh a choinníollacha go léir a bheith comhlíonta chun freagra a labhairt. Seiceáiltear iad uair amháin ag tús gach iarratais; fág folamh é chun labhairt i gcónaí, agus áirítear coinníoll nach féidir a mheas mar choinníoll nach bhfuil comhlíonta. Is féidir le coinníollacha teimpléid na hathróga `speaker`, `remote` agus `held` a úsáid.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Déan neamhaird de bhrúnna gearra",
           "max_request_seconds": "Fad uasta iarratais",
           "max_conversation_seconds": "Fad uasta comhrá",
-          "reply_condition": "Coinníoll freagra"
+          "reply_condition": "Coinníoll freagra",
+          "ignore_early_stop": "Déan neamhaird ar stad luath",
+          "gap_tolerance_ms": "Líon bearnaí gearra fuaime"
         },
         "data_description": {
           "pipeline_id": "An phíblíne Assist a phróiseálann caint: caint-go-téacs, gníomhaire comhrá agus téacs-go-caint. Teipeann píblíne bhainte le hearráid in ionad titim siar.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Déanann sé neamhaird de thapáil ar an gcnaipe gutha atá níos giorra ná seo, ionas nach dtosaíonn tapáil bhréagach iarratas; tosaíonn fíor-choinneáil an méid seo níos déanaí. Casann 0 as é. Úsáideach do chianrialtán Fire TV a theipeann leis le “Níl aon fhuaim micreafóin” díreach tar éis dúiseacht: athsheolann sé an eochair a dhúisigh é mar thapáil ar an toirt. Is pointe tosaigh maith é 0.1 s. Cianrialtáin Fire TV amháin.",
           "max_request_seconds": "An t-am is faide is féidir le hiarratas amháin a mhaireachtáil ar aon chianrialtán: coinneáil iomlán i mód Iarratas amháin, agus gach casadh i gComhrá malartach. Má shroichtear é, críochnaíonn an t-iarratas le hearráid teorann gabhála. Laghdaigh é chun taifeadadh cnaipe greamaithe a stopadh; ardaigh é le haghaidh dictála fada. Críochnaíonn cianrialtáin nach bhfuil coinnigh-chun-labhairt tar éis thart ar 15 soicind cainte nó ag tost, cibé acu is túisce.",
           "max_conversation_seconds": "An t-am is faide is féidir le coinneáil iomlán cnaipe a mhaireachtáil i mód Comhrá malartach. Déantar neamhaird de i mód Iarratas amháin agus ní mór dó a bheith chomh fada leis an uasfhad iarratais ar a laghad.",
-          "reply_condition": "Coinníollacha ar chóir dóibh go léir a bheith comhlíonta chun freagra a labhairt. Seiceáiltear uair amháin ag tús gach iarratais é (agus gach casadh i gComhrá malartach). Fág folamh é chun labhairt i gcónaí. Áirítear coinníoll a thugann earráid mar choinníoll nach bhfuil comhlíonta. Is féidir le coinníollacha teimpléid na hathróga speaker, remote agus held a úsáid."
+          "reply_condition": "Coinníollacha ar chóir dóibh go léir a bheith comhlíonta chun freagra a labhairt. Seiceáiltear uair amháin ag tús gach iarratais é (agus gach casadh i gComhrá malartach). Fág folamh é chun labhairt i gcónaí. Áirítear coinníoll a thugann earráid mar choinníoll nach bhfuil comhlíonta. Is féidir le coinníollacha teimpléid na hathróga speaker, remote agus held a úsáid.",
+          "ignore_early_stop": "Cuir é seo ar siúl má chríochnaíonn iarratais uaireanta tar éis cuid de shoicind cé gur choinnigh tú an cnaipe síos an t-am ar fad. Seolann roinnt cianrialtáin Android TV comhartha stad díreach tar éis duit tosú agus ansin leanann siad ag seoladh fuaime. Nuair a bhíonn sé ar siúl, déantar neamhaird ar stad sa chéad soicind fad is atá fuaim ag teacht fós, agus críochnaíonn an t-iarratas nuair a thost an fhuaim nó nuair a thagann an dara stad. Úsáidtear é seo amháin nuair atá Iompar cnaipe socraithe go Iarratas amháin in aghaidh gach coinneála.",
+          "gap_tolerance_ms": "Is féidir le Bluetooth nóiméad fuaime a chailleadh, rud a fhágann de ghnáth go dteipeann ar an iarratas le earráid bhearna fuaime. Socraigh fad anseo chun síneadh caillte suas leis an bhfad sin a chur in ionad tosta ionas go leanfaidh an t-iarratas. Teipeann ar bhearnaí níos faide fós. Is féidir le tost i lár focail cruinneas aitheantais a laghdú, mar sin úsáid an luach is ísle a oibríonn. Casann 0 as é. Cianrialtáin Android TV amháin."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Toradh thástáil an chianrialtáin",
+        "description": "Oibríonn do chianrialtán. Tosaíonn sé ag éisteacht leis féin fad is a choinníonn tú a chnaipe gutha síos, mar sin coinnigh an cnaipe síos agus tú ag labhairt."
+      },
+      "test_result_atvv_tap": {
+        "title": "Toradh thástáil an chianrialtáin",
+        "description": "Oibríonn do chianrialtán. Tapáil a chnaipe gutha chun tosú ag labhairt; stopann sé ag éisteacht nuair a stopann tú ag labhairt."
+      },
+      "test_result_fire_voice": {
+        "title": "Toradh thástáil an chianrialtáin",
+        "description": "Oibríonn do chianrialtán. Coinnigh a chnaipe gutha síos chomh fada agus a labhraíonn tú."
+      },
+      "test_result_plain_key": {
+        "title": "Toradh thástáil an chianrialtáin",
+        "description": "Sheol an cianrialtán gnáthbhrúnna cnaipe ach gan comhartha gutha, mar sin b'fhéidir nach n-oibríonn a chnaipe gutha thar Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Toradh thástáil an chianrialtáin",
+        "description": "Ní bhfuarthas aon rud ón gcianrialtán. Músclaigh é le heochair saighde, seiceáil go bhfuil sé ceangailte leis an meaisín Home Assistant seo agus tástáil arís."
+      },
+      "report": {
+        "title": "Tuarascáil cianrialtáin",
+        "description": "Cóipeáil an téacs seo i gcás GitHub. Níl seoladh Bluetooth iomlán, ainmneacha, seoltaí gréasáin ná fuaim ann.",
+        "data": {
+          "report": "Tuarascáil cianrialtáin"
+        },
+        "data_description": {
+          "report": "Roghnaigh gach rud agus cóipeáil."
+        }
+      },
+      "test_clips": {
+        "title": "Gearrthaí tástála",
+        "description": "Sábháladh gach brú ar an gcnaipe gutha mar ghearrthóg, ionas gur féidir leat éisteacht leis an méid a sheol an cianrialtán:\n\n{clips}\n\nTá na gearrthóga i Meán → Mo mheáin → Bluetooth Remote Voice. Oibríonn na naisc ar feadh 5 nóiméad."
+      },
+      "test_clips_none": {
+        "title": "Níor sábháladh gearrthóg",
+        "description": "D'oibrigh an cnaipe gutha, ach níor sábháladh gearrthóg. Sábháiltear gearrthóga i bhfillteán meán Home Assistant (Meán → Mo mheáin), mar sin seiceáil go bhfuil fillteán meán ag an Home Assistant seo ar féidir leis scríobh ann, agus déan tástáil arís."
+      },
+      "test_hints": {
+        "title": "An méid a thug an tástáil faoi deara",
+        "description": "Comharthaí stad luath: {early}. Bearnaí fuaime caillte: {gaps}.\n\nIs comhartha stad luath é stad ón gcianrialtán díreach tar éis duit tosú, agus tú fós ag coinneáil an chnaipe síos. Má tá sé os cionn 0 agus go bhfuil do chuid iarratas á ngearradh gearr, cuir Déan neamhaird ar stad luath ar siúl i Socruithe na comhtháthaithe.\n\nIs éard is bearna fuaime caillte ann ná síneadh fuaime a thit Bluetooth. Má tá sé os cionn 0 agus go dteipeann ar iarratais le earráid bhearna fuaime, socraigh Líon bearnaí gearra fuaime i Socruithe na comhtháthaithe."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Níl an callaire freagra sábháilte ar fáil faoi láthair, mar sin ní sheinnfear freagraí go dtí go bhfillfidh sé. Coinnigh é, nó roghnaigh ceann eile."
     },
     "abort": {
-      "no_pipelines": "Cruthaigh píblíne Assist ar dtús."
+      "no_pipelines": "Cruthaigh píblíne Assist ar dtús.",
+      "test_running": "Tá tástáil ar an gcianrialtán seo ag rith cheana féin.",
+      "pause_failed": "Níorbh fhéidir an cianrialtán a chur ar sos don tástáil. Bain triail eile as i gceann nóiméid."
+    },
+    "progress": {
+      "observing": "Brúigh agus coinnigh síos cnaipe gutha an chianrialaithe anois, labhair go hachomair, ansin lig as. Déan arís é chomh minic agus is mian leat: ritheann an tástáil ar feadh 20 soicind agus taifeadann sí gach brú ionas gur féidir leat éisteacht leis ina dhiaidh sin. Mura dtarlaíonn aon rud, dúisigh an cianrialtán le heochair saighde ar dtús. Tá do chianrialtán curtha ar sos le haghaidh úsáide gnáthaí cé go bhfuil seo ag rith: beidh a aonáin neamhaimseartha ar feadh thart ar nóiméad agus cuirtear iarratas atá ar siúl ar ceal."
     }
   },
   "selector": {

@@ -12,7 +12,13 @@ from .fire import FireTransport
 from .held import HeldTurns
 from .history import CaptureHistory
 from .playback import COUNTED
-from .preferences import DEFAULTS, PRESS_RANGE, SPEAKER_SKIP_LIMIT, capture_buffer_bytes
+from .preferences import (
+    DEFAULTS,
+    PRESS_RANGE,
+    SPEAKER_SKIP_LIMIT,
+    capture_buffer_bytes,
+    capture_settings,
+)
 from .protocol import parse_control
 from .remote_types import transport_family
 from .reply_condition import ReplyCondition
@@ -177,9 +183,12 @@ class VoiceCoordinator:
         controller = (
             HeldTurns(turns.put_nowait, max_request_seconds=request_seconds) if held else None
         )
+        settings = capture_settings(self.entry.options, caps.family)
         session = VoiceSession(
             caps.frame_size,
             caps=caps,
+            ignore_early_stop=settings["ignore_early_stop"],
+            max_gap_ms=settings["max_gap_ms"],
             # PCM may wait for a slow consumer to start reading; the cap follows the limit.
             max_bytes=capture_buffer_bytes(max_duration),
             max_duration=max_duration,
@@ -490,6 +499,17 @@ class VoiceCoordinator:
                 self.pipeline_task = self.create_task(
                     self.process(owner.session, owner), "BT voice utterance"
                 )
+        elif (
+            event.kind == "stop"
+            and event.reason in (0, 2)
+            and not self.ignored_press
+            and self.session
+            and self.session.stop_would_be_held_back()
+        ):
+            # "Ignore early stop": the remote is probably still held and still streaming. Keep the
+            # capture open (microphone active, keepalives going); the session ends on quiet audio or
+            # a second STOP, and the second STOP takes the normal path below.
+            self.session.remote_stop()
         elif event.kind == "stop":
             self.mic_active = False
             self.event("released")
@@ -517,7 +537,7 @@ class VoiceCoordinator:
                 self.ignored_press = False
             elif self.session and not self.session.finished:
                 if event.reason in (0, 2):
-                    self.session.release()
+                    self.session.remote_stop()
                 else:
                     self.session.abort("remote_stopped")
         elif event.kind == "sync" and self.session and not self.ignored_press:

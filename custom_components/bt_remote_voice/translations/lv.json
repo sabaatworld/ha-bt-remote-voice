@@ -35,7 +35,7 @@
           "pipeline_id": "Assist konveijers, kas apstrādā runu no šīs tālvadības pults.",
           "remote_type": "Atstājiet Automātiski, ja vien tālvadības pults netiek atpazīta vai iestatīšana neizdodas.",
           "show_report": "Atzīmējiet un iesniedziet, lai redzētu pārskatu, ko varat kopēt GitHub problēmā.",
-          "test_remote": "Atzīmējiet un iesniedziet, pēc tam nospiediet un turiet tālvadības pults balss pogu, lai redzētu, ko tā dara."
+          "test_remote": "Atzīmējiet un iesniedziet, pēc tam, runājot, nospiediet un turiet tālvadības pults balss pogu. Katrs nospiediens tiek ierakstīts, lai vēlāk to varētu noklausīties."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Tālvadības pults pārbaudes rezultāts",
-        "description": "Šī tālvadības pults pati sāk balsi, kamēr tās poga tiek turēta nospiesta. Lai runātu, turiet šo pogu. Iesniegt, lai turpinātu iestatīšanu."
+        "description": "Jūsu tālvadības pults darbojas. Tā pati sāk klausīties, kamēr turat nospiestu balss pogu, tāpēc runājot turiet pogu nospiestu. Iesniedziet, lai turpinātu iestatīšanu."
       },
       "test_result_atvv_tap": {
         "title": "Tālvadības pults pārbaudes rezultāts",
-        "description": "Šī tālvadības pults sāk balsi, pieskaroties tās pogai, un klausās, līdz beidzat runāt. Lai runātu, pieskarieties šai pogai. Iesniegt, lai turpinātu iestatīšanu."
+        "description": "Jūsu tālvadības pults darbojas. Pieskarieties balss pogai, lai sāktu runāt; tā pārtrauc klausīties, kad pārtraucat runāt. Iesniedziet, lai turpinātu iestatīšanu."
       },
       "test_result_fire_voice": {
         "title": "Tālvadības pults pārbaudes rezultāts",
-        "description": "Šis ir Fire TV tālvadības pults balss taustiņš. Turiet to nospiestu, kamēr runājat. Iesniegt, lai turpinātu iestatīšanu."
+        "description": "Jūsu tālvadības pults darbojas. Turiet balss pogu nospiestu, kamēr runājat. Iesniedziet, lai turpinātu iestatīšanu."
       },
       "test_result_plain_key": {
         "title": "Tālvadības pults pārbaudes rezultāts",
-        "description": "Tālvadības pults nosūtīja parastus taustiņus, bet ne balss signālu, tāpēc tās balss poga, iespējams, nesāk balsi, izmantojot Bluetooth. Iesniedziet un atzīmējiet Rādīt tālvadības pults pārskatu, lai kopīgotu redzēto."
+        "description": "Tālvadības pults nosūtīja parastus pogu nospiedienus, bet ne balss signālu, tāpēc tās balss poga, iespējams, nedarbojas caur Bluetooth. Iesniedziet, pēc tam atzīmējiet Rādīt tālvadības pults pārskatu, lai kopīgotu redzēto."
       },
       "test_result_nothing": {
         "title": "Tālvadības pults pārbaudes rezultāts",
         "description": "No tālvadības pults nekas netika saņemts. Pamodiniet to ar bultiņas taustiņu, pārbaudiet, vai tā ir savienota ar šo Home Assistant datoru, un pārbaudiet vēlreiz. Iesniegt, lai turpinātu."
+      },
+      "test_clips": {
+        "title": "Pārbaudes klipi",
+        "description": "Katrs balss pogas nospiediens ir saglabāts kā klips, lai varētu dzirdēt, ko tālvadības pults nosūtīja:\n\n{clips}\n\nKlipi atrodas sadaļā Multivide → Mana multivide → Bluetooth Remote Voice. Saites darbojas 5 minūtes."
+      },
+      "test_clips_none": {
+        "title": "Klips nav saglabāts",
+        "description": "Balss poga darbojās, bet klips netika saglabāts. Klipi tiek saglabāti Home Assistant multivides mapē (Multivide → Mana multivide), tāpēc pārbaudiet, vai šim Home Assistant ir multivides mape, kurā tas var rakstīt, un pārbaudiet vēlreiz."
+      },
+      "test_hints": {
+        "title": "Ko pamanīja pārbaude",
+        "description": "Agrīnas apturēšanas signāli: {early}. Zaudētās audio spraugas: {gaps}.\n\nAgrīnas apturēšanas signāls ir tālvadības pults apturēšana uzreiz pēc sākuma, kamēr vēl turējāt pogu. Ja tas ir virs 0 un jūsu pieprasījumi tiek pārtraukti pārāk agri, ieslēdziet Ignorēt agrīnu apturēšanu integrācijas Iestatījumi.\n\nZaudēta audio sprauga ir audio posms, ko Bluetooth nometa. Ja tas ir virs 0 un pieprasījumi neizdodas ar audio spraugas kļūdu, iestatiet Aizpildīt īsas audio spraugas integrācijas Iestatījumi."
       }
     },
     "progress": {
-      "observing": "Klausās 20 sekundes. Pamodiniet tālvadības pulti ar bultiņas taustiņu, pēc tam nospiediet un turiet tās balss pogu, īsi runājiet un atlaidiet."
+      "observing": "Tagad nospiediet un turiet tālvadības pults balss pogu, īsi parunājiet un atlaidiet. Atkārtojiet, cik reižu vēlaties: pārbaude ilgst 20 sekundes un ieraksta katru nospiedienu, lai vēlāk to varētu noklausīties. Ja šķiet, ka nekas nenotiek, vispirms pamodiniet pulti ar bultiņas taustiņu."
     },
     "error": {
       "bluetooth_unavailable": "Lokālais Bluetooth nav pieejams. Pārbaudiet, vai sistēmas D-Bus ir pieejams.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Šī tālvadības pults jau ir konfigurēta.",
-      "no_pipelines": "Pirms tālvadības pults pievienošanas izveidojiet Assist konveijeru."
+      "no_pipelines": "Pirms tālvadības pults pievienošanas izveidojiet Assist konveijeru.",
+      "test_running": "Šīs tālvadības pults pārbaude jau darbojas.",
+      "pause_failed": "Tālvadības pulti nevarēja apturēt pārbaudei. Mēģiniet vēlreiz pēc brīža."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Tālvadības pults opcijas",
+        "description": "Iestatījumi maina šīs tālvadības pults darbību. Tālvadības pulti un tās veidu šeit nevar mainīt: lai izmantotu citu pulti vai veidu, izdzēsiet šo ierakstu un pievienojiet pulti vēlreiz.",
+        "menu_options": {
+          "settings": "Iestatījumi",
+          "test": "Pārbaudīt manu tālvadības pulti",
+          "report": "Rādīt tālvadības pults pārskatu"
+        }
+      },
+      "settings": {
         "title": "Balss iestatījumi",
         "description": "Šie iestatījumi nosaka, kā tiek apstrādāti nospiešanas gadījumi un kā tiek izrunātas atbildes. Pieprasījuma aizstāšana nevar atcelt darbības, ko tas jau veicis. Vienlaicīgs pilns dupleks nav pieejams. Apturēšana pēc transkripcijas neatspējo rīkus, kas iebūvēti tiešraides runas pakalpojuma sniedzējā; ja darbības jāatspējo, izmantojiet tikai transkripcijas pakalpojuma sniedzēju.\n\n**Atbildes nosacījums:** lai atbilde tiktu izrunāta, jāizpildās visiem tā nosacījumiem. Tie tiek pārbaudīti vienreiz katra pieprasījuma sākumā; atstājiet tukšu, lai vienmēr runātu, un nosacījums, ko nevar novērtēt, tiek uzskatīts par neizpildītu. Veidņu nosacījumos var izmantot mainīgos `speaker`, `remote` un `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignorēt īsas nospiešanas",
           "max_request_seconds": "Maksimālais pieprasījuma ilgums",
           "max_conversation_seconds": "Maksimālais sarunas ilgums",
-          "reply_condition": "Atbildes nosacījums"
+          "reply_condition": "Atbildes nosacījums",
+          "ignore_early_stop": "Ignorēt agrīnu apturēšanu",
+          "gap_tolerance_ms": "Aizpildīt īsas audio spraugas"
         },
         "data_description": {
           "pipeline_id": "Assist konveijers, kas apstrādā runu: runas pārvēršana tekstā, sarunu aģents un teksta pārvēršana runā. Noņemts konveijers izraisa kļūdu, nevis atgriešanos pie cita.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignorē balss pogas pieskārienus, kas ir īsāki par šo vērtību, lai nejaušs pieskāriens nekad nesāktu pieprasījumu; īsta turēšana sākas par tik vēlāk. 0 to izslēdz. Noderīgi Fire TV tālvadības pultij, kas tūlīt pēc pamodināšanas beidzas ar kļūdu “Nav mikrofona audio”: tā atkārtoti nosūta taustiņu, kas to pamodināja, kā tūlītēju pieskārienu. 0,1 s ir labs sākumpunkts. Tikai Fire TV tālvadības pultīm.",
           "max_request_seconds": "Ilgākais laiks, cik var ilgt viens pieprasījums jebkurai tālvadības pultij: visa turēšana režīmā “Viens pieprasījums”, un katra kārta mijiedarbīgajā sarunā. Sasniedzot to, pieprasījums beidzas ar ierakstīšanas ierobežojuma kļūdu. Samaziniet, lai apturētu iestrēgušas pogas ierakstīšanu; palieliniet garai diktēšanai. Tālvadības pultis, kas nav paredzētas turēšanai runāšanai, beidzas arī pēc aptuveni 15 sekunžu runas vai pie klusuma, atkarībā no tā, kas notiek pirmais.",
           "max_conversation_seconds": "Ilgākais laiks, cik var ilgt visa pogas turēšana mijiedarbīgās sarunas režīmā. Režīmā “Viens pieprasījums” tas tiek ignorēts, un tas nedrīkst būt īsāks par maksimālo pieprasījuma ilgumu.",
-          "reply_condition": "Nosacījumi, kuriem visiem jāizpildās, lai atbilde tiktu izrunāta. Pārbauda vienreiz katra pieprasījuma sākumā (un katrā kārtā mijiedarbīgajā sarunā). Atstājiet tukšu, lai vienmēr runātu. Nosacījums, kas rada kļūdu, tiek uzskatīts par neizpildītu. Veidņu nosacījumos var izmantot mainīgos speaker, remote un held."
+          "reply_condition": "Nosacījumi, kuriem visiem jāizpildās, lai atbilde tiktu izrunāta. Pārbauda vienreiz katra pieprasījuma sākumā (un katrā kārtā mijiedarbīgajā sarunā). Atstājiet tukšu, lai vienmēr runātu. Nosacījums, kas rada kļūdu, tiek uzskatīts par neizpildītu. Veidņu nosacījumos var izmantot mainīgos speaker, remote un held.",
+          "ignore_early_stop": "Ieslēdziet, ja pieprasījumi dažreiz beidzas pēc sekundes daļas, lai gan visu laiku turējāt pogu nospiestu. Daži Android TV tālvadības pulti uzreiz pēc sākuma nosūta apturēšanas signālu un pēc tam turpina sūtīt audio. Ieslēgts, apturēšana pirmajā sekundē tiek ignorēta, kamēr audio vēl pienāk, un pieprasījums beidzas, kad audio kļūst kluss vai pienāk otra apturēšana. Tiek izmantots tikai tad, ja Pogas darbība ir iestatīts uz Viens pieprasījums uz turēšanu.",
+          "gap_tolerance_ms": "Bluetooth var zaudēt audio mirkli, kas parasti izraisa pieprasījuma neizdošanos ar audio spraugas kļūdu. Šeit iestatiet garumu, līdz kuram zaudētais posms tiek aizstāts ar klusumu, lai pieprasījums turpinātos. Garākas spraugas joprojām neizdodas. Klusums vārda vidū var samazināt atpazīšanas precizitāti, tāpēc izmantojiet zemāko darbojošos vērtību. 0 to izslēdz. Tikai Android TV tālvadības pultīm."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Tālvadības pults pārbaudes rezultāts",
+        "description": "Jūsu tālvadības pults darbojas. Tā pati sāk klausīties, kamēr turat nospiestu balss pogu, tāpēc runājot turiet pogu nospiestu."
+      },
+      "test_result_atvv_tap": {
+        "title": "Tālvadības pults pārbaudes rezultāts",
+        "description": "Jūsu tālvadības pults darbojas. Pieskarieties balss pogai, lai sāktu runāt; tā pārtrauc klausīties, kad pārtraucat runāt."
+      },
+      "test_result_fire_voice": {
+        "title": "Tālvadības pults pārbaudes rezultāts",
+        "description": "Jūsu tālvadības pults darbojas. Turiet balss pogu nospiestu, kamēr runājat."
+      },
+      "test_result_plain_key": {
+        "title": "Tālvadības pults pārbaudes rezultāts",
+        "description": "Tālvadības pults nosūtīja parastus pogu nospiedienus, bet ne balss signālu, tāpēc tās balss poga, iespējams, nedarbojas caur Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Tālvadības pults pārbaudes rezultāts",
+        "description": "No tālvadības pults nekas netika saņemts. Pamodiniet to ar bultiņas taustiņu, pārbaudiet, vai tā ir savienota ar šo Home Assistant datoru, un pārbaudiet vēlreiz."
+      },
+      "report": {
+        "title": "Tālvadības pults pārskats",
+        "description": "Nokopējiet šo tekstu GitHub problēmā. Tajā nav pilnas Bluetooth adreses, nosaukumu, tīmekļa adrešu vai audio.",
+        "data": {
+          "report": "Tālvadības pults pārskats"
+        },
+        "data_description": {
+          "report": "Atlasiet visu un kopējiet."
+        }
+      },
+      "test_clips": {
+        "title": "Pārbaudes klipi",
+        "description": "Katrs balss pogas nospiediens ir saglabāts kā klips, lai varētu dzirdēt, ko tālvadības pults nosūtīja:\n\n{clips}\n\nKlipi atrodas sadaļā Multivide → Mana multivide → Bluetooth Remote Voice. Saites darbojas 5 minūtes."
+      },
+      "test_clips_none": {
+        "title": "Klips nav saglabāts",
+        "description": "Balss poga darbojās, bet klips netika saglabāts. Klipi tiek saglabāti Home Assistant multivides mapē (Multivide → Mana multivide), tāpēc pārbaudiet, vai šim Home Assistant ir multivides mape, kurā tas var rakstīt, un pārbaudiet vēlreiz."
+      },
+      "test_hints": {
+        "title": "Ko pamanīja pārbaude",
+        "description": "Agrīnas apturēšanas signāli: {early}. Zaudētās audio spraugas: {gaps}.\n\nAgrīnas apturēšanas signāls ir tālvadības pults apturēšana uzreiz pēc sākuma, kamēr vēl turējāt pogu. Ja tas ir virs 0 un jūsu pieprasījumi tiek pārtraukti pārāk agri, ieslēdziet Ignorēt agrīnu apturēšanu integrācijas Iestatījumi.\n\nZaudēta audio sprauga ir audio posms, ko Bluetooth nometa. Ja tas ir virs 0 un pieprasījumi neizdodas ar audio spraugas kļūdu, iestatiet Aizpildīt īsas audio spraugas integrācijas Iestatījumi."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Saglabātais atbildes skaļrunis pašlaik nav pieejams, tāpēc atbildes netiks atskaņotas, līdz tas atgriezīsies. Paturiet to vai izvēlieties citu."
     },
     "abort": {
-      "no_pipelines": "Vispirms izveidojiet Assist konveijeru."
+      "no_pipelines": "Vispirms izveidojiet Assist konveijeru.",
+      "test_running": "Šīs tālvadības pults pārbaude jau darbojas.",
+      "pause_failed": "Tālvadības pulti nevarēja apturēt pārbaudei. Mēģiniet vēlreiz pēc brīža."
+    },
+    "progress": {
+      "observing": "Tagad nospiediet un turiet tālvadības pults balss pogu, īsi parunājiet un atlaidiet. Atkārtojiet, cik reižu vēlaties: pārbaude ilgst 20 sekundes un ieraksta katru nospiedienu, lai vēlāk to varētu noklausīties. Ja šķiet, ka nekas nenotiek, vispirms pamodiniet pulti ar bultiņas taustiņu. Jūsu tālvadības pults ir apturēta parastai lietošanai, kamēr tas darbojas: tās vienības būs nepieejamas apmēram minūti, un notiekošais pieprasījums tiks atcelts."
     }
   },
   "selector": {

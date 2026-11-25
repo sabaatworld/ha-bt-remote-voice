@@ -35,7 +35,7 @@
           "pipeline_id": "D'Assist-Pipeline, déi d'Sprooch vun dëser Fernbedienung verschafft.",
           "remote_type": "Op Automatesch loossen, ausser d'Fernbedienung gëtt net erkannt oder d'Astellung schléit fehl.",
           "show_report": "Aktivéieren a schécken, fir e Bericht ze gesinn, deen Dir an e GitHub-Issue kopéiere kënnt.",
-          "test_remote": "Aktivéiert a schéckt of, haalt dann d'Sproochtast vun der Fernbedienung gedréckt, fir ze gesinn, wat si mécht."
+          "test_remote": "Ukräizen an ofschécken, dréckt dann d'Sproochtast vun der Fernbedingung a haalt se gedréckt, während Dir schwätzt. All Drock gëtt opgeholl, sou datt Dir en duerno nolauschtere kënnt."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Resultat vum Fernbedienungstest",
-        "description": "Dës Fernbedienung start d'Sprooch selwer, solang hir Tast gehale gëtt. Haalt déi Tast fir ze schwätzen. Schécken, fir d'Astellung weiderzemaachen."
+        "description": "Är Fernbedingung funktionéiert. Si fänkt vu selwer un nozelauschteren, soulaang Dir d'Sproochtast gedréckt hutt, also haalt d'Tast gedréckt, während Dir schwätzt. Schéckt of, fir d'Astellung virunzesetzen."
       },
       "test_result_atvv_tap": {
         "title": "Resultat vum Fernbedienungstest",
-        "description": "Dës Fernbedienung start d'Sprooch, wann hir Tast ugetippt gëtt, a lauschtert, bis Dir ophält ze schwätzen. Tippt fir ze schwätzen op déi Tast. Schécken, fir d'Astellung weiderzemaachen."
+        "description": "Är Fernbedingung funktionéiert. Tippt op d'Sproochtast, fir unzefänken ze schwätzen; si hält op nozelauschteren, wann Dir ophält ze schwätzen. Schéckt of, fir d'Astellung virunzesetzen."
       },
       "test_result_fire_voice": {
         "title": "Resultat vum Fernbedienungstest",
-        "description": "Dat ass d'Sproochtast vun enger Fire-TV-Fernbedienung. Haalt si gedréckt, wärend Dir schwätzt. Schécken, fir d'Astellung weiderzemaachen."
+        "description": "Är Fernbedingung funktionéiert. Haalt d'Sproochtast gedréckt, soulaang Dir schwätzt. Schéckt of, fir d'Astellung virunzesetzen."
       },
       "test_result_plain_key": {
         "title": "Resultat vum Fernbedienungstest",
-        "description": "D'Fernbedienung huet normal Tasten, awer kee Sproochsignal geschéckt, dofir start hir Sproochtast d'Sprooch vläicht net iwwer Bluetooth. Schéckt of an aktivéiert dann Fernbedienungsbericht weisen, fir ze deelen, wat gesi gouf."
+        "description": "D'Fernbedingung huet normal Tastendréck geschéckt, awer kee Sproochsignal, dofir funktionéiert hir Sproochtast vläicht net iwwer Bluetooth. Schéckt of an ukräizt dann Fernbedingungsbericht uweisen, fir ze deelen, wat gesi gouf."
       },
       "test_result_nothing": {
         "title": "Resultat vum Fernbedienungstest",
         "description": "Vun der Fernbedienung ass näischt ukomm. Weckt si mat enger Pfeiltast op, kontrolléiert, ob si mat dëser Home-Assistant-Maschinn verbonne ass, a testet nach eng Kéier. Schécken, fir weiderzefueren."
+      },
+      "test_clips": {
+        "title": "Testclips",
+        "description": "All Drock op d'Sproochtast gouf als Clip gespäichert, sou datt Dir héiere kënnt, wat d'Fernbedingung geschéckt huet:\n\n{clips}\n\nD'Clips sinn ënner Medien → Meng Medien → Bluetooth Remote Voice. D'Linke funktionéieren 5 Minutten."
+      },
+      "test_clips_none": {
+        "title": "Kee Clip gespäichert",
+        "description": "D'Sproochtast huet funktionéiert, awer et gouf kee Clip gespäichert. Clips ginn am Medienuerdner vun Home Assistant gespäichert (Medien → Meng Medien), kuckt also no, ob dësen Home Assistant en Medienuerdner huet, an deen en schreiwe kann, a probéiert nach eng Kéier."
+      },
+      "test_hints": {
+        "title": "Wat den Test bemierkt huet",
+        "description": "Fréi Stoppsignaler: {early}. Verluere Audiolächer: {gaps}.\n\nE fréie Stoppsignal ass e Stopp vun der Fernbedingung direkt no dem Start, während Dir d'Tast nach gedréckt hutt. Wann et iwwer 0 ass an Är Ufroen ze fréi ofgebrach ginn, schalt Fréie Stopp ignoréieren an de Astellungen vun der Integratioun un.\n\nEt verluerent Audiolach ass e Stéck Audio, dat Bluetooth fale gelooss huet. Wann et iwwer 0 ass an Ufroen mat engem Audiolach-Feeler feelschloen, stellt Kuerz Audiolächer fëllen an de Astellungen vun der Integratioun an."
       }
     },
     "progress": {
-      "observing": "20 Sekonne lauschteren. Weckt d'Fernbedienung mat enger Pfeiltast op, haalt dann hir Sproochtast gedréckt, schwätzt kuerz a looss lass."
+      "observing": "Dréckt elo d'Sproochtast vun der Fernbedingung a haalt se gedréckt, schwätzt kuerz a looss lass. Widderhuelt et sou oft Dir wëllt: den Test dauert 20 Sekonnen an hëlt all Drock op, sou datt Dir en duerno nolauschtere kënnt. Wann et esou ausgesäit, als géif näischt geschéien, wecke d'Fernbedingung als éischt mat enger Päiltast."
     },
     "error": {
       "bluetooth_unavailable": "Lokale Bluetooth ass net verfügbar. Kontrolléiert, ob de System-D-Bus accessibel ass.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Dës Fernbedienung ass schonn konfiguréiert.",
-      "no_pipelines": "Erstellt eng Assist-Pipeline, ier Dir d'Fernbedienung derbäisetzt."
+      "no_pipelines": "Erstellt eng Assist-Pipeline, ier Dir d'Fernbedienung derbäisetzt.",
+      "test_running": "E Test vun dëser Fernbedingung leeft schonn.",
+      "pause_failed": "D'Fernbedingung konnt net fir den Test ageschalt ginn. Probéiert et an engem Moment nach eng Kéier."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Optioune vun der Fernbedingung",
+        "description": "Astellunge veränneren, wéi dës Fernbedingung sech verhält. D'Fernbedingung an hiren Typ kënnen hei net geännert ginn: fir eng aner Fernbedingung oder en anert Typ ze benotzen, läscht dësen Androck an füügt d'Fernbedingung nei derbäi.",
+        "menu_options": {
+          "settings": "Astellungen",
+          "test": "Meng Fernbedienung testen",
+          "report": "Fernbedienungsbericht weisen"
+        }
+      },
+      "settings": {
         "title": "Sproochastellungen",
         "description": "Dës Astellunge bestëmmen, wéi Tastendréck behandelt ginn a wéi Äntwerte geschwat ginn. Eng Ufro ze ersetzen kann Aktiounen, déi schonn ausgefouert goufen, net réckgängeg maachen. Gläichzäitege Vollduplex ass net verfügbar. Nom Transkriptioun ophalen deaktivéiert keng Tools, déi an e Live-Sproochubidder agebaut sinn; benotzt en Ubidder nëmme fir Transkriptioun, wann Aktiounen deaktivéiert musse ginn.\n\n**Äntwertbedingung:** all seng Bedingunge mussen erfëllt si, fir datt eng Äntwert geschwat gëtt. Si ginn eemol um Ufank vun all Ufro kontrolléiert; looss et eidel, fir ëmmer ze schwätzen, an eng Bedingung, déi net kann ausgewäert ginn, gëllt als net erfëllt. Template-Bedingunge kënnen d'Variabelen `speaker`, `remote` an `held` benotzen.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Kuerz Tastendréck ignoréieren",
           "max_request_seconds": "Maximal Uflängt",
           "max_conversation_seconds": "Maximal Gespréichslängt",
-          "reply_condition": "Äntwertbedingung"
+          "reply_condition": "Äntwertbedingung",
+          "ignore_early_stop": "Fréie Stopp ignoréieren",
+          "gap_tolerance_ms": "Kuerz Audiolächer fëllen"
         },
         "data_description": {
           "pipeline_id": "D'Assist-Pipeline, déi Sprooch verschafft: Spracherkennung, Gespréichsagent a Sproochausgab. Eng ewechgeholl Pipeline gëtt e Feeler, amplaz op eng aner zréckzefalen.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignoréiert Tippe op d'Sproochtast, déi méi kuerz si wéi dëst, fir datt en onbeabsiichtegt Tippe ni eng Ufro start; e richtegt Halen fänkt entspriechend méi spéit un. 0 schalt et aus. Nëtzlech fir eng Fire TV-Fernbedienung, déi direkt nom Opwecken mat \"No microphone audio\" feelschléit: si schéckt d'Tast, déi si opgeweckt huet, nees als direkten Tipp. 0,1 s ass e gudde Startwäert. Nëmme fir Fire TV-Fernbedienungen.",
           "max_request_seconds": "Déi längst Dauer vun enger eenzeler Ufro op all Fernbedienung: e ganzt Halen am Modus Eng Ufro, an all Tour am Wiesselend Gespréich. Wann se erreecht gëtt, endet d'Ufro mat engem Opnamlimit-Feeler. Verréngert et, fir eng blockéiert Tast ze hanneren, ewech ze huelen; erhéicht et fir laang Diktater. Fernbedienunge ouni Push-to-Talk enden och no ongeféier 15 Sekonnen Sprooch oder bei Rou, wat fréier kënnt.",
           "max_conversation_seconds": "Déi längst Dauer vun engem ganzen Tasthalen am Modus Wiesselend Gespréich. Gëtt am Modus Eng Ufro ignoréiert a muss net méi kuerz sinn wéi déi maximal Uflängt.",
-          "reply_condition": "Bedingungen, déi all erfëllt si mussen, fir datt eng Äntwert geschwat gëtt. Eemol um Ufank vun all Ufro kontrolléiert (an all Tour am Wiesselend Gespréich). Eidel loossen, fir ëmmer ze schwätzen. Eng Bedingung, déi e Feeler gëtt, gëllt als net erfëllt. Template-Bedingunge kënnen d'Variabelen speaker, remote an held benotzen."
+          "reply_condition": "Bedingungen, déi all erfëllt si mussen, fir datt eng Äntwert geschwat gëtt. Eemol um Ufank vun all Ufro kontrolléiert (an all Tour am Wiesselend Gespréich). Eidel loossen, fir ëmmer ze schwätzen. Eng Bedingung, déi e Feeler gëtt, gëllt als net erfëllt. Template-Bedingunge kënnen d'Variabelen speaker, remote an held benotzen.",
+          "ignore_early_stop": "Schalt dat un, wann Ufroen heiansdo no engem Bruchdeel vun enger Sekonn ophalen, obwuel Dir d'Tast déi ganz Zäit gedréckt hutt. E puer Android-TV-Fernbedingunge schécken direkt no dem Start e Stoppsignal a schécken dann nach Audio weider. Wann un, gëtt e Stopp an der éischter Sekonn ignoréiert, soulaang nach Audio ukënnt, an d'Ufro hält op, wann den Audio roueg gëtt oder en zweete Stopp kënnt. Gëtt nëmme benotzt, wann Tastverhalen op Eng Ufro pro Halen steet.",
+          "gap_tolerance_ms": "Bluetooth kann en Ament Audio verléieren, wat normalerweis d'Ufro mat engem Audiolach-Feeler feelschloe léisst. Leet hei eng Längt fest, fir e verluerene Stéck bis zu där Längt duerch Rou ze ersetzen, sou datt d'Ufro weidergeet. Méi laang Lächer schloen weiderhin feel. Rou an der Mëtt vun engem Wuert kann d'Erkennungsgenauegkeet reduzéieren, also benotzt de niddregsten Wäert, deen funktionéiert. 0 schalt et aus. Nëmme fir Android-TV-Fernbedingungen."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultat vum Fernbedienungstest",
+        "description": "Är Fernbedingung funktionéiert. Si fänkt vu selwer un nozelauschteren, soulaang Dir d'Sproochtast gedréckt hutt, also haalt d'Tast gedréckt, während Dir schwätzt."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultat vum Fernbedienungstest",
+        "description": "Är Fernbedingung funktionéiert. Tippt op d'Sproochtast, fir unzefänken ze schwätzen; si hält op nozelauschteren, wann Dir ophält ze schwätzen."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultat vum Fernbedienungstest",
+        "description": "Är Fernbedingung funktionéiert. Haalt d'Sproochtast gedréckt, soulaang Dir schwätzt."
+      },
+      "test_result_plain_key": {
+        "title": "Resultat vum Fernbedienungstest",
+        "description": "D'Fernbedingung huet normal Tastendréck geschéckt, awer kee Sproochsignal, dofir funktionéiert hir Sproochtast vläicht net iwwer Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Resultat vum Fernbedienungstest",
+        "description": "Vun der Fernbedienung ass näischt ukomm. Weckt si mat enger Pfeiltast op, kontrolléiert, ob si mat dëser Home-Assistant-Maschinn verbonne ass, a testet nach eng Kéier."
+      },
+      "report": {
+        "title": "Fernbedienungsbericht",
+        "description": "Kopéiert dësen Text an e GitHub-Issue. Hien enthält keng voll Bluetooth-Adress, keng Nimm, Webadressen oder Audio.",
+        "data": {
+          "report": "Fernbedienungsbericht"
+        },
+        "data_description": {
+          "report": "Alles auswielen a kopéieren."
+        }
+      },
+      "test_clips": {
+        "title": "Testclips",
+        "description": "All Drock op d'Sproochtast gouf als Clip gespäichert, sou datt Dir héiere kënnt, wat d'Fernbedingung geschéckt huet:\n\n{clips}\n\nD'Clips sinn ënner Medien → Meng Medien → Bluetooth Remote Voice. D'Linke funktionéieren 5 Minutten."
+      },
+      "test_clips_none": {
+        "title": "Kee Clip gespäichert",
+        "description": "D'Sproochtast huet funktionéiert, awer et gouf kee Clip gespäichert. Clips ginn am Medienuerdner vun Home Assistant gespäichert (Medien → Meng Medien), kuckt also no, ob dësen Home Assistant en Medienuerdner huet, an deen en schreiwe kann, a probéiert nach eng Kéier."
+      },
+      "test_hints": {
+        "title": "Wat den Test bemierkt huet",
+        "description": "Fréi Stoppsignaler: {early}. Verluere Audiolächer: {gaps}.\n\nE fréie Stoppsignal ass e Stopp vun der Fernbedingung direkt no dem Start, während Dir d'Tast nach gedréckt hutt. Wann et iwwer 0 ass an Är Ufroen ze fréi ofgebrach ginn, schalt Fréie Stopp ignoréieren an de Astellungen vun der Integratioun un.\n\nEt verluerent Audiolach ass e Stéck Audio, dat Bluetooth fale gelooss huet. Wann et iwwer 0 ass an Ufroen mat engem Audiolach-Feeler feelschloen, stellt Kuerz Audiolächer fëllen an de Astellungen vun der Integratioun an."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Deen gespäicherte Äntwert-Lautsprecher ass de Moment net verfügbar, dofir ginn Äntwerten eréischt erëm ofgespillt, wann en zréck ass. Behält en oder wielt en aneren."
     },
     "abort": {
-      "no_pipelines": "Erstellt als éischt eng Assist-Pipeline."
+      "no_pipelines": "Erstellt als éischt eng Assist-Pipeline.",
+      "test_running": "E Test vun dëser Fernbedingung leeft schonn.",
+      "pause_failed": "D'Fernbedingung konnt net fir den Test ageschalt ginn. Probéiert et an engem Moment nach eng Kéier."
+    },
+    "progress": {
+      "observing": "Dréckt elo d'Sproochtast vun der Fernbedingung a haalt se gedréckt, schwätzt kuerz a looss lass. Widderhuelt et sou oft Dir wëllt: den Test dauert 20 Sekonnen an hëlt all Drock op, sou datt Dir en duerno nolauschtere kënnt. Wann et esou ausgesäit, als géif näischt geschéien, wecke d'Fernbedingung als éischt mat enger Päiltast. Är Fernbedingung ass fir de normale Gebrauch ageschalt, während dëst leeft: hir Entitéite sinn ongeféier eng Minutt net verfügbar an eng lafend Ufro gëtt ofgebrach."
     }
   },
   "selector": {

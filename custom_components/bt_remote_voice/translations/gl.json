@@ -35,7 +35,7 @@
           "pipeline_id": "O pipeline de Assist que procesa a voz deste mando.",
           "remote_type": "Déixao en Automático, a non ser que non se recoñeza o control remoto ou falle a configuración.",
           "show_report": "Márcao e envía para ver un informe que podes copiar nunha incidencia de GitHub.",
-          "test_remote": "Márcao e envía, e despois mantén premido o botón de voz do control remoto para ver que fai."
+          "test_remote": "Marca a caixa e envía, despois mantén premido o botón de voz do mando mentres falas. Cada pulsación gárdase para que poidas escoitala despois."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Resultado da proba do control remoto",
-        "description": "Este control remoto inicia a voz por si mesmo mentres se mantén premido o seu botón. Mantén premido ese botón para falar. Envía para continuar coa configuración."
+        "description": "O teu mando funciona. Comeza a escoitar por si só mentres manteñas premido o seu botón de voz, así que mantén o botón premido mentres falas. Envía para continuar coa configuración."
       },
       "test_result_atvv_tap": {
         "title": "Resultado da proba do control remoto",
-        "description": "Este control remoto inicia a voz cando se toca o seu botón e escoita ata que deixes de falar. Toca ese botón para falar. Envía para continuar coa configuración."
+        "description": "O teu mando funciona. Toca o seu botón de voz para comezar a falar; deixa de escoitar cando deixas de falar. Envía para continuar coa configuración."
       },
       "test_result_fire_voice": {
         "title": "Resultado da proba do control remoto",
-        "description": "Esta é a tecla de voz dun control remoto Fire TV. Mantenla premida mentres falas. Envía para continuar coa configuración."
+        "description": "O teu mando funciona. Mantén premido o seu botón de voz mentres fales. Envía para continuar coa configuración."
       },
       "test_result_plain_key": {
         "title": "Resultado da proba do control remoto",
-        "description": "O control remoto enviou teclas normais pero ningún sinal de voz, así que o seu botón de voz quizais non inicie a voz por Bluetooth. Envía e despois marca Amosar informe do control remoto para compartir o que se viu."
+        "description": "O mando enviou pulsacións de botóns normais pero ningún sinal de voz, así que o seu botón de voz quizais non funcione por Bluetooth. Envía e marca Amosar o informe do mando para compartir o que se viu."
       },
       "test_result_nothing": {
         "title": "Resultado da proba do control remoto",
         "description": "Non se recibiu nada do control remoto. Espértao cunha tecla de frecha, comproba que estea conectado a esta máquina con Home Assistant e proba de novo. Envía para continuar."
+      },
+      "test_clips": {
+        "title": "Clips de proba",
+        "description": "Cada pulsación do botón de voz gardouse como un clip, para que poidas oír o que enviou o mando:\n\n{clips}\n\nOs clips están en Multimedia → Os meus medios → Bluetooth Remote Voice. As ligazóns funcionan durante 5 minutos."
+      },
+      "test_clips_none": {
+        "title": "Non se gardou ningún clip",
+        "description": "O botón de voz funcionou, pero non se gardou ningún clip. Os clips gárdanse no cartafol multimedia de Home Assistant (Multimedia → Os meus medios), así que comproba que este Home Assistant teña un cartafol multimedia no que poida escribir e proba de novo."
+      },
+      "test_hints": {
+        "title": "O que notou a proba",
+        "description": "Sinais de parada temperá: {early}. Ocos de audio perdidos: {gaps}.\n\nUn sinal de parada temperá é unha parada do mando xusto despois de comezar, mentres aínda mantiñas o botón premido. Se é maior que 0 e as túas solicitudes se cortan, activa Ignorar a parada temperá en Axustes da integración.\n\nUn oco de audio perdido é un treito de audio que o Bluetooth descartou. Se é maior que 0 e as solicitudes fallan cun erro de oco de audio, configura Encher ocos de audio curtos en Axustes da integración."
       }
     },
     "progress": {
-      "observing": "Escoitando durante 20 segundos. Esperta o control remoto cunha tecla de frecha, despois mantén premido o seu botón de voz, fala brevemente e solta."
+      "observing": "Mantén premido agora o botón de voz do mando, fala brevemente e solta. Repite as veces que queiras: a proba dura 20 segundos e grava cada pulsación para que poidas escoitala despois. Se parece que non pasa nada, esperta primeiro o mando cunha tecla de frecha."
     },
     "error": {
       "bluetooth_unavailable": "O Bluetooth local non está dispoñible. Comproba que se pode acceder ao D-Bus do sistema.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Este mando xa está configurado.",
-      "no_pipelines": "Crea un pipeline de Assist antes de engadir o mando."
+      "no_pipelines": "Crea un pipeline de Assist antes de engadir o mando.",
+      "test_running": "Xa hai unha proba deste mando en curso.",
+      "pause_failed": "Non se puido pór en pausa o mando para a proba. Téntao de novo nun momento."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opcións do mando",
+        "description": "Os axustes cambian o comportamento deste mando. O mando e o seu tipo non se poden cambiar aquí: para usar outro mando ou tipo, elimina esta entrada e engade o mando de novo.",
+        "menu_options": {
+          "settings": "Axustes",
+          "test": "Probar o meu control remoto",
+          "report": "Amosar informe do control remoto"
+        }
+      },
+      "settings": {
         "title": "Axustes de voz",
         "description": "Estes axustes controlan como se xestionan as pulsacións e como se din as respostas. Substituír unha solicitude non pode desfacer as accións que xa realizou. O dúplex completo simultáneo non está dispoñible. Deterse despois da transcrición non desactiva as ferramentas integradas nun provedor de voz en directo; usa un provedor de só transcrición cando haxa que desactivar as accións.\n\n**Condición de resposta:** deben cumprirse todas as súas condicións para que se diga unha resposta. Compróbanse unha vez ao comezo de cada solicitude; déixaa baleira para responder sempre en voz alta, e unha condición que non se pode avaliar conta como non cumprida. As condicións de modelo poden usar as variables `speaker`, `remote` e `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignorar pulsacións curtas",
           "max_request_seconds": "Duración máxima da solicitude",
           "max_conversation_seconds": "Duración máxima da conversa",
-          "reply_condition": "Condición de resposta"
+          "reply_condition": "Condición de resposta",
+          "ignore_early_stop": "Ignorar a parada temperá",
+          "gap_tolerance_ms": "Encher ocos de audio curtos"
         },
         "data_description": {
           "pipeline_id": "O pipeline de Assist que procesa a voz: voz a texto, axente de conversa e texto a voz. Un pipeline eliminado falla cun erro en lugar de recorrer a outro.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignora as pulsacións do botón de voz máis curtas que este valor, para que unha pulsación espuria nunca inicie unha solicitude; unha pulsación mantida real comeza este tempo máis tarde. 0 desactívao. Útil para un mando Fire TV que falla con «Non se recibiu audio do micrófono» xusto despois de espertar: reenvía a tecla que o espertou como unha pulsación instantánea. 0,1 s é un bo punto de partida. Só para mandos Fire TV.",
           "max_request_seconds": "A duración máxima dunha soa solicitude en calquera mando: toda a pulsación mantida no modo Unha solicitude, e cada quenda en Conversa alternada. Ao acadala, a solicitude remata cun erro de límite de captura. Redúceo para deter a gravación dun botón atascado; aumenta o valor para ditados longos. Os mandos que non son de premer para falar tamén rematan despois duns 15 segundos de voz ou co silencio, o que ocorra primeiro.",
           "max_conversation_seconds": "A duración máxima de toda unha pulsación mantida no modo Conversa alternada. Ignórase no modo Unha solicitude e non pode ser inferior á duración máxima da solicitude.",
-          "reply_condition": "Condicións que deben cumprirse todas para que se diga unha resposta. Compróbanse unha vez ao comezo de cada solicitude (e de cada quenda en Conversa alternada). Déixao baleiro para responder sempre en voz alta. Unha condición que dá erro conta como non cumprida. As condicións de modelo poden usar as variables speaker, remote e held."
+          "reply_condition": "Condicións que deben cumprirse todas para que se diga unha resposta. Compróbanse unha vez ao comezo de cada solicitude (e de cada quenda en Conversa alternada). Déixao baleiro para responder sempre en voz alta. Unha condición que dá erro conta como non cumprida. As condicións de modelo poden usar as variables speaker, remote e held.",
+          "ignore_early_stop": "Actívao se as solicitudes ás veces rematan nunha fracción de segundo aínda que mantiveses o botón premido todo o tempo. Algúns mandos de Android TV envían un sinal de parada xusto despois de comezar e logo seguen enviando audio. Cando está activado, ignórase unha parada no primeiro segundo mentres aínda chega audio, e a solicitude remata cando o audio se queda en silencio ou chega unha segunda parada. Só se usa cando Comportamento do botón está en Unha solicitude por pulsación mantida.",
+          "gap_tolerance_ms": "O Bluetooth pode perder un momento de audio, o que normalmente fai que a solicitude falle cun erro de oco de audio. Define aquí unha duración para substituír por silencio un treito perdido de ata esa duración e que a solicitude continúe. Os ocos máis longos seguen fallando. O silencio no medio dunha palabra pode reducir a precisión do recoñecemento, así que usa o valor máis baixo que funcione. 0 desactívao. Só para mandos de Android TV."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultado da proba do control remoto",
+        "description": "O teu mando funciona. Comeza a escoitar por si só mentres manteñas premido o seu botón de voz, así que mantén o botón premido mentres falas."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultado da proba do control remoto",
+        "description": "O teu mando funciona. Toca o seu botón de voz para comezar a falar; deixa de escoitar cando deixas de falar."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultado da proba do control remoto",
+        "description": "O teu mando funciona. Mantén premido o seu botón de voz mentres fales."
+      },
+      "test_result_plain_key": {
+        "title": "Resultado da proba do control remoto",
+        "description": "O mando enviou pulsacións de botóns normais pero ningún sinal de voz, así que o seu botón de voz quizais non funcione por Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Resultado da proba do control remoto",
+        "description": "Non se recibiu nada do control remoto. Espértao cunha tecla de frecha, comproba que estea conectado a esta máquina con Home Assistant e proba de novo."
+      },
+      "report": {
+        "title": "Informe do control remoto",
+        "description": "Copia este texto nunha incidencia de GitHub. Non contén ningún enderezo Bluetooth completo, nomes, enderezos web nin audio.",
+        "data": {
+          "report": "Informe do control remoto"
+        },
+        "data_description": {
+          "report": "Selecciona todo e copia."
+        }
+      },
+      "test_clips": {
+        "title": "Clips de proba",
+        "description": "Cada pulsación do botón de voz gardouse como un clip, para que poidas oír o que enviou o mando:\n\n{clips}\n\nOs clips están en Multimedia → Os meus medios → Bluetooth Remote Voice. As ligazóns funcionan durante 5 minutos."
+      },
+      "test_clips_none": {
+        "title": "Non se gardou ningún clip",
+        "description": "O botón de voz funcionou, pero non se gardou ningún clip. Os clips gárdanse no cartafol multimedia de Home Assistant (Multimedia → Os meus medios), así que comproba que este Home Assistant teña un cartafol multimedia no que poida escribir e proba de novo."
+      },
+      "test_hints": {
+        "title": "O que notou a proba",
+        "description": "Sinais de parada temperá: {early}. Ocos de audio perdidos: {gaps}.\n\nUn sinal de parada temperá é unha parada do mando xusto despois de comezar, mentres aínda mantiñas o botón premido. Se é maior que 0 e as túas solicitudes se cortan, activa Ignorar a parada temperá en Axustes da integración.\n\nUn oco de audio perdido é un treito de audio que o Bluetooth descartou. Se é maior que 0 e as solicitudes fallan cun erro de oco de audio, configura Encher ocos de audio curtos en Axustes da integración."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "O altofalante de resposta gardado non está dispoñible agora mesmo, polo que as respostas non se reproducirán ata que volva. Consérvao ou escolle outro."
     },
     "abort": {
-      "no_pipelines": "Crea primeiro un pipeline de Assist."
+      "no_pipelines": "Crea primeiro un pipeline de Assist.",
+      "test_running": "Xa hai unha proba deste mando en curso.",
+      "pause_failed": "Non se puido pór en pausa o mando para a proba. Téntao de novo nun momento."
+    },
+    "progress": {
+      "observing": "Mantén premido agora o botón de voz do mando, fala brevemente e solta. Repite as veces que queiras: a proba dura 20 segundos e grava cada pulsación para que poidas escoitala despois. Se parece que non pasa nada, esperta primeiro o mando cunha tecla de frecha. O teu mando queda en pausa para o uso normal mentres isto se executa: as súas entidades non estarán dispoñibles durante aproximadamente un minuto e cancélase calquera solicitude en curso."
     }
   },
   "selector": {

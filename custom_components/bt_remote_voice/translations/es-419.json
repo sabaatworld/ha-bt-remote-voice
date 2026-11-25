@@ -35,7 +35,7 @@
           "pipeline_id": "El pipeline de Assist que procesa la voz de este control remoto.",
           "remote_type": "Déjalo en Automático, a menos que no se reconozca el control remoto o falle la configuración.",
           "show_report": "Márcalo y envía para ver un informe que puedes copiar en un issue de GitHub.",
-          "test_remote": "Márcalo y envía, luego mantén presionado el botón de voz del control remoto para ver qué hace."
+          "test_remote": "Marca la casilla y envía, luego mantén presionado el botón de voz del control remoto mientras hablas. Cada pulsación se graba para que puedas escucharla después."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Resultado de la prueba del control remoto",
-        "description": "Este control remoto inicia la voz por sí mismo mientras se mantiene presionado su botón. Mantén presionado ese botón para hablar. Envía para continuar la configuración."
+        "description": "Tu control remoto funciona. Empieza a escuchar por sí solo mientras mantienes presionado su botón de voz, así que mantén el botón presionado mientras hablas. Envía para continuar con la configuración."
       },
       "test_result_atvv_tap": {
         "title": "Resultado de la prueba del control remoto",
-        "description": "Este control remoto inicia la voz cuando se toca su botón y escucha hasta que dejes de hablar. Toca ese botón para hablar. Envía para continuar la configuración."
+        "description": "Tu control remoto funciona. Toca su botón de voz para empezar a hablar; deja de escuchar cuando dejas de hablar. Envía para continuar con la configuración."
       },
       "test_result_fire_voice": {
         "title": "Resultado de la prueba del control remoto",
-        "description": "Esta es la tecla de voz de un control remoto Fire TV. Mantenla presionada mientras hablas. Envía para continuar la configuración."
+        "description": "Tu control remoto funciona. Mantén presionado su botón de voz mientras hablas. Envía para continuar con la configuración."
       },
       "test_result_plain_key": {
         "title": "Resultado de la prueba del control remoto",
-        "description": "El control remoto envió teclas normales pero ninguna señal de voz, así que su botón de voz quizá no inicie la voz por Bluetooth. Envía y luego marca Mostrar informe del control remoto para compartir lo que se vio."
+        "description": "El control remoto envió pulsaciones de botones normales pero ninguna señal de voz, así que su botón de voz quizá no funcione por Bluetooth. Envía y luego marca Mostrar informe del control remoto para compartir lo que se vio."
       },
       "test_result_nothing": {
         "title": "Resultado de la prueba del control remoto",
         "description": "No se recibió nada del control remoto. Despiértalo con una tecla de flecha, comprueba que esté conectado a esta máquina con Home Assistant y vuelve a probar. Envía para continuar."
+      },
+      "test_clips": {
+        "title": "Clips de prueba",
+        "description": "Cada pulsación del botón de voz se guardó como un clip, para que puedas escuchar lo que envió el control remoto:\n\n{clips}\n\nLos clips están en Multimedia → Mis medios → Bluetooth Remote Voice. Los enlaces funcionan durante 5 minutos."
+      },
+      "test_clips_none": {
+        "title": "No se guardó ningún clip",
+        "description": "El botón de voz funcionó, pero no se guardó ningún clip. Los clips se guardan en la carpeta multimedia de Home Assistant (Multimedia → Mis medios), así que verifica que este Home Assistant tenga una carpeta multimedia en la que pueda escribir y prueba de nuevo."
+      },
+      "test_hints": {
+        "title": "Lo que notó la prueba",
+        "description": "Señales de detención temprana: {early}. Huecos de audio perdidos: {gaps}.\n\nUna señal de detención temprana es una detención del control remoto justo después de empezar, mientras aún mantenías el botón. Si es mayor que 0 y tus solicitudes se cortan, activa Ignorar la detención temprana en Configuración de la integración.\n\nUn hueco de audio perdido es un tramo de audio que el Bluetooth descartó. Si es mayor que 0 y las solicitudes fallan con un error de hueco de audio, configura Rellenar huecos de audio cortos en Configuración de la integración."
       }
     },
     "progress": {
-      "observing": "Escuchando durante 20 segundos. Despierta el control remoto con una tecla de flecha, luego mantén presionado su botón de voz, habla brevemente y suéltalo."
+      "observing": "Mantén presionado ahora el botón de voz del control remoto, habla brevemente y suéltalo. Repite tantas veces como quieras: la prueba dura 20 segundos y graba cada pulsación para que puedas escucharla después. Si parece que no pasa nada, primero activa el control remoto con una tecla de flecha."
     },
     "error": {
       "bluetooth_unavailable": "El Bluetooth local no está disponible. Comprueba que se puede acceder al D-Bus del sistema.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Este control remoto ya está configurado.",
-      "no_pipelines": "Crea un pipeline de Assist antes de agregar el control remoto."
+      "no_pipelines": "Crea un pipeline de Assist antes de agregar el control remoto.",
+      "test_running": "Ya hay una prueba de este control remoto en curso.",
+      "pause_failed": "No se pudo pausar el control remoto para la prueba. Inténtalo de nuevo en un momento."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opciones del control remoto",
+        "description": "La configuración cambia cómo se comporta este control remoto. El control remoto y su tipo no se pueden cambiar aquí: para usar otro control remoto o tipo, elimina esta entrada y vuelve a agregar el control remoto.",
+        "menu_options": {
+          "settings": "Configuración",
+          "test": "Probar mi control remoto",
+          "report": "Mostrar informe del control remoto"
+        }
+      },
+      "settings": {
         "title": "Configuración de voz",
         "description": "Estos ajustes controlan cómo se gestionan las presiones y cómo se pronuncian las respuestas. Sustituir una solicitud no puede deshacer las acciones que ya realizó. El dúplex completo simultáneo no está disponible. Detenerse tras la transcripción no desactiva las herramientas integradas en un proveedor de voz en directo; usa un proveedor de solo transcripción cuando haya que desactivar las acciones.\n\n**Condición de respuesta:** deben cumplirse todas sus condiciones para que se pronuncie una respuesta. Se comprueban una vez al inicio de cada solicitud; déjala vacía para responder siempre en voz alta, y una condición que no se puede evaluar cuenta como no cumplida. Las condiciones de plantilla pueden usar las variables `speaker`, `remote` y `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignorar presiones cortas",
           "max_request_seconds": "Duración máxima de la solicitud",
           "max_conversation_seconds": "Duración máxima de la conversación",
-          "reply_condition": "Condición de respuesta"
+          "reply_condition": "Condición de respuesta",
+          "ignore_early_stop": "Ignorar la detención temprana",
+          "gap_tolerance_ms": "Rellenar huecos de audio cortos"
         },
         "data_description": {
           "pipeline_id": "El pipeline de Assist que procesa la voz: voz a texto, agente de conversación y texto a voz. Un pipeline eliminado produce un error en lugar de recurrir a otro.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignora las presiones del botón de voz más cortas que este valor, para que una presión espuria nunca inicie una solicitud; una presión mantenida real empieza esa cantidad más tarde. 0 lo desactiva. Útil para un control remoto Fire TV que falla con «No se recibió audio del micrófono» justo después de activarse: reenvía la tecla que lo activó como una presión instantánea. 0,1 s es un buen punto de partida. Solo para controles remotos Fire TV.",
           "max_request_seconds": "La duración máxima de una sola solicitud en cualquier control remoto: toda la presión mantenida en el modo Una solicitud, y cada turno en Conversación alterna. Al alcanzarla, la solicitud termina con un error de límite de captura. Redúcela para detener la grabación de un botón atascado; aumenta para dictados largos. Los controles remotos que no son de presionar para hablar también terminan tras unos 15 segundos de voz o en el silencio, lo que ocurra primero.",
           "max_conversation_seconds": "La duración máxima de toda una presión mantenida en el modo Conversación alterna. Se ignora en el modo Una solicitud y no debe ser menor que la duración máxima de la solicitud.",
-          "reply_condition": "Condiciones que deben cumplirse todas para que se pronuncie una respuesta. Se comprueban una vez al inicio de cada solicitud (y de cada turno en Conversación alterna). Déjalo vacío para responder siempre en voz alta. Una condición que da error cuenta como no cumplida. Las condiciones de plantilla pueden usar las variables speaker, remote y held."
+          "reply_condition": "Condiciones que deben cumplirse todas para que se pronuncie una respuesta. Se comprueban una vez al inicio de cada solicitud (y de cada turno en Conversación alterna). Déjalo vacío para responder siempre en voz alta. Una condición que da error cuenta como no cumplida. Las condiciones de plantilla pueden usar las variables speaker, remote y held.",
+          "ignore_early_stop": "Actívalo si las solicitudes a veces terminan a una fracción de segundo aunque mantuviste el botón todo el tiempo. Algunos controles remotos de Android TV envían una señal de detención justo después de empezar y luego siguen enviando audio. Al activarlo, se ignora una detención en el primer segundo mientras aún llega audio, y la solicitud termina cuando el audio se queda en silencio o llega una segunda detención. Solo se usa cuando Comportamiento del botón está en Una solicitud por presión mantenida.",
+          "gap_tolerance_ms": "El Bluetooth puede perder un momento de audio, lo que normalmente hace que la solicitud falle con un error de hueco de audio. Define aquí una duración para reemplazar con silencio un tramo perdido de hasta esa duración y que la solicitud continúe. Los huecos más largos siguen fallando. El silencio en medio de una palabra puede reducir la precisión del reconocimiento, así que usa el valor más bajo que funcione. 0 lo desactiva. Solo para controles remotos de Android TV."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultado de la prueba del control remoto",
+        "description": "Tu control remoto funciona. Empieza a escuchar por sí solo mientras mantienes presionado su botón de voz, así que mantén el botón presionado mientras hablas."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultado de la prueba del control remoto",
+        "description": "Tu control remoto funciona. Toca su botón de voz para empezar a hablar; deja de escuchar cuando dejas de hablar."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultado de la prueba del control remoto",
+        "description": "Tu control remoto funciona. Mantén presionado su botón de voz mientras hablas."
+      },
+      "test_result_plain_key": {
+        "title": "Resultado de la prueba del control remoto",
+        "description": "El control remoto envió pulsaciones de botones normales pero ninguna señal de voz, así que su botón de voz quizá no funcione por Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Resultado de la prueba del control remoto",
+        "description": "No se recibió nada del control remoto. Despiértalo con una tecla de flecha, comprueba que esté conectado a esta máquina con Home Assistant y vuelve a probar."
+      },
+      "report": {
+        "title": "Informe del control remoto",
+        "description": "Copia este texto en un issue de GitHub. No contiene ninguna dirección Bluetooth completa, nombres, direcciones web ni audio.",
+        "data": {
+          "report": "Informe del control remoto"
+        },
+        "data_description": {
+          "report": "Selecciona todo y copia."
+        }
+      },
+      "test_clips": {
+        "title": "Clips de prueba",
+        "description": "Cada pulsación del botón de voz se guardó como un clip, para que puedas escuchar lo que envió el control remoto:\n\n{clips}\n\nLos clips están en Multimedia → Mis medios → Bluetooth Remote Voice. Los enlaces funcionan durante 5 minutos."
+      },
+      "test_clips_none": {
+        "title": "No se guardó ningún clip",
+        "description": "El botón de voz funcionó, pero no se guardó ningún clip. Los clips se guardan en la carpeta multimedia de Home Assistant (Multimedia → Mis medios), así que verifica que este Home Assistant tenga una carpeta multimedia en la que pueda escribir y prueba de nuevo."
+      },
+      "test_hints": {
+        "title": "Lo que notó la prueba",
+        "description": "Señales de detención temprana: {early}. Huecos de audio perdidos: {gaps}.\n\nUna señal de detención temprana es una detención del control remoto justo después de empezar, mientras aún mantenías el botón. Si es mayor que 0 y tus solicitudes se cortan, activa Ignorar la detención temprana en Configuración de la integración.\n\nUn hueco de audio perdido es un tramo de audio que el Bluetooth descartó. Si es mayor que 0 y las solicitudes fallan con un error de hueco de audio, configura Rellenar huecos de audio cortos en Configuración de la integración."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "El bocina de respuesta guardado no está disponible ahora, por lo que las respuestas no se reproducirán hasta que vuelva. Consérvalo o elige otro."
     },
     "abort": {
-      "no_pipelines": "Crea primero un pipeline de Assist."
+      "no_pipelines": "Crea primero un pipeline de Assist.",
+      "test_running": "Ya hay una prueba de este control remoto en curso.",
+      "pause_failed": "No se pudo pausar el control remoto para la prueba. Inténtalo de nuevo en un momento."
+    },
+    "progress": {
+      "observing": "Mantén presionado ahora el botón de voz del control remoto, habla brevemente y suéltalo. Repite tantas veces como quieras: la prueba dura 20 segundos y graba cada pulsación para que puedas escucharla después. Si parece que no pasa nada, primero activa el control remoto con una tecla de flecha. Tu control remoto queda en pausa para el uso normal mientras esto se ejecuta: sus entidades no estarán disponibles durante aproximadamente un minuto y se cancelará cualquier solicitud en curso."
     }
   },
   "selector": {

@@ -120,7 +120,7 @@ async def test_options_speaker_is_optional_configurable_and_preserves_unknown_op
         "custom_components.bt_remote_voice.config_flow.pipelines",
         return_value={"stable-id": "Offline"},
     ):
-        result = await flow.async_step_init(
+        result = await flow.async_step_settings(
             {"pipeline_id": "stable-id", "mode": "commands", "speaker": "media_player.test_speaker"}
         )
     assert result["data"]["speaker"] == "media_player.test_speaker"
@@ -256,7 +256,7 @@ async def test_pipeline_field_is_a_dropdown_listing_the_real_pipelines(hass):
         "custom_components.bt_remote_voice.config_flow.pipelines",
         return_value={"p1": "Home Assistant", "p2": "Gemini Live"},
     ):
-        result = await flow.async_step_init()
+        result = await flow.async_step_settings()
     key, selector = _field(result, "pipeline_id")
     assert isinstance(selector, SelectSelector)
     assert [(o["value"], o["label"]) for o in selector.config["options"]] == [
@@ -275,12 +275,12 @@ async def test_missing_saved_pipeline_is_flagged_not_silently_replaced(hass):
         "custom_components.bt_remote_voice.config_flow.pipelines",
         return_value={"p1": "Home Assistant"},
     ):
-        result = await flow.async_step_init()
+        result = await flow.async_step_settings()
         key, _ = _field(result, "pipeline_id")
         assert result["errors"] == {"pipeline_id": "pipeline_missing"}
         assert key.default is vol.UNDEFINED  # nothing is pre-selected on the user's behalf
         # Saving without choosing one is refused, with the same message.
-        again = await flow.async_step_init({"pipeline_id": "gone", "mode": "transcription"})
+        again = await flow.async_step_settings({"pipeline_id": "gone", "mode": "transcription"})
     assert again["type"] == "form" and again["errors"]["base"] == "invalid_pipeline"
 
 
@@ -290,13 +290,13 @@ async def test_unavailable_saved_speaker_stays_selectable_and_other_settings_sti
         "custom_components.bt_remote_voice.config_flow.pipelines",
         return_value={"p1": "Home Assistant"},
     ):
-        result = await flow.async_step_init()
+        result = await flow.async_step_settings()
         key, selector = _field(result, "speaker")
         values = [o["value"] for o in selector.config["options"]]
         assert "media_player.office" in values  # the saved choice is not dropped
         assert key.default() == "media_player.office"
         assert result["errors"] == {"speaker": "speaker_missing"}
-        saved = await flow.async_step_init(
+        saved = await flow.async_step_settings(
             {
                 "pipeline_id": "p1",
                 "mode": "commands",
@@ -314,7 +314,7 @@ async def test_a_different_unknown_speaker_is_still_rejected(hass):
         "custom_components.bt_remote_voice.config_flow.pipelines",
         return_value={"p1": "Home Assistant"},
     ):
-        result = await flow.async_step_init(
+        result = await flow.async_step_settings(
             {"pipeline_id": "p1", "mode": "commands", "speaker": "media_player.typo"}
         )
     assert result["errors"]["base"] == "invalid_speaker"
@@ -327,8 +327,8 @@ async def test_options_accept_a_short_press_minimum_and_reject_one_out_of_range(
         "custom_components.bt_remote_voice.config_flow.pipelines",
         return_value={"p1": "Home Assistant"},
     ):
-        ok = await flow.async_step_init({**base, "min_press_seconds": 0.1})
-        bad = await flow.async_step_init({**base, "min_press_seconds": 0.55})
+        ok = await flow.async_step_settings({**base, "min_press_seconds": 0.1})
+        bad = await flow.async_step_settings({**base, "min_press_seconds": 0.55})
     assert ok["type"] == "create_entry" and ok["data"]["min_press_seconds"] == 0.1
     assert bad["type"] == "form" and bad["errors"]["base"] == "invalid_preferences"
 
@@ -357,10 +357,12 @@ async def test_saved_preferred_is_not_flagged_and_stays_selected(hass):
         "custom_components.bt_remote_voice.config_flow.pipelines",
         return_value={"p1": "Home Assistant"},
     ):
-        result = await flow.async_step_init()
+        result = await flow.async_step_settings()
         key, _ = _field(result, "pipeline_id")
         assert not result["errors"] and key.default() == "preferred"
-        saved = await flow.async_step_init({"pipeline_id": "preferred", "mode": "transcription"})
+        saved = await flow.async_step_settings(
+            {"pipeline_id": "preferred", "mode": "transcription"}
+        )
     assert saved["type"] == "create_entry" and saved["data"]["pipeline_id"] == "preferred"
 
 

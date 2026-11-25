@@ -35,7 +35,7 @@
           "pipeline_id": "Pipeline-i i Assist që përpunon të folurit nga kjo telekomandë.",
           "remote_type": "Lëreni në Automatik, përveç nëse telekomanda nuk njihet ose konfigurimi dështon.",
           "show_report": "Zgjidhni dhe dërgoni për të parë një raport që mund ta kopjoni në një çështje GitHub.",
-          "test_remote": "Zgjidhni dhe dërgoni, pastaj shtypni dhe mbani butonin zanor të telekomandës për të parë çfarë bën."
+          "test_remote": "Shënoni dhe dërgoni, pastaj shtypni dhe mbani të shtypur butonin e zërit të telekomandës ndërsa flisni. Çdo shtypje regjistrohet që ta dëgjoni më pas."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Rezultati i testit të telekomandës",
-        "description": "Kjo telekomandë e nis vetë zërin ndërsa butoni i saj mbahet i shtypur. Mbani atë buton për të folur. Dërgo për të vazhduar konfigurimin."
+        "description": "Telekomanda juaj funksionon. Ajo fillon të dëgjojë vetë për sa kohë mbani të shtypur butonin e zërit, ndaj mbajeni butonin të shtypur ndërsa flisni. Dërgojeni për të vazhduar konfigurimin."
       },
       "test_result_atvv_tap": {
         "title": "Rezultati i testit të telekomandës",
-        "description": "Kjo telekomandë e nis zërin kur preket butoni i saj dhe dëgjon derisa të ndaloni së foluri. Prekni atë buton për të folur. Dërgo për të vazhduar konfigurimin."
+        "description": "Telekomanda juaj funksionon. Prekni butonin e zërit për të filluar të flisni; ndalon së dëgjuari kur ndaloni së foluri. Dërgojeni për të vazhduar konfigurimin."
       },
       "test_result_fire_voice": {
         "title": "Rezultati i testit të telekomandës",
-        "description": "Ky është tasti zanor i një telekomande Fire TV. Mbajeni të shtypur ndërsa flisni. Dërgo për të vazhduar konfigurimin."
+        "description": "Telekomanda juaj funksionon. Mbani të shtypur butonin e zërit për sa kohë flisni. Dërgojeni për të vazhduar konfigurimin."
       },
       "test_result_plain_key": {
         "title": "Rezultati i testit të telekomandës",
-        "description": "Telekomanda dërgoi taste të zakonshme por jo sinjal zanor, kështu që butoni i saj zanor mund të mos e nisë zërin përmes Bluetooth. Dërgoni, pastaj zgjidhni Shfaq raportin e telekomandës për të ndarë çfarë u pa."
+        "description": "Telekomanda dërgoi shtypje të zakonshme butonash por jo sinjal zëri, ndaj butoni i saj i zërit mund të mos funksionojë përmes Bluetooth. Dërgojeni, pastaj shënoni Shfaq raportin e telekomandës për të ndarë çfarë u pa."
       },
       "test_result_nothing": {
         "title": "Rezultati i testit të telekomandës",
         "description": "Nuk u mor asgjë nga telekomanda. Zgjojeni me një tast shigjete, kontrolloni që është e lidhur me këtë makinë Home Assistant dhe testoni përsëri. Dërgo për të vazhduar."
+      },
+      "test_clips": {
+        "title": "Klipe prove",
+        "description": "Çdo shtypje e butonit të zërit u ruajt si klip, që të dëgjoni çfarë dërgoi telekomanda:\n\n{clips}\n\nKlipet ndodhen te Media → Media ime → Bluetooth Remote Voice. Lidhjet funksionojnë për 5 minuta."
+      },
+      "test_clips_none": {
+        "title": "Nuk u ruajt asnjë klip",
+        "description": "Butoni i zërit funksionoi, por nuk u ruajt asnjë klip. Klipet ruhen në dosjen e medias së Home Assistant (Media → Media ime), prandaj kontrolloni që ky Home Assistant ka një dosje media ku mund të shkruajë dhe provoni përsëri."
+      },
+      "test_hints": {
+        "title": "Çfarë vuri re prova",
+        "description": "Sinjale ndalimi të hershëm: {early}. Boshllëqe audio të humbura: {gaps}.\n\nNjë sinjal ndalimi i hershëm është një ndalim nga telekomanda menjëherë pas fillimit, ndërsa ju ende e mbanit butonin. Nëse është mbi 0 dhe kërkesat tuaja ndërpriten, aktivizoni Injoro ndalimin e hershëm te Cilësimet i integrimit.\n\nNjë boshllëk audio i humbur është një pjesë audioje që Bluetooth e hodhi. Nëse është mbi 0 dhe kërkesat dështojnë me një gabim boshllëku audio, vendosni Plotëso boshllëqet e shkurtra të audios te Cilësimet i integrimit."
       }
     },
     "progress": {
-      "observing": "Duke dëgjuar për 20 sekonda. Zgjojeni telekomandën me një tast shigjete, pastaj shtypni dhe mbani butonin e saj zanor, flisni shkurt dhe lëshojeni."
+      "observing": "Shtypni dhe mbani tani të shtypur butonin e zërit të telekomandës, flisni shkurt, pastaj lëshojeni. Përsëriteni sa herë të doni: prova zgjat 20 sekonda dhe regjistron çdo shtypje që ta dëgjoni më pas. Nëse duket se nuk ndodh asgjë, zgjojeni së pari telekomandën me një buton shigjete."
     },
     "error": {
       "bluetooth_unavailable": "Bluetooth-i lokal nuk është i disponueshëm. Kontrolloni që D-Bus i sistemit të jetë i aksesueshëm.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Kjo telekomandë është konfiguruar tashmë.",
-      "no_pipelines": "Krijoni një pipeline të Assist përpara se të shtoni telekomandën."
+      "no_pipelines": "Krijoni një pipeline të Assist përpara se të shtoni telekomandën.",
+      "test_running": "Një provë e kësaj telekomande po ekzekutohet tashmë.",
+      "pause_failed": "Telekomanda nuk mund të pezullohej për provën. Provoni përsëri pas pak."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opsionet e telekomandës",
+        "description": "Cilësimet ndryshojnë sjelljen e kësaj telekomande. Telekomanda dhe lloji i saj nuk mund të ndryshohen këtu: për të përdorur një telekomandë ose lloj tjetër, fshini këtë hyrje dhe shtoni përsëri telekomandën.",
+        "menu_options": {
+          "settings": "Cilësimet",
+          "test": "Testo telekomandën time",
+          "report": "Shfaq raportin e telekomandës"
+        }
+      },
+      "settings": {
         "title": "Cilësimet e zërit",
         "description": "Këto cilësime kontrollojnë si trajtohen shtypjet dhe si lexohen përgjigjet. Zëvendësimi i një kërkese nuk mund t'i zhbëjë veprimet që ajo ka kryer tashmë. Dupleksi i plotë i njëkohshëm nuk është i disponueshëm. Ndalimi pas transkriptimit nuk çaktivizon mjetet e integruara në një ofrues të të folurit live; përdorni një ofrues vetëm për transkriptim kur veprimet duhet të çaktivizohen.\n\n**Kushti i përgjigjes:** të gjitha kushtet e tij duhet të plotësohen që përgjigjja të lexohet. Kontrollohen një herë në fillim të çdo kërkese; lëreni bosh që të lexohet gjithmonë, dhe një kusht që nuk mund të vlerësohet konsiderohet i paplotësuar. Kushtet me shabllon mund të përdorin ndryshoret `speaker`, `remote` dhe `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Injoro shtypjet e shkurtra",
           "max_request_seconds": "Gjatësia maksimale e kërkesës",
           "max_conversation_seconds": "Gjatësia maksimale e bisedës",
-          "reply_condition": "Kushti i përgjigjes"
+          "reply_condition": "Kushti i përgjigjes",
+          "ignore_early_stop": "Injoro ndalimin e hershëm",
+          "gap_tolerance_ms": "Plotëso boshllëqet e shkurtra të audios"
         },
         "data_description": {
           "pipeline_id": "Pipeline-i i Assist që përpunon të folurit: të folurit në tekst, agjenti i bisedës dhe teksti në të folur. Një pipeline i hequr dështon me gabim në vend që të kalojë te një tjetër.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Injoron prekjet e butonit të zërit më të shkurtra se kjo vlerë, që një prekje e rreme të mos nisë kurrë një kërkesë; një mbajtje e vërtetë fillon kaq më vonë. 0 e çaktivizon. E dobishme për një telekomandë Fire TV që dështon me „Nuk u mor audio nga mikrofoni“ menjëherë pas zgjimit: ajo ridërgon tastin që e zgjoi si prekje të çastit. 0,1 s është pikë e mirë fillimi. Vetëm për telekomandat Fire TV.",
           "max_request_seconds": "Kohëzgjatja më e gjatë e një kërkese të vetme në çdo telekomandë: gjithë mbajtja në modalitetin e një kërkese dhe çdo radhë në bisedën me radhë. Kur arrihet, kërkesa mbaron me gabim të kufirit të regjistrimit. Ulni për të ndaluar regjistrimin e një butoni të bllokuar; rriteni për diktim të gjatë. Telekomandat pa të folur gjatë mbajtjes mbarojnë gjithashtu pas rreth 15 sekondash të folurit ose në heshtje, cilado vjen e para.",
           "max_conversation_seconds": "Kohëzgjatja më e gjatë e gjithë mbajtjes së butonit në modalitetin e bisedës me radhë. Injorohet në modalitetin e një kërkese dhe nuk duhet të jetë më e shkurtër se gjatësia maksimale e kërkesës.",
-          "reply_condition": "Kushtet që duhet të plotësohen të gjitha që përgjigjja të lexohet. Kontrollohen një herë në fillim të çdo kërkese (dhe çdo radhe në bisedën me radhë). Lëreni bosh që të lexohet gjithmonë. Një kusht me gabim konsiderohet i paplotësuar. Kushtet me shabllon mund të përdorin ndryshoret speaker, remote dhe held."
+          "reply_condition": "Kushtet që duhet të plotësohen të gjitha që përgjigjja të lexohet. Kontrollohen një herë në fillim të çdo kërkese (dhe çdo radhe në bisedën me radhë). Lëreni bosh që të lexohet gjithmonë. Një kusht me gabim konsiderohet i paplotësuar. Kushtet me shabllon mund të përdorin ndryshoret speaker, remote dhe held.",
+          "ignore_early_stop": "Aktivizojeni nëse kërkesat ndonjëherë përfundojnë pas një pjese të sekondës edhe pse e keni mbajtur butonin gjatë gjithë kohës. Disa telekomanda Android TV dërgojnë një sinjal ndalimi menjëherë pas fillimit dhe pastaj vazhdojnë të dërgojnë audio. Kur është aktiv, një ndalim në sekondën e parë injorohet derisa audio vazhdon të arrijë, dhe kërkesa përfundon kur audio heshtë ose arrin një ndalim i dytë. Përdoret vetëm kur Sjellja e butonit është vendosur në Një kërkesë për çdo mbajtje.",
+          "gap_tolerance_ms": "Bluetooth mund të humbasë një çast audio, gjë që zakonisht e bën kërkesën të dështojë me një gabim boshllëku audio. Vendosni këtu një gjatësi për të zëvendësuar me heshtje një pjesë të humbur deri në atë gjatësi, që kërkesa të vazhdojë. Boshllëqet më të gjata dështojnë prapë. Heshtja në mes të një fjale mund ta ulë saktësinë e njohjes, ndaj përdorni vlerën më të ulët që funksionon. 0 e çaktivizon. Vetëm për telekomanda Android TV."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Rezultati i testit të telekomandës",
+        "description": "Telekomanda juaj funksionon. Ajo fillon të dëgjojë vetë për sa kohë mbani të shtypur butonin e zërit, ndaj mbajeni butonin të shtypur ndërsa flisni."
+      },
+      "test_result_atvv_tap": {
+        "title": "Rezultati i testit të telekomandës",
+        "description": "Telekomanda juaj funksionon. Prekni butonin e zërit për të filluar të flisni; ndalon së dëgjuari kur ndaloni së foluri."
+      },
+      "test_result_fire_voice": {
+        "title": "Rezultati i testit të telekomandës",
+        "description": "Telekomanda juaj funksionon. Mbani të shtypur butonin e zërit për sa kohë flisni."
+      },
+      "test_result_plain_key": {
+        "title": "Rezultati i testit të telekomandës",
+        "description": "Telekomanda dërgoi shtypje të zakonshme butonash por jo sinjal zëri, ndaj butoni i saj i zërit mund të mos funksionojë përmes Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Rezultati i testit të telekomandës",
+        "description": "Nuk u mor asgjë nga telekomanda. Zgjojeni me një tast shigjete, kontrolloni që është e lidhur me këtë makinë Home Assistant dhe testoni përsëri."
+      },
+      "report": {
+        "title": "Raporti i telekomandës",
+        "description": "Kopjojeni këtë tekst në një çështje GitHub. Nuk përmban adresë të plotë Bluetooth, emra, adresa uebi ose audio.",
+        "data": {
+          "report": "Raporti i telekomandës"
+        },
+        "data_description": {
+          "report": "Zgjidhni të gjitha dhe kopjojeni."
+        }
+      },
+      "test_clips": {
+        "title": "Klipe prove",
+        "description": "Çdo shtypje e butonit të zërit u ruajt si klip, që të dëgjoni çfarë dërgoi telekomanda:\n\n{clips}\n\nKlipet ndodhen te Media → Media ime → Bluetooth Remote Voice. Lidhjet funksionojnë për 5 minuta."
+      },
+      "test_clips_none": {
+        "title": "Nuk u ruajt asnjë klip",
+        "description": "Butoni i zërit funksionoi, por nuk u ruajt asnjë klip. Klipet ruhen në dosjen e medias së Home Assistant (Media → Media ime), prandaj kontrolloni që ky Home Assistant ka një dosje media ku mund të shkruajë dhe provoni përsëri."
+      },
+      "test_hints": {
+        "title": "Çfarë vuri re prova",
+        "description": "Sinjale ndalimi të hershëm: {early}. Boshllëqe audio të humbura: {gaps}.\n\nNjë sinjal ndalimi i hershëm është një ndalim nga telekomanda menjëherë pas fillimit, ndërsa ju ende e mbanit butonin. Nëse është mbi 0 dhe kërkesat tuaja ndërpriten, aktivizoni Injoro ndalimin e hershëm te Cilësimet i integrimit.\n\nNjë boshllëk audio i humbur është një pjesë audioje që Bluetooth e hodhi. Nëse është mbi 0 dhe kërkesat dështojnë me një gabim boshllëku audio, vendosni Plotëso boshllëqet e shkurtra të audios te Cilësimet i integrimit."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Altoparlanti i ruajtur i përgjigjeve nuk është i disponueshëm tani, prandaj përgjigjet nuk do të luhen derisa të kthehet. Mbajeni ose zgjidhni një tjetër."
     },
     "abort": {
-      "no_pipelines": "Krijoni fillimisht një pipeline të Assist."
+      "no_pipelines": "Krijoni fillimisht një pipeline të Assist.",
+      "test_running": "Një provë e kësaj telekomande po ekzekutohet tashmë.",
+      "pause_failed": "Telekomanda nuk mund të pezullohej për provën. Provoni përsëri pas pak."
+    },
+    "progress": {
+      "observing": "Shtypni dhe mbani tani të shtypur butonin e zërit të telekomandës, flisni shkurt, pastaj lëshojeni. Përsëriteni sa herë të doni: prova zgjat 20 sekonda dhe regjistron çdo shtypje që ta dëgjoni më pas. Nëse duket se nuk ndodh asgjë, zgjojeni së pari telekomandën me një buton shigjete. Telekomanda juaj është e pezulluar për përdorim normal gjatë ekzekutimit të kësaj: entitetet e saj nuk janë të disponueshme për rreth një minutë dhe një kërkesë në vazhdim anulohet."
     }
   },
   "selector": {

@@ -35,7 +35,7 @@
           "pipeline_id": "El pipeline d’Assist que processa la veu d’aquest comandament.",
           "remote_type": "Deixeu-ho en Automàtic tret que no es reconegui el comandament o la configuració falli.",
           "show_report": "Marqueu-ho i envieu per veure un informe que podeu copiar en una incidència de GitHub.",
-          "test_remote": "Marqueu-ho i envieu, i després premeu i mantingueu premut el botó de veu del comandament per veure què fa."
+          "test_remote": "Marqueu-ho i envieu, després premeu i manteniu el botó de veu del comandament mentre parleu. Cada pulsació es grava perquè pugueu escoltar-la després."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Resultat de la prova del comandament",
-        "description": "Aquest comandament inicia la veu per si mateix mentre es manté premut el botó. Mantingueu premut aquest botó per parlar. Envia per continuar la configuració."
+        "description": "El comandament funciona. Comença a escoltar sol mentre en manteniu premut el botó de veu, així que manteniu el botó premut mentre parleu. Envieu per continuar la configuració."
       },
       "test_result_atvv_tap": {
         "title": "Resultat de la prova del comandament",
-        "description": "Aquest comandament inicia la veu quan es toca el botó i escolta fins que deixeu de parlar. Toqueu aquest botó per parlar. Envia per continuar la configuració."
+        "description": "El comandament funciona. Toqueu el seu botó de veu per començar a parlar; deixa d'escoltar quan deixeu de parlar. Envieu per continuar la configuració."
       },
       "test_result_fire_voice": {
         "title": "Resultat de la prova del comandament",
-        "description": "Aquesta és la tecla de veu d'un comandament Fire TV. Mantingueu-la premuda mentre parleu. Envia per continuar la configuració."
+        "description": "El comandament funciona. Manteniu premut el seu botó de veu mentre parleu. Envieu per continuar la configuració."
       },
       "test_result_plain_key": {
         "title": "Resultat de la prova del comandament",
-        "description": "El comandament ha enviat tecles normals però cap senyal de veu, de manera que el seu botó de veu potser no inicia la veu per Bluetooth. Envia i després marqueu Mostra l'informe del comandament per compartir el que s'ha vist."
+        "description": "El comandament ha enviat pulsacions de botons normals però cap senyal de veu, així que el seu botó de veu potser no funciona per Bluetooth. Envieu i marqueu Mostra l'informe del comandament per compartir el que s'ha vist."
       },
       "test_result_nothing": {
         "title": "Resultat de la prova del comandament",
         "description": "No s'ha rebut res del comandament. Desperteu-lo amb una tecla de fletxa, comproveu que estigui connectat a aquesta màquina amb Home Assistant i torneu a provar. Envia per continuar."
+      },
+      "test_clips": {
+        "title": "Clips de prova",
+        "description": "Cada pulsació del botó de veu s'ha desat com a clip, perquè pugueu sentir què ha enviat el comandament:\n\n{clips}\n\nEls clips són a Multimèdia → Els meus mitjans → Bluetooth Remote Voice. Els enllaços funcionen durant 5 minuts."
+      },
+      "test_clips_none": {
+        "title": "Cap clip desat",
+        "description": "El botó de veu ha funcionat, però no s'ha desat cap clip. Els clips es desen a la carpeta multimèdia de Home Assistant (Multimèdia → Els meus mitjans), així que comproveu que aquest Home Assistant tingui una carpeta multimèdia on pugui escriure i torneu a provar."
+      },
+      "test_hints": {
+        "title": "Què ha notat la prova",
+        "description": "Senyals d'aturada primerenca: {early}. Buits d'àudio perduts: {gaps}.\n\nUn senyal d'aturada primerenca és una aturada del comandament just després de començar, mentre encara teníeu el botó premut. Si és superior a 0 i les sol·licituds es tallen, activeu Ignora l'aturada primerenca a Configuració de la integració.\n\nUn buit d'àudio perdut és un tram d'àudio que el Bluetooth ha descartat. Si és superior a 0 i les sol·licituds fallen amb un error de buit d'àudio, establiu Omple buits d'àudio curts a Configuració de la integració."
       }
     },
     "progress": {
-      "observing": "S'està escoltant durant 20 segons. Desperteu el comandament amb una tecla de fletxa, després premeu i mantingueu premut el seu botó de veu, parleu breument i deixeu-lo anar."
+      "observing": "Premeu i manteniu ara el botó de veu del comandament, parleu breument i deixeu-lo anar. Repetiu-ho tantes vegades com vulgueu: la prova dura 20 segons i grava cada pulsació perquè pugueu escoltar-la després. Si sembla que no passa res, desperteu primer el comandament amb una tecla de fletxa."
     },
     "error": {
       "bluetooth_unavailable": "El Bluetooth local no està disponible. Comprova que es pot accedir al D-Bus del sistema.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Aquest comandament ja està configurat.",
-      "no_pipelines": "Crea un pipeline d’Assist abans d’afegir el comandament."
+      "no_pipelines": "Crea un pipeline d’Assist abans d’afegir el comandament.",
+      "test_running": "Ja s'està executant una prova d'aquest comandament.",
+      "pause_failed": "No s'ha pogut posar en pausa el comandament per a la prova. Torneu-ho a provar d'aquí a un moment."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opcions del comandament",
+        "description": "La configuració canvia el comportament d'aquest comandament. El comandament i el seu tipus no es poden canviar aquí: per utilitzar un comandament o un tipus diferent, elimineu aquesta entrada i torneu a afegir el comandament.",
+        "menu_options": {
+          "settings": "Configuració",
+          "test": "Prova el meu comandament",
+          "report": "Mostra l'informe del comandament"
+        }
+      },
+      "settings": {
         "title": "Configuració de veu",
         "description": "Aquesta configuració controla com es gestionen les pulsacions i com es diuen les respostes. Substituir una sol·licitud no pot desfer les accions que ja ha dut a terme. El dúplex complet simultani no està disponible. Aturar-se després de la transcripció no desactiva les eines integrades en un proveïdor de veu en directe; utilitza un proveïdor de només transcripció quan calgui desactivar les accions.\n\n**Condició de resposta:** s’han de complir totes les seves condicions perquè es digui una resposta. Es comproven una vegada a l’inici de cada sol·licitud; deixa-ho buit per respondre sempre en veu alta, i una condició que no es pot avaluar compta com a no complerta. Les condicions de plantilla poden utilitzar les variables `speaker`, `remote` i `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignora les pulsacions curtes",
           "max_request_seconds": "Durada màxima de la sol·licitud",
           "max_conversation_seconds": "Durada màxima de la conversa",
-          "reply_condition": "Condició de resposta"
+          "reply_condition": "Condició de resposta",
+          "ignore_early_stop": "Ignora l'aturada primerenca",
+          "gap_tolerance_ms": "Omple buits d'àudio curts"
         },
         "data_description": {
           "pipeline_id": "El pipeline d’Assist que processa la veu: veu a text, agent de conversa i text a veu. Un pipeline eliminat falla amb un error en lloc de recórrer-ne un altre.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignora les pulsacions del botó de veu més curtes que aquest valor, de manera que una pulsació espúria mai iniciï una sol·licitud; una pulsació mantinguda real comença aquest temps més tard. 0 ho desactiva. Útil per a un comandament Fire TV que falla amb «No s’ha rebut àudio del micròfon.» just després de despertar-se: reenvia la tecla que l’ha despertat com una pulsació instantània. 0,1 s és un bon punt de partida. Només per a comandaments Fire TV.",
           "max_request_seconds": "La durada màxima d’una sola sol·licitud en qualsevol comandament: tota la pulsació mantinguda en el mode Una sol·licitud, i cada torn en Conversa alternada. En arribar-hi, la sol·licitud acaba amb un error de límit de captura. Redueix-ho per aturar la gravació d’un botó encallat; augmenta-ho per a dictats llargs. Els comandaments que no són de prémer per parlar també acaben al cap d’uns 15 segons de veu o en el silenci, el que passi primer.",
           "max_conversation_seconds": "La durada màxima de tota una pulsació mantinguda en el mode Conversa alternada. S’ignora en el mode Una sol·licitud i no pot ser inferior a la durada màxima de la sol·licitud.",
-          "reply_condition": "Condicions que s’han de complir totes perquè es digui una resposta. Es comproven una vegada a l’inici de cada sol·licitud (i de cada torn en Conversa alternada). Deixa-ho buit per respondre sempre en veu alta. Una condició que dona error compta com a no complerta. Les condicions de plantilla poden utilitzar les variables speaker, remote i held."
+          "reply_condition": "Condicions que s’han de complir totes perquè es digui una resposta. Es comproven una vegada a l’inici de cada sol·licitud (i de cada torn en Conversa alternada). Deixa-ho buit per respondre sempre en veu alta. Una condició que dona error compta com a no complerta. Les condicions de plantilla poden utilitzar les variables speaker, remote i held.",
+          "ignore_early_stop": "Activeu-ho si de vegades les sol·licituds acaben al cap d'una fracció de segon tot i que heu mantingut el botó premut tot el temps. Alguns comandaments d'Android TV envien un senyal d'aturada just després de començar i després continuen enviant àudio. Si està activat, s'ignora una aturada durant el primer segon mentre encara arriba àudio, i la sol·licitud acaba quan l'àudio es queda en silenci o arriba una segona aturada. Només s'utilitza quan Comportament del botó està establert a Una sol·licitud per pulsació mantinguda.",
+          "gap_tolerance_ms": "El Bluetooth pot perdre un moment d'àudio, cosa que normalment fa que la sol·licitud falli amb un error de buit d'àudio. Establiu aquí una durada per substituir per silenci un tram perdut de fins a aquesta durada i que la sol·licitud continuï. Els buits més llargs continuen fallant. El silenci enmig d'una paraula pot reduir la precisió del reconeixement, així que feu servir el valor més baix que funcioni. 0 ho desactiva. Només per a comandaments d'Android TV."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultat de la prova del comandament",
+        "description": "El comandament funciona. Comença a escoltar sol mentre en manteniu premut el botó de veu, així que manteniu el botó premut mentre parleu."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultat de la prova del comandament",
+        "description": "El comandament funciona. Toqueu el seu botó de veu per començar a parlar; deixa d'escoltar quan deixeu de parlar."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultat de la prova del comandament",
+        "description": "El comandament funciona. Manteniu premut el seu botó de veu mentre parleu."
+      },
+      "test_result_plain_key": {
+        "title": "Resultat de la prova del comandament",
+        "description": "El comandament ha enviat pulsacions de botons normals però cap senyal de veu, així que el seu botó de veu potser no funciona per Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Resultat de la prova del comandament",
+        "description": "No s'ha rebut res del comandament. Desperteu-lo amb una tecla de fletxa, comproveu que estigui connectat a aquesta màquina amb Home Assistant i torneu a provar."
+      },
+      "report": {
+        "title": "Informe del comandament",
+        "description": "Copieu aquest text en una incidència de GitHub. No conté cap adreça Bluetooth completa, noms, adreces web ni àudio.",
+        "data": {
+          "report": "Informe del comandament"
+        },
+        "data_description": {
+          "report": "Seleccioneu-ho tot i copieu."
+        }
+      },
+      "test_clips": {
+        "title": "Clips de prova",
+        "description": "Cada pulsació del botó de veu s'ha desat com a clip, perquè pugueu sentir què ha enviat el comandament:\n\n{clips}\n\nEls clips són a Multimèdia → Els meus mitjans → Bluetooth Remote Voice. Els enllaços funcionen durant 5 minuts."
+      },
+      "test_clips_none": {
+        "title": "Cap clip desat",
+        "description": "El botó de veu ha funcionat, però no s'ha desat cap clip. Els clips es desen a la carpeta multimèdia de Home Assistant (Multimèdia → Els meus mitjans), així que comproveu que aquest Home Assistant tingui una carpeta multimèdia on pugui escriure i torneu a provar."
+      },
+      "test_hints": {
+        "title": "Què ha notat la prova",
+        "description": "Senyals d'aturada primerenca: {early}. Buits d'àudio perduts: {gaps}.\n\nUn senyal d'aturada primerenca és una aturada del comandament just després de començar, mentre encara teníeu el botó premut. Si és superior a 0 i les sol·licituds es tallen, activeu Ignora l'aturada primerenca a Configuració de la integració.\n\nUn buit d'àudio perdut és un tram d'àudio que el Bluetooth ha descartat. Si és superior a 0 i les sol·licituds fallen amb un error de buit d'àudio, establiu Omple buits d'àudio curts a Configuració de la integració."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "L’altaveu de resposta desat no està disponible ara mateix, de manera que les respostes no es reproduiran fins que torni. Conserva’l o tria’n un altre."
     },
     "abort": {
-      "no_pipelines": "Crea primer un pipeline d’Assist."
+      "no_pipelines": "Crea primer un pipeline d’Assist.",
+      "test_running": "Ja s'està executant una prova d'aquest comandament.",
+      "pause_failed": "No s'ha pogut posar en pausa el comandament per a la prova. Torneu-ho a provar d'aquí a un moment."
+    },
+    "progress": {
+      "observing": "Premeu i manteniu ara el botó de veu del comandament, parleu breument i deixeu-lo anar. Repetiu-ho tantes vegades com vulgueu: la prova dura 20 segons i grava cada pulsació perquè pugueu escoltar-la després. Si sembla que no passa res, desperteu primer el comandament amb una tecla de fletxa. El comandament queda en pausa per a l'ús normal mentre això s'executa: les seves entitats no estaran disponibles durant aproximadament un minut i es cancel·la qualsevol sol·licitud en curs."
     }
   },
   "selector": {

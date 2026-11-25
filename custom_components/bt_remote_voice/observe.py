@@ -54,6 +54,15 @@ class Observation:
     errors: list = field(default_factory=list)  # stable codes only
     started: float = 0.0  # monotonic start, for the timeline
     timeline: list = field(default_factory=list)  # [{"t": seconds, "event": ..., "detail": ...}]
+    clip_saved: bool = False  # a test clip of this test was saved (never the path or a link)
+    clips: list = field(default_factory=list)  # per recorded press: seconds, frames, how it ended
+    # What the remote did. The two counts below are the problems still unhandled (what the user
+    # should act on); the *_handled ones were dealt with by the saved settings.
+    early_stops: int = 0  # STOP soon after START, audio kept coming, and the setting is off
+    audio_gaps: int = 0  # stretches of lost audio that ended a clip (not filled with silence)
+    early_stops_handled: int = 0
+    gaps_handled: int = 0
+    lost_frames: int = 0
 
     @property
     def result(self):
@@ -84,13 +93,20 @@ class Observation:
             "hidraw_nodes": self.nodes,
             "errors": list(self.errors),
             "timeline": list(self.timeline),
+            "clip_saved": self.clip_saved,
+            "clips": list(self.clips),
+            "early_stops": self.early_stops,
+            "audio_gaps": self.audio_gaps,
+            "early_stops_handled": self.early_stops_handled,
+            "gaps_handled": self.gaps_handled,
+            "lost_frames": self.lost_frames,
         }
 
 
-def _mark(obs, event, detail=None):
+def _mark(obs, event, detail=None, at=None):
     """Append a timestamped event (seconds since the test began), bounded."""
     if len(obs.timeline) < MAX_TIMELINE or event == "disconnected":  # the ending is always kept
-        entry = {"t": round(time.monotonic() - obs.started, 1), "event": event}
+        entry = {"t": round((at or time.monotonic()) - obs.started, 1), "event": event}
         if detail:
             entry["detail"] = detail
         obs.timeline.append(entry)
@@ -208,11 +224,41 @@ async def _watch_atvv(address, deadline, obs, factory):
             pass
 
 
+def merge_recording(obs, events, errors, clips, summary=None):
+    """Fold what the clip recorder saw into the observation (counts and codes only)."""
+    for at, kind, reason, codec in events:
+        if len(obs.atvv_events) < MAX_EVENTS:
+            obs.atvv_events.append((kind, reason, codec))
+        _mark(obs, f"atvv_{kind}", f"reason {reason}" if kind == "start" else None, at=at)
+    obs.timeline.sort(key=lambda entry: entry["t"])
+    for code in errors:
+        _error(obs, code)
+    obs.audio_frames += sum(clip.frames for clip in clips)
+    summary = summary or {}
+    ignored = summary.get("early_stops_ignored", 0)
+    covered = summary.get("gaps_covered", 0)
+    obs.early_stops = summary.get("early_stops", 0) - ignored
+    obs.early_stops_handled = ignored
+    obs.audio_gaps = summary.get("gaps", 0) - covered
+    obs.gaps_handled = covered
+    obs.lost_frames = summary.get("lost_frames", 0)
+    obs.clips = [
+        {
+            "seconds": round(len(clip.pcm) / 32000, 1),
+            "frames": clip.frames,
+            "ended": clip.ended,
+            "reason": clip.reason,
+        }
+        for clip in clips[:MAX_EVENTS]
+    ]
+
+
 async def observe(
     address,
     family,
     seconds=OBSERVE_SECONDS,
     *,
+    atvv=True,
     factory=BlueZTransport,
     opener=lambda path: HidrawDevice(path, readonly=True),
     find_all=find_all_hidraw,
@@ -222,7 +268,7 @@ async def observe(
     obs = Observation(seconds=seconds, family=family, started=time.monotonic())
     deadline = obs.started + seconds
     watchers = [_watch_hid(address, deadline, obs, opener, find_all, read)]
-    if family != "fire":
+    if family != "fire" and atvv:  # the clip recorder is the only ATVV connection in a test
         watchers.append(
             asyncio.wait_for(
                 _watch_atvv(address, deadline, obs, factory),

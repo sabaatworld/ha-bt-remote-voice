@@ -35,7 +35,7 @@
           "pipeline_id": "D Assist-Pipeline, wo d Sprach vo dere Fernbedienig verarbeitet.",
           "remote_type": "Uf Automatisch la, usser d Fernbedienig wird nöd erkannt oder d Iirichtig schlaht fähl.",
           "show_report": "Aktivier und schick ab, zum en Bricht aazeige, wo du i es GitHub-Issue chasch kopiere.",
-          "test_remote": "Aktivier und schick ab, halt denn d Sprachtaschte vo de Fernbedienig gedrückt, zum gseh, was sie macht."
+          "test_remote": "Aktivierä und abschicke, dänn d Sprochtaschte vo dr Fernbedienig drückt haltä, während Si redet. Jede Druck wird ufgnoo, dass Si en nachhär aalose chönd."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Ergäbnis vom Fernbedienigstescht",
-        "description": "Die Fernbedienig startet d Sprach sälber, solang ihri Taschte gha wird. Halt die Taschte zum Rede. Abschicke, zum d Iirichtig wiiterfüehre."
+        "description": "Ihri Fernbedienig funktioniert. Si fangt vo sälber aa zuelose, solang Si d Sprochtaschte drückt haltät, drum haltät Si d Taschte drückt, während Si redät. Abschicke, zum d Iirichtig fortsetze."
       },
       "test_result_atvv_tap": {
         "title": "Ergäbnis vom Fernbedienigstescht",
-        "description": "Die Fernbedienig startet d Sprach, wenn ihri Taschte tippt wird, und lost zue, bis du ufhörsch rede. Tipp zum Rede uf die Taschte. Abschicke, zum d Iirichtig wiiterfüehre."
+        "description": "Ihri Fernbedienig funktioniert. Tippet Si uf d Sprochtaschte, zum afo rede; si hört uf zuelose, wenn Si ufhööret rede. Abschicke, zum d Iirichtig fortsetze."
       },
       "test_result_fire_voice": {
         "title": "Ergäbnis vom Fernbedienigstescht",
-        "description": "Das isch d Sprachtaschte vo ere Fire-TV-Fernbedienig. Halt sie gedrückt, während du redsch. Abschicke, zum d Iirichtig wiiterfüehre."
+        "description": "Ihri Fernbedienig funktioniert. Haltät Si d Sprochtaschte drückt, solang Si redät. Abschicke, zum d Iirichtig fortsetze."
       },
       "test_result_plain_key": {
         "title": "Ergäbnis vom Fernbedienigstescht",
-        "description": "D Fernbedienig het gwöhnlichi Taschte gschickt, aber kes Sprachsignal, drum startet ihri Sprachtaschte d Sprach villicht nöd über Bluetooth. Abschicke und denn Fernbedienigsbricht aazeige aktivier, zum teile, was gseh worde isch."
+        "description": "D Fernbedienig het gwöhnlichi Tastedrück gschickt, aber kes Sprochsignal, drum funktioniert ihri Sprochtaschte vilicht nöd über Bluetooth. Abschicke und dänn Fernbedienigsbricht aazeige aktivierä, zum teile, was gseh worde isch."
       },
       "test_result_nothing": {
         "title": "Ergäbnis vom Fernbedienigstescht",
         "description": "Vo de Fernbedienig isch nüt acho. Weck sie mit ere Pfiiltaschte uf, prüef, öb sie mit dem Home-Assistant-Rechner verbunde isch, und teschte nomal. Abschicke, zum wiiterfahre."
+      },
+      "test_clips": {
+        "title": "Testclips",
+        "description": "Jede Druck uf d Sprochtaschte isch als Clip gspeicheret worde, dass Si ghöred, was d Fernbedienig gschickt het:\n\n{clips}\n\nDie Clips sind under Medie → Mini Medie → Bluetooth Remote Voice. D Links funktioniered 5 Minute lang."
+      },
+      "test_clips_none": {
+        "title": "Kei Clip gspeicheret",
+        "description": "D Sprochtaschte het funktioniert, aber es isch kei Clip gspeicheret worde. Clips wärded im Medieordner vo Home Assistant gspeicheret (Medie → Mini Medie). Prüefed Si drum, öb dä Home Assistant en Medieordner het, i wo er schrybe cha, und teschtet Si nomal."
+      },
+      "test_hints": {
+        "title": "Was dr Test bemerkt het",
+        "description": "Früehi Stoppsignal: {early}. Verlorni Audiolücke: {gaps}.\n\nEs früehs Stoppsignal isch en Stopp vo dr Fernbedienig grad nach em Start, während Si d Taschte no gha händ. Wenn s über 0 isch und Ihri Aafrage z früeh abbräche, schaltät Si Früeh Stoppsignal ignoriere i de Iistellige vo dr Integration ii.\n\nEi verlorni Audiolücke isch es Stück Audio, wo Bluetooth verworfe het. Wenn s über 0 isch und Aafrage mit emene Audiolücke-Fehler fehlschlönd, stellät Si Churzi Audiolücke fülle i de Iistellige vo dr Integration ii."
       }
     },
     "progress": {
-      "observing": "20 Sekunde lang zuelose. Weck d Fernbedienig mit ere Pfiiltaschte uf, halt denn ihri Sprachtaschte gedrückt, red churz und lah los."
+      "observing": "Haltät Si jetzt d Sprochtaschte vo dr Fernbedienig drückt, redät Si churz und lönd Si los. Wiederholät Si s so oft Si wänd: Dr Test laufft 20 Sekunde und zeichnet jede Druck uf, dass Si en nachhär aalose chönd. Wenn s schiint, als würd nüt passiere, wecket Si d Fernbedienig zersch mit ere Pfiltaschte."
     },
     "error": {
       "bluetooth_unavailable": "Lokals Bluetooth isch nöd verfüegbar. Prüefed Sie, öb de System-D-Bus erreichbar isch.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Die Fernbedienig isch scho konfiguriert.",
-      "no_pipelines": "Erstellled Sie e Assist-Pipeline, bevor Sie d Fernbedienig hinzuefüeged."
+      "no_pipelines": "Erstellled Sie e Assist-Pipeline, bevor Sie d Fernbedienig hinzuefüeged.",
+      "test_running": "E Test vo dere Fernbedienig laufft scho.",
+      "pause_failed": "D Fernbedienig het fürs Teschte nöd chöne pausiert wärde. Probieret Si s grad nomal."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Optione vo dr Fernbedienig",
+        "description": "Iistellige ändered, wie sich die Fernbedienig verhaltet. D Fernbedienig und ihre Typ chönd da nöd gänderet wärde: Für e anderi Fernbedienig oder en andere Typ lösched Si dä Iitrag und fügäd d Fernbedienig nomal zue.",
+        "menu_options": {
+          "settings": "Iistellige",
+          "test": "Mini Fernbedienig teste",
+          "report": "Fernbedienigsbricht aazeige"
+        }
+      },
+      "settings": {
         "title": "Spracheistellige",
         "description": "Die Istellige legged fescht, wie Tastedrück behandlet und wie Antworte gsproche wärded. S Ersetze vore Aafrag cha scho usgfüehrti Aktione nöd rückgängig mache. Gliichziitige Vollduplex-Betrieb isch nöd verfüegbar. S Stoppe nach de Transkription deaktiviert kei Wärkzüüg, wo i en Live-Sprachaabieter iibaut sind; verwänded Sie en Aabieter nume für d Transkription, wenn Aktione müend deaktiviert sii.\n\n**Antwortbedingig:** Alli Bedingige müend erfüllt sii, damit e Antwort gsproche wird. Si wärded eimal am Afang vo jeder Aafrag prüeft; lönd Sie s Fäld läär, damit immer gsproche wird. E Bedingig, wo nöd cha uusgwärtet wärde, gilt als nöd erfüllt. Template-Bedingige chönd d Variable `speaker`, `remote` und `held` bruuche.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Churzi Tastedrück ignoriere",
           "max_request_seconds": "Maximali Aafraglängi",
           "max_conversation_seconds": "Maximali Konversationslängi",
-          "reply_condition": "Antwortbedingig"
+          "reply_condition": "Antwortbedingig",
+          "ignore_early_stop": "Früeh Stoppsignal ignoriere",
+          "gap_tolerance_ms": "Churzi Audiolücke fülle"
         },
         "data_description": {
           "pipeline_id": "D Assist-Pipeline, wo Sprach verarbeitet: Spracherkennig, Konversationsagent und Sprachuusgab. E entfernti Pipeline füehrt zunere Fehlermäldig statt zunere Uswichlösig.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignoriert churzi Aatippe vo de Sprachtaschte, wo churzer sind als dä Wert, damit es versehentlichs Aatippe kei Aafrag startet; es würklichs Halte fangt entsprächend spöter aa. 0 schaltet d Funktion uus. Nützlich für e Fire TV-Fernbedienig, wo grad nach em Ufwecke mit «No microphone audio» fehlschlaat: Si schickt d Taschte, wo si gweckt hät, nomal als churzes Aatippe. 0,1 s isch en gute Startwert. Nume für Fire TV-Fernbedienige.",
           "max_request_seconds": "Di längsti Duur vo ere einzelne Aafrag bi jeder Fernbedienig: es ganzes Halte im Modus «Ei Aafrag» und jede Durchgang bi «Wächslendi Konversation». Wenn si erreicht wird, ändet d Aafrag mit emene Ufnahmegränze-Fehler. Verchlinered Sie si, um e hängendi Taschte am Ufnäh z hindere; erhöched Sie si für lang Diktat. Fernbedienige ohni Push-to-Talk ändet zudem nach öppe 15 Sekunde Sprach oder bi Stilli, je nachdem, was zersch iitrifft.",
           "max_conversation_seconds": "Di längsti Duur vom ganze Tastehalte im Modus «Wächslendi Konversation». Im Modus «Ei Aafrag» wird si ignoriert und darf nöd churzer sii als d maximali Aafraglängi.",
-          "reply_condition": "Bedingige, wo alli müend erfüllt sii, damit e Antwort gsproche wird. Si wärded eimal am Afang vo jeder Aafrag prüeft (und bi jedem Durchgang i «Wächslendi Konversation»). Läär lah, damit immer gsproche wird. E Bedingig, wo en Fehler verursacht, gilt als nöd erfüllt. Template-Bedingige chönd d Variable speaker, remote und held bruuche."
+          "reply_condition": "Bedingige, wo alli müend erfüllt sii, damit e Antwort gsproche wird. Si wärded eimal am Afang vo jeder Aafrag prüeft (und bi jedem Durchgang i «Wächslendi Konversation»). Läär lah, damit immer gsproche wird. E Bedingig, wo en Fehler verursacht, gilt als nöd erfüllt. Template-Bedingige chönd d Variable speaker, remote und held bruuche.",
+          "ignore_early_stop": "Schaltät Si das ii, wenn Aafrage mängmal nach emene Sekundebruchteil ändet, obwohl Si d Taschte die ganzi Ziit gha händ. Es paar Android-TV-Fernbedienige schicked grad nach em Start es Stoppsignal und schicked denn wiiter Audio. Wenn iigschaltet, wird en Stopp i dr erschte Sekunde ignoriert, solang no Audio ykunnt, und d Aafrag ändet, wenn s Audio verstummt oder es zweits Stoppsignal chunnt. Wird nur bruucht, wenn Tastiverhalte uf Ei Aafrag pro Halte staht.",
+          "gap_tolerance_ms": "Bluetooth cha en Momänt Audio verlüüre, wodurch d Aafrag normalerwiis mit emene Audiolücke-Fehler fehlschlaat. Leged Si do e Längi fescht, bis zu dere es verlorns Stück dur Stilli ersetzt wird, dass d Aafrag wiiterlaufft. Längeri Lücke schlönd wiiter fehl. Stilli mitts im Wort cha d Erkennigsgnauigkeit verringere, drum bruuched Si dr tüüfscht Wärt, wo funktioniert. 0 schaltet s us. Nur für Android-TV-Fernbedienige."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Ergäbnis vom Fernbedienigstescht",
+        "description": "Ihri Fernbedienig funktioniert. Si fangt vo sälber aa zuelose, solang Si d Sprochtaschte drückt haltät, drum haltät Si d Taschte drückt, während Si redät."
+      },
+      "test_result_atvv_tap": {
+        "title": "Ergäbnis vom Fernbedienigstescht",
+        "description": "Ihri Fernbedienig funktioniert. Tippet Si uf d Sprochtaschte, zum afo rede; si hört uf zuelose, wenn Si ufhööret rede."
+      },
+      "test_result_fire_voice": {
+        "title": "Ergäbnis vom Fernbedienigstescht",
+        "description": "Ihri Fernbedienig funktioniert. Haltät Si d Sprochtaschte drückt, solang Si redät."
+      },
+      "test_result_plain_key": {
+        "title": "Ergäbnis vom Fernbedienigstescht",
+        "description": "D Fernbedienig het gwöhnlichi Tastedrück gschickt, aber kes Sprochsignal, drum funktioniert ihri Sprochtaschte vilicht nöd über Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Ergäbnis vom Fernbedienigstescht",
+        "description": "Vo de Fernbedienig isch nüt acho. Weck sie mit ere Pfiiltaschte uf, prüef, öb sie mit dem Home-Assistant-Rechner verbunde isch, und teschte nomal."
+      },
+      "report": {
+        "title": "Fernbedienigsbricht",
+        "description": "Kopier dä Text i es GitHub-Issue. Er enthaltet kei vollständigi Bluetooth-Adrässe, kei Name, Webadrässe oder Audio.",
+        "data": {
+          "report": "Fernbedienigsbricht"
+        },
+        "data_description": {
+          "report": "Alles uswähle und kopiere."
+        }
+      },
+      "test_clips": {
+        "title": "Testclips",
+        "description": "Jede Druck uf d Sprochtaschte isch als Clip gspeicheret worde, dass Si ghöred, was d Fernbedienig gschickt het:\n\n{clips}\n\nDie Clips sind under Medie → Mini Medie → Bluetooth Remote Voice. D Links funktioniered 5 Minute lang."
+      },
+      "test_clips_none": {
+        "title": "Kei Clip gspeicheret",
+        "description": "D Sprochtaschte het funktioniert, aber es isch kei Clip gspeicheret worde. Clips wärded im Medieordner vo Home Assistant gspeicheret (Medie → Mini Medie). Prüefed Si drum, öb dä Home Assistant en Medieordner het, i wo er schrybe cha, und teschtet Si nomal."
+      },
+      "test_hints": {
+        "title": "Was dr Test bemerkt het",
+        "description": "Früehi Stoppsignal: {early}. Verlorni Audiolücke: {gaps}.\n\nEs früehs Stoppsignal isch en Stopp vo dr Fernbedienig grad nach em Start, während Si d Taschte no gha händ. Wenn s über 0 isch und Ihri Aafrage z früeh abbräche, schaltät Si Früeh Stoppsignal ignoriere i de Iistellige vo dr Integration ii.\n\nEi verlorni Audiolücke isch es Stück Audio, wo Bluetooth verworfe het. Wenn s über 0 isch und Aafrage mit emene Audiolücke-Fehler fehlschlönd, stellät Si Churzi Audiolücke fülle i de Iistellige vo dr Integration ii."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "De gspeicheret Antwort-Lautsprächer isch im Momänt nöd verfüegbar, drum wärded Antworte erscht wider abgspielt, wenn är zrugg isch. Bhaltet Sie ihn oder wähled Sie en andere."
     },
     "abort": {
-      "no_pipelines": "Erstellled Sie zersch e Assist-Pipeline."
+      "no_pipelines": "Erstellled Sie zersch e Assist-Pipeline.",
+      "test_running": "E Test vo dere Fernbedienig laufft scho.",
+      "pause_failed": "D Fernbedienig het fürs Teschte nöd chöne pausiert wärde. Probieret Si s grad nomal."
+    },
+    "progress": {
+      "observing": "Haltät Si jetzt d Sprochtaschte vo dr Fernbedienig drückt, redät Si churz und lönd Si los. Wiederholät Si s so oft Si wänd: Dr Test laufft 20 Sekunde und zeichnet jede Druck uf, dass Si en nachhär aalose chönd. Wenn s schiint, als würd nüt passiere, wecket Si d Fernbedienig zersch mit ere Pfiltaschte. Ihri Fernbedienig isch fürs normale Bruuche pausiert, solang dä Test laufft: Ihri Entitäte sind öppe e Minute nöd verfüegbar, und e laufendi Aafrag wird abbroche."
     }
   },
   "selector": {

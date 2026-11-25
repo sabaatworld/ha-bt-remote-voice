@@ -35,7 +35,7 @@
           "pipeline_id": "Urrutiko aginte honen hizketa prozesatzen duen Assist kanalizazioa.",
           "remote_type": "Utzi Automatikoa, urruneko agintea ezagutzen ez bada edo konfigurazioak huts egiten badu izan ezik.",
           "show_report": "Markatu eta bidali GitHub-eko arazo batean kopia dezakezun txosten bat ikusteko.",
-          "test_remote": "Markatu eta bidali, gero sakatu eta eutsi urruneko agintearen ahots-botoiari zer egiten duen ikusteko."
+          "test_remote": "Markatu eta bidali, gero sakatu eta eduki sakatuta urrutiko aginte-botoia hitz egiten duzun bitartean. Sakatze bakoitza grabatzen da, geroago entzun ahal izateko."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Urruneko agintearen probaren emaitza",
-        "description": "Urruneko aginte honek berak abiarazten du ahotsa botoiari eusten zaion bitartean. Eutsi botoi horri hitz egiteko. Bidali konfigurazioarekin jarraitzeko."
+        "description": "Zure urrutiko agintea funtzionatzen ari da. Berez hasten da entzuten ahots-botoia sakatuta duzun bitartean, beraz, eduki botoia sakatuta hitz egiten duzun bitartean. Bidali konfigurazioarekin jarraitzeko."
       },
       "test_result_atvv_tap": {
         "title": "Urruneko agintearen probaren emaitza",
-        "description": "Urruneko aginte honek ahotsa abiarazten du botoia ukitzean eta hitz egiteari uzten diozun arte entzuten du. Ukitu botoi hori hitz egiteko. Bidali konfigurazioarekin jarraitzeko."
+        "description": "Zure urrutiko agintea funtzionatzen ari da. Ukitu ahots-botoia hitz egiten hasteko; hitz egiteari uzten diozunean entzuteari uzten dio. Bidali konfigurazioarekin jarraitzeko."
       },
       "test_result_fire_voice": {
         "title": "Urruneko agintearen probaren emaitza",
-        "description": "Hau Fire TV urruneko aginte baten ahots-tekla da. Eutsi hitz egiten duzun bitartean. Bidali konfigurazioarekin jarraitzeko."
+        "description": "Zure urrutiko agintea funtzionatzen ari da. Eduki ahots-botoia sakatuta hitz egiten duzun bitartean. Bidali konfigurazioarekin jarraitzeko."
       },
       "test_result_plain_key": {
         "title": "Urruneko agintearen probaren emaitza",
-        "description": "Urruneko aginteak tekla arruntak bidali ditu baina ez ahots-seinalerik, beraz bere ahots-botoiak agian ez du ahotsa abiarazten Bluetooth bidez. Bidali, gero markatu Erakutsi urruneko aginteko txostena ikusitakoa partekatzeko."
+        "description": "Urrutiko aginteak botoi-sakatze arruntak bidali ditu, baina ez ahots-seinalerik, beraz, agian bere ahots-botoiak ez du Bluetooth bidez funtzionatzen. Bidali eta gero markatu Erakutsi urrutiko agintearen txostena ikusitakoa partekatzeko."
       },
       "test_result_nothing": {
         "title": "Urruneko agintearen probaren emaitza",
         "description": "Ez da ezer jaso urruneko agintetik. Esnatu gezi-tekla batekin, egiaztatu Home Assistant makina honetara konektatuta dagoela eta probatu berriro. Bidali jarraitzeko."
+      },
+      "test_clips": {
+        "title": "Proba-klipak",
+        "description": "Ahots-botoiaren sakatze bakoitza klip gisa gorde da, urrutiko aginteak zer bidali duen entzun ahal izateko:\n\n{clips}\n\nKlipak Multimedia → Nire multimedia → Bluetooth Remote Voice atalean daude. Estekek 5 minutuz funtzionatzen dute."
+      },
+      "test_clips_none": {
+        "title": "Ez da klipik gorde",
+        "description": "Ahots-botoiak funtzionatu zuen, baina ez da klipik gorde. Klipak Home Assistant-en multimedia-karpetan gordetzen dira (Multimedia → Nire multimedia), beraz, egiaztatu Home Assistant honek idatz dezakeen multimedia-karpeta bat duela, eta probatu berriro."
+      },
+      "test_hints": {
+        "title": "Probak nabaritu duena",
+        "description": "Aurretiko geldiketa-seinaleak: {early}. Galdutako audio-hutsuneak: {gaps}.\n\nAurretiko geldiketa-seinalea urrutiko aginteak hasi eta berehala bidalitako geldiketa bat da, oraindik botoia sakatuta zeneukanean. 0 baino handiagoa bada eta eskaerak goiz mozten badira, aktibatu Ez ikusi aurretiko geldiketa integrazioaren Ezarpenak atalean.\n\nGaldutako audio-hutsunea Bluetooth-ek jaregin duen audio zati bat da. 0 baino handiagoa bada eta eskaerak audio-hutsuneko errorearekin huts egiten badute, ezarri Bete audio hutsune laburrak integrazioaren Ezarpenak atalean."
       }
     },
     "progress": {
-      "observing": "20 segundoz entzuten. Esnatu urruneko agintea gezi-tekla batekin, gero sakatu eta eutsi bere ahots-botoiari, hitz egin laburki eta askatu."
+      "observing": "Sakatu eta eduki sakatuta orain urrutiko agintearen ahots-botoia, hitz egin labur eta askatu. Errepikatu nahi adina aldiz: probak 20 segundo irauten du eta sakatze bakoitza grabatzen du, geroago entzun ahal izateko. Ezer gertatzen ez dela iruditzen bazaizu, esnatu lehenik urrutiko agintea gezi-tekla batekin."
     },
     "error": {
       "bluetooth_unavailable": "Bluetooth lokala ez dago erabilgarri. Egiaztatu sistemako D-Bus eskuragarri dagoela.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Urrutiko aginte hau jada konfiguratuta dago.",
-      "no_pipelines": "Sortu Assist kanalizazio bat urrutiko agintea gehitu aurretik."
+      "no_pipelines": "Sortu Assist kanalizazio bat urrutiko agintea gehitu aurretik.",
+      "test_running": "Urrutiko agintearen proba bat martxan dago dagoeneko.",
+      "pause_failed": "Urrutiko agintea ezin izan da proba egiteko pausatu. Saiatu berriro une batean."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Urrutiko agintearen aukerak",
+        "description": "Ezarpenek urrutiko agintearen portaera aldatzen dute. Urrutiko agintea eta bere mota ezin dira hemen aldatu: beste urrutiko aginte edo mota bat erabiltzeko, ezabatu sarrera hau eta gehitu berriro urrutiko agintea.",
+        "menu_options": {
+          "settings": "Ezarpenak",
+          "test": "Probatu nire urruneko agintea",
+          "report": "Erakutsi urruneko aginteko txostena"
+        }
+      },
+      "settings": {
         "title": "Ahots-ezarpenak",
         "description": "Ezarpen hauek kontrolatzen dute sakatzeak nola kudeatzen diren eta erantzunak nola ahoskatzen diren. Eskaera bat ordezkatzeak ezin ditu dagoeneko egindako ekintzak desegin. Aldibereko full duplex ez dago erabilgarri. Transkripzioaren ondoren gelditzeak ez ditu desgaitzen zuzeneko hizketa-hornitzaile batean integratutako tresnak; erabili transkripzio soileko hornitzailea ekintzak desgaitu behar direnean.\n\n**Erantzun-baldintza:** bere baldintza guztiak bete behar dira erantzun bat ahoskatzeko. Eskaera bakoitzaren hasieran behin egiaztatzen dira; utzi hutsik beti ahoskatzeko, eta ebaluatu ezin den baldintza bat bete gabe dagoela jotzen da. Txantiloi-baldintzek `speaker`, `remote` eta `held` aldagaiak erabil ditzakete.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ez ikusi sakatze laburrak",
           "max_request_seconds": "Eskaeraren gehienezko iraupena",
           "max_conversation_seconds": "Elkarrizketaren gehienezko iraupena",
-          "reply_condition": "Erantzun-baldintza"
+          "reply_condition": "Erantzun-baldintza",
+          "ignore_early_stop": "Ez ikusi aurretiko geldiketa",
+          "gap_tolerance_ms": "Bete audio hutsune laburrak"
         },
         "data_description": {
           "pipeline_id": "Hizketa prozesatzen duen Assist kanalizazioa: hizketa-testu bihurketa, elkarrizketa-agentea eta testu-hizketa bihurketa. Kendutako kanalizazio batek errorea eragiten du, beste batera itzuli beharrean.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Hau baino laburragoak diren ahots-botoiaren ukituak ez ditu kontuan hartzen, ukitu faltsu batek inoiz eskaerarik ez hasteko; benetako sakatze luze batek hainbeste beranduago hasten da. 0 balioak desaktibatzen du. Esnatu ondoren berehala “Mikrofonoaren audiorik ez” errorearekin huts egiten duen Fire TV urrutiko agintearentzat erabilgarria: esnatu zuen tekla berriro bidaltzen du berehalako ukitu gisa. 0,1 s abiapuntu ona da. Fire TV urrutiko aginteentzat soilik.",
           "max_request_seconds": "Eskaera bakar batek urrutiko aginte edozeinetan iraun dezakeen denbora luzeena: sakatze osoa Eskaera bakarra moduan, eta txanda bakoitza Txandakatutako elkarrizketan. Hori lortzean eskaera grabazio-mugaren errorearekin amaitzen da. Murriztu trabatutako botoi baten grabazioa gelditzeko; handitu diktatu luzeetarako. Sakatuta hitz egiteko ez diren urrutiko aginteak ere 15 segundo inguruko hizketaren edo isiltasunaren ondoren amaitzen dira, lehenengoa gertatzen dena.",
           "max_conversation_seconds": "Botoi-sakatze oso batek Txandakatutako elkarrizketa moduan iraun dezakeen denbora luzeena. Ez da kontuan hartzen Eskaera bakarra moduan, eta ezin da eskaeraren gehienezko iraupena baino laburragoa izan.",
-          "reply_condition": "Erantzun bat ahoskatzeko guztiak bete behar diren baldintzak. Eskaera bakoitzaren hasieran behin egiaztatzen dira (eta txanda bakoitzean Txandakatutako elkarrizketan). Utzi hutsik beti ahoskatzeko. Errorea ematen duen baldintza bat bete gabe dagoela jotzen da. Txantiloi-baldintzek speaker, remote eta held aldagaiak erabil ditzakete."
+          "reply_condition": "Erantzun bat ahoskatzeko guztiak bete behar diren baldintzak. Eskaera bakoitzaren hasieran behin egiaztatzen dira (eta txanda bakoitzean Txandakatutako elkarrizketan). Utzi hutsik beti ahoskatzeko. Errorea ematen duen baldintza bat bete gabe dagoela jotzen da. Txantiloi-baldintzek speaker, remote eta held aldagaiak erabil ditzakete.",
+          "ignore_early_stop": "Aktibatu hau eskaerak segundo-zati batean amaitzen badira botoia denbora guztian sakatuta izan arren. Android TV urrutiko aginte batzuek geldiketa-seinalea bidaltzen dute hasi eta berehala, eta gero audioa bidaltzen jarraitzen dute. Aktibatuta dagoenean, lehen segunduko geldiketa ez da aintzat hartzen audioa iristen ari den bitartean, eta eskaera amaitzen da audioa isiltzen denean edo bigarren geldiketa iristen denean. Botoiaren portaera Eskaera bat sakatze-aldi bakoitzeko gisa ezarrita dagoenean soilik erabiltzen da.",
+          "gap_tolerance_ms": "Bluetooth-ek audioaren une bat gal dezake, eta horrek normalean eskaerak audio-hutsuneko errorearekin huts egitea eragiten du. Ezarri hemen luzera bat, gehienez luzera horretako zati galdua isiltasunarekin ordezkatzeko eta eskaerak jarrai dezan. Hutsune luzeagoek huts egiten jarraitzen dute. Hitz baten erdian isiltasunak ezagutzaren zehaztasuna murriztu dezake, beraz erabili funtzionatzen duen balio txikiena. 0k desaktibatzen du. Android TV urrutiko aginteentzat soilik."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Urruneko agintearen probaren emaitza",
+        "description": "Zure urrutiko agintea funtzionatzen ari da. Berez hasten da entzuten ahots-botoia sakatuta duzun bitartean, beraz, eduki botoia sakatuta hitz egiten duzun bitartean."
+      },
+      "test_result_atvv_tap": {
+        "title": "Urruneko agintearen probaren emaitza",
+        "description": "Zure urrutiko agintea funtzionatzen ari da. Ukitu ahots-botoia hitz egiten hasteko; hitz egiteari uzten diozunean entzuteari uzten dio."
+      },
+      "test_result_fire_voice": {
+        "title": "Urruneko agintearen probaren emaitza",
+        "description": "Zure urrutiko agintea funtzionatzen ari da. Eduki ahots-botoia sakatuta hitz egiten duzun bitartean."
+      },
+      "test_result_plain_key": {
+        "title": "Urruneko agintearen probaren emaitza",
+        "description": "Urrutiko aginteak botoi-sakatze arruntak bidali ditu, baina ez ahots-seinalerik, beraz, agian bere ahots-botoiak ez du Bluetooth bidez funtzionatzen."
+      },
+      "test_result_nothing": {
+        "title": "Urruneko agintearen probaren emaitza",
+        "description": "Ez da ezer jaso urruneko agintetik. Esnatu gezi-tekla batekin, egiaztatu Home Assistant makina honetara konektatuta dagoela eta probatu berriro."
+      },
+      "report": {
+        "title": "Urruneko agintearen txostena",
+        "description": "Kopiatu testu hau GitHub-eko arazo batean. Ez dauka Bluetooth helbide osorik, izenik, web-helbiderik edo audiorik.",
+        "data": {
+          "report": "Urruneko agintearen txostena"
+        },
+        "data_description": {
+          "report": "Hautatu dena eta kopiatu."
+        }
+      },
+      "test_clips": {
+        "title": "Proba-klipak",
+        "description": "Ahots-botoiaren sakatze bakoitza klip gisa gorde da, urrutiko aginteak zer bidali duen entzun ahal izateko:\n\n{clips}\n\nKlipak Multimedia → Nire multimedia → Bluetooth Remote Voice atalean daude. Estekek 5 minutuz funtzionatzen dute."
+      },
+      "test_clips_none": {
+        "title": "Ez da klipik gorde",
+        "description": "Ahots-botoiak funtzionatu zuen, baina ez da klipik gorde. Klipak Home Assistant-en multimedia-karpetan gordetzen dira (Multimedia → Nire multimedia), beraz, egiaztatu Home Assistant honek idatz dezakeen multimedia-karpeta bat duela, eta probatu berriro."
+      },
+      "test_hints": {
+        "title": "Probak nabaritu duena",
+        "description": "Aurretiko geldiketa-seinaleak: {early}. Galdutako audio-hutsuneak: {gaps}.\n\nAurretiko geldiketa-seinalea urrutiko aginteak hasi eta berehala bidalitako geldiketa bat da, oraindik botoia sakatuta zeneukanean. 0 baino handiagoa bada eta eskaerak goiz mozten badira, aktibatu Ez ikusi aurretiko geldiketa integrazioaren Ezarpenak atalean.\n\nGaldutako audio-hutsunea Bluetooth-ek jaregin duen audio zati bat da. 0 baino handiagoa bada eta eskaerak audio-hutsuneko errorearekin huts egiten badute, ezarri Bete audio hutsune laburrak integrazioaren Ezarpenak atalean."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Gordetako erantzun-bozgorailua ez dago erabilgarri une honetan, beraz, erantzunak ez dira erreproduzituko itzuli arte. Mantendu edo hautatu beste bat."
     },
     "abort": {
-      "no_pipelines": "Sortu lehenik Assist kanalizazio bat."
+      "no_pipelines": "Sortu lehenik Assist kanalizazio bat.",
+      "test_running": "Urrutiko agintearen proba bat martxan dago dagoeneko.",
+      "pause_failed": "Urrutiko agintea ezin izan da proba egiteko pausatu. Saiatu berriro une batean."
+    },
+    "progress": {
+      "observing": "Sakatu eta eduki sakatuta orain urrutiko agintearen ahots-botoia, hitz egin labur eta askatu. Errepikatu nahi adina aldiz: probak 20 segundo irauten du eta sakatze bakoitza grabatzen du, geroago entzun ahal izateko. Ezer gertatzen ez dela iruditzen bazaizu, esnatu lehenik urrutiko agintea gezi-tekla batekin. Zure urrutiko agintea erabilera normalerako pausatuta dago hau exekutatzen ari den bitartean: bere entitateak ez daude eskuragarri minutu bat inguruz, eta abian dagoen eskaera bertan behera uzten da."
     }
   },
   "selector": {

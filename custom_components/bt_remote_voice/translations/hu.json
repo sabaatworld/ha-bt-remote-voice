@@ -35,7 +35,7 @@
           "pipeline_id": "Az Assist folyamat, amely feldolgozza a távirányító beszédét.",
           "remote_type": "Hagyja Automatikus beállításon, hacsak a távirányítót nem ismeri fel, vagy a beállítás sikertelen.",
           "show_report": "Jelölje be és küldje el, hogy megjelenjen egy jelentés, amelyet GitHub-hibajegybe másolhat.",
-          "test_remote": "Jelölje be és küldje el, majd tartsa lenyomva a távirányító hangomb gombját, hogy lássa, mit csinál."
+          "test_remote": "Jelölje be és küldje el, majd tartsa nyomva a távirányító hangbillentyűjét, miközben beszél. Minden nyomás rögzítésre kerül, hogy utólag meghallgathassa."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "A távirányító tesztjének eredménye",
-        "description": "Ez a távirányító magától indítja a hangot, amíg a gombját nyomva tartják. Beszédhez tartsa lenyomva ezt a gombot. Küldés a beállítás folytatásához."
+        "description": "A távirányító működik. Magától hallgatni kezd, amíg nyomva tartja a hangbillentyűt, ezért beszéd közben tartsa nyomva a billentyűt. Küldje el a beállítás folytatásához."
       },
       "test_result_atvv_tap": {
         "title": "A távirányító tesztjének eredménye",
-        "description": "Ez a távirányító a gomb megérintésére indítja a hangot, és addig hallgat, amíg abba nem hagyja a beszédet. Beszédhez érintse meg ezt a gombot. Küldés a beállítás folytatásához."
+        "description": "A távirányító működik. Koppintson a hangbillentyűre a beszéd megkezdéséhez; abbahagyja a hallgatózást, amikor Ön abbahagyja a beszédet. Küldje el a beállítás folytatásához."
       },
       "test_result_fire_voice": {
         "title": "A távirányító tesztjének eredménye",
-        "description": "Ez egy Fire TV-távirányító hangbillentyűje. Beszéd közben tartsa lenyomva. Küldés a beállítás folytatásához."
+        "description": "A távirányító működik. Tartsa nyomva a hangbillentyűt, amíg beszél. Küldje el a beállítás folytatásához."
       },
       "test_result_plain_key": {
         "title": "A távirányító tesztjének eredménye",
-        "description": "A távirányító közönséges billentyűket küldött, de hangjelet nem, így a hang gombja lehet, hogy nem indít hangot Bluetooth-on. Küldje el, majd jelölje be a(z) Távirányító-jelentés megjelenítése lehetőséget a látottak megosztásához."
+        "description": "A távirányító hagyományos gombnyomásokat küldött, de hangjelzést nem, így előfordulhat, hogy a hangbillentyűje nem működik Bluetooth-on. Küldje el, majd jelölje be a Távirányító-jelentés megjelenítése lehetőséget, hogy megossza a látottakat."
       },
       "test_result_nothing": {
         "title": "A távirányító tesztjének eredménye",
         "description": "Nem érkezett semmi a távirányítótól. Ébressze fel egy nyílgombbal, ellenőrizze, hogy csatlakozik-e ehhez a Home Assistant géphez, és tesztelje újra. Küldés a folytatáshoz."
+      },
+      "test_clips": {
+        "title": "Tesztklipek",
+        "description": "A hangbillentyű minden megnyomása klipként lett mentve, hogy meghallhassa, mit küldött a távirányító:\n\n{clips}\n\nA klipek a Média → Saját média → Bluetooth Remote Voice helyen találhatók. A hivatkozások 5 percig működnek."
+      },
+      "test_clips_none": {
+        "title": "Nem lett klip mentve",
+        "description": "A hangbillentyű működött, de nem lett klip mentve. A klipek a Home Assistant médiamappájába kerülnek (Média → Saját média), ezért ellenőrizze, hogy ennek a Home Assistantnak van-e olyan médiamappája, amelybe írhat, majd tesztelje újra."
+      },
+      "test_hints": {
+        "title": "Mit vett észre a teszt",
+        "description": "Korai leállítási jelek: {early}. Elveszett hanghézagok: {gaps}.\n\nA korai leállítási jel a távirányító által közvetlenül az indítás után küldött leállítás, miközben még nyomva tartotta a gombot. Ha 0-nál nagyobb, és a kérései idő előtt megszakadnak, kapcsolja be a(z) Korai leállítás figyelmen kívül hagyása beállítást az integráció Beállítások részében.\n\nAz elveszett hanghézag a Bluetooth által eldobott hangszakasz. Ha 0-nál nagyobb, és a kérések hanghézag-hibával meghiúsulnak, állítsa be a(z) Rövid hanghézagok kitöltése beállítást az integráció Beállítások részében."
       }
     },
     "progress": {
-      "observing": "Hallgatás 20 másodpercig. Ébressze fel a távirányítót egy nyílgombbal, majd tartsa lenyomva a hang gombját, beszéljen röviden, és engedje el."
+      "observing": "Most tartsa nyomva a távirányító hangbillentyűjét, beszéljen röviden, majd engedje el. Ismételje, ahányszor csak szeretné: a teszt 20 másodpercig tart, és minden nyomást rögzít, hogy utólag meghallgathassa. Ha úgy tűnik, hogy semmi sem történik, először ébressze fel a távirányítót egy nyílbillentyűvel."
     },
     "error": {
       "bluetooth_unavailable": "A helyi Bluetooth nem érhető el. Ellenőrizze, hogy a rendszer D-Bus elérhető-e.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Ez a távirányító már be van állítva.",
-      "no_pipelines": "A távirányító hozzáadása előtt hozzon létre egy Assist folyamatot."
+      "no_pipelines": "A távirányító hozzáadása előtt hozzon létre egy Assist folyamatot.",
+      "test_running": "Ennek a távirányítónak a tesztje már fut.",
+      "pause_failed": "A távirányítót nem sikerült szüneteltetni a teszthez. Próbálja újra egy pillanat múlva."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Távirányító beállításai",
+        "description": "A beállítások megváltoztatják a távirányító viselkedését. A távirányító és a típusa itt nem módosítható: másik távirányító vagy típus használatához törölje ezt a bejegyzést, és adja hozzá újra a távirányítót.",
+        "menu_options": {
+          "settings": "Beállítások",
+          "test": "A távirányítóm tesztelése",
+          "report": "Távirányító-jelentés megjelenítése"
+        }
+      },
+      "settings": {
         "title": "Hangbeállítások",
         "description": "Ezek a beállítások határozzák meg, hogyan kezeli a rendszer a megnyomásokat, és hogyan szólalnak meg a válaszok. A kérés lecserélése nem vonhatja vissza a már végrehajtott műveleteket. Az egyidejű full duplex nem érhető el. Az átirat utáni leállás nem tiltja le az élő beszédszolgáltatóba beépített eszközöket; ha a műveleteket le kell tiltani, használjon csak átiratot készítő szolgáltatót.\n\n**Válaszfeltétel:** a válasz felolvasásához minden feltételének teljesülnie kell. Ellenőrzésük minden kérés elején egyszer történik; hagyja üresen, hogy mindig felolvassa, a nem kiértékelhető feltétel pedig nem teljesültnek számít. A sablonfeltételek használhatják a `speaker`, `remote` és `held` változókat.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Rövid megnyomások figyelmen kívül hagyása",
           "max_request_seconds": "Kérés maximális hossza",
           "max_conversation_seconds": "Beszélgetés maximális hossza",
-          "reply_condition": "Válaszfeltétel"
+          "reply_condition": "Válaszfeltétel",
+          "ignore_early_stop": "Korai leállítás figyelmen kívül hagyása",
+          "gap_tolerance_ms": "Rövid hanghézagok kitöltése"
         },
         "data_description": {
           "pipeline_id": "Az Assist folyamat, amely feldolgozza a beszédet: beszédfelismerés, beszélgetési ügynök és szövegfelolvasás. Egy eltávolított folyamat hibával jár ahelyett, hogy másikra váltana.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Figyelmen kívül hagyja az ennél rövidebb hanggomb-érintéseket, így egy téves érintés soha nem indít kérést; a valódi tartás ennyivel később indul. A 0 kikapcsolja. Hasznos Fire TV távirányítóhoz, amely közvetlenül az ébresztés után „Nincs mikrofonhang” hibával meghiúsul: az ébresztő billentyűt azonnali érintésként újraküldi. A 0,1 s jó kiindulópont. Csak Fire TV távirányítókhoz.",
           "max_request_seconds": "A leghosszabb idő, ameddig egyetlen kérés tarthat bármely távirányítón: a teljes tartás Egy kérés módban, és minden forduló Váltakozó beszélgetésben. Elérése a kérést rögzítési korlát hibával fejezi be. Csökkentse egy beragadt gomb rögzítésének megállítására; növelje hosszú diktáláshoz. A nem tartva beszélős távirányítók körülbelül 15 másodpercnyi beszédnél vagy csendnél is véget érnek, amelyik előbb bekövetkezik.",
           "max_conversation_seconds": "A leghosszabb idő, ameddig egy teljes gombtartás tarthat Váltakozó beszélgetés módban. Egy kérés módban figyelmen kívül marad, és nem lehet rövidebb a kérés maximális hosszánál.",
-          "reply_condition": "Feltételek, amelyeknek mindegyikének teljesülnie kell a válasz felolvasásához. Minden kérés elején egyszer ellenőrzi (és Váltakozó beszélgetésben minden fordulónál). Hagyja üresen, hogy mindig felolvassa. Hibát okozó feltétel nem teljesültnek számít. A sablonfeltételek használhatják a speaker, remote és held változókat."
+          "reply_condition": "Feltételek, amelyeknek mindegyikének teljesülnie kell a válasz felolvasásához. Minden kérés elején egyszer ellenőrzi (és Váltakozó beszélgetésben minden fordulónál). Hagyja üresen, hogy mindig felolvassa. Hibát okozó feltétel nem teljesültnek számít. A sablonfeltételek használhatják a speaker, remote és held változókat.",
+          "ignore_early_stop": "Kapcsolja be, ha a kérések néha egy másodperc törtrésze után véget érnek, bár végig nyomva tartotta a gombot. Néhány Android TV távirányító közvetlenül az indítás után leállítási jelet küld, majd tovább küld hangot. Bekapcsolva az első másodpercben érkező leállítást figyelmen kívül hagyja, amíg még érkezik hang, és a kérés akkor ér véget, ha a hang elcsendesedik vagy második leállítás érkezik. Csak akkor használt, ha a Gomb viselkedése értéke Egy kérés tartásonként.",
+          "gap_tolerance_ms": "A Bluetooth elveszíthet egy pillanatnyi hangot, ami általában azt okozza, hogy a kérés hanghézag-hibával meghiúsul. Itt megadhat egy hosszt, amelyig az elveszett szakaszt csenddel pótolja, hogy a kérés folytatódjon. A hosszabb hézagok továbbra is hibát okoznak. A szó közepén lévő csend ronthatja a felismerés pontosságát, ezért a legkisebb működő értéket használja. A 0 kikapcsolja. Csak Android TV távirányítókhoz."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "A távirányító tesztjének eredménye",
+        "description": "A távirányító működik. Magától hallgatni kezd, amíg nyomva tartja a hangbillentyűt, ezért beszéd közben tartsa nyomva a billentyűt."
+      },
+      "test_result_atvv_tap": {
+        "title": "A távirányító tesztjének eredménye",
+        "description": "A távirányító működik. Koppintson a hangbillentyűre a beszéd megkezdéséhez; abbahagyja a hallgatózást, amikor Ön abbahagyja a beszédet."
+      },
+      "test_result_fire_voice": {
+        "title": "A távirányító tesztjének eredménye",
+        "description": "A távirányító működik. Tartsa nyomva a hangbillentyűt, amíg beszél."
+      },
+      "test_result_plain_key": {
+        "title": "A távirányító tesztjének eredménye",
+        "description": "A távirányító hagyományos gombnyomásokat küldött, de hangjelzést nem, így előfordulhat, hogy a hangbillentyűje nem működik Bluetooth-on."
+      },
+      "test_result_nothing": {
+        "title": "A távirányító tesztjének eredménye",
+        "description": "Nem érkezett semmi a távirányítótól. Ébressze fel egy nyílgombbal, ellenőrizze, hogy csatlakozik-e ehhez a Home Assistant géphez, és tesztelje újra."
+      },
+      "report": {
+        "title": "Távirányító-jelentés",
+        "description": "Másolja ezt a szöveget egy GitHub-hibajegybe. Nem tartalmaz teljes Bluetooth-címet, neveket, webcímeket vagy hangot.",
+        "data": {
+          "report": "Távirányító-jelentés"
+        },
+        "data_description": {
+          "report": "Jelölje ki az egészet, és másolja."
+        }
+      },
+      "test_clips": {
+        "title": "Tesztklipek",
+        "description": "A hangbillentyű minden megnyomása klipként lett mentve, hogy meghallhassa, mit küldött a távirányító:\n\n{clips}\n\nA klipek a Média → Saját média → Bluetooth Remote Voice helyen találhatók. A hivatkozások 5 percig működnek."
+      },
+      "test_clips_none": {
+        "title": "Nem lett klip mentve",
+        "description": "A hangbillentyű működött, de nem lett klip mentve. A klipek a Home Assistant médiamappájába kerülnek (Média → Saját média), ezért ellenőrizze, hogy ennek a Home Assistantnak van-e olyan médiamappája, amelybe írhat, majd tesztelje újra."
+      },
+      "test_hints": {
+        "title": "Mit vett észre a teszt",
+        "description": "Korai leállítási jelek: {early}. Elveszett hanghézagok: {gaps}.\n\nA korai leállítási jel a távirányító által közvetlenül az indítás után küldött leállítás, miközben még nyomva tartotta a gombot. Ha 0-nál nagyobb, és a kérései idő előtt megszakadnak, kapcsolja be a(z) Korai leállítás figyelmen kívül hagyása beállítást az integráció Beállítások részében.\n\nAz elveszett hanghézag a Bluetooth által eldobott hangszakasz. Ha 0-nál nagyobb, és a kérések hanghézag-hibával meghiúsulnak, állítsa be a(z) Rövid hanghézagok kitöltése beállítást az integráció Beállítások részében."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "A mentett válaszhangszóró jelenleg nem érhető el, ezért a válaszok nem szólalnak meg, amíg vissza nem tér. Tartsa meg, vagy válasszon másikat."
     },
     "abort": {
-      "no_pipelines": "Először hozzon létre egy Assist folyamatot."
+      "no_pipelines": "Először hozzon létre egy Assist folyamatot.",
+      "test_running": "Ennek a távirányítónak a tesztje már fut.",
+      "pause_failed": "A távirányítót nem sikerült szüneteltetni a teszthez. Próbálja újra egy pillanat múlva."
+    },
+    "progress": {
+      "observing": "Most tartsa nyomva a távirányító hangbillentyűjét, beszéljen röviden, majd engedje el. Ismételje, ahányszor csak szeretné: a teszt 20 másodpercig tart, és minden nyomást rögzít, hogy utólag meghallgathassa. Ha úgy tűnik, hogy semmi sem történik, először ébressze fel a távirányítót egy nyílbillentyűvel. A távirányító a teszt futása alatt szünetel a normál használatban: az entitásai körülbelül egy percig nem elérhetők, és a folyamatban lévő kérés megszakad."
     }
   },
   "selector": {

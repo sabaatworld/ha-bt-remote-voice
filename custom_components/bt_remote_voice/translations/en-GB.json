@@ -35,7 +35,7 @@
           "pipeline_id": "The Assist pipeline that processes speech from this remote.",
           "remote_type": "Leave on Automatic unless the remote is not recognised or setup fails.",
           "show_report": "Tick and submit to see a report you can copy into a GitHub issue.",
-          "test_remote": "Tick and submit, then press and hold the remote's voice button to see what the remote does."
+          "test_remote": "Tick and submit, then press and hold the remote's voice button while you speak. Each press is recorded so you can listen to it afterwards."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Remote test result",
-        "description": "This remote starts voice by itself while its button is held. Hold that button to talk. Submit to continue setup."
+        "description": "Your remote works. It starts listening by itself while you hold its voice button, so hold the button while you speak. Submit to continue setup."
       },
       "test_result_atvv_tap": {
         "title": "Remote test result",
-        "description": "This remote starts voice when its button is tapped and listens until you stop speaking. Tap that button to talk. Submit to continue setup."
+        "description": "Your remote works. Tap its voice button to start talking; it stops listening when you stop speaking. Submit to continue setup."
       },
       "test_result_fire_voice": {
         "title": "Remote test result",
-        "description": "This is the voice key of a Fire TV remote. Hold it while you speak. Submit to continue setup."
+        "description": "Your remote works. Hold its voice button for as long as you speak. Submit to continue setup."
       },
       "test_result_plain_key": {
         "title": "Remote test result",
-        "description": "The remote sent ordinary keys but no voice signal, so its voice button may not start voice over Bluetooth. Submit, then tick Show remote report to share what was seen."
+        "description": "The remote sent ordinary button presses but no voice signal, so its voice button may not work over Bluetooth. Submit, then tick Show remote report to share what was seen."
       },
       "test_result_nothing": {
         "title": "Remote test result",
         "description": "Nothing was received from the remote. Wake it with an arrow key, check that it is connected to this Home Assistant machine, and test again. Submit to continue."
+      },
+      "test_clips": {
+        "title": "Test clips",
+        "description": "Each press of the voice button was saved as a clip, so you can hear what the remote sent:\n\n{clips}\n\nThe clips are in Media → My media → Bluetooth Remote Voice. The links work for 5 minutes."
+      },
+      "test_clips_none": {
+        "title": "No clip saved",
+        "description": "The voice button worked, but no clip was saved. Clips are saved in Home Assistant's media folder (Media → My media), so check that this Home Assistant has a media folder it can write to, then test again."
+      },
+      "test_hints": {
+        "title": "What the test noticed",
+        "description": "Early stop signals: {early}. Lost audio gaps: {gaps}.\n\nAn early stop signal is a stop from the remote right after you started, while you were still holding the button. If this is above 0 and your requests get cut short, turn on Ignore early stop in the integration's Settings.\n\nA lost audio gap is a stretch of audio that Bluetooth dropped. If this is above 0 and requests fail with an audio gap error, set Fill short audio gaps in the integration's Settings."
       }
     },
     "progress": {
-      "observing": "Listening for 20 seconds. Wake the remote with an arrow key, then press and hold its voice button, speak briefly and release."
+      "observing": "Press and hold the remote's voice button now, speak briefly, then release. Repeat as often as you like: the test runs for 20 seconds and records every press so you can listen afterwards. If nothing seems to happen, wake the remote with an arrow key first."
     },
     "error": {
       "bluetooth_unavailable": "Local Bluetooth is unavailable. Check that system D-Bus is accessible.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "This remote is already configured.",
-      "no_pipelines": "Create an Assist pipeline before adding the remote."
+      "no_pipelines": "Create an Assist pipeline before adding the remote.",
+      "test_running": "A test of this remote is already running.",
+      "pause_failed": "The remote could not be paused for the test. Try again in a moment."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Remote options",
+        "description": "Settings change how this remote behaves. The remote and its type can't be changed here: to use a different remote or type, delete this entry and add the remote again.",
+        "menu_options": {
+          "settings": "Settings",
+          "test": "Test my remote",
+          "report": "Show remote report"
+        }
+      },
+      "settings": {
         "title": "Voice settings",
         "description": "These settings control how presses are handled and how replies are spoken. Replacing a request cannot undo actions it already performed. Simultaneous full duplex is unavailable. Stopping after transcription does not disable tools built into a live speech provider; use a transcription-only provider when actions must be disabled.\n\n**Reply condition:** all of its conditions must pass for a reply to be spoken. They are checked once at the start of each request; leave it empty to always speak, and a condition that cannot be evaluated counts as not met. Template conditions can use the variables `speaker`, `remote` and `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignore short presses",
           "max_request_seconds": "Maximum request length",
           "max_conversation_seconds": "Maximum conversation length",
-          "reply_condition": "Reply condition"
+          "reply_condition": "Reply condition",
+          "ignore_early_stop": "Ignore early stop",
+          "gap_tolerance_ms": "Fill short audio gaps"
         },
         "data_description": {
           "pipeline_id": "The Assist pipeline that processes speech: speech-to-text, conversation agent and text-to-speech. A removed pipeline fails with an error instead of falling back.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignores voice-button taps shorter than this, so a spurious tap never starts a request; a real hold starts this much later. 0 turns it off. Useful for a Fire TV remote that fails with \"No microphone audio\" right after waking: it re-sends the key that woke it as an instant tap. 0.1 s is a good starting point. Fire TV remotes only.",
           "max_request_seconds": "The longest a single request can last on any remote: a whole hold in One-request mode, and each turn in Alternating conversation. Reaching it ends the request with a capture-limit error. Lower it to stop a stuck button recording; raise it for long dictation. Remotes that are not hold-to-talk also end at about 15 seconds of speech or at silence, whichever comes first.",
           "max_conversation_seconds": "The longest a whole button hold can last in Alternating conversation mode. It is ignored in One-request mode and must not be shorter than the maximum request length.",
-          "reply_condition": "Conditions that must all pass for a reply to be spoken. Checked once at the start of each request (and each turn in Alternating conversation). Leave empty to always speak. A condition that errors counts as not met. Template conditions can use the variables speaker, remote and held."
+          "reply_condition": "Conditions that must all pass for a reply to be spoken. Checked once at the start of each request (and each turn in Alternating conversation). Leave empty to always speak. A condition that errors counts as not met. Template conditions can use the variables speaker, remote and held.",
+          "ignore_early_stop": "Turn this on if requests sometimes end after a split second even though you held the button the whole time. Some Android TV remotes send a stop signal right after you start and then keep sending audio. When on, a stop in the first second is ignored while audio is still arriving, and the request ends when the audio goes quiet or a second stop arrives. Only used with Button behaviour set to One request per hold.",
+          "gap_tolerance_ms": "Bluetooth can lose a moment of audio, which normally makes the request fail with an audio gap error. Set a length here to replace a lost stretch of up to that length with silence so the request carries on. Longer gaps still fail. Silence in the middle of a word can lower recognition accuracy, so use the lowest value that works. 0 turns it off. Android TV remotes only."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Remote test result",
+        "description": "Your remote works. It starts listening by itself while you hold its voice button, so hold the button while you speak."
+      },
+      "test_result_atvv_tap": {
+        "title": "Remote test result",
+        "description": "Your remote works. Tap its voice button to start talking; it stops listening when you stop speaking."
+      },
+      "test_result_fire_voice": {
+        "title": "Remote test result",
+        "description": "Your remote works. Hold its voice button for as long as you speak."
+      },
+      "test_result_plain_key": {
+        "title": "Remote test result",
+        "description": "The remote sent ordinary button presses but no voice signal, so its voice button may not work over Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Remote test result",
+        "description": "Nothing was received from the remote. Wake it with an arrow key, check that it is connected to this Home Assistant machine, and test again."
+      },
+      "report": {
+        "title": "Remote report",
+        "description": "Copy this text into a GitHub issue. It has no full Bluetooth address, names, web addresses or audio.",
+        "data": {
+          "report": "Remote report"
+        },
+        "data_description": {
+          "report": "Select all and copy."
+        }
+      },
+      "test_clips": {
+        "title": "Test clips",
+        "description": "Each press of the voice button was saved as a clip, so you can hear what the remote sent:\n\n{clips}\n\nThe clips are in Media → My media → Bluetooth Remote Voice. The links work for 5 minutes."
+      },
+      "test_clips_none": {
+        "title": "No clip saved",
+        "description": "The voice button worked, but no clip was saved. Clips are saved in Home Assistant's media folder (Media → My media), so check that this Home Assistant has a media folder it can write to, then test again."
+      },
+      "test_hints": {
+        "title": "What the test noticed",
+        "description": "Early stop signals: {early}. Lost audio gaps: {gaps}.\n\nAn early stop signal is a stop from the remote right after you started, while you were still holding the button. If this is above 0 and your requests get cut short, turn on Ignore early stop in the integration's Settings.\n\nA lost audio gap is a stretch of audio that Bluetooth dropped. If this is above 0 and requests fail with an audio gap error, set Fill short audio gaps in the integration's Settings."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "The saved reply speaker is not available right now, so replies will not play until it returns. Keep it, or choose another."
     },
     "abort": {
-      "no_pipelines": "Create an Assist pipeline first."
+      "no_pipelines": "Create an Assist pipeline first.",
+      "test_running": "A test of this remote is already running.",
+      "pause_failed": "The remote could not be paused for the test. Try again in a moment."
+    },
+    "progress": {
+      "observing": "Press and hold the remote's voice button now, speak briefly, then release. Repeat as often as you like: the test runs for 20 seconds and records every press so you can listen afterwards. If nothing seems to happen, wake the remote with an arrow key first. Your remote is paused for normal use while this runs: its entities are unavailable for about a minute and a request in progress is cancelled."
     }
   },
   "selector": {

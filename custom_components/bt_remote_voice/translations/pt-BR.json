@@ -35,7 +35,7 @@
           "pipeline_id": "O pipeline do Assist que processa a voz deste controle remoto.",
           "remote_type": "Deixe em Automático, a menos que o controle remoto não seja reconhecido ou a configuração falhe.",
           "show_report": "Marque e envie para ver um relatório que você pode copiar em uma issue do GitHub.",
-          "test_remote": "Marque e envie, depois mantenha pressionado o botão de voz do controle remoto para ver o que ele faz."
+          "test_remote": "Marque e envie, depois mantenha pressionado o botão de voz do controle remoto enquanto fala. Cada pressionamento é gravado para que você possa ouvi-lo depois."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Resultado do teste do controle remoto",
-        "description": "Este controle remoto inicia a voz sozinho enquanto o botão é mantido pressionado. Mantenha esse botão pressionado para falar. Envie para continuar a configuração."
+        "description": "Seu controle remoto funciona. Ele começa a ouvir sozinho enquanto você mantém o botão de voz pressionado, então mantenha o botão pressionado enquanto fala. Envie para continuar a configuração."
       },
       "test_result_atvv_tap": {
         "title": "Resultado do teste do controle remoto",
-        "description": "Este controle remoto inicia a voz quando o botão é tocado e ouve até você parar de falar. Toque nesse botão para falar. Envie para continuar a configuração."
+        "description": "Seu controle remoto funciona. Toque no botão de voz para começar a falar; ele para de ouvir quando você para de falar. Envie para continuar a configuração."
       },
       "test_result_fire_voice": {
         "title": "Resultado do teste do controle remoto",
-        "description": "Esta é a tecla de voz de um controle remoto Fire TV. Mantenha-a pressionada enquanto fala. Envie para continuar a configuração."
+        "description": "Seu controle remoto funciona. Mantenha o botão de voz pressionado enquanto você fala. Envie para continuar a configuração."
       },
       "test_result_plain_key": {
         "title": "Resultado do teste do controle remoto",
-        "description": "O controle remoto enviou teclas comuns, mas nenhum sinal de voz, então o botão de voz pode não iniciar a voz por Bluetooth. Envie e depois marque Mostrar relatório do controle remoto para compartilhar o que foi visto."
+        "description": "O controle remoto enviou pressionamentos de botão comuns, mas nenhum sinal de voz, então o botão de voz dele talvez não funcione por Bluetooth. Envie e depois marque Mostrar relatório do controle remoto para compartilhar o que foi visto."
       },
       "test_result_nothing": {
         "title": "Resultado do teste do controle remoto",
         "description": "Nada foi recebido do controle remoto. Acorde-o com uma tecla de seta, verifique se ele está conectado a esta máquina com Home Assistant e teste novamente. Envie para continuar."
+      },
+      "test_clips": {
+        "title": "Clipes de teste",
+        "description": "Cada pressionamento do botão de voz foi salvo como um clipe, para que você ouça o que o controle remoto enviou:\n\n{clips}\n\nOs clipes estão em Mídia → Minha mídia → Bluetooth Remote Voice. Os links funcionam por 5 minutos."
+      },
+      "test_clips_none": {
+        "title": "Nenhum clipe salvo",
+        "description": "O botão de voz funcionou, mas nenhum clipe foi salvo. Os clipes são salvos na pasta de mídia do Home Assistant (Mídia → Minha mídia); verifique se este Home Assistant tem uma pasta de mídia na qual possa gravar e teste novamente."
+      },
+      "test_hints": {
+        "title": "O que o teste percebeu",
+        "description": "Sinais de parada antecipada: {early}. Lacunas de áudio perdidas: {gaps}.\n\nUm sinal de parada antecipada é uma parada enviada pelo controle remoto logo depois de você começar, enquanto ainda segurava o botão. Se for maior que 0 e suas solicitações forem cortadas, ative Ignorar parada antecipada em Configurações da integração.\n\nUma lacuna de áudio perdida é um trecho de áudio que o Bluetooth descartou. Se for maior que 0 e as solicitações falharem com um erro de lacuna de áudio, defina Preencher lacunas curtas de áudio em Configurações da integração."
       }
     },
     "progress": {
-      "observing": "Ouvindo por 20 segundos. Acorde o controle remoto com uma tecla de seta, depois mantenha pressionado o botão de voz, fale brevemente e solte."
+      "observing": "Mantenha pressionado agora o botão de voz do controle remoto, fale brevemente e solte. Repita quantas vezes quiser: o teste dura 20 segundos e grava cada pressionamento para que você possa ouvi-lo depois. Se parecer que nada acontece, primeiro acorde o controle remoto com uma tecla de seta."
     },
     "error": {
       "bluetooth_unavailable": "O Bluetooth local não está disponível. Verifique se o D-Bus do sistema está acessível.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "Este controle remoto já está configurado.",
-      "no_pipelines": "Crie um pipeline do Assist antes de adicionar o controle remoto."
+      "no_pipelines": "Crie um pipeline do Assist antes de adicionar o controle remoto.",
+      "test_running": "Já há um teste deste controle remoto em andamento.",
+      "pause_failed": "Não foi possível pausar o controle remoto para o teste. Tente novamente em instantes."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Opções do controle remoto",
+        "description": "As configurações alteram o comportamento deste controle remoto. O controle remoto e o tipo não podem ser alterados aqui: para usar outro controle remoto ou tipo, exclua esta entrada e adicione o controle remoto novamente.",
+        "menu_options": {
+          "settings": "Configurações",
+          "test": "Testar meu controle remoto",
+          "report": "Mostrar relatório do controle remoto"
+        }
+      },
+      "settings": {
         "title": "Configurações de voz",
         "description": "Estas configurações controlam como as pressões são tratadas e como as respostas são faladas. Substituir um pedido não pode anular as ações que já realizou. O duplex integral simultâneo não está disponível. Parar após a transcrição não desativa as ferramentas integradas num fornecedor de voz em vivo; use um fornecedor apenas de transcrição quando for necessário desativar as ações.\n\n**Condição de resposta:** todas as suas condições têm de ser cumpridas para que uma resposta seja falada. São verificadas uma vez no início de cada pedido; deixe-a vazia para falar sempre, e uma condição que não possa ser avaliada conta como não cumprida. As condições de modelo podem usar as variáveis `speaker`, `remote` e `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Ignorar pressões curtas",
           "max_request_seconds": "Duração máxima do pedido",
           "max_conversation_seconds": "Duração máxima da conversa",
-          "reply_condition": "Condição de resposta"
+          "reply_condition": "Condição de resposta",
+          "ignore_early_stop": "Ignorar parada antecipada",
+          "gap_tolerance_ms": "Preencher lacunas curtas de áudio"
         },
         "data_description": {
           "pipeline_id": "O pipeline do Assist que processa a voz: voz para texto, agente de conversação e texto para voz. Um pipeline removido falha com um erro em vez de recorrer a outro.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Ignora os toques no botão de voz mais curtos do que este valor, para que um toque espúrio nunca inicie um pedido; uma pressão contínua real começa essa duração mais tarde. 0 desativa. Útil para um controle remoto Fire TV que falha com «Não foi recebido áudio do microfone» logo após ser ativado: reenvia a tecla que o ativou como um toque instantâneo. 0,1 s é um bom ponto de partida. Apenas para controles remotos Fire TV.",
           "max_request_seconds": "A duração máxima de um único pedido em qualquer controle remoto: toda a pressão contínua no modo Um pedido, e cada turno na Conversa alternada. Ao atingi-la, o pedido termina com um erro de limite de captura. Reduza-a para parar a gravação de um botão preso; aumente-a para ditados longos. Os controles remotos que não são de pressionar para falar também terminam após cerca de 15 segundos de fala ou no silêncio, o que ocorrer primeiro.",
           "max_conversation_seconds": "A duração máxima de toda uma pressão contínua no modo de conversa alternada. É ignorada no modo Um pedido e não pode ser inferior à duração máxima do pedido.",
-          "reply_condition": "Condições que têm de ser todas cumpridas para que uma resposta seja falada. Verificadas uma vez no início de cada pedido (e de cada turno na Conversa alternada). Deixe vazio para falar sempre. Uma condição com erro conta como não cumprida. As condições de modelo podem usar as variáveis speaker, remote e held."
+          "reply_condition": "Condições que têm de ser todas cumpridas para que uma resposta seja falada. Verificadas uma vez no início de cada pedido (e de cada turno na Conversa alternada). Deixe vazio para falar sempre. Uma condição com erro conta como não cumprida. As condições de modelo podem usar as variáveis speaker, remote e held.",
+          "ignore_early_stop": "Ative se as solicitações às vezes terminarem em uma fração de segundo mesmo você segurando o botão o tempo todo. Alguns controles remotos Android TV enviam um sinal de parada logo depois de você começar e continuam enviando áudio. Quando ativado, uma parada no primeiro segundo é ignorada enquanto ainda chega áudio, e a solicitação termina quando o áudio fica silencioso ou chega uma segunda parada. Usado apenas quando Comportamento do botão está definido como Um pedido por pressão contínua.",
+          "gap_tolerance_ms": "O Bluetooth pode perder um instante de áudio, o que normalmente faz a solicitação falhar com um erro de lacuna de áudio. Defina aqui uma duração para substituir por silêncio um trecho perdido de até essa duração, para a solicitação continuar. Lacunas maiores ainda falham. Silêncio no meio de uma palavra pode reduzir a precisão do reconhecimento, então use o menor valor que funcione. 0 desativa. Somente para controles remotos Android TV."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Resultado do teste do controle remoto",
+        "description": "Seu controle remoto funciona. Ele começa a ouvir sozinho enquanto você mantém o botão de voz pressionado, então mantenha o botão pressionado enquanto fala."
+      },
+      "test_result_atvv_tap": {
+        "title": "Resultado do teste do controle remoto",
+        "description": "Seu controle remoto funciona. Toque no botão de voz para começar a falar; ele para de ouvir quando você para de falar."
+      },
+      "test_result_fire_voice": {
+        "title": "Resultado do teste do controle remoto",
+        "description": "Seu controle remoto funciona. Mantenha o botão de voz pressionado enquanto você fala."
+      },
+      "test_result_plain_key": {
+        "title": "Resultado do teste do controle remoto",
+        "description": "O controle remoto enviou pressionamentos de botão comuns, mas nenhum sinal de voz, então o botão de voz dele talvez não funcione por Bluetooth."
+      },
+      "test_result_nothing": {
+        "title": "Resultado do teste do controle remoto",
+        "description": "Nada foi recebido do controle remoto. Acorde-o com uma tecla de seta, verifique se ele está conectado a esta máquina com Home Assistant e teste novamente."
+      },
+      "report": {
+        "title": "Relatório do controle remoto",
+        "description": "Copie este texto em uma issue do GitHub. Ele não contém endereço Bluetooth completo, nomes, endereços da web nem áudio.",
+        "data": {
+          "report": "Relatório do controle remoto"
+        },
+        "data_description": {
+          "report": "Selecione tudo e copie."
+        }
+      },
+      "test_clips": {
+        "title": "Clipes de teste",
+        "description": "Cada pressionamento do botão de voz foi salvo como um clipe, para que você ouça o que o controle remoto enviou:\n\n{clips}\n\nOs clipes estão em Mídia → Minha mídia → Bluetooth Remote Voice. Os links funcionam por 5 minutos."
+      },
+      "test_clips_none": {
+        "title": "Nenhum clipe salvo",
+        "description": "O botão de voz funcionou, mas nenhum clipe foi salvo. Os clipes são salvos na pasta de mídia do Home Assistant (Mídia → Minha mídia); verifique se este Home Assistant tem uma pasta de mídia na qual possa gravar e teste novamente."
+      },
+      "test_hints": {
+        "title": "O que o teste percebeu",
+        "description": "Sinais de parada antecipada: {early}. Lacunas de áudio perdidas: {gaps}.\n\nUm sinal de parada antecipada é uma parada enviada pelo controle remoto logo depois de você começar, enquanto ainda segurava o botão. Se for maior que 0 e suas solicitações forem cortadas, ative Ignorar parada antecipada em Configurações da integração.\n\nUma lacuna de áudio perdida é um trecho de áudio que o Bluetooth descartou. Se for maior que 0 e as solicitações falharem com um erro de lacuna de áudio, defina Preencher lacunas curtas de áudio em Configurações da integração."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "O alto-falante de resposta salvo não está disponível no momento, então as respostas não serão reproduzidas até que volte. Mantenha-o ou escolha outro."
     },
     "abort": {
-      "no_pipelines": "Crie primeiro um pipeline do Assist."
+      "no_pipelines": "Crie primeiro um pipeline do Assist.",
+      "test_running": "Já há um teste deste controle remoto em andamento.",
+      "pause_failed": "Não foi possível pausar o controle remoto para o teste. Tente novamente em instantes."
+    },
+    "progress": {
+      "observing": "Mantenha pressionado agora o botão de voz do controle remoto, fale brevemente e solte. Repita quantas vezes quiser: o teste dura 20 segundos e grava cada pressionamento para que você possa ouvi-lo depois. Se parecer que nada acontece, primeiro acorde o controle remoto com uma tecla de seta. Seu controle remoto fica pausado para uso normal enquanto isso é executado: as entidades dele ficam indisponíveis por cerca de um minuto e uma solicitação em andamento é cancelada."
     }
   },
   "selector": {

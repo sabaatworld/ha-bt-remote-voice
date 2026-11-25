@@ -24,6 +24,15 @@ DESCRIPTOR = bytes.fromhex(
 )
 
 
+@pytest.fixture(autouse=True)
+def no_recording():
+    async def silent(*args, **kwargs):
+        return []
+
+    with patch("custom_components.bt_remote_voice.flow_steps.record_test", silent):
+        yield
+
+
 def flow_for(hass, family="fire"):
     flow = ConfigFlow()
     flow.hass = hass
@@ -40,7 +49,7 @@ def flow_for(hass, family="fire"):
 
 
 def fake_observe(result_obs):
-    async def observe(address, family, seconds):
+    async def observe(address, family, seconds, **kwargs):
         observe.calls.append((address, family, seconds))
         await asyncio.sleep(0.01)  # a real listen takes seconds; HA starts tasks eagerly
         return result_obs
@@ -62,7 +71,7 @@ async def test_the_test_step_shows_progress_then_the_matching_result_and_returns
     observe = fake_observe(obs)
     with (
         patch("custom_components.bt_remote_voice.config_flow.pipelines", return_value={"p": "P"}),
-        patch("custom_components.bt_remote_voice.config_flow.observe", observe),
+        patch("custom_components.bt_remote_voice.flow_steps.observe", observe),
     ):
         first = await flow.async_step_configure(
             {"pipeline_id": "p", "remote_type": "fire_press_to_talk", "test_remote": True}
@@ -73,7 +82,9 @@ async def test_the_test_step_shows_progress_then_the_matching_result_and_returns
         assert done["type"] == "progress_done" and done["step_id"] == "test_result_fire_voice"
         shown = await flow.async_step_test_result_fire_voice()
         assert shown["type"] == "form" and shown["step_id"] == "test_result_fire_voice"
-        back = await flow.async_step_test_result_fire_voice({})
+        none = await flow.async_step_test_result_fire_voice({})
+        assert none["step_id"] == "test_clips_none"  # voice key pressed but nothing saved
+        back = await flow.async_step_test_clips_none({})
     assert observe.calls == [("A8:42:A7:11:22:33", "fire", 20)]  # forced type drives the family
     assert back["step_id"] == "configure"
     schema = back["data_schema"].schema
@@ -111,17 +122,17 @@ async def test_removing_the_flow_cancels_a_running_listen(hass):
     flow = flow_for(hass)
     started = asyncio.Event()
 
-    async def slow(address, family, seconds):
+    async def slow(address, family, seconds, **kwargs):
         started.set()
         await asyncio.sleep(30)
 
-    with patch("custom_components.bt_remote_voice.config_flow.observe", slow):
+    with patch("custom_components.bt_remote_voice.flow_steps.observe", slow):
         await flow.async_step_test()
         await started.wait()
         task = flow.observe_task
         flow.async_remove()
-        await asyncio.sleep(0)
-    await asyncio.sleep(0)
+        with pytest.raises(asyncio.CancelledError):
+            await task
     assert task.cancelled()
 
 
@@ -172,11 +183,11 @@ async def test_forced_fire_on_a_remote_without_voice_reports_is_refused_end_to_e
 async def test_a_failing_listen_still_ends_on_a_result_screen(hass):
     flow = flow_for(hass)
 
-    async def broken(address, family, seconds):
+    async def broken(address, family, seconds, **kwargs):
         await asyncio.sleep(0.01)
         raise RuntimeError("boom")
 
-    with patch("custom_components.bt_remote_voice.config_flow.observe", broken):
+    with patch("custom_components.bt_remote_voice.flow_steps.observe", broken):
         first = await flow.async_step_test()
         assert first["type"] == "progress"
         await asyncio.gather(flow.observe_task, return_exceptions=True)

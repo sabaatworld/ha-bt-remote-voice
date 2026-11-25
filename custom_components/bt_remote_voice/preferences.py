@@ -16,6 +16,7 @@ MAX_HEAD_START = 10  # seconds
 REQUEST_RANGE = (5, 120, 5)  # seconds: (min, max, step)
 CONVERSATION_RANGE = (30, 600, 10)
 PRESS_RANGE = (0, 0.5, 0.05)  # seconds; 0 turns the short-press filter off
+GAP_RANGE = (0, 500, 20)  # milliseconds of lost audio covered with silence; 0 turns it off
 
 # Order of the options form and of the README configuration table (spec: option order).
 FORM_ORDER = (
@@ -31,6 +32,8 @@ FORM_ORDER = (
     "input_mode",
     "remote_type",
     "min_press_seconds",
+    "ignore_early_stop",
+    "gap_tolerance_ms",
     "max_request_seconds",
     "max_conversation_seconds",
 )
@@ -54,6 +57,8 @@ DEFAULTS = {
     "remote_type": DEFAULT_REMOTE_TYPE,
     "stream_head_start": 0,
     "min_press_seconds": 0,
+    "ignore_early_stop": False,
+    "gap_tolerance_ms": 0,
     "max_request_seconds": 30,
     "max_conversation_seconds": 120,
 }
@@ -84,7 +89,38 @@ def preferences(options):
             raise ValueError("invalid_preferences")
     if result["max_conversation_seconds"] < result["max_request_seconds"]:
         raise ValueError("invalid_preferences")
+    if not isinstance(result["ignore_early_stop"], bool):
+        raise ValueError("invalid_preferences")
+    gap = result["gap_tolerance_ms"]
+    if (
+        isinstance(gap, bool)
+        or not isinstance(gap, (int, float))
+        or not GAP_RANGE[0] <= gap <= GAP_RANGE[1]
+    ):
+        raise ValueError("invalid_preferences")
     return result
+
+
+def capture_settings(options, family=None):
+    """Early-stop and gap handling for a capture, from stored options (bad values mean off).
+
+    The single place that decides when the settings apply, for real requests and for the test:
+    ``early_stop_applies`` is False for Fire remotes (their STOP is the real key release) and in
+    Alternating conversation (a held conversation manages its own turns); then the setting is off.
+    """
+    early = options.get("ignore_early_stop", DEFAULTS["ignore_early_stop"])
+    gap = options.get("gap_tolerance_ms", DEFAULTS["gap_tolerance_ms"])
+    usable_gap = (
+        isinstance(gap, (int, float))
+        and not isinstance(gap, bool)
+        and GAP_RANGE[0] <= gap <= GAP_RANGE[1]
+    )
+    applies = family != "fire" and options.get("input_mode", "single") != "conversation"
+    return {
+        "ignore_early_stop": early is True and applies,
+        "early_stop_applies": applies,
+        "max_gap_ms": gap if usable_gap else DEFAULTS["gap_tolerance_ms"],
+    }
 
 
 def capture_buffer_bytes(seconds):

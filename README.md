@@ -153,11 +153,23 @@ release. This integration cannot choose a different button: on an Android TV rem
 voice itself, and a Fire remote only streams audio after its own microphone key is held. Other buttons on the
 remote cannot start voice (see [Compatibility and microphone controls](#compatibility-and-microphone-controls)).
 
-- **Not sure which button it is?** In setup tick **Test my remote** and submit, wake the remote with an arrow key,
-  then press and hold its voice button for a few seconds. For 20 seconds the integration only listens (it does not
-  open the microphone and sends the remote only the standard capability request) and then tells you what the remote did: starts voice while held,
-  starts voice on a tap, sent a Fire voice key, sent only ordinary keys, or nothing. The result is also in the
-  remote report (counts of key usages only).
+- **Not sure which button it is?** Use **Test my remote**: in setup tick **Test my remote** and submit, or for a remote
+  you already added open **Configure** and choose **Test my remote**. Wake the remote with an arrow key, then press and
+  hold its voice button and speak. For 20 seconds the integration listens and then tells you what the remote did:
+  starts voice while held, starts voice on a tap, sent a Fire voice key, sent only ordinary keys, or nothing. The result
+  is also in the remote report (counts of key usages only).
+  - **Every press is recorded.** Each press of the voice button during the test is saved as a clip, named like
+    `Test clip 2026-11-25 14-30-07.wav` (16 kHz mono WAV of everything the remote sent for that press, including audio that arrives just after an early release), in your
+    Home Assistant media folder under **Media → My media → Bluetooth Remote Voice**. The result screen links to the clips
+    (the links work for 5 minutes); the files stay there until you delete them, like any other media. The clips stay on
+    your Home Assistant, and the remote report never contains audio. If your Home Assistant has no media folder this
+    integration can write to, the test still works and says that no clip was saved.
+  - **A configured remote is paused during the test.** The remote can only be held by one thing at a time, so the
+    integration lets go of it for the test and takes it back afterwards (also if you cancel). Its entities are
+    unavailable for about a minute and a request in progress is cancelled. Only one test per remote runs at a time.
+  - **The test follows your saved settings.** It records with the same **Ignore short presses**, **Ignore early stop** and **Fill short audio gaps** settings a real request would use, so a clip is what that request would have received. That includes your **Button behavior** and the remote type: **Ignore early stop** is not applied, and early stops are not counted, for Fire TV remotes or in Alternating conversation, exactly as for a real request. For a remote you already added, that means the settings saved in **Configure → Settings**. While you are adding a new remote there are no saved settings yet, so it uses the defaults (all off). To try the two remote-quirk settings, add the remote, turn them on in **Configure → Settings**, then run **Configure → Test my remote** again.
+  - **How you can tell what it did.** After the clips, a last screen called "What the test noticed" appears whenever the remote showed a quirk. It counts **early stop signals** (the remote sent a stop right after you started, while you were still holding the button) and **lost audio gaps** (audio the remote sent but Bluetooth dropped). With **Ignore early stop** off, an early stop shows as a very short clip (a fraction of a second) and the screen says to turn the setting on. With it on, the same press is recorded in full, because the early stop was ignored. Lost audio shows as a clip that ends early (or, with **Fill short audio gaps** set high enough, as a clip with silence in the gap). The same counts are in **Show remote report** (`early_stops`, `audio_gaps`, `lost_frames`, and per clip how many frames arrived and how it ended), so you can paste them into an issue.
+  - **A very short clip can also be a real quick tap.** If you released the button right after pressing it, the clip is a fraction of a second long, with or without these settings.
 - **Android TV (ATVV) remotes:** some start voice while the button is held; some start on a tap and listen
   until you stop speaking. The integration follows what the remote does.
 - **Fire remotes:** hold the microphone key for as long as you speak. Right after the remote wakes, it can send
@@ -271,7 +283,9 @@ to Home Assistant itself.
 
 ## Configuration reference
 
-Select **Configure** on the integration to change these settings; changes reload
+Select **Configure** on the integration: a menu offers **Settings** (the options below),
+**Test my remote** and **Show remote report**. The remote itself and its type cannot be changed there; to
+use a different remote or type, delete the entry and add the remote again. Saving the settings reloads
 the integration. Every setting has a short description in the form itself; this
 section adds when to use each one. All text, including entity names, option
 labels and error messages, comes from Home Assistant's translation files
@@ -301,6 +315,8 @@ until you choose otherwise.
 | Button behavior | How a hold maps to requests. **One request per hold** records one request and ends at release. **Alternating conversation** keeps listening while the button is held: speak, pause about 0.8 s, hear the reply, then speak again without releasing. | **One request**; Alternating conversation | Alternating needs a hold-to-talk remote and suits a longer back-and-forth. It starts a request only after about 0.3 s of speech is heard, so a very short or quiet hold is dropped without an error; use One request per hold for short commands. |
 | Remote type | Which kind of remote this is, so the integration talks to it the right way. **Automatic** uses what was detected when you added the remote. **Android TV / Google TV remote (ATVV)** is for remotes whose own microphone button starts voice. **Amazon Fire TV / Alexa voice remote** is for Fire remotes, which stream voice while the microphone key is held. Changing it reconnects the remote. | **Automatic** | Setup says your remote is not supported, or it was detected as the wrong type. Setup also offers this choice, so you are never stuck on a remote that was not recognised. A manual choice never works if the remote lacks the voice features it needs; the error then says what is missing. |
 | Ignore short presses | Ignores voice-button taps shorter than the time you set, so a spurious tap never starts a request (no request, no failure, no Last error). A real hold starts that much later. | 0 to 0.5 seconds in 0.05 s steps (**0**, off) | A Fire TV remote that fails with "No microphone audio" right after waking: a sleeping Fire remote re-sends the key that woke it as an instant tap. Try 0.1 s. Fire TV remotes only; other remotes ignore it. |
+| Ignore early stop | For Android TV remotes that sometimes send a stop signal right after you start talking, even though you are still holding the button. Without this setting that stop ends the request after a split second. When on, a stop in the first second is ignored while audio is still arriving; the request then ends when the audio has been quiet for 0.6 s, or when a second stop arrives. Only used with Button behavior set to One request per hold; it does nothing for Fire TV remotes. | On, **Off** | Requests from a held button sometimes end after a split second (the heard text is empty or only the first word), or **Test my remote** reports "Early stop signals" above 0. Cost: after such a stop the request ends up to 0.6 s later. |
+| Fill short audio gaps | Bluetooth sometimes loses a moment of audio on the way from the remote. Normally that makes the request fail with an "audio sequence gap" error. This sets how long a lost stretch may be for the integration to replace it with silence and carry on; longer gaps still fail. Silence in the middle of a word can make recognition less accurate, so use the lowest value that works. Android TV remotes only; it works in both button behaviors. | 0 to 500 ms in 20 ms steps (**0**, off) | Requests fail with the error "audio sequence gap", or **Test my remote** reports "Lost audio gaps" above 0. Start with 240 ms. Better Bluetooth reception (adapter on a short USB extension, away from USB 3 ports and Wi-Fi routers) fixes the cause. |
 | Maximum request length | The longest a single request can last on any remote; reaching it ends the request with a capture-limit error. In One-request mode it is the longest hold; in Alternating mode it bounds each turn. Remotes that are not hold-to-talk also end at about 15 seconds of speech or at silence, whichever comes first. | 5 to 120 seconds in 5 s steps (**30**) | Lower it to stop a stuck button from recording; raise it for long dictation. |
 | Maximum conversation length | The longest a whole hold can last in Alternating conversation mode. Must not be shorter than the request length. | 30 to 600 seconds in 10 s steps (**120**) | You use Alternating conversation and want longer or shorter conversations. Ignored in One-request mode. |
 
@@ -351,6 +367,22 @@ Examples: a state condition `binary_sensor.office_occupancy` is `on` speaks only
 while the office is occupied; a template condition
 `{{ is_state('person.alex', 'home') and speaker == 'media_player.office' }}` ties
 the rule to one speaker.
+
+### Recommended settings by remote
+
+These are starting points from the remotes we know of. Run **Test my remote** first: it records your
+presses with the settings you have saved and its last screen tells you if it saw early stop signals or
+lost audio, which is the sign to turn on the matching setting.
+
+| Remote | Remote type | Ignore short presses | Ignore early stop | Fill short audio gaps | Notes |
+| --- | --- | --- | --- | --- | --- |
+| BT19K (T-Mobile TVision) and other Android TV remotes that start voice while the button is held (ATVV 1.0) | Automatic | **0** (off) | Turn **on** if held requests end after a split second. Seen on the BT19K: in 2 of 7 held presses the remote sent a stop 10 ms after the start while still held. | **240 ms** if requests fail with "audio sequence gap". Seen on the BT19K: one 0.24 s loss in a 2.8 s hold. | Keep Button behavior on One request per hold if you use Ignore early stop. A tap on this remote starts a short stream: hold the button for as long as you speak. |
+| Android TV remotes that start voice on a tap and listen until you stop speaking | Automatic | **0** (off) | Leave off | Same as above | Not hardware tested; reports welcome. |
+| Other ATVV 0.4 / 1.0 remotes | Automatic | **0** (off) | Leave off until the test or your requests show the problem | Same as above | Not hardware tested; reports welcome. |
+| Amazon Fire TV voice remote (`0x0413`) | Automatic, or Fire TV | **0.1 to 0.2 s** if a request fails with "No microphone audio" right after the remote wakes | Does nothing | Does nothing | Hold the key for as long as you speak. The remote's first audio arrives about 0.3 s after you press, and it sometimes pauses for up to a second mid-press: keep the first words after a short pause. |
+| Alexa Voice Remote 3rd generation (`0x0414`) | Automatic, or Fire TV | **0.2 to 0.25 s** | Does nothing | Does nothing | Streams audio like the 2nd generation. A full request through speech recognition is not yet confirmed. |
+
+If the test shows no early stops and no lost audio, leave both settings off: they are for remotes that misbehave.
 
 ### Choosing settings by situation
 
@@ -442,7 +474,8 @@ BlueZ does not let applications write to the HID service. What that needs:
   remain; accepted/rejected/queued/failed/context_reset outcomes add a stage,
   code and readable reason. Satellite attributes show the current error.
 - No microphone service opens capture without a physical voice notification.
-- No recordings or transcripts are saved by this integration. Diagnostics omit
+- No recordings or transcripts are saved by this integration in normal use. The one exception is **Test my remote**,
+  which saves a clip of each voice press you make during the test, in your media folder, so you can listen to it. Diagnostics omit
   identifiers/content and include capabilities, counts, errors and timings.
   Bounded history retains the last 20 captures and at most 64 anonymous boundary
   records each, so a later success does not erase the preceding failure.
@@ -528,9 +561,9 @@ battery depletion, radio interference, adapter removal or a host reboot.
 
 ### Getting more detail
 
-- **Remote report** (setup) and **diagnostics** (after setup) both include **Voice checks**: for each thing the
+- **Remote report** (setup, or **Configure → Show remote report**) and **diagnostics** (after setup) both include **Voice checks**: for each thing the
   integration needs from a Fire remote's input device it says what it found, so a refusal explains itself.
-  **Test my remote** adds a short timeline (seconds since the test began) of what the remote sent.
+  **Test my remote** adds a short timeline and whether a clip was saved (seconds since the test began) of what the remote sent.
 - **Fire remote runtime counters** are in the diagnostics download under `fire_stats`: voice-key presses,
   microphone enables written (and how many were re-arms after frames stopped), audio frames received, the delay
   from a press's first enable to its first frame, the longest gap between two frames and the Opus header bytes seen.

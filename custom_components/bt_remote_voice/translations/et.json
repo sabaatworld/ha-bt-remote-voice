@@ -35,7 +35,7 @@
           "pipeline_id": "Assisti torujuhe, mis töötleb selle kaugjuhtimispuldi kõnet.",
           "remote_type": "Jätke Automaatne, kui pulti ei tuvastata või seadistamine ebaõnnestub.",
           "show_report": "Märkige ja saatke, et näha aruannet, mille saate kopeerida GitHubi probleemi.",
-          "test_remote": "Märkige ja saatke, seejärel vajutage ja hoidke puldi häälenuppu, et näha, mida pult teeb."
+          "test_remote": "Märkige ruut ja saatke, seejärel vajutage ja hoidke kaugjuhtimispuldi häälnuppu all, kui räägite. Iga vajutus salvestatakse, et saaksite seda hiljem kuulata."
         }
       },
       "report": {
@@ -50,27 +50,39 @@
       },
       "test_result_atvv_hold": {
         "title": "Puldi testi tulemus",
-        "description": "See pult käivitab hääle ise, kuni selle nuppu hoitakse all. Rääkimiseks hoidke seda nuppu all. Saada, et seadistust jätkata."
+        "description": "Teie kaugjuhtimispult töötab. See hakkab ise kuulama, kui hoiate häälnuppu all, seega hoidke nuppu all, kui räägite. Saatke, et seadistamist jätkata."
       },
       "test_result_atvv_tap": {
         "title": "Puldi testi tulemus",
-        "description": "See pult käivitab hääle nupu puudutamisel ja kuulab, kuni te lõpetate rääkimise. Rääkimiseks puudutage seda nuppu. Saada, et seadistust jätkata."
+        "description": "Teie kaugjuhtimispult töötab. Puudutage häälnuppu, et rääkima hakata; see lõpetab kuulamise, kui te lõpetate rääkimise. Saatke, et seadistamist jätkata."
       },
       "test_result_fire_voice": {
         "title": "Puldi testi tulemus",
-        "description": "See on Fire TV puldi häälenupp. Hoidke seda rääkimise ajal all. Saada, et seadistust jätkata."
+        "description": "Teie kaugjuhtimispult töötab. Hoidke häälnuppu all niikaua, kuni räägite. Saatke, et seadistamist jätkata."
       },
       "test_result_plain_key": {
         "title": "Puldi testi tulemus",
-        "description": "Pult saatis tavalisi klahve, kuid mitte hääle signaali, seega selle häälenupp ei pruugi Bluetoothi kaudu häält käivitada. Saatke ja märkige seejärel Kuva puldi aruanne, et jagada nähtut."
+        "description": "Kaugjuhtimispult saatis tavalisi nupuvajutusi, kuid mitte häälsignaali, seega ei pruugi selle häälnupp Bluetoothi kaudu töötada. Saatke ja märkige seejärel Kuva puldi aruanne, et jagada nähtut."
       },
       "test_result_nothing": {
         "title": "Puldi testi tulemus",
         "description": "Pult ei saatnud midagi. Äratage see nooleklahviga, kontrollige, et see on ühendatud selle Home Assistanti masinaga, ja testige uuesti. Saada, et jätkata."
+      },
+      "test_clips": {
+        "title": "Testklipid",
+        "description": "Iga häälnupu vajutus salvestati klipina, et saaksite kuulda, mida kaugjuhtimispult saatis:\n\n{clips}\n\nKlipid asuvad jaotises Meedia → Minu meedia → Bluetooth Remote Voice. Lingid töötavad 5 minutit."
+      },
+      "test_clips_none": {
+        "title": "Klippi ei salvestatud",
+        "description": "Häälnupp töötas, kuid klippi ei salvestatud. Klipid salvestatakse Home Assistanti meediakausta (Meedia → Minu meedia), seega kontrollige, et sellel Home Assistantil oleks meediakaust, kuhu see saab kirjutada, ja proovige uuesti."
+      },
+      "test_hints": {
+        "title": "Mida test märkas",
+        "description": "Varased peatussignaalid: {early}. Kadunud heliaugud: {gaps}.\n\nVaranne peatussignaal on pulti peatus kohe pärast algust, kui hoidsite nuppu veel all. Kui see on üle 0 ja teie päringud katkevad liiga vara, lülitage integratsiooni Seaded all sisse Eira varajast peatust.\n\nKadunud heliauk on helilõik, mille Bluetooth kaotas. Kui see on üle 0 ja päringud ebaõnnestuvad heliaugu veaga, seadke integratsiooni Seaded all Täida lühikesed heliaugud."
       }
     },
     "progress": {
-      "observing": "Kuulamine 20 sekundit. Äratage pult nooleklahviga, seejärel vajutage ja hoidke selle häälenuppu, rääkige lühidalt ja vabastage."
+      "observing": "Vajutage ja hoidke kaugjuhtimispuldi häälnuppu nüüd all, rääkige lühidalt ja vabastage. Korrake nii palju kui soovite: test kestab 20 sekundit ja salvestab iga vajutuse, et saaksite seda hiljem kuulata. Kui tundub, et midagi ei juhtu, äratage pult kõigepealt nooleklahviga."
     },
     "error": {
       "bluetooth_unavailable": "Kohalik Bluetooth ei ole saadaval. Kontrollige, kas süsteemi D-Bus on juurdepääsetav.",
@@ -88,12 +100,23 @@
     },
     "abort": {
       "already_configured": "See kaugjuhtimispult on juba seadistatud.",
-      "no_pipelines": "Looge enne kaugjuhtimispuldi lisamist Assisti torujuhe."
+      "no_pipelines": "Looge enne kaugjuhtimispuldi lisamist Assisti torujuhe.",
+      "test_running": "Selle kaugjuhtimispuldi test juba töötab.",
+      "pause_failed": "Kaugjuhtimispulti ei õnnestunud testi ajaks peatada. Proovige hetke pärast uuesti."
     }
   },
   "options": {
     "step": {
       "init": {
+        "title": "Kaugjuhtimispuldi valikud",
+        "description": "Seaded muudavad selle kaugjuhtimispuldi käitumist. Kaugjuhtimispulti ja selle tüüpi ei saa siin muuta: teise puldi või tüübi kasutamiseks kustutage see kirje ja lisage pult uuesti.",
+        "menu_options": {
+          "settings": "Seaded",
+          "test": "Testi minu pulti",
+          "report": "Kuva puldi aruanne"
+        }
+      },
+      "settings": {
         "title": "Hääleseaded",
         "description": "Need seaded määravad, kuidas vajutusi käsitletakse ja kuidas vastuseid esitatakse. Päringu asendamine ei saa juba tehtud toiminguid tagasi võtta. Samaaegne täisdupleks ei ole saadaval. Transkriptsiooni järel peatumine ei keela otsekõnepakkuja sisseehitatud tööriistu; kui toimingud peavad olema keelatud, kasutage ainult transkriptsiooni pakkujat.\n\n**Vastuse tingimus:** vastuse esitamiseks peavad kõik selle tingimused olema täidetud. Neid kontrollitakse iga päringu alguses üks kord; jätke tühjaks, et alati rääkida, ja tingimus, mida ei saa hinnata, loetakse täitmata. Mallitingimustes saab kasutada muutujaid `speaker`, `remote` ja `held`.",
         "data": {
@@ -110,7 +133,9 @@
           "min_press_seconds": "Eira lühikesi vajutusi",
           "max_request_seconds": "Päringu maksimaalne pikkus",
           "max_conversation_seconds": "Vestluse maksimaalne pikkus",
-          "reply_condition": "Vastuse tingimus"
+          "reply_condition": "Vastuse tingimus",
+          "ignore_early_stop": "Eira varajast peatust",
+          "gap_tolerance_ms": "Täida lühikesed heliaugud"
         },
         "data_description": {
           "pipeline_id": "Assisti torujuhe, mis töötleb kõnet: kõnetuvastus, vestlusagent ja tekstist kõneks. Eemaldatud torujuhe annab veateate, mitte ei lähe tagasi teisele.",
@@ -126,8 +151,52 @@
           "min_press_seconds": "Eirab häälenupu puudutusi, mis on sellest lühemad, et eksliku puudutuse peale päringut ei algaks; tõeline hoidmine algab selle võrra hiljem. 0 lülitab välja. Kasulik Fire TV kaugjuhtimispuldi puhul, mis ebaõnnestub teatega „Mikrofoni heli puudub“ kohe pärast äratamist: see saadab äratanud klahvi uuesti hetkelise puudutusena. 0,1 s on hea lähtepunkt. Ainult Fire TV kaugjuhtimispuldid.",
           "max_request_seconds": "Pikim aeg, kaua üksik päring võib ükskõik millisel kaugjuhtimispuldil kesta: terve hoidmine režiimis „Üks päring“ ja iga vooru kestus vahelduvas vestluses. Selle saavutamine lõpetab päringu salvestuspiiri veaga. Vähendage kinnijäänud nupu salvestamise peatamiseks; suurendage pika dikteerimise jaoks. Kaugjuhtimispuldid, mis ei ole hoia-ja-räägi tüüpi, lõpetavad ka umbes 15 sekundi kõne või vaikuse korral, olenevalt sellest, kumb tuleb enne.",
           "max_conversation_seconds": "Pikim aeg, kaua terve nupuhoidmine võib vahelduva vestluse režiimis kesta. Režiimis „Üks päring“ seda eiratakse ja see ei tohi olla lühem kui päringu maksimaalne pikkus.",
-          "reply_condition": "Tingimused, mis kõik peavad olema täidetud, et vastus esitataks. Kontrollitakse üks kord iga päringu alguses (ja iga vooru alguses vahelduvas vestluses). Jätke tühjaks, et alati rääkida. Tingimus, mis annab vea, loetakse täitmata. Mallitingimustes saab kasutada muutujaid speaker, remote ja held."
+          "reply_condition": "Tingimused, mis kõik peavad olema täidetud, et vastus esitataks. Kontrollitakse üks kord iga päringu alguses (ja iga vooru alguses vahelduvas vestluses). Jätke tühjaks, et alati rääkida. Tingimus, mis annab vea, loetakse täitmata. Mallitingimustes saab kasutada muutujaid speaker, remote ja held.",
+          "ignore_early_stop": "Lülitage see sisse, kui päringud lõpevad vahel sekundi murdosa pärast, kuigi hoidsite nuppu kogu aeg all. Mõned Android TV puldid saadavad peatussignaali kohe pärast algust ja jätkavad siis heli saatmist. Sisselülitatuna eiratakse esimese sekundi jooksul tulnud peatust seni, kuni heli veel saabub, ja päring lõpeb, kui heli vaikib või saabub teine peatus. Kasutatakse ainult siis, kui Nupu käitumine on seatud väärtusele Üks päring hoidmise kohta.",
+          "gap_tolerance_ms": "Bluetooth võib kaotada hetke heli, mis tavaliselt põhjustab päringu ebaõnnestumise heliaugu veaga. Määrake siin pikkus, kuni milleni kadunud lõik asendatakse vaikusega ja päring jätkub. Pikemad augud ebaõnnestuvad endiselt. Vaikus sõna keskel võib vähendada tuvastustäpsust, seega kasutage madalaimat toimivat väärtust. 0 lülitab välja. Ainult Android TV pultidele."
         }
+      },
+      "test_result_atvv_hold": {
+        "title": "Puldi testi tulemus",
+        "description": "Teie kaugjuhtimispult töötab. See hakkab ise kuulama, kui hoiate häälnuppu all, seega hoidke nuppu all, kui räägite."
+      },
+      "test_result_atvv_tap": {
+        "title": "Puldi testi tulemus",
+        "description": "Teie kaugjuhtimispult töötab. Puudutage häälnuppu, et rääkima hakata; see lõpetab kuulamise, kui te lõpetate rääkimise."
+      },
+      "test_result_fire_voice": {
+        "title": "Puldi testi tulemus",
+        "description": "Teie kaugjuhtimispult töötab. Hoidke häälnuppu all niikaua, kuni räägite."
+      },
+      "test_result_plain_key": {
+        "title": "Puldi testi tulemus",
+        "description": "Kaugjuhtimispult saatis tavalisi nupuvajutusi, kuid mitte häälsignaali, seega ei pruugi selle häälnupp Bluetoothi kaudu töötada."
+      },
+      "test_result_nothing": {
+        "title": "Puldi testi tulemus",
+        "description": "Pult ei saatnud midagi. Äratage see nooleklahviga, kontrollige, et see on ühendatud selle Home Assistanti masinaga, ja testige uuesti."
+      },
+      "report": {
+        "title": "Puldi aruanne",
+        "description": "Kopeerige see tekst GitHubi probleemi. See ei sisalda täielikku Bluetoothi aadressi, nimesid, veebiaadresse ega heli.",
+        "data": {
+          "report": "Puldi aruanne"
+        },
+        "data_description": {
+          "report": "Valige kõik ja kopeerige."
+        }
+      },
+      "test_clips": {
+        "title": "Testklipid",
+        "description": "Iga häälnupu vajutus salvestati klipina, et saaksite kuulda, mida kaugjuhtimispult saatis:\n\n{clips}\n\nKlipid asuvad jaotises Meedia → Minu meedia → Bluetooth Remote Voice. Lingid töötavad 5 minutit."
+      },
+      "test_clips_none": {
+        "title": "Klippi ei salvestatud",
+        "description": "Häälnupp töötas, kuid klippi ei salvestatud. Klipid salvestatakse Home Assistanti meediakausta (Meedia → Minu meedia), seega kontrollige, et sellel Home Assistantil oleks meediakaust, kuhu see saab kirjutada, ja proovige uuesti."
+      },
+      "test_hints": {
+        "title": "Mida test märkas",
+        "description": "Varased peatussignaalid: {early}. Kadunud heliaugud: {gaps}.\n\nVaranne peatussignaal on pulti peatus kohe pärast algust, kui hoidsite nuppu veel all. Kui see on üle 0 ja teie päringud katkevad liiga vara, lülitage integratsiooni Seaded all sisse Eira varajast peatust.\n\nKadunud heliauk on helilõik, mille Bluetooth kaotas. Kui see on üle 0 ja päringud ebaõnnestuvad heliaugu veaga, seadke integratsiooni Seaded all Täida lühikesed heliaugud."
       }
     },
     "error": {
@@ -139,7 +208,12 @@
       "speaker_missing": "Salvestatud vastuste kõlar ei ole praegu saadaval, seega vastuseid ei esitata enne, kui see taas ilmub. Jätke see alles või valige mõni muu."
     },
     "abort": {
-      "no_pipelines": "Looge esmalt Assisti torujuhe."
+      "no_pipelines": "Looge esmalt Assisti torujuhe.",
+      "test_running": "Selle kaugjuhtimispuldi test juba töötab.",
+      "pause_failed": "Kaugjuhtimispulti ei õnnestunud testi ajaks peatada. Proovige hetke pärast uuesti."
+    },
+    "progress": {
+      "observing": "Vajutage ja hoidke kaugjuhtimispuldi häälnuppu nüüd all, rääkige lühidalt ja vabastage. Korrake nii palju kui soovite: test kestab 20 sekundit ja salvestab iga vajutuse, et saaksite seda hiljem kuulata. Kui tundub, et midagi ei juhtu, äratage pult kõigepealt nooleklahviga. Teie kaugjuhtimispult on selle töö ajal tavakasutuseks peatatud: selle olemid pole umbes minuti kättesaadavad ja pooleliolev päring tühistatakse."
     }
   },
   "selector": {
