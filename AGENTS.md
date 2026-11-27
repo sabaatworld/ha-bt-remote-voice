@@ -137,6 +137,35 @@ the HA audio dependencies; mount the repo read-only and set
   repository's Pre-release switch (Marketplace docs). Never publish a beta as a regular release, and verify a
   release candidate (full tests, CI on `main`, the built zip) before pushing its tag. The `hacs/default` listing pull request needs the
   maintainer's go-ahead. Spec: https://contributors.home-assistant.io/marketplace/guides/integrations/
+- **Release notes.** Every GitHub release, stable or beta, ships with proper notes before the
+  release is announced or a user is pointed at it. The Release workflow's `--generate-notes` only
+  produces a compare link, so after the tag is published write the notes to a file and apply them with
+  `gh release edit vX.Y.Z --notes-file <file>`. Write them for users, not maintainers: plain language,
+  what changed for them, no commit hashes or internal names, and only what the commits and diffs
+  support (never claim behaviour you did not verify). A stable release rolls up its betas. Use exactly
+  this template and omit a section only when it has nothing to say:
+
+  ```markdown
+  <One or two sentences: what this release is about.>
+
+  ### What's new
+  - **Feature name:** what it does for the user and where to find it.
+
+  ### Fixed
+  - What was wrong, in the user's terms, and what happens now. Link issues like [#1](url).
+
+  ### Changed
+  - Behaviour or default changes, and anything users must do after updating.
+
+  ### Please test
+  - Betas only: what to try and what to attach if it fails.
+
+  **Full Changelog**: <compare link, v<previous>...v<this>>
+  ```
+
+  Betas start with this line, above the summary: `**Beta.** Offered only to people who turned on this
+  repository's **Pre-release** switch in the Marketplace (see [Trying a beta release](https://github.com/sabaatworld/ha-bt-remote-voice#trying-a-beta-release)).`
+  After editing, run `gh release view <tag> --json body` and confirm the body is more than the compare link.
 - **Hardware safety.** Never press or script a remote's power buttons. Do not
   open a microphone without a physical voice notification ("Test my remote" records only the
   presses the user makes during the test, and always closes the microphone afterwards).
