@@ -6,12 +6,12 @@
 
 <!-- ha-marketplace:exclude-start -->
 <p align="center">
-  <a href="https://github.com/sabaatworld/ha-bt-remote-voice/releases/latest"><img alt="Latest stable release" src="https://img.shields.io/github/v/release/sabaatworld/ha-bt-remote-voice?style=flat-square&label=release"></a>
-  <a href="https://github.com/sabaatworld/ha-bt-remote-voice/releases"><img alt="Latest version including pre-releases" src="https://img.shields.io/github/v/release/sabaatworld/ha-bt-remote-voice?include_prereleases&sort=semver&style=flat-square&label=latest"></a>
-  <a href="https://github.com/sabaatworld/ha-bt-remote-voice/releases"><img alt="Release downloads" src="https://img.shields.io/github/downloads/sabaatworld/ha-bt-remote-voice/total?style=flat-square&label=downloads"></a>
-  <a href="https://github.com/sabaatworld/ha-bt-remote-voice/actions/workflows/validate.yml"><img alt="hassfest and Marketplace validation" src="https://img.shields.io/github/actions/workflow/status/sabaatworld/ha-bt-remote-voice/validate.yml?style=flat-square&label=hassfest%20%2B%20marketplace"></a>
+  <a href="https://github.com/sabaatworld/ha-bt-remote-voice/releases/latest"><img alt="Latest stable release" src="https://badgen.net/github/release/sabaatworld/ha-bt-remote-voice/stable?label=release"></a>
+  <a href="https://github.com/sabaatworld/ha-bt-remote-voice/releases"><img alt="Latest version including pre-releases" src="https://badgen.net/github/release/sabaatworld/ha-bt-remote-voice/any?label=latest"></a>
+  <a href="https://github.com/sabaatworld/ha-bt-remote-voice/releases"><img alt="Release downloads" src="https://badgen.net/github/assets-dl/sabaatworld/ha-bt-remote-voice/total?label=downloads"></a>
+  <a href="https://github.com/sabaatworld/ha-bt-remote-voice/actions/workflows/validate.yml"><img alt="hassfest and Marketplace validation" src="https://github.com/sabaatworld/ha-bt-remote-voice/actions/workflows/validate.yml/badge.svg"></a>
   <a href="#install"><img alt="Home Assistant 2026.11 or later" src="https://img.shields.io/badge/Home%20Assistant-2026.11%2B-41BDF5?style=flat-square"></a>
-  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/github/license/sabaatworld/ha-bt-remote-voice?style=flat-square"></a>
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-blue?style=flat-square"></a>
 </p>
 <!-- ha-marketplace:exclude-end -->
 
